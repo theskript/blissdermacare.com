@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "scrape.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fix-and-zip": "node scripts/fix_routes_and_zip.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "dependencies": {
     "puppeteer": "^24.29.1",
     "website-scraper": "^6.0.0",
-    "website-scraper-puppeteer": "^2.0.0"
+    "website-scraper-puppeteer": "^2.0.0",
+    "adm-zip": "^0.5.9"
   }
 }
