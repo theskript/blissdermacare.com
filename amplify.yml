@@ -1,0 +1,15 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "No build for static site"
+    build:
+      commands:
+        - echo "No build for static site"
+  artifacts:
+    baseDirectory: downloaded_site
+    files:
+      - '**/*'
+  cache:
+    paths: []
