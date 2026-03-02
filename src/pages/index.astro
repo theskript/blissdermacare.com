@@ -3,18 +3,56 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Bliss Dermacare - Professional Esthetician Services">
+  <!-- Upcoming Events Banner -->
+  <section class="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 text-white py-3 md:py-4">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 text-center">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center justify-center w-6 h-6 bg-white/20 rounded-full">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </span>
+          <span class="font-semibold text-sm md:text-base">Upcoming Events</span>
+        </div>
+        <div class="hidden md:block w-px h-6 bg-white/30"></div>
+        <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-sm md:text-base">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <strong>March 15:</strong> Spring Glow Facial Event
+          </span>
+          <span class="hidden sm:inline text-white/50">|</span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
+            <strong>March 22:</strong> Free Skin Consultation Day
+          </span>
+        </div>
+        <a href="#consultation" class="mt-2 md:mt-0 inline-flex items-center text-sm font-medium bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full transition-colors">
+          Reserve Your Spot
+          <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Hero Section -->
-  <section class="relative bg-gradient-to-br from-primary-50 via-white to-primary-50 py-24 md:py-32 overflow-hidden">
+  <section class="relative bg-gradient-to-br from-primary-50 via-white to-primary-50 py-16 md:py-24 lg:py-32 overflow-hidden">
     <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZiN2UzYyIgc3Ryb2tlLW9wYWNpdHk9IjAuMDUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-50"></div>
     
     <div class="relative max-w-7xl mx-auto px-6">
+      <!-- Mobile Hero Image -->
+      <div class="lg:hidden mb-8">
+        <div class="relative">
+          <img src="/hero-blissdermacare.jpg" alt="Bliss Dermacare - Professional skincare and esthetician services" class="rounded-2xl shadow-xl w-full h-[250px] sm:h-[300px] object-cover" loading="eager" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
+        </div>
+      </div>
+
       <div class="grid lg:grid-cols-2 gap-12 items-center">
       <div>
-        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 mb-6 leading-tight">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 mb-6 leading-tight">
           Radiant Skin,<br/>
           <span class="text-primary-600">Timeless Beauty</span>
         </h1>
-        <p class="text-xl md:text-2xl text-neutral-600 mb-8 leading-relaxed">
+        <p class="text-lg sm:text-xl md:text-2xl text-neutral-600 mb-8 leading-relaxed">
           Experience professional esthetician services designed to enhance your natural beauty. Using advanced techniques and award-winning products tailored to your unique skin needs.
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
@@ -28,7 +66,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         
         <!-- Trust Indicators -->
-        <div class="mt-12 flex flex-wrap gap-8 items-center text-neutral-600">
+        <div class="mt-12 flex flex-wrap gap-6 sm:gap-8 items-center text-neutral-600">
           <div class="flex items-center">
             <svg class="w-5 h-5 text-primary-600 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
             <span class="font-medium">5.0 Rating</span>
@@ -46,7 +84,7 @@ import Layout from '../layouts/Layout.astro';
       
       <div class="hidden lg:block">
         <div class="relative">
-          <img src="https://images.unsplash.com/photo-1599683064250-4f96e6b1379b?w=800&h=1000&fit=crop&q=80" alt="Professional esthetician providing skincare treatment" class="rounded-2xl shadow-2xl w-full h-[600px] object-cover" loading="eager" />
+          <img src="/hero-blissdermacare.jpg" alt="Bliss Dermacare - Professional skincare and esthetician services" class="rounded-2xl shadow-2xl w-full h-[500px] object-cover" loading="eager" />
           <div class="absolute -bottom-6 -right-6 w-48 h-48 bg-primary-200 rounded-2xl -z-10"></div>
         </div>
       </div>
@@ -54,17 +92,52 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- How It Works Section (inspired by Glowbar) -->
+  <section class="py-16 md:py-20 bg-white border-b border-neutral-100">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span class="text-primary-600 font-semibold text-sm uppercase tracking-wider">Simple Process</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 mt-2">How It Works</h2>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8 md:gap-12">
+        <div class="text-center group">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+            <span class="text-2xl font-bold text-primary-600">1</span>
+          </div>
+          <h3 class="text-xl font-bold text-neutral-900 mb-2">Book Online</h3>
+          <p class="text-neutral-600">Choose your treatment and pick a time that works for you. Easy scheduling, no phone calls needed.</p>
+        </div>
+        <div class="text-center group">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+            <span class="text-2xl font-bold text-primary-600">2</span>
+          </div>
+          <h3 class="text-xl font-bold text-neutral-900 mb-2">Skin Analysis</h3>
+          <p class="text-neutral-600">Your esthetician assesses your skin and customizes the treatment to your specific needs.</p>
+        </div>
+        <div class="text-center group">
+          <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+            <span class="text-2xl font-bold text-primary-600">3</span>
+          </div>
+          <h3 class="text-xl font-bold text-neutral-900 mb-2">Glow & Go</h3>
+          <p class="text-neutral-600">Leave with radiant skin and a personalized at-home routine to maintain your results.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Services Section -->
-  <section id="services" class="py-24 bg-white">
+  <section id="services" class="py-20 md:py-28 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">Our Services</h2>
-        <p class="text-xl text-neutral-600 max-w-2xl mx-auto">
-          Comprehensive skin care treatments designed to address your specific concerns and enhance your natural radiance.
+      <div class="text-center mb-14">
+        <span class="text-primary-600 font-semibold text-sm uppercase tracking-wider">Treatments</span>
+        <h2 class="text-4xl md:text-5xl font-bold text-neutral-900 mt-2 mb-4">Our Services</h2>
+        <p class="text-lg text-neutral-600 max-w-2xl mx-auto">
+          Expert treatments designed to address your specific concerns and enhance your natural radiance.
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Service Card 1 -->
         <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
           <div class="relative h-48 overflow-hidden">
@@ -76,8 +149,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Personalized deep cleansing treatment with double cleanse, exfoliation, steam therapy, professional extractions, custom mask, serums, and therapeutic facial massage. Includes neck and décolleté treatment. Perfect for all skin types.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$120</p>
-          <p class="text-sm text-neutral-500">60 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$120</p>
+              <p class="text-sm text-neutral-500">60 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -92,8 +170,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Advanced rejuvenation treatment with peptide-rich serums, collagen-boosting techniques, LED light therapy, lymphatic drainage massage, retinol or vitamin C application, and firming mask. Targets fine lines, wrinkles, sagging, and age spots.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$175</p>
-          <p class="text-sm text-neutral-500">75 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$175</p>
+              <p class="text-sm text-neutral-500">75 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -108,8 +191,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Medical-grade chemical exfoliation using glycolic, lactic, or salicylic acid. Improves texture, reduces hyperpigmentation, acne scars, fine lines, and sun damage. Includes pre-peel prep, neutralizer, and post-peel hydrating treatment. Multiple strength options available.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$150</p>
-          <p class="text-sm text-neutral-500">45 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$150</p>
+              <p class="text-sm text-neutral-500">45 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -124,8 +212,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Diamond-tip or crystal microdermabrasion for deep exfoliation. Removes dead skin cells, minimizes pores, reduces fine lines and acne scars. Stimulates collagen production. Includes cleanse, treatment, hydrating mask, and protective serums. Immediate glow with no downtime.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$135</p>
-          <p class="text-sm text-neutral-500">50 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$135</p>
+              <p class="text-sm text-neutral-500">50 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -140,8 +233,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Specialized deep-pore cleansing with salicylic acid, thorough extractions, high-frequency therapy to kill bacteria, blue LED light treatment, purifying clay mask, and oil-control serums. Reduces inflammation, prevents future breakouts. Customized for acne-prone and oily skin.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$130</p>
-          <p class="text-sm text-neutral-500">75 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$130</p>
+              <p class="text-sm text-neutral-500">75 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -156,8 +254,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Premium 3-step vortex treatment: cleanse and peel, extract and hydrate, fuse and protect with antioxidants. Uses patented hydradermabrasion technology. Includes neck treatment, boosters (growth factors or brightening), LED therapy, and lymphatic drainage. Instant results, zero downtime.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$200</p>
-          <p class="text-sm text-neutral-500">60 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$200</p>
+              <p class="text-sm text-neutral-500">60 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -172,8 +275,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Semi-permanent cosmetic tattooing that creates natural-looking hair follicle impressions. Ideal for thinning hair, receding hairlines, alopecia, and scar camouflage. Custom pigment matching, precise dotting technique. Includes consultation, numbing, and aftercare kit. Multiple sessions recommended for optimal results.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$800</p>
-          <p class="text-sm text-neutral-500">per session (2-3 sessions typical)</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$800</p>
+              <p class="text-sm text-neutral-500">per session (2-3 sessions)</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -188,8 +296,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Collagen induction therapy using sterile micro-needles to stimulate hair follicles and increase blood flow. Creates micro-channels for enhanced absorption of growth serums and peptides. Treats hair thinning, pattern baldness, and promotes thicker, healthier hair growth. Includes growth factor serum application.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$250</p>
-          <p class="text-sm text-neutral-500">60 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$250</p>
+              <p class="text-sm text-neutral-500">60 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -204,8 +317,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Advanced platelet-rich plasma facial combining microneedling with your body's own growth factors. Blood is drawn, processed to extract PRP, then applied during microneedling to stimulate collagen production, tighten skin, and accelerate healing. Also known as the PRP Facial or Platelet-Rich Plasma Facial. Reduces fine lines, acne scars, hyperpigmentation, and improves overall skin texture. Results continue improving for months.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$450</p>
-          <p class="text-sm text-neutral-500">75 minutes | Series of 3 recommended</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$450</p>
+              <p class="text-sm text-neutral-500">75 min | Series of 3</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -220,8 +338,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Premium eyelash extension services featuring classic, hybrid, volume, and mega volume styles. Handpicked premium lash materials with customizable lengths, curls, and densities to enhance your natural beauty. Includes patch test, precise application using isolation tweezers, and professional aftercare instructions. Perfect for special occasions or everyday glamour. Lash fills available every 3-4 weeks.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$180</p>
-          <p class="text-sm text-neutral-500">Full set 2 hours | Fills $50 (45 min)</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$180</p>
+              <p class="text-sm text-neutral-500">Full set 2 hr | Fills $50</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
 
@@ -236,8 +359,13 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 mb-4">
             Professional eyebrow and lash lift treatment that straightens and sets hairs into a lifted, defined shape for 6-8 weeks. Includes brow lamination with styling, optional tint for deeper definition, and nourishing serum to keep brows and lashes healthy. Creates a polished, elevated brow and lash line without extensions. Great for natural-looking enhancement and low-maintenance beauty.
           </p>
-          <p class="text-3xl font-bold text-primary-600 mb-4">$85</p>
-          <p class="text-sm text-neutral-500">60 minutes</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">$85</p>
+              <p class="text-sm text-neutral-500">60 minutes</p>
+            </div>
+            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+          </div>
           </div>
         </div>
       </div>
@@ -283,7 +411,7 @@ import Layout from '../layouts/Layout.astro';
         
         <div class="relative">
           <div class="aspect-[4/5] bg-gradient-to-br from-primary-200 to-primary-300 rounded-2xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1679583156493-a87b85801837?w=600&h=750&fit=crop&q=80" alt="Professional esthetician at work" class="w-full h-full object-cover" loading="lazy" />
+            <img src="https://images.unsplash.com/photo-1599683064250-4f96e6b1379b?w=600&h=750&fit=crop&q=80" alt="Professional esthetician providing skincare treatment" class="w-full h-full object-cover" loading="lazy" />
           </div>
           <div class="absolute -bottom-6 -right-6 w-48 h-48 bg-primary-100 rounded-2xl -z-10"></div>
         </div>
@@ -291,8 +419,83 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- Testimonials Section (inspired by Heyday/Glowbar) -->
+  <section class="py-20 md:py-28 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <span class="text-primary-600 font-semibold text-sm uppercase tracking-wider">Client Love</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 mt-2">What Our Clients Say</h2>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+        <!-- Testimonial 1 -->
+        <div class="bg-neutral-50 rounded-2xl p-8 relative">
+          <div class="flex gap-1 mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-neutral-700 mb-6 leading-relaxed">"My skin has never looked better! The personalized approach and attention to detail makes every visit special. I've been coming monthly for a year now."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center">
+              <span class="text-primary-700 font-semibold text-sm">SM</span>
+            </div>
+            <div>
+              <p class="font-semibold text-neutral-900">Sarah M.</p>
+              <p class="text-sm text-neutral-500">Wesley Chapel</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="bg-neutral-50 rounded-2xl p-8 relative">
+          <div class="flex gap-1 mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-neutral-700 mb-6 leading-relaxed">"Finally found an esthetician who understands my skin! The chemical peel series completely transformed my hyperpigmentation. Highly recommend!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center">
+              <span class="text-primary-700 font-semibold text-sm">JT</span>
+            </div>
+            <div>
+              <p class="font-semibold text-neutral-900">Jessica T.</p>
+              <p class="text-sm text-neutral-500">Tampa</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="bg-neutral-50 rounded-2xl p-8 relative">
+          <div class="flex gap-1 mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-neutral-700 mb-6 leading-relaxed">"The scalp regeneration treatment was a game changer for my thinning hair. Such a calming experience and real results. Best kept secret in the Bay area!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center">
+              <span class="text-primary-700 font-semibold text-sm">MR</span>
+            </div>
+            <div>
+              <p class="font-semibold text-neutral-900">Michelle R.</p>
+              <p class="text-sm text-neutral-500">Land O' Lakes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Pricing Section -->
-  <section id="pricing" class="py-24 bg-white">
+  <section id="pricing" class="py-20 md:py-28 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <h2 class="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">Treatment Packages</h2>

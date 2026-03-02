@@ -4,29 +4,32 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Dusty Rose/Blush palette - industry standard for luxury skincare
+        // Inspired by Glossier, Heyday, and high-end esthetician brands
         primary: {
-          50: '#fff4ed',
-          100: '#ffe6d5',
-          200: '#feccaa',
-          300: '#fdab74',
-          400: '#fb7e3c',
-          500: '#f95c16',
-          600: '#ea450c',
-          700: '#c2330c',
-          800: '#9a2b12',
-          900: '#7c2712',
+          50: '#fdf5f6',
+          100: '#fceaec',
+          200: '#f9d5db',
+          300: '#f4b4be',
+          400: '#ec8a99',
+          500: '#df6377',
+          600: '#c94d63',  // Main brand color - elegant dusty rose
+          700: '#a93d51',
+          800: '#8d3645',
+          900: '#78323e',
         },
+        // Warm neutral palette for text and backgrounds
         neutral: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
+          50: '#fafaf9',
+          100: '#f5f5f4',
+          200: '#e7e5e4',
+          300: '#d6d3d1',
+          400: '#a8a29e',
+          500: '#78716c',
+          600: '#57534e',
+          700: '#44403c',
+          800: '#292524',
+          900: '#1c1917',
         },
       },
       fontFamily: {
