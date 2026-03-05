@@ -48,12 +48,21 @@ import Layout from '../layouts/Layout.astro';
 
       <div class="grid lg:grid-cols-2 gap-12 items-center">
       <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+          </div>
+          <div>
+            <p class="text-sm text-neutral-500 uppercase tracking-wider">Your Esthetician</p>
+            <p class="font-semibold text-neutral-900">Iateaka Lizardo</p>
+          </div>
+        </div>
         <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 mb-6 leading-tight">
           Radiant Skin,<br/>
           <span class="text-primary-600">Timeless Beauty</span>
         </h1>
         <p class="text-lg sm:text-xl md:text-2xl text-neutral-600 mb-8 leading-relaxed">
-          Experience professional esthetician services designed to enhance your natural beauty. Using advanced techniques and award-winning products tailored to your unique skin needs.
+          Hi, I'm Iateaka—a licensed esthetician dedicated to enhancing your natural beauty. Using advanced techniques and award-winning products tailored to your unique skin needs.
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
           <a href="https://blissdermacare.setmore.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-primary-600 text-white px-8 py-4 rounded-full hover:bg-primary-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg">
@@ -129,7 +138,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- Services Section -->
   <section id="services" class="py-20 md:py-28 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-14">
+      <div class="text-center mb-8">
         <span class="text-primary-600 font-semibold text-sm uppercase tracking-wider">Treatments</span>
         <h2 class="text-4xl md:text-5xl font-bold text-neutral-900 mt-2 mb-4">Our Services</h2>
         <p class="text-lg text-neutral-600 max-w-2xl mx-auto">
@@ -137,235 +146,252 @@ import Layout from '../layouts/Layout.astro';
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Service Card 1 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1519415387722-a1c3bbef716c?w=600&h=400&fit=crop&q=80" alt="Classic Facial Treatment with professional esthetician" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Signature Radiance Facial</h3>
-          <p class="text-neutral-600 mb-4">
-            Personalized deep cleansing treatment with double cleanse, exfoliation, steam therapy, professional extractions, custom mask, serums, and therapeutic facial massage. Includes neck and décolleté treatment. Perfect for all skin types.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$120</p>
-              <p class="text-sm text-neutral-500">60 minutes</p>
-            </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
-          </div>
-          </div>
+      <!-- Featured Services Section -->
+      <div class="mb-16">
+        <div class="flex items-center justify-center gap-3 mb-8">
+          <div class="h-px bg-gradient-to-r from-transparent to-primary-200 flex-1 max-w-[100px]"></div>
+          <span class="inline-flex items-center gap-2 bg-primary-50 text-primary-700 px-4 py-2 rounded-full text-sm font-semibold">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            Most Popular
+          </span>
+          <div class="h-px bg-gradient-to-l from-transparent to-primary-200 flex-1 max-w-[100px]"></div>
         </div>
 
-        <!-- Service Card 2 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/7582562/pexels-photo-7582562.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Senior woman receiving spa facial treatment for rejuvenation" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Age-Defying Renewal</h3>
-          <p class="text-neutral-600 mb-4">
-            Advanced rejuvenation treatment with peptide-rich serums, collagen-boosting techniques, LED light therapy, lymphatic drainage massage, retinol or vitamin C application, and firming mask. Targets fine lines, wrinkles, sagging, and age spots.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$175</p>
-              <p class="text-sm text-neutral-500">75 minutes</p>
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Featured Service 1: Signature Radiance Facial -->
+          <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
+            <div class="absolute top-4 right-4 z-10">
+              <span class="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">BESTSELLER</span>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="relative h-56 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1519415387722-a1c3bbef716c?w=600&h=400&fit=crop&q=80" alt="Classic Facial Treatment with professional esthetician" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </div>
+            <div class="p-8">
+              <h3 class="text-2xl font-bold text-neutral-900 mb-3">Signature Radiance Facial</h3>
+              <p class="text-neutral-600 mb-4">
+                Personalized deep cleansing treatment with double cleanse, exfoliation, steam therapy, professional extractions, custom mask, serums, and therapeutic facial massage. Perfect for all skin types.
+              </p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-3xl font-bold text-primary-600">$120</p>
+                  <p class="text-sm text-neutral-500">60 minutes</p>
+                </div>
+                <a href="#booking" class="px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg">Book Now</a>
+              </div>
+            </div>
           </div>
+
+          <!-- Featured Service 2: Vampire Facial (PRP) -->
+          <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
+            <div class="absolute top-4 right-4 z-10">
+              <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">PREMIUM</span>
+            </div>
+            <div class="relative h-56 overflow-hidden">
+              <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Professional PRP Vampire Facial microneedling treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </div>
+            <div class="p-8">
+              <h3 class="text-2xl font-bold text-neutral-900 mb-3">Vampire Facial (PRP)</h3>
+              <p class="text-neutral-600 mb-4">
+                Advanced platelet-rich plasma facial combining microneedling with your body's own growth factors. Reduces fine lines, acne scars, hyperpigmentation, and improves overall skin texture.
+              </p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-3xl font-bold text-primary-600">$450</p>
+                  <p class="text-sm text-neutral-500">75 min | Series of 3</p>
+                </div>
+                <a href="#booking" class="px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg">Book Now</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Service 3: Lash Lift & Brow Lamination -->
+          <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
+            <div class="absolute top-4 right-4 z-10">
+              <span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">TRENDING</span>
+            </div>
+            <div class="relative h-56 overflow-hidden">
+              <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Professional brow and lash lamination treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </div>
+            <div class="p-8">
+              <h3 class="text-2xl font-bold text-neutral-900 mb-3">Lash Lift & Brow Lamination</h3>
+              <p class="text-neutral-600 mb-4">
+                Professional eyebrow and lash lift treatment that straightens and sets hairs into a lifted, defined shape for 6-8 weeks. Great for natural-looking enhancement and low-maintenance beauty.
+              </p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-3xl font-bold text-primary-600">$85</p>
+                  <p class="text-sm text-neutral-500">60 minutes</p>
+                </div>
+                <a href="#booking" class="px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg">Book Now</a>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Service Card 3 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5069454/pexels-photo-5069454.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Cosmetologist cleaning client face with sponges during peel treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Brightening Resurfacing Peel</h3>
-          <p class="text-neutral-600 mb-4">
-            Medical-grade chemical exfoliation using glycolic, lactic, or salicylic acid. Improves texture, reduces hyperpigmentation, acne scars, fine lines, and sun damage. Includes pre-peel prep, neutralizer, and post-peel hydrating treatment. Multiple strength options available.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$150</p>
-              <p class="text-sm text-neutral-500">45 minutes</p>
-            </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
-          </div>
-          </div>
+      <!-- More Services Section -->
+      <div>
+        <div class="flex items-center justify-center gap-3 mb-8">
+          <div class="h-px bg-neutral-200 flex-1 max-w-[100px]"></div>
+          <span class="text-neutral-500 text-sm font-medium uppercase tracking-wider">More Treatments</span>
+          <div class="h-px bg-neutral-200 flex-1 max-w-[100px]"></div>
         </div>
 
-        <!-- Service Card 4 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1722350766824-f8520e9676ac?w=600&h=400&fit=crop&q=80" alt="Microdermabrasion exfoliation treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Diamond Glow Exfoliation</h3>
-          <p class="text-neutral-600 mb-4">
-            Diamond-tip or crystal microdermabrasion for deep exfoliation. Removes dead skin cells, minimizes pores, reduces fine lines and acne scars. Stimulates collagen production. Includes cleanse, treatment, hydrating mask, and protective serums. Immediate glow with no downtime.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$135</p>
-              <p class="text-sm text-neutral-500">50 minutes</p>
-            </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
-          </div>
-          </div>
-        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
 
-        <!-- Service Card 5 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/6476078/pexels-photo-6476078.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Young woman cleaning face for clear skin treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Clear Skin Purifying Treatment</h3>
-          <p class="text-neutral-600 mb-4">
-            Specialized deep-pore cleansing with salicylic acid, thorough extractions, high-frequency therapy to kill bacteria, blue LED light treatment, purifying clay mask, and oil-control serums. Reduces inflammation, prevents future breakouts. Customized for acne-prone and oily skin.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$130</p>
-              <p class="text-sm text-neutral-500">75 minutes</p>
+          <!-- Compact Service Card: Age-Defying Renewal -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1646457417455-77a66a9fcf34?w=400&h=300&fit=crop&q=80" alt="Age-Defying Renewal treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Age-Defying Renewal</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Advanced rejuvenation with peptide serums, LED therapy & firming mask.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$175</p>
+                  <p class="text-xs text-neutral-400">75 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        <!-- Service Card 6 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1646457417455-77a66a9fcf34?w=600&h=400&fit=crop&q=80" alt="Hydrafacial advanced skin treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Platinum Hydrafacial MD</h3>
-          <p class="text-neutral-600 mb-4">
-            Premium 3-step vortex treatment: cleanse and peel, extract and hydrate, fuse and protect with antioxidants. Uses patented hydradermabrasion technology. Includes neck treatment, boosters (growth factors or brightening), LED therapy, and lymphatic drainage. Instant results, zero downtime.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$200</p>
-              <p class="text-sm text-neutral-500">60 minutes</p>
+          <!-- Compact Service Card: Brightening Peel -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/5069454/pexels-photo-5069454.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Brightening Resurfacing Peel" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Brightening Peel</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Medical-grade chemical exfoliation for texture & hyperpigmentation.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$150</p>
+                  <p class="text-xs text-neutral-400">45 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        <!-- Service Card 7 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/23532307/pexels-photo-23532307.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Professional scalp micropigmentation hairline restoration procedure" class="w-full h-full object-cover object-bottom group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Hairline Restoration SMP</h3>
-          <p class="text-neutral-600 mb-4">
-            Semi-permanent cosmetic tattooing that creates natural-looking hair follicle impressions. Ideal for thinning hair, receding hairlines, alopecia, and scar camouflage. Custom pigment matching, precise dotting technique. Includes consultation, numbing, and aftercare kit. Multiple sessions recommended for optimal results.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$800</p>
-              <p class="text-sm text-neutral-500">per session (2-3 sessions)</p>
+          <!-- Compact Service Card: Diamond Glow -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="/images/diamond-glow.jpg" alt="Diamond Glow Exfoliation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Diamond Glow</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Diamond-tip microdermabrasion for instant glow with no downtime.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$135</p>
+                  <p class="text-xs text-neutral-400">50 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        <!-- Service Card 8 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/3881012/pexels-photo-3881012.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Black woman receiving professional scalp and shoulder massage for hair regeneration therapy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Scalp Regeneration Therapy</h3>
-          <p class="text-neutral-600 mb-4">
-            Collagen induction therapy using sterile micro-needles to stimulate hair follicles and increase blood flow. Creates micro-channels for enhanced absorption of growth serums and peptides. Treats hair thinning, pattern baldness, and promotes thicker, healthier hair growth. Includes growth factor serum application.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$250</p>
-              <p class="text-sm text-neutral-500">60 minutes</p>
+          <!-- Compact Service Card: Clear Skin Treatment -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/6476078/pexels-photo-6476078.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Clear Skin Purifying Treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Clear Skin Treatment</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Deep-pore cleansing with high-frequency & LED for acne-prone skin.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$130</p>
+                  <p class="text-xs text-neutral-400">75 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        <!-- Service Card 9 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Professional PRP Vampire Facial microneedling treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Vampire Facial (PRP)</h3>
-          <p class="text-neutral-600 mb-4">
-            Advanced platelet-rich plasma facial combining microneedling with your body's own growth factors. Blood is drawn, processed to extract PRP, then applied during microneedling to stimulate collagen production, tighten skin, and accelerate healing. Also known as the PRP Facial or Platelet-Rich Plasma Facial. Reduces fine lines, acne scars, hyperpigmentation, and improves overall skin texture. Results continue improving for months.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$450</p>
-              <p class="text-sm text-neutral-500">75 min | Series of 3</p>
+          <!-- Compact Service Card: Hairline Restoration -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/23532307/pexels-photo-23532307.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Hairline Restoration SMP" class="w-full h-full object-cover object-bottom group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Hairline Restoration</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">SMP micropigmentation for natural hair follicle impressions.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$800</p>
+                  <p class="text-xs text-neutral-400">2-3 sessions</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        <!-- Service Card 10 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Professional eyelash extensions for women" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Lash Extensions</h3>
-          <p class="text-neutral-600 mb-4">
-            Premium eyelash extension services featuring classic, hybrid, volume, and mega volume styles. Handpicked premium lash materials with customizable lengths, curls, and densities to enhance your natural beauty. Includes patch test, precise application using isolation tweezers, and professional aftercare instructions. Perfect for special occasions or everyday glamour. Lash fills available every 3-4 weeks.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$180</p>
-              <p class="text-sm text-neutral-500">Full set 2 hr | Fills $50</p>
+          <!-- Compact Service Card: Scalp Therapy -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/3881012/pexels-photo-3881012.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Scalp Regeneration Therapy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Scalp Therapy</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Micro-needling to stimulate hair follicles with growth serums.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$250</p>
+                  <p class="text-xs text-neutral-400">60 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        <!-- Service Card 11 -->
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-neutral-200">
-          <div class="relative h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Professional brow and lash lamination treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-          </div>
-          <div class="p-8">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-3">Lash Lift & Brow Lamination</h3>
-          <p class="text-neutral-600 mb-4">
-            Professional eyebrow and lash lift treatment that straightens and sets hairs into a lifted, defined shape for 6-8 weeks. Includes brow lamination with styling, optional tint for deeper definition, and nourishing serum to keep brows and lashes healthy. Creates a polished, elevated brow and lash line without extensions. Great for natural-looking enhancement and low-maintenance beauty.
-          </p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-3xl font-bold text-primary-600">$85</p>
-              <p class="text-sm text-neutral-500">60 minutes</p>
+          <!-- Compact Service Card: Lash Extensions -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Professional Lash Extensions" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <a href="#booking" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-full hover:bg-primary-700 transition-colors">Book Now</a>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Lash Extensions</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Classic, hybrid, volume & mega volume styles available.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$180</p>
+                  <p class="text-xs text-neutral-400">2 hr | Fills $50</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
+
+          <!-- Compact Service Card: Teen Skincare -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Teen Skincare Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Teen Skincare Facial</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Gentle facial for teens targeting acne, oiliness & proper skincare habits.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$75</p>
+                  <p class="text-xs text-neutral-400">45 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -752,11 +778,9 @@ import Layout from '../layouts/Layout.astro';
             </p>
           </div>
 
-          <form name="demo-model-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="space-y-5">
+          <form name="demo-model-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=demo-model#demo-model" class="space-y-5">
             <input type="hidden" name="form-name" value="demo-model-application" />
-            <p class="hidden">
-              <label>Don't fill this out: <input name="bot-field" /></label>
-            </p>
+            <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
 
             <div class="grid md:grid-cols-2 gap-4">
               <div>
@@ -936,11 +960,9 @@ import Layout from '../layouts/Layout.astro';
             </p>
           </div>
 
-          <form name="skincare-consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="space-y-5">
+          <form name="skincare-consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=consultation#consultation" class="space-y-5">
             <input type="hidden" name="form-name" value="skincare-consultation" />
-            <p class="hidden">
-              <label>Don't fill this out: <input name="bot-field" /></label>
-            </p>
+            <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
 
             <!-- Personal Information -->
             <div class="space-y-4">
