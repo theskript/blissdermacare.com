@@ -33,9 +33,9 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['Playfair Display', 'system-ui', 'serif'],
+        serif: ['Cormorant', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'system-ui', 'serif'],
+        display: ['Cormorant', 'Georgia', 'serif'],
       },
     },
   },

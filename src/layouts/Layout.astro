@@ -34,7 +34,7 @@ const { title, description = 'Professional esthetician services in a serene, mod
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WDRNPRQ9T6"></script>
@@ -48,14 +48,14 @@ const { title, description = 'Professional esthetician services in a serene, mod
     
     <title>{title}</title>
   </head>
-  <body class="bg-white text-neutral-900 antialiased">
+  <body class="bg-white text-neutral-900 antialiased font-serif font-semibold text-xl leading-tight">
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-200">
-      <div class="max-w-7xl mx-auto px-6 py-4">
+    <nav class="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-neutral-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-6 py-2">
         <div class="flex items-center justify-between">
           <!-- Logo -->
-          <a href="/" class="text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors">
-            Bliss Dermacare
+          <a href="/" class="block flex-shrink-0">
+            <img src="/images/logo.jpg" alt="Bliss Dermacare" class="h-40 w-auto object-contain" />
           </a>
           
           <!-- Desktop Navigation -->
@@ -95,7 +95,7 @@ const { title, description = 'Professional esthetician services in a serene, mod
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-20">
+    <main class="pt-48">
       <slot />
     </main>
 
@@ -180,6 +180,89 @@ const { title, description = 'Professional esthetician services in a serene, mod
           }
         });
       });
+
+      // Cool JS Effects
+      // Scroll animations with Intersection Observer
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const fadeInObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            fadeInObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      // Apply animations on load
+      window.addEventListener('DOMContentLoaded', () => {
+        // Animate sections on scroll - exclude nav-related elements
+        document.querySelectorAll('main section, .service-card').forEach((el) => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(30px)';
+          el.style.transition = 'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)';
+          fadeInObserver.observe(el);
+        });
+
+        // Navbar shadow on scroll (no transforms)
+        window.addEventListener('scroll', () => {
+          const scrolled = window.pageYOffset;
+          const nav = document.querySelector('nav');
+          if (nav) {
+            if (scrolled > 50) {
+              nav.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+            } else {
+              nav.style.boxShadow = 'none';
+            }
+          }
+        });
+
+        // Enhanced card hover effects - only for cards inside main
+        document.querySelectorAll('main .group').forEach(card => {
+          card.addEventListener('mouseenter', function(e) {
+            this.style.transform = 'translateY(-8px)';
+            this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+            this.style.transition = 'all 0.3s ease';
+          });
+          
+          card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+          });
+        });
+
+        // Button effects - exclude nav buttons
+        document.querySelectorAll('main a[href*="setmore"], main button[type="submit"]').forEach(btn => {
+          btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.transition = 'all 0.3s ease';
+          });
+          btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+          });
+        });
+      });
+
+      // Add animations CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        .animate-in {
+          opacity: 1 !important;
+          transform: translateY(0) !important;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
+      `;
+      document.head.appendChild(style);
 
       // Show success message after form submission
       (function() {
