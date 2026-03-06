@@ -33,93 +33,199 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Hero Section -->
-  <section class="relative min-h-[90vh] flex items-center overflow-hidden">
-    <!-- Full Background Image -->
+  <!-- Hero Section - Luxury Editorial (inspired by Augustinus Bader, Aesop) -->
+  <section class="relative min-h-[100svh] flex items-end bg-neutral-900 overflow-hidden">
+    <!-- Background Image with Ken Burns Effect -->
     <div class="absolute inset-0">
-      <img src="/hero-blissdermacare.jpg" alt="Bliss Dermacare" class="w-full h-full object-cover" loading="eager" />
-      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+      <img 
+        src="/hero-blissdermacare.jpg" 
+        alt="Bliss Dermacare" 
+        class="w-full h-full object-cover scale-105 animate-slow-zoom"
+        loading="eager" 
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-neutral-900/20"></div>
     </div>
     
     <!-- Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-6 py-20 w-full">
-      <div class="max-w-2xl">
-        <!-- Small intro -->
-        <p class="text-primary-300 uppercase tracking-widest text-sm mb-6 font-medium">Wesley Chapel, FL</p>
-        
-        <!-- Main Headline -->
-        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-serif text-white mb-6 leading-[1.1]">
-          Reveal Your<br/>
-          <span class="text-primary-400">Natural Glow</span>
-        </h1>
-        
-        <!-- Description -->
-        <p class="text-xl text-white/80 mb-8 leading-relaxed max-w-lg">
-          Professional facials and advanced skincare treatments by Iateaka Lizardo, licensed esthetician with 7+ years of experience.
-        </p>
-        
-        <!-- CTAs -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-12">
-          <a href="https://blissdermacare.setmore.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-primary-600 text-white px-8 py-4 rounded-full hover:bg-primary-500 transition-all font-semibold text-lg">
-            Book Appointment
-            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-          </a>
-          <a href="#services" class="inline-flex items-center justify-center border-2 border-white/40 text-white px-8 py-4 rounded-full hover:bg-white/10 transition-all font-semibold text-lg">
-            View Services
-          </a>
-        </div>
-        
-        <!-- Trust Badges -->
-        <div class="flex flex-wrap items-center gap-6 text-white/70 text-sm">
-          <div class="flex items-center gap-2">
-            <div class="flex text-amber-400">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+    <div class="relative z-10 w-full">
+      <div class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+          
+          <!-- Main Content -->
+          <div class="lg:col-span-7 xl:col-span-6">
+            <!-- Eyebrow -->
+            <div class="flex items-center gap-4 mb-6">
+              <span class="w-12 h-px bg-primary-400"></span>
+              <span class="text-primary-300 uppercase tracking-[0.3em] text-xs font-medium">Wesley Chapel, Florida</span>
             </div>
-            <span class="text-white">5.0 Rating</span>
+            
+            <!-- Headline -->
+            <h1 class="text-white mb-6">
+              <span class="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif font-light leading-[0.9] tracking-tight">
+                Your Skin,
+              </span>
+              <span class="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif italic font-light leading-[0.9] tracking-tight text-primary-300">
+                Elevated.
+              </span>
+            </h1>
+            
+            <!-- Subtext -->
+            <p class="text-white/70 text-lg lg:text-xl max-w-lg leading-relaxed mb-8 font-light">
+              Bespoke facial artistry by Iateaka Lizardo. Where clinical precision meets the transformative power of touch.
+            </p>
+            
+            <!-- CTA Row -->
+            <div class="flex flex-wrap items-center gap-4">
+              <a href="https://blissdermacare.setmore.com/" target="_blank" rel="noopener noreferrer" 
+                 class="group inline-flex items-center gap-3 bg-white text-neutral-900 px-8 py-4 font-medium tracking-wide hover:bg-primary-50 transition-colors">
+                Book Your Experience
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </a>
+              <a href="#services" class="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors font-medium">
+                Explore Treatments
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </a>
+            </div>
           </div>
-          <span class="text-white/30">|</span>
-          <span>FL Licensed</span>
-          <span class="text-white/30">|</span>
-          <span>500+ Happy Clients</span>
+          
+          <!-- Stats Card -->
+          <div class="lg:col-span-5 xl:col-span-4 xl:col-start-9">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-8 lg:p-10">
+              <div class="grid grid-cols-3 gap-6 text-center">
+                <div>
+                  <div class="text-3xl lg:text-4xl font-serif text-white mb-1">7+</div>
+                  <div class="text-xs text-white/60 uppercase tracking-wider">Years</div>
+                </div>
+                <div class="border-x border-white/20">
+                  <div class="text-3xl lg:text-4xl font-serif text-white mb-1">500+</div>
+                  <div class="text-xs text-white/60 uppercase tracking-wider">Clients</div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-center gap-1 text-3xl lg:text-4xl font-serif text-white mb-1">
+                    5.0
+                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                  </div>
+                  <div class="text-xs text-white/60 uppercase tracking-wider">Rating</div>
+                </div>
+              </div>
+              <div class="mt-6 pt-6 border-t border-white/20">
+                <p class="text-sm text-white/70 text-center">Florida State Licensed Esthetician</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+      
+      <!-- Scroll Indicator -->
+      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <div class="w-px h-12 bg-gradient-to-b from-white/50 to-transparent animate-pulse"></div>
       </div>
     </div>
   </section>
+  
+  <style>
+    @keyframes slow-zoom {
+      0% { transform: scale(1.05); }
+      100% { transform: scale(1.15); }
+    }
+    .animate-slow-zoom {
+      animation: slow-zoom 20s ease-out forwards;
+    }
+  </style>
 
-  <!-- How It Works Section (inspired by Glowbar) -->
-  <section class="py-10 md:py-12 bg-white border-b border-neutral-100">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="text-center mb-12">
-        <span class="text-primary-600 font-semibold text-sm uppercase tracking-wider">Simple Process</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 mt-2">How It Works</h2>
+  <!-- The Experience Section (replaces How It Works) -->
+  <section class="py-20 lg:py-28 bg-[#faf9f7]">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      
+      <!-- Section Header -->
+      <div class="max-w-3xl mb-16 lg:mb-20">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">The Journey</span>
+        <h2 class="text-4xl lg:text-5xl xl:text-6xl font-serif text-neutral-900 leading-[1.1] mb-6">
+          A ritual designed<br class="hidden sm:block" />
+          <span class="italic font-light">around you.</span>
+        </h2>
+        <p class="text-lg text-neutral-600 leading-relaxed">
+          Every session is a personalized journey toward radiant skin. No rushed appointments, no cookie-cutter treatments—just intentional care tailored to your unique needs.
+        </p>
       </div>
       
-      <div class="grid md:grid-cols-3 gap-6 md:gap-8">
-        <div class="text-center group">
-          <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
-            <span class="text-2xl font-bold text-primary-600">1</span>
+      <!-- Journey Steps -->
+      <div class="grid lg:grid-cols-3 gap-8 lg:gap-4">
+        
+        <!-- Step 1 -->
+        <div class="group relative">
+          <div class="relative overflow-hidden mb-6">
+            <img 
+              src="https://images.pexels.com/photos/5938558/pexels-photo-5938558.jpeg?auto=compress&cs=tinysrgb&w=600" 
+              alt="Book your appointment online" 
+              class="w-full aspect-[4/5] object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-neutral-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
+            <div class="absolute top-6 left-6">
+              <span class="inline-flex items-center justify-center w-12 h-12 bg-white text-neutral-900 font-serif text-xl">01</span>
+            </div>
           </div>
-          <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Book Online</h3>
-          <p class="text-neutral-600">Choose your treatment and pick a time that works for you. Easy scheduling, no phone calls needed.</p>
-        </div>
-        <div class="text-center group">
-          <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
-            <span class="text-2xl font-bold text-primary-600">2</span>
+          <h3 class="text-2xl font-serif text-neutral-900 mb-3">Reserve Your Time</h3>
+          <p class="text-neutral-600 leading-relaxed">
+            Browse treatments and book online in seconds. Select a time that honors your schedule—we believe self-care shouldn't feel like a chore.
+          </p>
+          <div class="mt-4">
+            <a href="https://blissdermacare.setmore.com/" class="inline-flex items-center gap-2 text-primary-600 font-medium group-hover:gap-3 transition-all">
+              Book Now
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
           </div>
-          <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Skin Analysis</h3>
-          <p class="text-neutral-600">Your esthetician assesses your skin and customizes the treatment to your specific needs.</p>
         </div>
-        <div class="text-center group">
-          <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
-            <span class="text-2xl font-bold text-primary-600">3</span>
+        
+        <!-- Step 2 -->
+        <div class="group relative lg:mt-12">
+          <div class="relative overflow-hidden mb-6">
+            <img 
+              src="https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=600" 
+              alt="Personalized skin consultation" 
+              class="w-full aspect-[4/5] object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-neutral-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
+            <div class="absolute top-6 left-6">
+              <span class="inline-flex items-center justify-center w-12 h-12 bg-white text-neutral-900 font-serif text-xl">02</span>
+            </div>
           </div>
-          <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Glow & Go</h3>
-          <p class="text-neutral-600">Leave with radiant skin and a personalized at-home routine to maintain your results.</p>
+          <h3 class="text-2xl font-serif text-neutral-900 mb-3">The Consultation</h3>
+          <p class="text-neutral-600 leading-relaxed">
+            We begin with a thorough skin analysis. Understanding your concerns, lifestyle, and goals allows us to craft a treatment uniquely yours.
+          </p>
         </div>
+        
+        <!-- Step 3 -->
+        <div class="group relative lg:mt-24">
+          <div class="relative overflow-hidden mb-6">
+            <img 
+              src="https://images.pexels.com/photos/3997381/pexels-photo-3997381.jpeg?auto=compress&cs=tinysrgb&w=600" 
+              alt="Leave glowing and radiant" 
+              class="w-full aspect-[4/5] object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-neutral-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
+            <div class="absolute top-6 left-6">
+              <span class="inline-flex items-center justify-center w-12 h-12 bg-white text-neutral-900 font-serif text-xl">03</span>
+            </div>
+          </div>
+          <h3 class="text-2xl font-serif text-neutral-900 mb-3">Glow Forward</h3>
+          <p class="text-neutral-600 leading-relaxed">
+            Leave with luminous skin and a curated at-home protocol. We're invested in your long-term radiance, not just the moment.
+          </p>
+        </div>
+        
       </div>
     </div>
   </section>
