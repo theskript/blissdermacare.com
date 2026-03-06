@@ -33,8 +33,9 @@ export default {
         },
       },
       fontFamily: {
+        serif: ['Playfair Display', 'system-ui', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Inter Display', 'system-ui', 'sans-serif'],
+        display: ['Playfair Display', 'system-ui', 'serif'],
       },
     },
   },
