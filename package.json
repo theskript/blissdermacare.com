@@ -17,5 +17,5 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.6.3"
   },
-  "description": "Modern esthetician services website built with Astro and StudioCMS"
+  "description": "Modern aesthetician services website built with Astro and StudioCMS"
 }

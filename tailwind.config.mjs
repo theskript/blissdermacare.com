@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         // Dusty Rose/Blush palette - industry standard for luxury skincare
-        // Inspired by Glossier, Heyday, and high-end esthetician brands
+        // Inspired by Glossier, Heyday, and high-end aesthetician brands
         primary: {
           50: '#fdf5f6',
           100: '#fceaec',

@@ -1,6 +1,6 @@
-# Bliss Dermacare - Professional Esthetician Services
+# Bliss Dermacare - Professional Aesthetician Services
 
-A modern, single-page application built with Astro for professional esthetician services and bookings.
+A modern, single-page application built with Astro for professional aesthetician services and bookings.
 
 ## 🚀 Features
 
