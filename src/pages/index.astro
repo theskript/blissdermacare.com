@@ -33,199 +33,166 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Hero Section - Luxury Editorial (inspired by Augustinus Bader, Aesop) -->
-  <section class="relative min-h-[100svh] flex items-end bg-neutral-900 overflow-hidden">
-    <!-- Background Image with Ken Burns Effect -->
-    <div class="absolute inset-0">
-      <img 
-        src="/hero-blissdermacare.jpg" 
-        alt="Bliss Dermacare" 
-        class="w-full h-full object-cover scale-105 animate-slow-zoom"
-        loading="eager" 
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-neutral-900/20"></div>
-    </div>
-    
-    <!-- Content -->
-    <div class="relative z-10 w-full">
-      <div class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
-        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-          
-          <!-- Main Content -->
-          <div class="lg:col-span-7 xl:col-span-6">
-            <!-- Eyebrow -->
-            <div class="flex items-center gap-4 mb-6">
-              <span class="w-12 h-px bg-primary-400"></span>
-              <span class="text-primary-300 uppercase tracking-[0.3em] text-xs font-medium">Pebble Creek, Florida</span>
-            </div>
-            
-            <!-- Headline -->
-            <h1 class="text-white mb-6">
-              <span class="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif font-light leading-[0.9] tracking-tight">
-                Your Skin,
-              </span>
-              <span class="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif italic font-light leading-[0.9] tracking-tight text-primary-300">
-                Elevated.
-              </span>
-            </h1>
-            
-            <!-- Subtext -->
-            <p class="text-white/70 text-lg lg:text-xl max-w-lg leading-relaxed mb-8 font-light">
-              Bespoke facial artistry by Iateaka Lizardo. Where clinical precision meets the transformative power of touch.
-            </p>
-            
-            <!-- CTA Row -->
-            <div class="flex flex-wrap items-center gap-4">
-              <a href="https://blissdermacare.setmore.com/" target="_blank" rel="noopener noreferrer" 
-                 class="group inline-flex items-center gap-3 bg-white text-neutral-900 px-8 py-4 font-medium tracking-wide hover:bg-primary-50 transition-colors">
-                Book Your Experience
-                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </a>
-              <a href="#services" class="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors font-medium">
-                Explore Treatments
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-          
-          <!-- Stats Card -->
-          <div class="lg:col-span-5 xl:col-span-4 xl:col-start-9">
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-8 lg:p-10">
-              <div class="grid grid-cols-3 gap-6 text-center">
-                <div>
-                  <div class="text-3xl lg:text-4xl font-serif text-white mb-1">7+</div>
-                  <div class="text-xs text-white/60 uppercase tracking-wider">Years</div>
-                </div>
-                <div class="border-x border-white/20">
-                  <div class="text-3xl lg:text-4xl font-serif text-white mb-1">500+</div>
-                  <div class="text-xs text-white/60 uppercase tracking-wider">Clients</div>
-                </div>
-                <div>
-                  <div class="flex items-center justify-center gap-1 text-3xl lg:text-4xl font-serif text-white mb-1">
-                    5.0
-                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
-                  </div>
-                  <div class="text-xs text-white/60 uppercase tracking-wider">Rating</div>
-                </div>
-              </div>
-              <div class="mt-6 pt-6 border-t border-white/20">
-                <p class="text-sm text-white/70 text-center">Florida State Licensed Aesthetician</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Scroll Indicator -->
-      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <div class="w-px h-12 bg-gradient-to-b from-white/50 to-transparent animate-pulse"></div>
-      </div>
-    </div>
-  </section>
-  
-  <style>
-    @keyframes slow-zoom {
-      0% { transform: scale(1.05); }
-      100% { transform: scale(1.15); }
-    }
-    .animate-slow-zoom {
-      animation: slow-zoom 20s ease-out forwards;
-    }
-  </style>
-
-  <!-- The Experience Section (replaces How It Works) -->
-  <section class="py-20 lg:py-28 bg-[#faf9f7]">
-    <div class="max-w-7xl mx-auto px-6 lg:px-12">
-      
-      <!-- Section Header -->
-      <div class="max-w-3xl mb-16 lg:mb-20">
-        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">The Journey</span>
-        <h2 class="text-4xl lg:text-5xl xl:text-6xl font-serif text-neutral-900 leading-[1.1] mb-6">
-          A ritual designed<br class="hidden sm:block" />
-          <span class="italic font-light">around you.</span>
-        </h2>
-        <p class="text-lg text-neutral-600 leading-relaxed">
-          Every session is a personalized journey toward radiant skin. No rushed appointments, no cookie-cutter treatments—just intentional care tailored to your unique needs.
-        </p>
-      </div>
-      
-      <!-- Journey Steps -->
-      <div class="grid lg:grid-cols-3 gap-8 lg:gap-4">
-        
-        <!-- Step 1 -->
-        <div class="group relative">
-          <div class="relative overflow-hidden mb-6">
-            <img 
-              src="https://images.pexels.com/photos/5938558/pexels-photo-5938558.jpeg?auto=compress&cs=tinysrgb&w=600" 
-              alt="Book your appointment online" 
-              class="w-full aspect-[4/5] object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-              loading="lazy"
-            />
-            <div class="absolute inset-0 bg-neutral-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
-            <div class="absolute top-6 left-6">
-              <span class="inline-flex items-center justify-center w-12 h-12 bg-white text-neutral-900 font-serif text-xl">01</span>
-            </div>
-          </div>
-          <h3 class="text-2xl font-serif text-neutral-900 mb-3">Reserve Your Time</h3>
-          <p class="text-neutral-600 leading-relaxed">
-            Browse treatments and book online in seconds. Select a time that honors your schedule—we believe self-care shouldn't feel like a chore.
+  <!-- Simple Hero Section -->
+  <section class="bg-[#f6f1eb] py-12 md:py-16 lg:py-20">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+        <div class="order-2 lg:order-1">
+          <span class="mb-4 block text-xs font-semibold uppercase tracking-[0.24em] text-primary-600">Pebble Creek, Florida</span>
+          <h1 class="mb-6 max-w-3xl text-4xl font-serif leading-tight text-neutral-900 md:text-5xl lg:text-6xl">
+            Clinical skincare with a softer, more personal approach.
+          </h1>
+          <p class="mb-8 max-w-2xl text-lg leading-relaxed text-neutral-600 md:text-xl">
+            Bliss Dermacare offers customized facials and skin-focused treatments designed to restore clarity, calm, and confidence without the rushed feel of a typical medspa visit.
           </p>
-          <div class="mt-4">
-            <a href="https://blissdermacare.setmore.com/" class="inline-flex items-center gap-2 text-primary-600 font-medium group-hover:gap-3 transition-all">
-              Book Now
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <a href="#booking"
+               class="group inline-flex items-center justify-center gap-2 bg-neutral-900 px-6 py-3 font-medium text-white transition-colors hover:bg-neutral-800 md:px-8 md:py-4">
+              Reserve Your Appointment
+              <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+            <a href="#treatments" class="inline-flex items-center justify-center gap-2 font-medium text-primary-700 transition-colors hover:text-primary-800">
+              View Treatment Options
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
             </a>
           </div>
         </div>
-        
-        <!-- Step 2 -->
-        <div class="group relative lg:mt-12">
-          <div class="relative overflow-hidden mb-6">
-            <img 
-              src="https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=600" 
-              alt="Personalized skin consultation" 
-              class="w-full aspect-[4/5] object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-              loading="lazy"
-            />
-            <div class="absolute inset-0 bg-neutral-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
-            <div class="absolute top-6 left-6">
-              <span class="inline-flex items-center justify-center w-12 h-12 bg-white text-neutral-900 font-serif text-xl">02</span>
+
+        <div class="order-1 lg:order-2">
+          <figure class="mx-auto max-w-md">
+            <div class="overflow-hidden rounded-sm bg-[#e8ddd2] p-3 shadow-[0_24px_70px_rgba(38,31,24,0.10)]">
+              <img
+                src="/hero-blissdermacare.jpg"
+                alt="Bliss Dermacare Aesthetician Services"
+                class="block w-full h-auto"
+                width="600"
+                height="400"
+                loading="eager"
+              />
             </div>
-          </div>
-          <h3 class="text-2xl font-serif text-neutral-900 mb-3">The Consultation</h3>
-          <p class="text-neutral-600 leading-relaxed">
-            We begin with a thorough skin analysis. Understanding your concerns, lifestyle, and goals allows us to craft a treatment uniquely yours.
-          </p>
+          </figure>
         </div>
-        
-        <!-- Step 3 -->
-        <div class="group relative lg:mt-24">
-          <div class="relative overflow-hidden mb-6">
-            <img 
-              src="https://images.pexels.com/photos/3997381/pexels-photo-3997381.jpeg?auto=compress&cs=tinysrgb&w=600" 
-              alt="Leave glowing and radiant" 
-              class="w-full aspect-[4/5] object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-              loading="lazy"
-            />
-            <div class="absolute inset-0 bg-neutral-900/20 group-hover:bg-transparent transition-colors duration-500"></div>
-            <div class="absolute top-6 left-6">
-              <span class="inline-flex items-center justify-center w-12 h-12 bg-white text-neutral-900 font-serif text-xl">03</span>
-            </div>
-          </div>
-          <h3 class="text-2xl font-serif text-neutral-900 mb-3">Glow Forward</h3>
-          <p class="text-neutral-600 leading-relaxed">
-            Leave with luminous skin and a curated at-home protocol. We're invested in your long-term radiance, not just the moment.
-          </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Process -->
+  <section class="py-14 bg-[#faf9f7]">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">How Booking Works</span>
+        <h2 class="text-4xl lg:text-5xl font-serif text-neutral-900 leading-[1.1] mb-4">Simple, direct, and easy to confirm.</h2>
+        <p class="text-lg text-neutral-600 leading-relaxed">Choose the service you want, request a time that works for you, and receive a confirmed appointment after review. No third-party widget, no extra tabs, no confusion.</p>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-3">
+        <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">1</div>
+          <h3 class="mb-2 text-xl font-serif text-neutral-900">Pick your treatment</h3>
+          <p class="text-neutral-600">Review packages and services first so your booking request matches the care you actually want.</p>
         </div>
-        
+        <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">2</div>
+          <h3 class="mb-2 text-xl font-serif text-neutral-900">Choose a time slot</h3>
+          <p class="text-neutral-600">Select your preferred day and appointment window from the booking form below.</p>
+        </div>
+        <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">3</div>
+          <h3 class="mb-2 text-xl font-serif text-neutral-900">Receive confirmation</h3>
+          <p class="text-neutral-600">Bliss Dermacare follows up promptly to confirm your timeslot and any pre-appointment details.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Treatments Section -->
+  <section id="treatments" class="py-12 md:py-16 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900 mb-4">Treatment Packages</h2>
+        <p class="text-xl text-neutral-600 max-w-2xl mx-auto">
+          Save with curated packages designed for consistency, visible results, and easier maintenance.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div class="border-2 border-neutral-200 rounded-2xl p-8 hover:border-primary-600 transition-all">
+          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Fresh Start Collection</h3>
+          <p class="text-neutral-600 mb-6">Perfect for trying our services</p>
+          <div class="mb-6">
+            <span class="text-5xl font-bold text-neutral-900">$330</span>
+            <span class="text-neutral-600 ml-2">/ 3 sessions</span>
+            <div class="text-sm text-primary-600 mt-1">Save $30</div>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>3 Signature Radiance Facials</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Complimentary Skin Analysis</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>10% Off Skincare Products</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Valid 6 months</span></li>
+          </ul>
+          <a href="#booking" class="block text-center bg-neutral-900 text-white px-6 py-3 rounded-full hover:bg-neutral-800 transition-colors font-medium">Get Started</a>
+        </div>
+
+        <div class="border-2 border-primary-600 rounded-2xl p-8 relative bg-primary-50/50">
+          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</div>
+          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Radiant Glow Ritual</h3>
+          <p class="text-neutral-600 mb-6">Best value for regular care</p>
+          <div class="mb-6">
+            <span class="text-5xl font-bold text-neutral-900">$780</span>
+            <span class="text-neutral-600 ml-2">/ 6 sessions</span>
+            <div class="text-sm text-primary-600 mt-1">Save $120+</div>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>6 Treatments across facial, glow, and acne-focused services</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Priority booking access</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>15% Off all skincare products</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Complimentary LED add-on</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Valid 9 months</span></li>
+          </ul>
+          <a href="#booking" class="block text-center bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-colors font-medium shadow-lg">Choose Package</a>
+        </div>
+
+        <div class="border-2 border-neutral-200 rounded-2xl p-8 hover:border-primary-600 transition-all">
+          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Ultimate Transformation</h3>
+          <p class="text-neutral-600 mb-6">For long-term skin goals</p>
+          <div class="mb-6">
+            <span class="text-5xl font-bold text-neutral-900">$1,680</span>
+            <span class="text-neutral-600 ml-2">/ 12 sessions</span>
+            <div class="text-sm text-primary-600 mt-1">Save $320+</div>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>12 premium treatments</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>VIP scheduling flexibility</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>20% off products and services</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>2 treatment upgrades included</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Valid 12 months</span></li>
+          </ul>
+          <a href="#booking" class="block text-center bg-neutral-900 text-white px-6 py-3 rounded-full hover:bg-neutral-800 transition-colors font-medium">Get Premium</a>
+        </div>
+
+        <div class="border-2 border-primary-600 rounded-2xl p-8 bg-gradient-to-br from-primary-50 to-white hover:shadow-xl transition-all">
+          <div class="inline-block bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-semibold mb-4">MOBILE SPA</div>
+          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Luxury In-Home Experience</h3>
+          <p class="text-neutral-600 mb-6">Spa service brought to you</p>
+          <div class="mb-6">
+            <span class="text-5xl font-bold text-neutral-900">$200</span>
+            <span class="text-neutral-600 ml-2">/ per visit</span>
+            <div class="text-sm text-primary-600 mt-1">+ $35 travel fee within 10 miles</div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
+            <p class="text-sm text-amber-900"><strong>Required:</strong> Complimentary consultation and screening call before first mobile booking.</p>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Any 90-minute signature treatment</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Professional setup and cleanup</span></li>
+            <li class="flex items-start"><svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Evening and weekend availability</span></li>
+          </ul>
+          <a href="#booking" class="block text-center bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-colors font-medium shadow-lg">Request Mobile Booking</a>
+        </div>
       </div>
     </div>
   </section>
@@ -259,7 +226,7 @@ import Layout from '../layouts/Layout.astro';
               <span class="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">BESTSELLER</span>
             </div>
             <div class="relative h-56 overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1519415387722-a1c3bbef716c?w=600&h=400&fit=crop&q=80" alt="Classic Facial Treatment with professional aesthetician" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+              <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Relaxing signature facial treatment with cleansing and mask application" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             </div>
             <div class="p-8">
@@ -454,7 +421,7 @@ import Layout from '../layouts/Layout.astro';
           <!-- Compact Service Card: Scalp Therapy -->
           <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
             <div class="relative h-32 overflow-hidden">
-              <img src="https://images.pexels.com/photos/3881012/pexels-photo-3881012.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Scalp Regeneration Therapy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400&h=300&fit=crop&q=80" alt="Scalp therapy treatment focused on scalp health and stimulation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
             <div class="p-4">
@@ -464,25 +431,6 @@ import Layout from '../layouts/Layout.astro';
                 <div>
                   <p class="text-xl font-bold text-primary-600">$213</p>
                   <p class="text-xs text-neutral-400">60 min</p>
-                </div>
-                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Compact Service Card: Lash Extensions -->
-          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
-            <div class="relative h-32 overflow-hidden">
-              <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Professional Lash Extensions" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-            </div>
-            <div class="p-4">
-              <h3 class="text-lg font-bold text-neutral-900 mb-1">Lash Extensions</h3>
-              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Classic, hybrid, volume & mega volume styles available.</p>
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-xl font-bold text-primary-600">$153</p>
-                  <p class="text-xs text-neutral-400">2 hr | Fills $43</p>
                 </div>
                 <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
               </div>
@@ -502,6 +450,25 @@ import Layout from '../layouts/Layout.astro';
                 <div>
                   <p class="text-xl font-bold text-primary-600">$64</p>
                   <p class="text-xs text-neutral-400">45 min</p>
+                </div>
+                <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compact Service Card: Lash Extensions -->
+          <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
+            <div class="relative h-32 overflow-hidden">
+              <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Professional Lash Extensions" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-bold text-neutral-900 mb-1">Lash Extensions</h3>
+              <p class="text-neutral-500 text-sm mb-3 line-clamp-2">Classic, hybrid, volume & mega volume styles available.</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xl font-bold text-primary-600">$153</p>
+                  <p class="text-xs text-neutral-400">2 hr | Fills $43</p>
                 </div>
                 <a href="#booking" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a>
               </div>
@@ -637,196 +604,111 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Pricing Section -->
-  <section id="pricing" class="py-12 md:py-16 bg-neutral-50">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900 mb-4">Treatment Packages</h2>
-        <p class="text-xl text-neutral-600 max-w-2xl mx-auto">
-          Save with our exclusive treatment packages designed for ongoing skincare maintenance.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-4 gap-8 max-w-7xl mx-auto">
-        <!-- Package 1 -->
-        <div class="border-2 border-neutral-200 rounded-2xl p-8 hover:border-primary-600 transition-all">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Fresh Start Collection</h3>
-          <p class="text-neutral-600 mb-6">Perfect for trying our services</p>
-          <div class="mb-6">
-            <span class="text-5xl font-bold text-neutral-900">$280</span>
-            <span class="text-neutral-600 ml-2">/ 3 sessions</span>
-            <div class="text-sm text-primary-600 mt-1">Save $25</div>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>3 Signature Radiance Facials</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Complimentary Skin Analysis</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>10% Off Skincare Products</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Valid 6 months</span>
-            </li>
-          </ul>
-          <a href="#booking" class="block text-center bg-neutral-900 text-white px-6 py-3 rounded-full hover:bg-neutral-800 transition-colors font-medium">
-            Get Started
-          </a>
-        </div>
-
-        <!-- Package 2 - Featured -->
-        <div class="border-2 border-primary-600 rounded-2xl p-8 relative bg-primary-50/50">
-          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-            Most Popular
-          </div>
-          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Radiant Glow Ritual</h3>
-          <p class="text-neutral-600 mb-6">Best value for regular care</p>
-          <div class="mb-6">
-            <span class="text-5xl font-bold text-neutral-900">$665</span>
-            <span class="text-neutral-600 ml-2">/ 6 sessions</span>
-            <div class="text-sm text-primary-600 mt-1">Save $102+</div>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>6 Treatments (Mix & Match: Signature Radiance, Diamond Glow, Clear Skin Purifying)</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Priority Booking Access</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>15% Off All Skincare Products</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Complimentary LED Light Therapy Add-on</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Valid 9 months</span>
-            </li>
-          </ul>
-          <a href="#booking" class="block text-center bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-colors font-medium shadow-lg">
-            Choose Package
-          </a>
-        </div>
-
-        <!-- Package 3 -->
-        <div class="border-2 border-neutral-200 rounded-2xl p-8 hover:border-primary-600 transition-all">
-          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Ultimate Transformation</h3>
-          <p class="text-neutral-600 mb-6">Ultimate skincare experience</p>
-          <div class="mb-6">
-            <span class="text-5xl font-bold text-neutral-900">$1,425</span>
-            <span class="text-neutral-600 ml-2">/ 12 sessions</span>
-            <div class="text-sm text-primary-600 mt-1">Save $272+</div>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>12 Premium Treatments (Platinum Hydrafacial MD, Age-Defying Renewal, Brightening Resurfacing)</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>VIP Priority Booking & Flexible Scheduling</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>20% Off All Products & Services</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>2 Free Treatment Upgrades ($100 value)</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Deluxe Home Care Kit ($150 value)</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Valid 12 months</span>
-            </li>
-          </ul>
-          <a href="#booking" class="block text-center bg-neutral-900 text-white px-6 py-3 rounded-full hover:bg-neutral-800 transition-colors font-medium">
-            Get Premium
-          </a>
-        </div>
-
-        <!-- Package 4 - At Home Visit -->
-        <div class="border-2 border-primary-600 rounded-2xl p-8 bg-gradient-to-br from-primary-50 to-white hover:shadow-xl transition-all">
-          <div class="inline-block bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-semibold mb-4">
-            MOBILE SPA
-          </div>
-          <h3 class="text-2xl font-bold text-neutral-900 mb-2">Luxury In-Home Experience</h3>
-          <p class="text-neutral-600 mb-6">We bring the spa to you</p>
-          <div class="mb-6">
-            <span class="text-5xl font-bold text-neutral-900">$170</span>
-            <span class="text-neutral-600 ml-2">/ per visit</span>
-            <div class="text-sm text-primary-600 mt-1">+ $30 travel fee (within 10 miles)</div>
-          </div>
-          <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
-            <p class="text-sm text-amber-900"><strong>Required:</strong> Complimentary consultation & screening call before first booking. Service area limited to 10-mile radius.</p>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Any 90-Minute Signature Treatment</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Professional Equipment Brought to Your Home</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Luxurious Linens & Premium Products Included</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Complete Setup & Cleanup Service</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Flexible Scheduling (Evenings & Weekends Available)</span>
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <span>Perfect for Spa Parties (3+ guests, special rates)</span>
-            </li>
-          </ul>
-          <a href="#booking" class="block text-center bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-colors font-medium shadow-lg">
-            Book Mobile Service
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Booking/Contact Section -->
   <section id="booking" class="py-14 bg-gradient-to-br from-primary-600 to-primary-700 text-white">
-    <div class="max-w-4xl mx-auto px-6">
+    <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl font-bold font-serif mb-4">Ready to Transform Your Skin?</h2>
-        <p class="text-xl text-primary-100">
-          Book your appointment today and experience the Bliss Dermacare difference.
-        </p>
+        <h2 class="text-4xl md:text-5xl font-bold font-serif mb-4">Book and Confirm Your Timeslot</h2>
+        <p class="text-xl text-primary-100">Submit your preferred service, date, and appointment window. You'll receive a confirmation follow-up with final details.</p>
       </div>
 
-      <div class="bg-white rounded-2xl p-4 md:p-8 shadow-2xl">
-        <iframe src="https://blissdermacare.setmore.com/" 
-                class="w-full h-[800px] border-0 rounded-lg"
-                title="Book Appointment with Bliss Dermacare">
-        </iframe>
+      <div class="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] items-start">
+        <div class="space-y-5">
+          <div class="rounded-2xl bg-white/10 p-6 backdrop-blur-sm">
+            <h3 class="text-2xl font-serif mb-4">Booking details</h3>
+            <ul class="space-y-3 text-primary-50">
+              <li class="flex gap-3"><span class="mt-1 h-2.5 w-2.5 rounded-full bg-white"></span><span>Select the service you want and your preferred appointment date.</span></li>
+              <li class="flex gap-3"><span class="mt-1 h-2.5 w-2.5 rounded-full bg-white"></span><span>Choose one of the available time windows below.</span></li>
+              <li class="flex gap-3"><span class="mt-1 h-2.5 w-2.5 rounded-full bg-white"></span><span>Once reviewed, Bliss Dermacare will confirm your booking by phone, text, or email.</span></li>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl bg-white/10 p-6 backdrop-blur-sm">
+            <h3 class="text-2xl font-serif mb-4">Commonly requested windows</h3>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div class="rounded-xl bg-white/10 px-4 py-3">Tuesday<br /><span class="text-primary-100">10am - 1pm</span></div>
+              <div class="rounded-xl bg-white/10 px-4 py-3">Wednesday<br /><span class="text-primary-100">1pm - 4pm</span></div>
+              <div class="rounded-xl bg-white/10 px-4 py-3">Thursday<br /><span class="text-primary-100">4pm - 7pm</span></div>
+              <div class="rounded-xl bg-white/10 px-4 py-3">Saturday<br /><span class="text-primary-100">10am - 2pm</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-8 md:p-10 shadow-2xl text-neutral-900">
+          <form name="appointment-booking" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=booking#booking" class="space-y-5">
+            <input type="hidden" name="form-name" value="appointment-booking" />
+            <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="bookingFirstName" class="block text-sm font-medium text-neutral-700 mb-1">First Name *</label>
+                <input type="text" id="bookingFirstName" name="firstName" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="Jane" />
+              </div>
+              <div>
+                <label for="bookingLastName" class="block text-sm font-medium text-neutral-700 mb-1">Last Name *</label>
+                <input type="text" id="bookingLastName" name="lastName" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="Doe" />
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="bookingEmail" class="block text-sm font-medium text-neutral-700 mb-1">Email *</label>
+                <input type="email" id="bookingEmail" name="email" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="jane@example.com" />
+              </div>
+              <div>
+                <label for="bookingPhone" class="block text-sm font-medium text-neutral-700 mb-1">Phone *</label>
+                <input type="tel" id="bookingPhone" name="phone" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="(813) 555-0123" />
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="bookingService" class="block text-sm font-medium text-neutral-700 mb-1">Service *</label>
+                <select id="bookingService" name="service" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                  <option value="">Select a service</option>
+                  <option value="signature-radiance-facial">Signature Radiance Facial</option>
+                  <option value="vampire-facial-prp">Vampire Facial (PRP)</option>
+                  <option value="lash-lift-brow-lamination">Lash Lift & Brow Lamination</option>
+                  <option value="diamond-glow">Diamond Glow</option>
+                  <option value="clear-skin-treatment">Clear Skin Treatment</option>
+                  <option value="teen-skincare-facial">Teen Skincare Facial</option>
+                  <option value="scalp-therapy">Scalp Therapy</option>
+                  <option value="mobile-in-home">Luxury In-Home Experience</option>
+                </select>
+              </div>
+              <div>
+                <label for="bookingDate" class="block text-sm font-medium text-neutral-700 mb-1">Preferred Date *</label>
+                <input type="date" id="bookingDate" name="preferredDate" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" />
+              </div>
+            </div>
+
+            <fieldset>
+              <legend class="block text-sm font-medium text-neutral-700 mb-3">Preferred Time Slot *</legend>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <label class="rounded-xl border border-neutral-300 px-4 py-3 cursor-pointer hover:border-primary-400 transition-colors"><input type="radio" name="timeslot" value="morning-9-12" class="mr-2" required />Morning, 9am - 12pm</label>
+                <label class="rounded-xl border border-neutral-300 px-4 py-3 cursor-pointer hover:border-primary-400 transition-colors"><input type="radio" name="timeslot" value="midday-12-3" class="mr-2" required />Midday, 12pm - 3pm</label>
+                <label class="rounded-xl border border-neutral-300 px-4 py-3 cursor-pointer hover:border-primary-400 transition-colors"><input type="radio" name="timeslot" value="afternoon-3-5" class="mr-2" required />Afternoon, 3pm - 5pm</label>
+                <label class="rounded-xl border border-neutral-300 px-4 py-3 cursor-pointer hover:border-primary-400 transition-colors"><input type="radio" name="timeslot" value="evening-5-7" class="mr-2" required />Evening, 5pm - 7pm</label>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="bookingNotes" class="block text-sm font-medium text-neutral-700 mb-1">Notes</label>
+              <textarea id="bookingNotes" name="notes" rows="3" class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors resize-none" placeholder="Share any timing constraints, skin goals, or questions."></textarea>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <input type="checkbox" id="bookingConsent" name="bookingConsent" required class="mt-1 w-5 h-5 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
+              <label for="bookingConsent" class="text-sm text-neutral-600">I understand this request reserves my preferred timeslot for review and that Bliss Dermacare will contact me to confirm the appointment. *</label>
+            </div>
+
+            <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">Request Booking</button>
+          </form>
+        </div>
       </div>
 
       <div class="mt-12 text-center">
-        <p class="text-primary-100 mb-4">Or reach out directly:</p>
+        <p class="text-primary-100 mb-4">Prefer to book directly? Reach out here:</p>
         <div class="flex flex-col md:flex-row justify-center gap-6 text-lg">
           <a href="tel:6093660857" class="flex items-center justify-center hover:text-primary-100 transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
@@ -1443,9 +1325,9 @@ import Layout from '../layouts/Layout.astro';
 
           <div class="bg-neutral-50 rounded-2xl p-6">
             <h4 class="font-semibold text-neutral-900 mb-3">Ready to book?</h4>
-            <p class="text-neutral-600 mb-4">Schedule your appointment online or give us a call. We look forward to helping you achieve your skincare goals!</p>
+            <p class="text-neutral-600 mb-4">Send a booking request with your preferred service and time, or call directly if you need help choosing.</p>
             <a href="#booking" class="inline-flex items-center justify-center bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium shadow-sm hover:shadow-md">
-              Book Now
+              Request Booking
               <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </a>
           </div>
