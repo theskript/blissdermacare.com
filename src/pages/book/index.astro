@@ -9,11 +9,11 @@ import Layout from '../../layouts/Layout.astro';
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Schedule Your Visit</span>
       <h1 class="text-5xl font-serif text-neutral-900 mb-4">Book an Appointment</h1>
-      <p class="text-lg text-neutral-600">Fill out the form below. We'll confirm your appointment by phone, text, or email within 24 hours.</p>
+      <p class="text-lg text-neutral-600">Choose your service and a time that works for you. We'll confirm within 24 hours.</p>
     </div>
   </section>
 
-  <!-- Booking Form Section -->
+  <!-- Booking Form -->
   <section class="py-14 bg-white">
     <div class="max-w-6xl mx-auto px-6">
       <div class="grid lg:grid-cols-3 gap-10">
@@ -25,107 +25,293 @@ import Layout from '../../layouts/Layout.astro';
             method="POST"
             data-netlify="true"
             action="/book/?submitted=booking"
-            class="space-y-6"
+            class="space-y-10"
           >
             <input type="hidden" name="form-name" value="appointment-booking" />
 
-            <div class="grid sm:grid-cols-2 gap-5">
+            <!-- Contact -->
+            <div class="space-y-5">
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3">Your Details</h2>
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label for="bookingName" class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name *</label>
+                  <input type="text" id="bookingName" name="name" required placeholder="Jane Smith"
+                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+                </div>
+                <div>
+                  <label for="bookingPhone" class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number *</label>
+                  <input type="tel" id="bookingPhone" name="phone" required placeholder="(609) 366-0857"
+                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+                </div>
+              </div>
               <div>
-                <label for="bookingName" class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name *</label>
-                <input type="text" id="bookingName" name="name" required placeholder="Jane Smith"
+                <label for="bookingEmail" class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address *</label>
+                <input type="email" id="bookingEmail" name="email" required placeholder="jane@example.com"
                   class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
               </div>
-              <div>
-                <label for="bookingPhone" class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number *</label>
-                <input type="tel" id="bookingPhone" name="phone" required placeholder="(813) 555-0100"
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+            </div>
+
+            <!-- Service Picker -->
+            <div>
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-6">Choose a Service *</h2>
+              <div class="space-y-6">
+
+                <!-- Facials -->
+                <div>
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Facials</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="signature-radiance-facial" class="sr-only peer" required />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Signature Radiance Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$99</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="age-defying-renewal" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Age-Defying Renewal</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$149</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">75 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="brightening-peel" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Brightening Peel</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$128</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">45 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="clear-skin-treatment" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Clear Skin Treatment</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$111</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">75 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="diamond-glow" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Diamond Glow</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$115</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">50 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="teen-skincare-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Teen Skincare Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$64</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">45 min</p>
+                      </div>
+                    </label>
+
+                  </div>
+                </div>
+
+                <!-- Lash & Brow -->
+                <div>
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Lash &amp; Brow</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="lash-extensions" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Extensions</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$153</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">2 hr</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="lash-extensions-fill" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Extensions Fill</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$43</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">1 hr</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="lash-lift-brow-lamination" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Lift &amp; Brow Lamination</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$72</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
+                  </div>
+                </div>
+
+                <!-- Body & Advanced -->
+                <div class="grid sm:grid-cols-2 gap-6">
+
+                  <div>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Body &amp; Wax</p>
+                    <label class="cursor-pointer block">
+                      <input type="radio" name="service" value="body-waxing" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                        <p class="font-semibold text-sm text-neutral-900">Body Waxing</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$45</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">30–45 min</p>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Advanced Treatments</p>
+                    <div class="space-y-2">
+
+                      <label class="cursor-pointer block">
+                        <input type="radio" name="service" value="vampire-facial-prp" class="sr-only peer" />
+                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                          <p class="font-semibold text-sm text-neutral-900">Vampire Facial (PRP)</p>
+                          <p class="text-primary-600 font-bold text-sm mt-1.5">$380</p>
+                          <p class="text-xs text-neutral-400 mt-0.5">75 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer block">
+                        <input type="radio" name="service" value="scalp-therapy" class="sr-only peer" />
+                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                          <p class="font-semibold text-sm text-neutral-900">Scalp Therapy</p>
+                          <p class="text-primary-600 font-bold text-sm mt-1.5">$213</p>
+                          <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer block">
+                        <input type="radio" name="service" value="hairline-restoration" class="sr-only peer" />
+                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                          <p class="font-semibold text-sm text-neutral-900">Hairline Restoration</p>
+                          <p class="text-primary-600 font-bold text-sm mt-1.5">$680</p>
+                          <p class="text-xs text-neutral-400 mt-0.5">2–3 sessions</p>
+                        </div>
+                      </label>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Packages -->
+                <div>
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Packages</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="fresh-start-collection" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Fresh Start</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$280</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">3 sessions</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="radiant-glow-ritual" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Radiant Glow Ritual</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$665</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">6 sessions</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="ultimate-transformation" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Ultimate Transformation</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$1,425</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">12 sessions</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="radio" name="service" value="luxury-in-home" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Luxury In-Home</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$170</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">90 min</p>
+                      </div>
+                    </label>
+
+                  </div>
+                </div>
+
+                <!-- Other -->
+                <label class="cursor-pointer inline-block">
+                  <input type="radio" name="service" value="other" class="sr-only peer" />
+                  <div class="rounded-xl border-2 border-neutral-200 px-5 py-3.5 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                    <p class="font-semibold text-sm text-neutral-900">Other / Not Sure</p>
+                    <p class="text-xs text-neutral-400 mt-0.5">Describe in the notes section below</p>
+                  </div>
+                </label>
+
               </div>
             </div>
 
+            <!-- Date -->
             <div>
-              <label for="bookingEmail" class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address *</label>
-              <input type="email" id="bookingEmail" name="email" required placeholder="jane@example.com"
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Date *</h2>
+              <input type="date" id="bookingDate" name="date" required
+                class="px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
             </div>
 
+            <!-- Time Picker -->
             <div>
-              <label for="bookingService" class="block text-sm font-medium text-neutral-700 mb-1.5">Service Requested *</label>
-              <select id="bookingService" name="service" required
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
-                <option value="">Choose a service...</option>
-                <optgroup label="Facials">
-                  <option value="signature-radiance-facial">Signature Radiance Facial — $99</option>
-                  <option value="age-defying-renewal">Age-Defying Renewal — $149</option>
-                  <option value="brightening-peel">Brightening Peel — $128</option>
-                  <option value="clear-skin-treatment">Clear Skin Treatment — $111</option>
-                  <option value="diamond-glow">Diamond Glow — $115</option>
-                  <option value="teen-skincare-facial">Teen Skincare Facial — $64</option>
-                </optgroup>
-                <optgroup label="Lash & Brow">
-                  <option value="lash-extensions">Lash Extensions — $153</option>
-                  <option value="lash-extensions-fill">Lash Extensions Fill — $43</option>
-                  <option value="lash-lift-brow-lamination">Lash Lift & Brow Lamination — $72</option>
-                </optgroup>
-                <optgroup label="Body & Wax">
-                  <option value="body-waxing">Body Waxing — $45</option>
-                </optgroup>
-                <optgroup label="Advanced Treatments">
-                  <option value="vampire-facial-prp">Vampire Facial (PRP) — $380</option>
-                  <option value="scalp-therapy">Scalp Therapy — $213</option>
-                  <option value="hairline-restoration">Hairline Restoration — $680</option>
-                </optgroup>
-                <optgroup label="Packages">
-                  <option value="fresh-start-collection">Fresh Start Collection (3 sessions) — $280</option>
-                  <option value="radiant-glow-ritual">Radiant Glow Ritual (6 sessions) — $665</option>
-                  <option value="ultimate-transformation">Ultimate Transformation (12 sessions) — $1,425</option>
-                  <option value="luxury-in-home">Luxury In-Home Experience — $170</option>
-                </optgroup>
-                <option value="other">Other / Not Sure</option>
-              </select>
-            </div>
-
-            <div class="grid sm:grid-cols-2 gap-5">
-              <div>
-                <label for="bookingDate" class="block text-sm font-medium text-neutral-700 mb-1.5">Preferred Date *</label>
-                <input type="date" id="bookingDate" name="date" required
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Time *</h2>
+              <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {[
+                  ['10:00am','10:00 AM'],
+                  ['10:30am','10:30 AM'],
+                  ['11:00am','11:00 AM'],
+                  ['11:30am','11:30 AM'],
+                  ['12:00pm','12:00 PM'],
+                  ['12:30pm','12:30 PM'],
+                  ['1:00pm', '1:00 PM'],
+                  ['1:30pm', '1:30 PM'],
+                  ['2:00pm', '2:00 PM'],
+                  ['2:30pm', '2:30 PM'],
+                  ['3:00pm', '3:00 PM'],
+                  ['3:30pm', '3:30 PM'],
+                  ['4:00pm', '4:00 PM'],
+                  ['4:30pm', '4:30 PM'],
+                  ['5:00pm', '5:00 PM'],
+                  ['5:30pm', '5:30 PM'],
+                  ['6:00pm', '6:00 PM'],
+                  ['6:30pm', '6:30 PM'],
+                  ['7:00pm', '7:00 PM'],
+                ].map(([value, label]) => (
+                  <label class="cursor-pointer">
+                    <input type="radio" name="timeslot" value={value} class="sr-only peer" required />
+                    <div class="text-center rounded-lg border-2 border-neutral-200 py-3 px-1 text-sm font-medium peer-checked:border-primary-600 peer-checked:bg-primary-600 peer-checked:text-white hover:border-primary-300 transition-all">
+                      {label}
+                    </div>
+                  </label>
+                ))}
               </div>
-              <div>
-                <label for="bookingTimeslot" class="block text-sm font-medium text-neutral-700 mb-1.5">Preferred Time *</label>
-                <select id="bookingTimeslot" name="timeslot" required
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
-                  <option value="">Select a time...</option>
-                  <option value="10:00am">10:00 AM</option>
-                  <option value="10:30am">10:30 AM</option>
-                  <option value="11:00am">11:00 AM</option>
-                  <option value="11:30am">11:30 AM</option>
-                  <option value="12:00pm">12:00 PM</option>
-                  <option value="12:30pm">12:30 PM</option>
-                  <option value="1:00pm">1:00 PM</option>
-                  <option value="1:30pm">1:30 PM</option>
-                  <option value="2:00pm">2:00 PM</option>
-                  <option value="2:30pm">2:30 PM</option>
-                  <option value="3:00pm">3:00 PM</option>
-                  <option value="3:30pm">3:30 PM</option>
-                  <option value="4:00pm">4:00 PM</option>
-                  <option value="4:30pm">4:30 PM</option>
-                  <option value="5:00pm">5:00 PM</option>
-                  <option value="5:30pm">5:30 PM</option>
-                  <option value="6:00pm">6:00 PM</option>
-                  <option value="6:30pm">6:30 PM</option>
-                  <option value="7:00pm">7:00 PM</option>
-                </select>
-              </div>
+              <p class="text-xs text-neutral-400 mt-3">Mon–Fri 10 AM – 7 PM &middot; Sat 10 AM – 6 PM &middot; Sun by request</p>
             </div>
 
+            <!-- Notes -->
             <div>
-              <label for="bookingNotes" class="block text-sm font-medium text-neutral-700 mb-1.5">Skin Concerns or Notes</label>
-              <textarea id="bookingNotes" name="notes" rows="4" placeholder="Tell us about your skin concerns, allergies, or any questions you have..."
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Additional Notes</h2>
+              <textarea id="bookingNotes" name="notes" rows="4" placeholder="Skin concerns, allergies, questions, or anything else we should know..."
                 class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm resize-none"></textarea>
             </div>
 
+            <!-- Confirmation -->
             <div>
-              <label class="block text-sm font-medium text-neutral-700 mb-2">How would you like us to confirm? *</label>
+              <label class="block text-sm font-medium text-neutral-700 mb-3">How would you like us to confirm?</label>
               <div class="flex flex-wrap gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" name="confirm-phone" value="yes" class="w-4 h-4 accent-primary-600" />
@@ -175,9 +361,9 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-neutral-900 rounded-2xl p-6 text-white">
             <h3 class="font-semibold mb-3">Can't find the right time?</h3>
             <p class="text-sm text-neutral-400 mb-4">Reach out directly and we'll work something out.</p>
-            <a href="tel:+18138101304" class="flex items-center gap-2 text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors">
+            <a href="tel:+16093660857" class="flex items-center gap-2 text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-              (813) 810-1304
+              (609) 366-0857
             </a>
           </div>
 
@@ -200,6 +386,7 @@ import Layout from '../../layouts/Layout.astro';
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </section>

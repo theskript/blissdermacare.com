@@ -50,21 +50,21 @@ const { title, description = 'Professional aesthetician services in a serene, mo
   </head>
   <body class="bg-white text-neutral-900 antialiased font-serif font-semibold text-xl leading-tight">
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-neutral-200 shadow-sm">
+    <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-neutral-200 shadow-sm transition-transform duration-300">
       <div class="max-w-7xl mx-auto px-6 py-2">
         <div class="flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="block flex-shrink-0">
-            <img src="/images/IMG_1350.JPG.jpeg" alt="Bliss Dermacare" class="h-40 w-auto object-contain" />
+            <img src="/images/IMG_1350.JPG.jpeg" alt="Bliss Dermacare" class="h-20 w-auto object-contain" />
           </a>
           
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-6">
-            <a href="/services/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-sm">Services</a>
+            <a href="/services/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base">Services</a>
 
             <!-- About dropdown -->
             <div class="relative group">
-              <button class="flex items-center gap-1 text-neutral-600 hover:text-primary-600 transition-colors font-medium text-sm py-1" aria-haspopup="true">
+              <button class="flex items-center gap-1 text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base py-1" aria-haspopup="true">
                 About
                 <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
               </button>
@@ -78,7 +78,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
 
             <!-- Programs dropdown -->
             <div class="relative group">
-              <button class="flex items-center gap-1 text-neutral-600 hover:text-primary-600 transition-colors font-medium text-sm py-1" aria-haspopup="true">
+              <button class="flex items-center gap-1 text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base py-1" aria-haspopup="true">
                 Programs
                 <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
               </button>
@@ -90,9 +90,9 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               </div>
             </div>
 
-            <a href="/faq/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-sm">FAQ</a>
-            <a href="/contact/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-sm">Contact</a>
-            <a href="/book/" class="bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-all font-medium text-sm shadow-sm hover:shadow-md whitespace-nowrap">
+            <a href="/faq/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base">FAQ</a>
+            <a href="/contact/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base">Contact</a>
+            <a href="/book/" class="bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-all font-medium text-base shadow-sm hover:shadow-md whitespace-nowrap">
               Book Appointment
             </a>
           </div>
@@ -143,7 +143,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-48">
+    <main class="pt-24">
       <slot />
     </main>
 
@@ -265,18 +265,20 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           fadeInObserver.observe(el);
         });
 
-        // Navbar shadow on scroll (no transforms)
+        // Hide nav on scroll down, show on scroll up
+        let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
-          const scrolled = window.pageYOffset;
-          const nav = document.querySelector('nav');
-          if (nav) {
-            if (scrolled > 50) {
-              nav.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-            } else {
-              nav.style.boxShadow = 'none';
-            }
+          const nav = document.getElementById('main-nav');
+          const currentScrollY = window.scrollY;
+          if (!nav) return;
+          if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            nav.style.transform = 'translateY(-100%)';
+          } else {
+            nav.style.transform = 'translateY(0)';
           }
-        });
+          nav.style.boxShadow = currentScrollY > 50 ? '0 4px 20px rgba(0,0,0,0.08)' : 'none';
+          lastScrollY = currentScrollY;
+        }, { passive: true });
 
         // Enhanced card hover effects - only for cards inside main
         document.querySelectorAll('main .group').forEach(card => {
