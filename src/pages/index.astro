@@ -311,7 +311,7 @@ import Layout from '../layouts/Layout.astro';
           <!-- Compact Service Card: Body Waxing -->
           <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-neutral-200">
             <div class="relative h-32 overflow-hidden">
-              <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Professional Body Waxing Service" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <img src="https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Professional Body Waxing Service" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
             <div class="p-4">
@@ -484,125 +484,73 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- About Section -->
-  <section id="about" class="py-14 bg-neutral-50">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900 mb-6">
-            Modern Approach to<br/>
-            <span class="text-primary-600">Timeless Skincare</span>
-          </h2>
-          <div class="space-y-4 text-lg text-neutral-600">
-            <p>
-              At Bliss Dermacare, we believe that beautiful skin is the result of personalized care, advanced techniques, and high-quality products. Our approach combines time-tested aesthetician practices with cutting-edge skincare innovations.
-            </p>
-            <p>
-              With over a decade of experience, we specialize in creating customized treatment plans that address your unique skin concerns, from anti-aging and acne to hydration and overall skin health.
-            </p>
-            <p>
-              Every treatment is performed in a serene, spa-like environment designed to help you relax and rejuvenate while we work to enhance your natural beauty.
-            </p>
-          </div>
-          
-          <div class="mt-8 grid grid-cols-3 gap-6">
-            <div class="text-center">
-              <div class="text-4xl font-bold text-primary-600 mb-2">Licensed</div>
-              <div class="text-sm text-neutral-600">FL Aesthetician</div>
-            </div>
-            <div class="text-center">
-              <div class="text-4xl font-bold text-primary-600 mb-2">100%</div>
-              <div class="text-sm text-neutral-600">Personalized Care</div>
-            </div>
-            <div class="text-center">
-              <div class="text-4xl font-bold text-primary-600 mb-2">Results</div>
-              <div class="text-sm text-neutral-600">You Can See</div>
-            </div>
-          </div>
-        </div>
-        
+  <section id="about" class="py-14 md:py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
         <div class="relative">
-          <div class="aspect-[4/5] bg-gradient-to-br from-primary-200 to-primary-300 rounded-2xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1599683064250-4f96e6b1379b?w=600&h=750&fit=crop&q=80" alt="Professional aesthetician providing skincare treatment" class="w-full h-full object-cover" loading="lazy" />
+          <div class="aspect-[4/5] rounded-2xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1599683064250-4f96e6b1379b?w=600&h=750&fit=crop&q=80" alt="Bliss Dermacare Aesthetician" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <div class="absolute -bottom-6 -right-6 w-48 h-48 bg-primary-100 rounded-2xl -z-10"></div>
+          <div class="absolute -bottom-6 -right-6 w-40 h-40 bg-primary-100 rounded-2xl -z-10"></div>
+        </div>
+        <div>
+          <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">About Us</span>
+          <h2 class="text-4xl md:text-5xl font-serif font-light text-neutral-900 leading-tight mb-6">
+            Skincare that actually<br/><span class="italic">fits your life.</span>
+          </h2>
+          <p class="text-lg text-neutral-600 leading-relaxed mb-5">
+            Bliss Dermacare is a licensed aesthetics practice based in Pebble Creek, Florida. We offer personalized facial treatments, waxing, and advanced skincare services tailored to your skin.
+          </p>
+          <p class="text-lg text-neutral-600 leading-relaxed mb-8">
+            Every appointment is one-on-one and built around what your skin actually needs that day — no upselling, no rushing, no one-size-fits-all protocols.
+          </p>
+          <div class="grid grid-cols-3 gap-4 pt-6 border-t border-neutral-100">
+            <div>
+              <p class="text-3xl font-bold text-primary-600">FL</p>
+              <p class="text-sm text-neutral-500 mt-1">State Licensed</p>
+            </div>
+            <div>
+              <p class="text-3xl font-bold text-primary-600">7+</p>
+              <p class="text-sm text-neutral-500 mt-1">Years Experience</p>
+            </div>
+            <div>
+              <p class="text-3xl font-bold text-primary-600">5.0★</p>
+              <p class="text-sm text-neutral-500 mt-1">Client Rating</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Why Choose Us Section -->
-  <section class="py-12 md:py-16 bg-white">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="text-center mb-14">
-        <span class="text-primary-600 font-semibold text-sm uppercase tracking-wider">Why Choose Us</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 mt-2">Your Skin Deserves the Best</h2>
+  <section id="why-us" class="py-14 bg-neutral-50">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Why Bliss Dermacare</span>
+        <h2 class="text-3xl md:text-4xl font-serif text-neutral-900">The difference is in the details.</h2>
       </div>
-
-      <div class="grid md:grid-cols-3 gap-6 md:gap-8">
-        <!-- Benefit 1 -->
-        <div class="bg-neutral-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-8">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <h3 class="text-xl font-bold font-serif text-neutral-900 mb-4">Personalized Treatments</h3>
-          <p class="text-neutral-600 leading-relaxed">Every treatment is customized to your unique skin type, concerns, and goals. No cookie-cutter approaches here.</p>
+          <h3 class="text-xl font-semibold text-neutral-900 mb-3">Truly Personalized</h3>
+          <p class="text-neutral-600">Every visit starts with a skin check. Treatments are adjusted session to session based on what your skin needs — not what's on a menu.</p>
         </div>
-
-        <!-- Benefit 2 -->
-        <div class="bg-neutral-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
+        <div class="bg-white rounded-2xl p-8">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           </div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-4">Advanced Technology</h3>
-          <p class="text-neutral-600 leading-relaxed">State-of-the-art equipment and cutting-edge techniques for maximum results with minimal downtime.</p>
+          <h3 class="text-xl font-semibold text-neutral-900 mb-3">Licensed & Knowledgeable</h3>
+          <p class="text-neutral-600">Florida State Licensed Aesthetician with hands-on training in advanced modalities including PRP, microneedling, and chemical resurfacing.</p>
         </div>
-
-        <!-- Benefit 3 -->
-        <div class="bg-neutral-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
+        <div class="bg-white rounded-2xl p-8">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-4">Luxury Experience</h3>
-          <p class="text-neutral-600 leading-relaxed">Relaxing spa atmosphere with premium products and exceptional service that makes you feel pampered.</p>
-        </div>
-
-        <!-- Benefit 4 -->
-        <div class="bg-neutral-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-4">Expert Knowledge</h3>
-          <p class="text-neutral-600 leading-relaxed">Licensed aesthetician with extensive training in the latest skincare techniques and product knowledge.</p>
-        </div>
-
-        <!-- Benefit 5 -->
-        <div class="bg-neutral-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-4">Local Community</h3>
-          <p class="text-neutral-600 leading-relaxed">Serving Pebble Creek and the Tampa Bay area with personalized care that understands local skin concerns.</p>
-        </div>
-
-        <!-- Benefit 6 -->
-        <div class="bg-neutral-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-4">Results You Can See</h3>
-          <p class="text-neutral-600 leading-relaxed">Evidence-based treatments with before/after tracking to ensure you're getting the results you deserve.</p>
+          <h3 class="text-xl font-semibold text-neutral-900 mb-3">Local to Pebble Creek</h3>
+          <p class="text-neutral-600">Serving the Pebble Creek community and greater Tampa Bay area. Mobile spa appointments available within a 10-mile radius.</p>
         </div>
       </div>
     </div>
@@ -768,93 +716,163 @@ import Layout from '../layouts/Layout.astro';
 
   <!-- Demo Model Program Section -->
   <section id="demo-model" class="py-14 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="grid lg:grid-cols-2 gap-10 items-center">
-        <!-- Left: Image & Info -->
-        <div class="space-y-8">
-          <div class="relative rounded-2xl overflow-hidden shadow-2xl">
-            <img 
-              src="https://images.pexels.com/photos/5069463/pexels-photo-5069463.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-              alt="Aesthetician applying professional facial treatment to demo model client"
-              class="w-full h-[400px] object-cover"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6">
-              <span class="inline-block bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                Now Accepting Applications
-              </span>
-            </div>
-          </div>
-          
-          <div class="bg-primary-50 rounded-2xl p-8">
-            <h3 class="text-2xl font-bold text-neutral-900 mb-4">What is a Demo Model?</h3>
-            <p class="text-neutral-700 leading-relaxed">
-              Demo models (also known as Practice Models or Training Models) receive professional skincare treatments 
-              at significantly reduced rates while helping our aestheticians perfect their techniques and build their portfolios. 
-              It's a win-win opportunity for beauty enthusiasts in the Tampa Bay and Pebble Creek area.
-            </p>
-          </div>
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="inline-block bg-primary-100 text-primary-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">Now Accepting Applications</span>
+        <h2 class="text-4xl md:text-5xl font-serif text-neutral-900 mb-4">Demo Model Program</h2>
+        <p class="text-lg text-neutral-600 max-w-2xl mx-auto">
+          Get professional skincare treatments at 50–80% off by participating as a demo model. Same licensed aesthetician, same professional products — reduced pricing in exchange for your time and feedback.
+        </p>
+      </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-neutral-50 rounded-xl p-6 text-center">
-              <div class="text-3xl font-bold text-primary-600 mb-1">50-80%</div>
-              <div class="text-sm text-neutral-600">Off Regular Prices</div>
-            </div>
-            <div class="bg-neutral-50 rounded-xl p-6 text-center">
-              <div class="text-3xl font-bold text-primary-600 mb-1">Same</div>
-              <div class="text-sm text-neutral-600">Professional Products</div>
-            </div>
+      <div class="grid md:grid-cols-2 gap-8 items-start">
+        <div class="space-y-6">
+          <div class="bg-neutral-50 rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-neutral-900 mb-4">Demo Model Pricing</h3>
+            <ul class="space-y-3 text-neutral-600">
+              <li class="flex justify-between py-2 border-b border-neutral-200"><span>Signature Facials</span><span class="font-semibold text-primary-600">$20 – $40</span></li>
+              <li class="flex justify-between py-2 border-b border-neutral-200"><span>Chemical Peels</span><span class="font-semibold text-primary-600">$30 – $50</span></li>
+              <li class="flex justify-between py-2 border-b border-neutral-200"><span>Microneedling</span><span class="font-semibold text-primary-600">$64 – $107</span></li>
+              <li class="flex justify-between py-2"><span>Scalp Treatments</span><span class="font-semibold text-primary-600">$43 – $85</span></li>
+            </ul>
+            <p class="text-xs text-neutral-400 mt-4">Prices vary by treatment type and duration. All services use professional-grade products.</p>
           </div>
+          <img
+            src="https://images.pexels.com/photos/5069463/pexels-photo-5069463.jpeg?auto=compress&cs=tinysrgb&w=800"
+            alt="Demo model receiving professional facial treatment"
+            class="w-full h-52 object-cover rounded-2xl"
+            loading="lazy"
+          />
         </div>
 
-        <!-- Right: Application Form -->
-        <div class="bg-neutral-50 rounded-2xl p-8 lg:p-10">
-          <div class="text-center mb-8">
-            <h2 class="text-3xl md:text-4xl font-bold text-neutral-900 mb-3">Become a Demo Model</h2>
-            <p class="text-neutral-600">
-              Get premium skincare treatments at a fraction of the cost. Perfect for budget-conscious beauty lovers 
-              in Pebble Creek, Tampa, and surrounding Pasco County areas.
-            </p>
-          </div>
-
-          <form name="demo-model-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=demo-model#demo-model" class="space-y-5">
+        <div class="bg-neutral-50 rounded-2xl p-8">
+          <h3 class="text-2xl font-serif text-neutral-900 mb-6">Apply Now</h3>
+          <form name="demo-model-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=demo-model#demo-model" class="space-y-4">
             <input type="hidden" name="form-name" value="demo-model-application" />
             <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
 
-            <div class="grid md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4">
               <div>
-                <label for="firstName" class="block text-sm font-medium text-neutral-700 mb-1">First Name *</label>
-                <input type="text" id="firstName" name="firstName" required
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                  placeholder="Jane" />
+                <label for="dmFirstName" class="block text-sm font-medium text-neutral-700 mb-1">First Name *</label>
+                <input type="text" id="dmFirstName" name="firstName" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="Jane" />
               </div>
               <div>
-                <label for="lastName" class="block text-sm font-medium text-neutral-700 mb-1">Last Name *</label>
-                <input type="text" id="lastName" name="lastName" required
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                  placeholder="Doe" />
+                <label for="dmLastName" class="block text-sm font-medium text-neutral-700 mb-1">Last Name *</label>
+                <input type="text" id="dmLastName" name="lastName" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="Doe" />
               </div>
             </div>
 
             <div>
-              <label for="email" class="block text-sm font-medium text-neutral-700 mb-1">Email Address *</label>
-              <input type="email" id="email" name="email" required
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                placeholder="jane@example.com" />
+              <label for="dmEmail" class="block text-sm font-medium text-neutral-700 mb-1">Email *</label>
+              <input type="email" id="dmEmail" name="email" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="jane@example.com" />
             </div>
 
             <div>
-              <label for="phone" class="block text-sm font-medium text-neutral-700 mb-1">Phone Number *</label>
-              <input type="tel" id="phone" name="phone" required
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                placeholder="(813) 555-0123" />
+              <label for="dmPhone" class="block text-sm font-medium text-neutral-700 mb-1">Phone *</label>
+              <input type="tel" id="dmPhone" name="phone" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="(813) 555-0123" />
             </div>
 
             <div>
-              <label for="skinType" class="block text-sm font-medium text-neutral-700 mb-1">Skin Type *</label>
-              <select id="skinType" name="skinType" required
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                <option value="">Select your skin type</option>
+              <label for="dmTreatments" class="block text-sm font-medium text-neutral-700 mb-1">Treatments of Interest *</label>
+              <select id="dmTreatments" name="treatments" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                <option value="">Select treatment type</option>
+                <option value="facials">Facials & Chemical Peels</option>
+                <option value="microneedling">Microneedling</option>
+                <option value="scalp">Scalp Treatments</option>
+                <option value="prp">PRP / Vampire Facial</option>
+                <option value="multiple">Open to Multiple</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="dmAvailability" class="block text-sm font-medium text-neutral-700 mb-1">Availability *</label>
+              <select id="dmAvailability" name="availability" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                <option value="">When are you available?</option>
+                <option value="weekday-morning">Weekday Mornings</option>
+                <option value="weekday-afternoon">Weekday Afternoons</option>
+                <option value="weekday-evening">Weekday Evenings</option>
+                <option value="weekend">Weekends</option>
+                <option value="flexible">Flexible</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="dmConcerns" class="block text-sm font-medium text-neutral-700 mb-1">Skin Notes (Optional)</label>
+              <textarea id="dmConcerns" name="concerns" rows="2" class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors resize-none" placeholder="Any allergies, conditions, or skin concerns to note..."></textarea>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <input type="checkbox" id="dmConsent" name="consent" required class="mt-1 w-5 h-5 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
+              <label for="dmConsent" class="text-sm text-neutral-600">I understand appointments may take longer than standard and photos may be taken for portfolio purposes. *</label>
+            </div>
+
+            <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-lg">Submit Application</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skincare Consultation Section -->
+  <section id="consultation" class="py-14 bg-neutral-50">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="inline-block bg-primary-100 text-primary-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">Complimentary</span>
+        <h2 class="text-4xl md:text-5xl font-serif text-neutral-900 mb-4">Free Skin Consultation</h2>
+        <p class="text-lg text-neutral-600 max-w-xl mx-auto">Tell us a bit about your skin and what you're looking to address. We'll reach out within 24 hours to discuss a treatment plan.</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+          <p class="text-2xl font-bold text-primary-600 mb-1">Free</p>
+          <p class="text-sm text-neutral-600">No cost, no obligation</p>
+        </div>
+        <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+          <p class="text-2xl font-bold text-primary-600 mb-1">24h</p>
+          <p class="text-sm text-neutral-600">Response time</p>
+        </div>
+        <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+          <p class="text-2xl font-bold text-primary-600 mb-1">1:1</p>
+          <p class="text-sm text-neutral-600">Personalized advice</p>
+        </div>
+        <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+          <p class="text-2xl font-bold text-primary-600 mb-1">Local</p>
+          <p class="text-sm text-neutral-600">Pebble Creek, FL</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 lg:p-10 shadow-sm">
+        <form name="skincare-consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=consultation#consultation" class="space-y-5">
+          <input type="hidden" name="form-name" value="skincare-consultation" />
+          <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="consultFirstName" class="block text-sm font-medium text-neutral-700 mb-1">First Name *</label>
+              <input type="text" id="consultFirstName" name="firstName" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="Jane" />
+            </div>
+            <div>
+              <label for="consultLastName" class="block text-sm font-medium text-neutral-700 mb-1">Last Name *</label>
+              <input type="text" id="consultLastName" name="lastName" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="Doe" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="consultEmail" class="block text-sm font-medium text-neutral-700 mb-1">Email *</label>
+              <input type="email" id="consultEmail" name="email" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="jane@example.com" />
+            </div>
+            <div>
+              <label for="consultPhone" class="block text-sm font-medium text-neutral-700 mb-1">Phone *</label>
+              <input type="tel" id="consultPhone" name="phone" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors" placeholder="(813) 555-0123" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="consultSkinType" class="block text-sm font-medium text-neutral-700 mb-1">Skin Type *</label>
+              <select id="consultSkinType" name="skinType" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                <option value="">Select skin type</option>
                 <option value="normal">Normal</option>
                 <option value="oily">Oily</option>
                 <option value="dry">Dry</option>
@@ -863,487 +881,155 @@ import Layout from '../layouts/Layout.astro';
                 <option value="unsure">Not Sure</option>
               </select>
             </div>
-
             <div>
-              <label for="treatments" class="block text-sm font-medium text-neutral-700 mb-1">Treatments of Interest *</label>
-              <select id="treatments" name="treatments" required
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                <option value="">Select treatment type</option>
-                <option value="facials">Facials & Chemical Peels</option>
-                <option value="microneedling">Microneedling</option>
-                <option value="scalp">Scalp Treatments (SMP/Regeneration)</option>
-                <option value="prp">PRP / Vampire Facial</option>
-                <option value="skinpen">SkinPen Treatments</option>
-                <option value="multiple">Open to Multiple Treatments</option>
+              <label for="consultConcerns" class="block text-sm font-medium text-neutral-700 mb-1">Primary Concern *</label>
+              <select id="consultConcerns" name="primaryConcerns" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                <option value="">Select main concern</option>
+                <option value="acne">Acne / Breakouts</option>
+                <option value="aging">Fine Lines / Aging</option>
+                <option value="hyperpigmentation">Dark Spots</option>
+                <option value="dryness">Dryness / Dehydration</option>
+                <option value="texture">Uneven Texture / Pores</option>
+                <option value="general">General Maintenance</option>
+                <option value="multiple">Multiple Concerns</option>
               </select>
             </div>
-
-            <div>
-              <label for="availability" class="block text-sm font-medium text-neutral-700 mb-1">General Availability *</label>
-              <select id="availability" name="availability" required
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                <option value="">When are you typically available?</option>
-                <option value="weekday-morning">Weekday Mornings</option>
-                <option value="weekday-afternoon">Weekday Afternoons</option>
-                <option value="weekday-evening">Weekday Evenings</option>
-                <option value="weekend">Weekends</option>
-                <option value="flexible">Flexible Schedule</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="concerns" class="block text-sm font-medium text-neutral-700 mb-1">Skin Concerns (Optional)</label>
-              <textarea id="concerns" name="concerns" rows="3"
-                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors resize-none"
-                placeholder="Tell us about any skin concerns, allergies, or conditions we should know about..."></textarea>
-            </div>
-
-            <div class="flex items-start gap-3">
-              <input type="checkbox" id="consent" name="consent" required
-                class="mt-1 w-5 h-5 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
-              <label for="consent" class="text-sm text-neutral-600">
-                I understand that demo model appointments may take longer than regular appointments and photos may be taken 
-                for training/portfolio purposes. I consent to being contacted about demo opportunities. *
-              </label>
-            </div>
-
-            <button type="submit"
-              class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
-              Submit Application
-            </button>
-          </form>
-
-          <div class="mt-6 pt-6 border-t border-neutral-200">
-            <h4 class="font-semibold text-neutral-900 mb-3">Demo Model Pricing (Tampa Bay Area)</h4>
-            <ul class="space-y-2 text-sm text-neutral-600">
-              <li class="flex justify-between"><span>Signature Facials</span><span class="font-medium text-primary-600">$20 - $40</span></li>
-              <li class="flex justify-between"><span>Chemical Peels</span><span class="font-medium text-primary-600">$30 - $50</span></li>
-              <li class="flex justify-between"><span>Microneedling</span><span class="font-medium text-primary-600">$64 - $107</span></li>
-              <li class="flex justify-between"><span>Scalp Treatments</span><span class="font-medium text-primary-600">$43 - $85</span></li>
-            </ul>
-            <p class="text-xs text-neutral-500 mt-3">*Prices vary based on treatment type and duration. All treatments use same professional-grade products.</p>
           </div>
-        </div>
+
+          <div>
+            <label for="consultGoals" class="block text-sm font-medium text-neutral-700 mb-1">What are your skincare goals?</label>
+            <textarea id="consultGoals" name="skincareGoals" rows="3" class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors resize-none" placeholder="Describe what you'd like to achieve or any questions you have..."></textarea>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="consultContact" class="block text-sm font-medium text-neutral-700 mb-1">Preferred Contact Method *</label>
+              <select id="consultContact" name="contactMethod" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                <option value="">How should we reach you?</option>
+                <option value="phone">Phone Call</option>
+                <option value="text">Text Message</option>
+                <option value="email">Email</option>
+              </select>
+            </div>
+            <div>
+              <label for="consultTime" class="block text-sm font-medium text-neutral-700 mb-1">Best Time to Contact *</label>
+              <select id="consultTime" name="bestTime" required class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
+                <option value="">When to contact you?</option>
+                <option value="morning">Morning (9am – 12pm)</option>
+                <option value="afternoon">Afternoon (12pm – 5pm)</option>
+                <option value="evening">Evening (5pm – 8pm)</option>
+                <option value="anytime">Anytime</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <input type="checkbox" id="consultPrivacy" name="privacyConsent" required class="mt-1 w-5 h-5 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
+            <label for="consultPrivacy" class="text-sm text-neutral-600">I consent to Bliss Dermacare using this information to contact me about skincare services. My information will not be shared with third parties. *</label>
+          </div>
+
+          <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-lg">Request Free Consultation</button>
+          <p class="text-center text-sm text-neutral-400">Serving Pebble Creek, Tampa, Land O' Lakes, Lutz & surrounding areas</p>
+        </form>
       </div>
     </div>
   </section>
 
-  <!-- Skincare Consultation Section -->
-  <section id="consultation" class="py-14 bg-neutral-50">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="grid lg:grid-cols-2 gap-10 items-start">
-        <!-- Left: Info & Image -->
-        <div class="space-y-8 lg:sticky lg:top-24">
-          <div class="space-y-4">
-            <span class="inline-block bg-primary-100 text-primary-700 px-4 py-1.5 rounded-full text-sm font-semibold">
-              Complimentary Service
-            </span>
-            <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900">Personalized Skin Analysis</h2>
-            <p class="text-xl text-neutral-600 leading-relaxed">
-              Start your skincare journey with a complimentary consultation. Our licensed aestheticians will analyze your skin, 
-              discuss your concerns, and create a customized treatment plan tailored to your unique needs.
-            </p>
-          </div>
-
-          <div class="relative rounded-2xl overflow-hidden shadow-2xl">
-            <img 
-              src="https://images.pexels.com/photos/7446684/pexels-photo-7446684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-              alt="Licensed aesthetician consulting with client about personalized skincare treatment plan"
-              class="w-full h-[350px] object-cover"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            <div class="absolute bottom-6 left-6 right-6 text-white">
-              <p class="font-semibold text-lg">Professional Skin Assessment</p>
-              <p class="text-sm text-white/80">Pebble Creek & Tampa Bay Area</p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white rounded-xl p-5 shadow-sm">
-              <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mb-3">
-                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </div>
-              <h4 class="font-semibold text-neutral-900">No Obligation</h4>
-              <p class="text-sm text-neutral-600">Free consultation with no pressure to book</p>
-            </div>
-            <div class="bg-white rounded-xl p-5 shadow-sm">
-              <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mb-3">
-                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </div>
-              <h4 class="font-semibold text-neutral-900">Quick Response</h4>
-              <p class="text-sm text-neutral-600">We'll contact you within 24 hours</p>
-            </div>
-            <div class="bg-white rounded-xl p-5 shadow-sm">
-              <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mb-3">
-                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-              </div>
-              <h4 class="font-semibold text-neutral-900">Expert Advice</h4>
-              <p class="text-sm text-neutral-600">Personalized treatment recommendations</p>
-            </div>
-            <div class="bg-white rounded-xl p-5 shadow-sm">
-              <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mb-3">
-                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              </div>
-              <h4 class="font-semibold text-neutral-900">Local Service</h4>
-              <p class="text-sm text-neutral-600">Serving Pebble Creek & Pasco County</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Consultation Form -->
-        <div class="bg-white rounded-2xl p-8 lg:p-10 shadow-xl">
-          <div class="text-center mb-8">
-            <h3 class="text-2xl font-bold text-neutral-900 mb-2">Request Your Free Consultation</h3>
-            <p class="text-neutral-600">
-              Complete this skin intake form and we'll reach out to schedule your personalized assessment.
-            </p>
-          </div>
-
-          <form name="skincare-consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=consultation#consultation" class="space-y-5">
-            <input type="hidden" name="form-name" value="skincare-consultation" />
-            <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
-
-            <!-- Personal Information -->
-            <div class="space-y-4">
-              <h4 class="font-semibold text-neutral-800 text-sm uppercase tracking-wide border-b pb-2">Contact Information</h4>
-              
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label for="consultFirstName" class="block text-sm font-medium text-neutral-700 mb-1">First Name *</label>
-                  <input type="text" id="consultFirstName" name="firstName" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                    placeholder="Jane" />
-                </div>
-                <div>
-                  <label for="consultLastName" class="block text-sm font-medium text-neutral-700 mb-1">Last Name *</label>
-                  <input type="text" id="consultLastName" name="lastName" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                    placeholder="Doe" />
-                </div>
-              </div>
-
-              <div>
-                <label for="consultEmail" class="block text-sm font-medium text-neutral-700 mb-1">Email Address *</label>
-                <input type="email" id="consultEmail" name="email" required
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                  placeholder="jane@example.com" />
-              </div>
-
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label for="consultPhone" class="block text-sm font-medium text-neutral-700 mb-1">Phone Number *</label>
-                  <input type="tel" id="consultPhone" name="phone" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
-                    placeholder="(813) 555-0123" />
-                </div>
-                <div>
-                  <label for="consultAge" class="block text-sm font-medium text-neutral-700 mb-1">Age Range *</label>
-                  <select id="consultAge" name="ageRange" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                    <option value="">Select age range</option>
-                    <option value="18-24">18-24</option>
-                    <option value="25-34">25-34</option>
-                    <option value="35-44">35-44</option>
-                    <option value="45-54">45-54</option>
-                    <option value="55-64">55-64</option>
-                    <option value="65+">65+</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Skin Profile -->
-            <div class="space-y-4 pt-4">
-              <h4 class="font-semibold text-neutral-800 text-sm uppercase tracking-wide border-b pb-2">Your Skin Profile</h4>
-              
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label for="consultSkinType" class="block text-sm font-medium text-neutral-700 mb-1">Skin Type *</label>
-                  <select id="consultSkinType" name="skinType" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                    <option value="">Select skin type</option>
-                    <option value="normal">Normal</option>
-                    <option value="oily">Oily</option>
-                    <option value="dry">Dry</option>
-                    <option value="combination">Combination</option>
-                    <option value="sensitive">Sensitive</option>
-                    <option value="unsure">Not Sure</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="consultFitzpatrick" class="block text-sm font-medium text-neutral-700 mb-1">Skin Tone *</label>
-                  <select id="consultFitzpatrick" name="skinTone" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                    <option value="">Select skin tone</option>
-                    <option value="very-fair">Very Fair (Burns easily)</option>
-                    <option value="fair">Fair (Burns, then tans)</option>
-                    <option value="medium">Medium (Tans easily)</option>
-                    <option value="olive">Olive</option>
-                    <option value="brown">Brown</option>
-                    <option value="dark-brown">Dark Brown / Black</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label for="consultConcerns" class="block text-sm font-medium text-neutral-700 mb-1">Primary Skin Concerns *</label>
-                <select id="consultConcerns" name="primaryConcerns" required
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                  <option value="">Select your main concern</option>
-                  <option value="acne">Acne / Breakouts</option>
-                  <option value="aging">Fine Lines / Wrinkles</option>
-                  <option value="hyperpigmentation">Dark Spots / Hyperpigmentation</option>
-                  <option value="dryness">Dryness / Dehydration</option>
-                  <option value="redness">Redness / Rosacea</option>
-                  <option value="texture">Uneven Texture / Large Pores</option>
-                  <option value="dullness">Dull / Tired Looking Skin</option>
-                  <option value="scarring">Acne Scars / Scarring</option>
-                  <option value="sun-damage">Sun Damage</option>
-                  <option value="general">General Maintenance / Prevention</option>
-                  <option value="multiple">Multiple Concerns</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="consultGoals" class="block text-sm font-medium text-neutral-700 mb-1">What are your skincare goals?</label>
-                <textarea id="consultGoals" name="skincareGoals" rows="2"
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors resize-none"
-                  placeholder="Tell us what you'd like to achieve with your skin..."></textarea>
-              </div>
-            </div>
-
-            <!-- History & Preferences -->
-            <div class="space-y-4 pt-4">
-              <h4 class="font-semibold text-neutral-800 text-sm uppercase tracking-wide border-b pb-2">History & Preferences</h4>
-              
-              <div>
-                <label for="consultTreatmentHistory" class="block text-sm font-medium text-neutral-700 mb-1">Previous Professional Treatments</label>
-                <select id="consultTreatmentHistory" name="treatmentHistory"
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                  <option value="">Have you had professional skincare treatments before?</option>
-                  <option value="never">Never - This would be my first</option>
-                  <option value="occasional">Occasional facials only</option>
-                  <option value="regular">Regular facials / treatments</option>
-                  <option value="advanced">Advanced treatments (peels, microneedling, etc.)</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="consultAllergies" class="block text-sm font-medium text-neutral-700 mb-1">Allergies or Sensitivities</label>
-                <textarea id="consultAllergies" name="allergies" rows="2"
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors resize-none"
-                  placeholder="List any known allergies to skincare ingredients, fragrances, latex, etc..."></textarea>
-              </div>
-
-              <div>
-                <label for="consultPreferred" class="block text-sm font-medium text-neutral-700 mb-1">Treatments of Interest</label>
-                <select id="consultPreferred" name="interestedTreatments"
-                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                  <option value="">Any specific treatments you're curious about?</option>
-                  <option value="facials">Custom Facials</option>
-                  <option value="peels">Chemical Peels</option>
-                  <option value="microneedling">Microneedling / SkinPen</option>
-                  <option value="prp">PRP / Vampire Facial</option>
-                  <option value="scalp">Scalp Treatments</option>
-                  <option value="unsure">Not sure - need guidance</option>
-                </select>
-              </div>
-
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label for="consultContact" class="block text-sm font-medium text-neutral-700 mb-1">Preferred Contact Method *</label>
-                  <select id="consultContact" name="contactMethod" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                    <option value="">How should we reach you?</option>
-                    <option value="phone">Phone Call</option>
-                    <option value="text">Text Message</option>
-                    <option value="email">Email</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="consultTime" class="block text-sm font-medium text-neutral-700 mb-1">Best Time to Contact *</label>
-                  <select id="consultTime" name="bestTime" required
-                    class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors bg-white">
-                    <option value="">When should we contact you?</option>
-                    <option value="morning">Morning (9am - 12pm)</option>
-                    <option value="afternoon">Afternoon (12pm - 5pm)</option>
-                    <option value="evening">Evening (5pm - 8pm)</option>
-                    <option value="anytime">Anytime</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3 pt-2">
-              <input type="checkbox" id="consultPrivacy" name="privacyConsent" required
-                class="mt-1 w-5 h-5 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
-              <label for="consultPrivacy" class="text-sm text-neutral-600">
-                I consent to Bliss Dermacare collecting this information for the purpose of providing skincare consultation services. 
-                My information will be kept confidential and not shared with third parties. *
-              </label>
-            </div>
-
-            <button type="submit"
-              class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
-              Request Free Consultation
-            </button>
-
-            <p class="text-center text-sm text-neutral-500">
-              Serving Pebble Creek, Tampa, Land O' Lakes, Lutz, New Tampa & surrounding Pasco/Hillsborough County areas
-            </p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- FAQ Section -->
   <section id="faq" class="py-14 bg-white">
-    <div class="max-w-4xl mx-auto px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900 mb-4">Frequently Asked Questions</h2>
-        <p class="text-xl text-neutral-600">Everything you need to know about our services</p>
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Questions</span>
+        <h2 class="text-4xl font-serif text-neutral-900">Frequently Asked</h2>
       </div>
 
-      <div class="space-y-4">
-        <!-- FAQ 1 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
+      <div class="space-y-3">
+        <details class="rounded-xl border border-neutral-200 p-6 group open:border-primary-200">
+          <summary class="font-semibold text-neutral-900 cursor-pointer list-none flex items-center justify-between text-base">
             How often should I get a facial?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </summary>
-          <p class="mt-4 text-neutral-600">For optimal results, we recommend getting a facial every 4-6 weeks to maintain healthy, glowing skin and address specific concerns.</p>
+          <p class="mt-4 text-neutral-600">For most people, every 4–6 weeks is ideal to maintain healthy, consistently clear skin and stay ahead of any concerns.</p>
         </details>
 
-        <!-- FAQ 2 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
-            What should I expect during my first visit?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <details class="rounded-xl border border-neutral-200 p-6 group open:border-primary-200">
+          <summary class="font-semibold text-neutral-900 cursor-pointer list-none flex items-center justify-between text-base">
+            What happens during my first visit?
+            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </summary>
-          <p class="mt-4 text-neutral-600">Your first visit includes a skin consultation to assess your skin type and concerns, followed by a customized treatment plan tailored to your needs.</p>
+          <p class="mt-4 text-neutral-600">We start with a brief skin assessment, discuss your goals, and then move into your treatment. No pressure, no sales pitch — just focused skincare.</p>
         </details>
 
-        <!-- FAQ 3 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
-            Is there any downtime after treatments?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <details class="rounded-xl border border-neutral-200 p-6 group open:border-primary-200">
+          <summary class="font-semibold text-neutral-900 cursor-pointer list-none flex items-center justify-between text-base">
+            Is there downtime after treatments?
+            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </summary>
-          <p class="mt-4 text-neutral-600">Most treatments have little to no downtime. Chemical peels may cause slight redness for 1-2 days. We'll provide detailed aftercare instructions for each service.</p>
+          <p class="mt-4 text-neutral-600">Most services have little to no downtime. Chemical peels may cause mild redness or flaking for 1–3 days. We'll always walk you through what to expect before you leave.</p>
         </details>
 
-        <!-- FAQ 4 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
-            Can I wear makeup after a facial?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <details class="rounded-xl border border-neutral-200 p-6 group open:border-primary-200">
+          <summary class="font-semibold text-neutral-900 cursor-pointer list-none flex items-center justify-between text-base">
+            What's your cancellation policy?
+            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </summary>
-          <p class="mt-4 text-neutral-600">We recommend avoiding makeup for at least 6-8 hours after your facial to allow your skin to fully absorb the treatment benefits.</p>
+          <p class="mt-4 text-neutral-600">We ask for at least 24 hours notice for cancellations or rescheduling. Life happens — just let us know as early as possible.</p>
         </details>
 
-        <!-- FAQ 5 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
-            What's the difference between a chemical peel and microdermabrasion?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <details class="rounded-xl border border-neutral-200 p-6 group open:border-primary-200">
+          <summary class="font-semibold text-neutral-900 cursor-pointer list-none flex items-center justify-between text-base">
+            Do you offer mobile / in-home services?
+            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </summary>
-          <p class="mt-4 text-neutral-600">Chemical peels use acids to exfoliate and resurface skin, while microdermabrasion physically removes dead skin cells. Both improve texture, but peels penetrate deeper for more dramatic results.</p>
-        </details>
-
-        <!-- FAQ 6 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
-            Do you offer consultations?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-          </summary>
-          <p class="mt-4 text-neutral-600">Yes! We offer free consultations to discuss your skincare goals and recommend the best treatment plan for your specific needs.</p>
-        </details>
-
-        <!-- FAQ 7 -->
-        <details class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow group">
-          <summary class="font-semibold text-lg text-neutral-900 cursor-pointer list-none flex items-center justify-between">
-            What is your cancellation policy?
-            <svg class="w-5 h-5 text-primary-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-          </summary>
-          <p class="mt-4 text-neutral-600">We require 24-hour notice for cancellations or rescheduling. Late cancellations may be subject to a fee. Please contact us as soon as possible if you need to change your appointment.</p>
+          <p class="mt-4 text-neutral-600">Yes. The Luxury In-Home Experience brings the full treatment to your door within a 10-mile radius of Pebble Creek. A brief consultation call is required before your first mobile booking.</p>
         </details>
       </div>
     </div>
   </section>
 
   <!-- Contact Section -->
-  <section id="contact" class="py-14 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900 mb-4">Get In Touch</h2>
-        <p class="text-xl text-neutral-600">We'd love to hear from you</p>
+  <section id="contact" class="py-14 bg-neutral-50">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Get In Touch</span>
+        <h2 class="text-4xl font-serif text-neutral-900">We'd love to hear from you.</h2>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Contact Info -->
-        <div class="space-y-8">
-          <div>
-            <h3 class="text-2xl font-bold text-neutral-900 mb-6">Contact Information</h3>
-            <div class="space-y-4">
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
-                  <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-neutral-900 mb-1">Phone</h4>
-                  <a href="tel:6093660857" class="text-neutral-600 hover:text-primary-600 transition-colors">(609) 366-0857</a>
-                </div>
-              </div>
-
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
-                  <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-neutral-900 mb-1">Email</h4>
-                  <a href="mailto:info@blissdermacare.com" class="text-neutral-600 hover:text-primary-600 transition-colors">info@blissdermacare.com</a>
-                </div>
-              </div>
-
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
-                  <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-neutral-900 mb-1">Hours</h4>
-                  <p class="text-neutral-600">By Appointment Only</p>
-                  <p class="text-neutral-600 text-sm mt-1">Monday - Saturday: 9am - 7pm</p>
-                </div>
-              </div>
-
-              <div class="flex items-start">
-                <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
-                  <svg class="w-6 h-6 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-neutral-900 mb-1">Follow Us</h4>
-                  <a href="https://instagram.com/blissdermacare" target="_blank" rel="noopener noreferrer" class="text-neutral-600 hover:text-primary-600 transition-colors">@blissdermacare</a>
-                </div>
-              </div>
-            </div>
+      <div class="grid md:grid-cols-3 gap-5 mb-10">
+        <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
           </div>
-
-          <div class="bg-neutral-50 rounded-2xl p-6">
-            <h4 class="font-semibold text-neutral-900 mb-3">Ready to book?</h4>
-            <p class="text-neutral-600 mb-4">Send a booking request with your preferred service and time, or call directly if you need help choosing.</p>
-            <a href="#booking" class="inline-flex items-center justify-center bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium shadow-sm hover:shadow-md">
-              Request Booking
-              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-            </a>
+          <h4 class="font-semibold text-neutral-900 mb-1">Phone</h4>
+          <a href="tel:6093660857" class="text-primary-600 hover:text-primary-700 transition-colors">(609) 366-0857</a>
+          <p class="text-sm text-neutral-400 mt-1">Mon–Sat, 9am–7pm</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
+          <h4 class="font-semibold text-neutral-900 mb-1">Email</h4>
+          <a href="mailto:info@blissdermacare.com" class="text-primary-600 hover:text-primary-700 transition-colors">info@blissdermacare.com</a>
+          <p class="text-sm text-neutral-400 mt-1">Reply within 24 hours</p>
         </div>
+        <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </div>
+          <h4 class="font-semibold text-neutral-900 mb-1">Instagram</h4>
+          <a href="https://instagram.com/blissdermacare" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700 transition-colors">@blissdermacare</a>
+          <p class="text-sm text-neutral-400 mt-1">DMs welcome</p>
+        </div>
+      </div>
 
-        <!-- Contact Image -->
-        <div class="relative">
-          <img src="https://images.unsplash.com/photo-1628451463982-09471e18aea8?w=800&h=1000&fit=crop&q=80" alt="Diverse spa reception area and beauty services" class="rounded-2xl shadow-xl w-full h-full object-cover" loading="lazy" />
-          <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-primary-200 rounded-2xl -z-10"></div>
-        </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm text-center">
+        <h3 class="text-2xl font-serif text-neutral-900 mb-3">Ready to reserve your spot?</h3>
+        <p class="text-neutral-600 mb-6">Head to our booking form to choose a service, date, and preferred time window. We'll confirm your appointment shortly after.</p>
+        <a href="#booking" class="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-full hover:bg-primary-700 transition-all font-medium shadow-sm hover:shadow-md">
+          Request Booking
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
       </div>
     </div>
   </section>
