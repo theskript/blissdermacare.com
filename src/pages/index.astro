@@ -109,8 +109,194 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Treatments Section -->
-  <section id="treatments" class="py-12 md:py-16 bg-neutral-50">
+  <!-- Services Preview -->
+  <section class="py-14 bg-white">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">What We Offer</span>
+          <h2 class="text-4xl font-serif text-neutral-900">Popular treatments.</h2>
+        </div>
+        <a href="/services/" class="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          View all services
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-serif text-neutral-900 mb-2">Signature Radiance Facial</h3>
+            <p class="text-neutral-500 text-sm mb-4">Deep cleansing, exfoliation, extractions & custom mask. Tailored to your skin every visit.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-primary-600">$99</span>
+              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vampire Facial PRP" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-serif text-neutral-900 mb-2">Vampire Facial (PRP)</h3>
+            <p class="text-neutral-500 text-sm mb-4">Advanced PRP + microneedling for fines lines, scars & overall skin texture improvement.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-primary-600">$380</span>
+              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-serif text-neutral-900 mb-2">Lash Lift & Brow Lamination</h3>
+            <p class="text-neutral-500 text-sm mb-4">Define and lift your natural brows and lashes — no extensions required. Lasts 6–8 weeks.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-primary-600">$72</span>
+              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 text-center sm:hidden">
+        <a href="/services/" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          View all services
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Strip -->
+  <section class="py-14 bg-[#faf9f7]">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-5">
+        <a href="/book/" class="group rounded-2xl bg-neutral-900 text-white p-8 flex flex-col hover:bg-neutral-800 transition-colors">
+          <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Book an Appointment</h3>
+          <p class="text-neutral-400 text-sm mb-5 flex-1">Choose your service, pick a date and time, and submit your request. We'll confirm shortly.</p>
+          <span class="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">Request Booking <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/consultation/" class="group rounded-2xl bg-primary-50 border border-primary-100 text-neutral-900 p-8 flex flex-col hover:bg-primary-100 transition-colors">
+          <div class="w-10 h-10 bg-primary-200 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Free Consultation</h3>
+          <p class="text-neutral-600 text-sm mb-5 flex-1">Not sure where to start? Tell us about your skin and we'll reach out with a personalized plan.</p>
+          <span class="text-sm font-medium text-primary-600 flex items-center gap-2 group-hover:gap-3 transition-all">Get Started <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/demo-model/" class="group rounded-2xl bg-white border border-neutral-200 text-neutral-900 p-8 flex flex-col hover:border-primary-300 hover:shadow-md transition-all">
+          <div class="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Demo Model Program</h3>
+          <p class="text-neutral-600 text-sm mb-5 flex-1">Get professional treatments at 50–80% off. Same products, same care — reduced pricing in exchange for your feedback.</p>
+          <span class="text-sm font-medium text-neutral-700 flex items-center gap-2 group-hover:gap-3 transition-all">Apply Now <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">What We Offer</span>
+          <h2 class="text-4xl font-serif text-neutral-900">Popular treatments.</h2>
+        </div>
+        <a href="/services/" class="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          View all services
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-serif text-neutral-900 mb-2">Signature Radiance Facial</h3>
+            <p class="text-neutral-500 text-sm mb-4">Deep cleansing, exfoliation, extractions & custom mask. Tailored to your skin every visit.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-primary-600">$99</span>
+              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vampire Facial PRP" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-serif text-neutral-900 mb-2">Vampire Facial (PRP)</h3>
+            <p class="text-neutral-500 text-sm mb-4">Advanced PRP + microneedling for fines lines, scars & overall skin texture improvement.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-primary-600">$380</span>
+              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-serif text-neutral-900 mb-2">Lash Lift & Brow Lamination</h3>
+            <p class="text-neutral-500 text-sm mb-4">Define and lift your natural brows and lashes — no extensions required. Lasts 6–8 weeks.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold text-primary-600">$72</span>
+              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 text-center sm:hidden">
+        <a href="/services/" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          View all services
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Strip -->
+  <section class="py-14 bg-[#faf9f7]">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-5">
+        <a href="/book/" class="group rounded-2xl bg-neutral-900 text-white p-8 flex flex-col hover:bg-neutral-800 transition-colors">
+          <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Book an Appointment</h3>
+          <p class="text-neutral-400 text-sm mb-5 flex-1">Choose your service, pick a date and time, and submit your request. We'll confirm shortly.</p>
+          <span class="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">Request Booking <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/consultation/" class="group rounded-2xl bg-primary-50 border border-primary-100 text-neutral-900 p-8 flex flex-col hover:bg-primary-100 transition-colors">
+          <div class="w-10 h-10 bg-primary-200 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Free Consultation</h3>
+          <p class="text-neutral-600 text-sm mb-5 flex-1">Not sure where to start? Tell us about your skin and we'll reach out with a personalized plan.</p>
+          <span class="text-sm font-medium text-primary-600 flex items-center gap-2 group-hover:gap-3 transition-all">Get Started <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/demo-model/" class="group rounded-2xl bg-white border border-neutral-200 text-neutral-900 p-8 flex flex-col hover:border-primary-300 hover:shadow-md transition-all">
+          <div class="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Demo Model Program</h3>
+          <p class="text-neutral-600 text-sm mb-5 flex-1">Get professional treatments at 50–80% off. Same products, same care — reduced pricing in exchange for your feedback.</p>
+          <span class="text-sm font-medium text-neutral-700 flex items-center gap-2 group-hover:gap-3 transition-all">Apply Now <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <h2 class="text-4xl md:text-5xl font-bold font-serif text-neutral-900 mb-4">Treatment Packages</h2>

@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const faqs = [
+  {
+    q: "Do I need an appointment, or can I walk in?",
+    a: "Appointments are required. We're a private studio, not a drop-in salon. Book online through our booking page or reach out directly by phone or text. Same-day appointments may be available depending on the schedule — just ask."
+  },
+  {
+    q: "How do I know which treatment is right for me?",
+    a: "Not sure where to start? That's what our free consultation is for. Submit a consultation request and we'll reach out to assess your skin type, concerns, and goals — then recommend the best starting point. No pressure, no upselling."
+  },
+  {
+    q: "What's included in the Demo Model Program?",
+    a: "The Demo Model Program gives you access to professional skincare treatments at 50–80% off the standard rate. You'll receive the exact same products and expertise as any other client. In return, we ask for honest feedback and — optionally, with your written consent — to document your results. Availability is limited and varies by what techniques are being practiced."
+  },
+  {
+    q: "What should I do before and after a facial or treatment?",
+    a: "Before: Avoid retinoids, exfoliants, and waxing for at least 48 hours prior. Arrive with clean skin if possible. After: Skip heavy makeup for 24 hours, avoid direct sun exposure, stay hydrated, and follow the specific aftercare instructions given to you post-treatment. We'll always walk you through what to do."
+  },
+  {
+    q: "Do you offer in-home (mobile) services?",
+    a: "Yes — through our Luxury In-Home Experience package. We bring the same professional equipment and products to your home. A brief consultation call is required before your first mobile booking. Service is available within a 10-mile radius of Pebble Creek, FL. Travel fees may apply."
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: "We accept all major credit cards (Visa, Mastercard, Amex), cash, Zelle, Venmo, and Apple Pay. Payment is collected at the time of service."
+  },
+  {
+    q: "What is your cancellation policy?",
+    a: "We ask for at least 24 hours notice if you need to cancel or reschedule. Late cancellations or no-shows may be subject to a cancellation fee. Life happens — just communicate with us and we'll do our best to work it out."
+  }
+];
+---
+
+<Layout title="FAQ – Bliss Dermacare" description="Answers to common questions about booking, treatments, the Demo Model Program, cancellations, and more at Bliss Dermacare in Pebble Creek, FL.">
+
+  <!-- Page Header -->
+  <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Common Questions</span>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4">FAQ</h1>
+      <p class="text-lg text-neutral-600">Everything you need to know before your first (or next) appointment.</p>
+    </div>
+  </section>
+
+  <!-- FAQ Accordion -->
+  <section class="py-14 bg-white">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="space-y-3" id="faq-list">
+        {faqs.map((faq, i) => (
+          <div class="bg-[#faf9f7] rounded-2xl border border-neutral-200 overflow-hidden" data-faq-item>
+            <button
+              class="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-neutral-100/60 transition-colors"
+              aria-expanded="false"
+              data-faq-btn
+            >
+              <span class="font-semibold text-neutral-900 text-base">{faq.q}</span>
+              <svg class="w-5 h-5 text-primary-600 flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-faq-icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="hidden px-6 pb-5" data-faq-answer>
+              <p class="text-neutral-600 leading-relaxed">{faq.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 text-center bg-primary-50 rounded-2xl p-8 border border-primary-100">
+        <h2 class="text-2xl font-serif text-neutral-900 mb-3">Still have questions?</h2>
+        <p class="text-neutral-600 mb-6">We're happy to answer anything before you commit to booking.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/contact/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium text-sm">
+            Contact Us
+          </a>
+          <a href="/consultation/" class="inline-flex items-center gap-2 border border-neutral-300 text-neutral-700 px-6 py-3 rounded-full hover:border-primary-400 hover:text-primary-600 transition-all font-medium text-sm">
+            Free Consultation
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll('[data-faq-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('[data-faq-item]');
+      const answer = item?.querySelector('[data-faq-answer]');
+      const icon = btn.querySelector('[data-faq-icon]');
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+      // Close all others
+      document.querySelectorAll('[data-faq-item]').forEach(el => {
+        el.querySelector('[data-faq-btn]')?.setAttribute('aria-expanded', 'false');
+        el.querySelector('[data-faq-answer]')?.classList.add('hidden');
+        (el.querySelector('[data-faq-icon]') as HTMLElement | null)?.style.setProperty('transform', '');
+      });
+
+      // Toggle current
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        answer?.classList.remove('hidden');
+        if (icon instanceof HTMLElement) icon.style.transform = 'rotate(180deg)';
+      }
+    });
+  });
+</script>
