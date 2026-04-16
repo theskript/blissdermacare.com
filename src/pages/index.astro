@@ -3,37 +3,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Bliss Dermacare - Professional Aesthetician Services">
-  <!-- Upcoming Events Banner -->
-  <section class="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 text-white py-3 md:py-4">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 text-center">
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center justify-center w-6 h-6 bg-white/20 rounded-full">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          </span>
-          <span class="font-semibold text-sm md:text-base">Upcoming Events</span>
-        </div>
-        <div class="hidden md:block w-px h-6 bg-white/30"></div>
-        <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-sm md:text-base">
-          <span class="flex items-center gap-1.5">
-            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-            <strong>March 16:</strong> Spring Glow Facial Event
-          </span>
-          <span class="hidden sm:inline text-white/50">|</span>
-          <span class="flex items-center gap-1.5">
-            <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
-            <strong>March 22:</strong> Free Skin Consultation Day
-          </span>
-        </div>
-        <a href="#consultation" class="mt-2 md:mt-0 inline-flex items-center text-sm font-medium bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full transition-colors">
-          Reserve Your Spot
-          <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Simple Hero Section -->
+  <!-- Hero Section -->
   <section class="bg-[#f6f1eb] py-12 md:py-16 lg:py-20">
     <div class="max-w-6xl mx-auto px-6 lg:px-12">
       <div class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
@@ -46,15 +16,15 @@ import Layout from '../layouts/Layout.astro';
             Bliss Dermacare offers customized facials and skin-focused treatments designed to restore clarity, calm, and confidence without the rushed feel of a typical medspa visit.
           </p>
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <a href="#booking"
+            <a href="/book/"
                class="group inline-flex items-center justify-center gap-2 bg-neutral-900 px-6 py-3 font-medium text-white transition-colors hover:bg-neutral-800 md:px-8 md:py-4">
-              Reserve Your Appointment
+              Book an Appointment
               <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
               </svg>
             </a>
-            <a href="#treatments" class="inline-flex items-center justify-center gap-2 font-medium text-primary-700 transition-colors hover:text-primary-800">
-              View Treatment Options
+            <a href="/services/" class="inline-flex items-center justify-center gap-2 font-medium text-primary-700 transition-colors hover:text-primary-800">
+              View Services
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
@@ -76,98 +46,6 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </figure>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Booking Process -->
-  <section class="py-14 bg-[#faf9f7]">
-    <div class="max-w-6xl mx-auto px-6 lg:px-12">
-      <div class="max-w-3xl mb-10">
-        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">How Booking Works</span>
-        <h2 class="text-4xl lg:text-5xl font-serif text-neutral-900 leading-[1.1] mb-4">Simple, direct, and easy to confirm.</h2>
-        <p class="text-lg text-neutral-600 leading-relaxed">Choose the service you want, request a time that works for you, and receive a confirmed appointment after review. No third-party widget, no extra tabs, no confusion.</p>
-      </div>
-
-      <div class="grid gap-5 md:grid-cols-3">
-        <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">1</div>
-          <h3 class="mb-2 text-xl font-serif text-neutral-900">Pick your treatment</h3>
-          <p class="text-neutral-600">Review packages and services first so your booking request matches the care you actually want.</p>
-        </div>
-        <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">2</div>
-          <h3 class="mb-2 text-xl font-serif text-neutral-900">Choose a time slot</h3>
-          <p class="text-neutral-600">Select your preferred day and appointment window from the booking form below.</p>
-        </div>
-        <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">3</div>
-          <h3 class="mb-2 text-xl font-serif text-neutral-900">Receive confirmation</h3>
-          <p class="text-neutral-600">Bliss Dermacare follows up promptly to confirm your timeslot and any pre-appointment details.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Preview -->
-  <section class="py-14 bg-white">
-    <div class="max-w-6xl mx-auto px-6 lg:px-12">
-      <div class="flex items-end justify-between mb-10">
-        <div>
-          <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">What We Offer</span>
-          <h2 class="text-4xl font-serif text-neutral-900">Popular treatments.</h2>
-        </div>
-        <a href="/services/" class="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
-          View all services
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-        </a>
-      </div>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-          <div class="h-48 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-serif text-neutral-900 mb-2">Signature Radiance Facial</h3>
-            <p class="text-neutral-500 text-sm mb-4">Deep cleansing, exfoliation, extractions & custom mask. Tailored to your skin every visit.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$99</span>
-              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
-            </div>
-          </div>
-        </div>
-        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-          <div class="h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vampire Facial PRP" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-serif text-neutral-900 mb-2">Vampire Facial (PRP)</h3>
-            <p class="text-neutral-500 text-sm mb-4">Advanced PRP + microneedling for fines lines, scars & overall skin texture improvement.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$380</span>
-              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
-            </div>
-          </div>
-        </div>
-        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-          <div class="h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-serif text-neutral-900 mb-2">Lash Lift & Brow Lamination</h3>
-            <p class="text-neutral-500 text-sm mb-4">Define and lift your natural brows and lashes — no extensions required. Lasts 6–8 weeks.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$72</span>
-              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mt-8 text-center sm:hidden">
-        <a href="/services/" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
-          View all services
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-        </a>
       </div>
     </div>
   </section>
