@@ -262,6 +262,10 @@ import Layout from '../../layouts/Layout.astro';
             <!-- Date -->
             <div>
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Date *</h2>
+              <div class="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
+                <svg class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-sm text-amber-800">Appointments must be booked at least <strong>24 hours in advance</strong>. Same-day bookings are not available.</p>
+              </div>
               <input type="date" id="bookingDate" name="date" required
                 class="px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
             </div>
@@ -309,6 +313,68 @@ import Layout from '../../layouts/Layout.astro';
                 class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm resize-none"></textarea>
             </div>
 
+            <!-- Discount Eligibility -->
+            <div>
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-2">Discount Eligibility</h2>
+              <p class="text-sm text-neutral-500 mb-4">We're proud to offer savings to those who serve our community. Select a category if applicable — valid ID or credentials will be verified at your appointment.</p>
+              <div class="space-y-2">
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-neutral-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="none" checked class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <p class="text-sm font-medium text-neutral-700">No discount — standard rate applies</p>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="first-responder-veteran" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold text-neutral-900">First Responder / Veteran</p>
+                      <p class="text-xs text-neutral-500 mt-0.5">Active or retired military, police, fire, EMT, paramedic</p>
+                    </div>
+                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">15% off</span>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="teacher-educator" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold text-neutral-900">Teacher / Educator</p>
+                      <p class="text-xs text-neutral-500 mt-0.5">K–12, college, university, or licensed childcare professional</p>
+                    </div>
+                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="senior-65-plus" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold text-neutral-900">Senior</p>
+                      <p class="text-xs text-neutral-500 mt-0.5">Age 65 and older — valid government-issued ID required</p>
+                    </div>
+                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="student" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold text-neutral-900">Student</p>
+                      <p class="text-xs text-neutral-500 mt-0.5">Enrolled full- or part-time at any accredited institution</p>
+                    </div>
+                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
+                  </div>
+                </label>
+
+              </div>
+              <p class="text-xs text-neutral-400 mt-3 flex items-start gap-1.5">
+                <svg class="w-3.5 h-3.5 text-neutral-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Discount applied to service total at time of appointment upon verification. One discount per visit. Cannot be combined with other offers.
+              </p>
+            </div>
+
             <!-- Confirmation -->
             <div>
               <label class="block text-sm font-medium text-neutral-700 mb-3">How would you like us to confirm?</label>
@@ -326,6 +392,29 @@ import Layout from '../../layouts/Layout.astro';
                   <span class="text-sm text-neutral-700">Email</span>
                 </label>
               </div>
+            </div>
+
+            <!-- Price Summary -->
+            <div id="price-summary" class="hidden rounded-2xl border-2 border-neutral-200 overflow-hidden">
+              <div class="bg-neutral-50 px-5 py-3.5 border-b border-neutral-200 flex items-center gap-2">
+                <svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <h2 class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">Booking Estimate</h2>
+              </div>
+              <div class="p-5 space-y-3">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-neutral-600" id="summary-service-label">—</span>
+                  <span class="font-semibold text-neutral-900" id="summary-service-price">—</span>
+                </div>
+                <div id="summary-discount-row" class="hidden flex justify-between items-center text-sm">
+                  <span class="text-emerald-700" id="summary-discount-label">—</span>
+                  <span class="font-semibold text-emerald-700" id="summary-discount-amount">—</span>
+                </div>
+                <div class="border-t border-neutral-200 pt-3 flex justify-between items-baseline">
+                  <span class="text-sm font-bold text-neutral-900">Estimated Total</span>
+                  <span class="text-2xl font-bold text-primary-600" id="summary-total">—</span>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-400 px-5 pb-4 -mt-1">Estimate only — final price confirmed at your appointment.</p>
             </div>
 
             <button type="submit"
@@ -356,6 +445,29 @@ import Layout from '../../layouts/Layout.astro';
             <p class="text-sm text-neutral-600 mb-1">Bliss Dermacare Studio</p>
             <p class="text-sm text-neutral-900 font-medium">Pebble Creek, FL 33544</p>
             <p class="text-xs text-neutral-500 mt-2">Exact address provided upon booking confirmation.</p>
+          </div>
+
+          <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-100">
+            <h3 class="font-semibold text-neutral-900 mb-1">Community Discounts</h3>
+            <p class="text-xs text-neutral-500 mb-4">Select your category in the form. Valid ID or credentials verified at appointment. One discount per visit.</p>
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-sm text-neutral-700">First Responders &amp; Veterans</span>
+                <span class="text-sm font-bold text-emerald-700">15% off</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-sm text-neutral-700">Teachers &amp; Educators</span>
+                <span class="text-sm font-bold text-emerald-700">10% off</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-sm text-neutral-700">Seniors (65+)</span>
+                <span class="text-sm font-bold text-emerald-700">10% off</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-sm text-neutral-700">Students</span>
+                <span class="text-sm font-bold text-emerald-700">10% off</span>
+              </div>
+            </div>
           </div>
 
           <div class="bg-neutral-900 rounded-2xl p-6 text-white">
@@ -390,4 +502,233 @@ import Layout from '../../layouts/Layout.astro';
       </div>
     </div>
   </section>
+
+  <script>
+    (function () {
+      const PRICES: Record<string, number> = {
+        'signature-radiance-facial': 99,
+        'age-defying-renewal': 149,
+        'brightening-peel': 128,
+        'clear-skin-treatment': 111,
+        'diamond-glow': 115,
+        'teen-skincare-facial': 64,
+        'lash-extensions': 153,
+        'lash-extensions-fill': 43,
+        'lash-lift-brow-lamination': 72,
+        'body-waxing': 45,
+        'vampire-facial-prp': 380,
+        'scalp-therapy': 213,
+        'hairline-restoration': 680,
+        'fresh-start-collection': 280,
+        'radiant-glow-ritual': 665,
+        'ultimate-transformation': 1425,
+        'luxury-in-home': 170,
+      };
+
+      const SERVICE_LABELS: Record<string, string> = {
+        'signature-radiance-facial': 'Signature Radiance Facial',
+        'age-defying-renewal': 'Age-Defying Renewal',
+        'brightening-peel': 'Brightening Peel',
+        'clear-skin-treatment': 'Clear Skin Treatment',
+        'diamond-glow': 'Diamond Glow',
+        'teen-skincare-facial': 'Teen Skincare Facial',
+        'lash-extensions': 'Lash Extensions',
+        'lash-extensions-fill': 'Lash Extensions Fill',
+        'lash-lift-brow-lamination': 'Lash Lift & Brow Lamination',
+        'body-waxing': 'Body Waxing',
+        'vampire-facial-prp': 'Vampire Facial (PRP)',
+        'scalp-therapy': 'Scalp Therapy',
+        'hairline-restoration': 'Hairline Restoration',
+        'fresh-start-collection': 'Fresh Start (3 sessions)',
+        'radiant-glow-ritual': 'Radiant Glow Ritual (6 sessions)',
+        'ultimate-transformation': 'Ultimate Transformation (12 sessions)',
+        'luxury-in-home': 'Luxury In-Home',
+        'other': 'Other / Not Sure',
+      };
+
+      const DISCOUNT_PCT: Record<string, number> = {
+        'none': 0,
+        'first-responder-veteran': 15,
+        'teacher-educator': 10,
+        'senior-65-plus': 10,
+        'student': 10,
+      };
+
+      const DISCOUNT_LABELS: Record<string, string> = {
+        'first-responder-veteran': 'First Responder / Veteran (15% off)',
+        'teacher-educator': 'Teacher / Educator (10% off)',
+        'senior-65-plus': 'Senior 65+ (10% off)',
+        'student': 'Student (10% off)',
+      };
+
+      function fmt(n: number): string {
+        return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      function update() {
+        const serviceInput = document.querySelector<HTMLInputElement>('input[name="service"]:checked');
+        const discountInput = document.querySelector<HTMLInputElement>('input[name="discount"]:checked');
+        const summary = document.getElementById('price-summary')!;
+
+        if (!serviceInput) {
+          summary.classList.add('hidden');
+          return;
+        }
+
+        summary.classList.remove('hidden');
+
+        const svc = serviceInput.value;
+        const disc = discountInput?.value ?? 'none';
+        const basePrice = PRICES[svc];
+
+        const labelEl = document.getElementById('summary-service-label')!;
+        const priceEl = document.getElementById('summary-service-price')!;
+        const discRow = document.getElementById('summary-discount-row')!;
+        const discLabelEl = document.getElementById('summary-discount-label')!;
+        const discAmtEl = document.getElementById('summary-discount-amount')!;
+        const totalEl = document.getElementById('summary-total')!;
+
+        labelEl.textContent = SERVICE_LABELS[svc] ?? svc;
+
+        if (basePrice === undefined) {
+          priceEl.textContent = 'TBD';
+          discRow.classList.add('hidden');
+          totalEl.textContent = 'TBD';
+          return;
+        }
+
+        priceEl.textContent = fmt(basePrice);
+
+        const pct = DISCOUNT_PCT[disc] ?? 0;
+        if (pct > 0) {
+          const savings = basePrice * pct / 100;
+          discLabelEl.textContent = DISCOUNT_LABELS[disc];
+          discAmtEl.textContent = '−' + fmt(savings);
+          discRow.classList.remove('hidden');
+          totalEl.textContent = fmt(basePrice - savings);
+        } else {
+          discRow.classList.add('hidden');
+          totalEl.textContent = fmt(basePrice);
+        }
+      }
+
+      document.querySelectorAll<HTMLInputElement>('input[name="service"], input[name="discount"]')
+        .forEach(el => el.addEventListener('change', update));
+
+      // Enforce strict 24-hour advance booking (exact datetime, not just calendar day)
+      const dateInput = document.getElementById('bookingDate') as HTMLInputElement;
+
+      function toDateStr(d: Date): string {
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+
+      // Parse a time slot value like "10:00am", "1:30pm" into total minutes since midnight
+      function slotToMinutes(value: string): number {
+        const m = value.match(/^(\d+):(\d+)(am|pm)$/i);
+        if (!m) return -1;
+        let h = parseInt(m[1]);
+        const min = parseInt(m[2]);
+        const period = m[3].toLowerCase();
+        if (period === 'pm' && h !== 12) h += 12;
+        if (period === 'am' && h === 12) h = 0;
+        return h * 60 + min;
+      }
+
+      function refreshTimeSlots() {
+        const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000); // now + 24 h
+        const cutoffDateStr = toDateStr(cutoff);
+        const cutoffMinutes = cutoff.getHours() * 60 + cutoff.getMinutes();
+        const selectedDate = dateInput?.value ?? '';
+
+        // Check if selected date is a Saturday (day 6); parse as local date
+        const parsedDay = selectedDate ? new Date(selectedDate + 'T00:00:00').getDay() : -1;
+        const isSunday = parsedDay === 0;
+        const isSaturday = parsedDay === 6;
+        const SAT_LAST_SLOT = 18 * 60; // 6:00 PM in minutes
+
+        document.querySelectorAll<HTMLInputElement>('input[name="timeslot"]').forEach(input => {
+          const slotMins = slotToMinutes(input.value);
+          // All slots unavailable on Sundays
+          const isSundaySlot = isSunday;
+          // Disable slots past 6 PM on Saturdays
+          const afterSatClose = isSaturday && slotMins > SAT_LAST_SLOT;
+          // Disable slots that fall within the 24-hour window on the cutoff date
+          const tooSoon = selectedDate === cutoffDateStr && slotMins !== -1 && slotMins <= cutoffMinutes;
+          const disabled = isSundaySlot || afterSatClose || tooSoon;
+
+          input.disabled = disabled;
+          if (disabled && input.checked) input.checked = false;
+
+          const label = input.closest('label') as HTMLElement | null;
+          const card = input.nextElementSibling as HTMLElement | null;
+          if (label) {
+            label.classList.toggle('cursor-not-allowed', disabled);
+            label.classList.toggle('cursor-pointer', !disabled);
+          }
+          if (card) {
+            card.classList.toggle('opacity-30', disabled);
+            card.classList.toggle('pointer-events-none', disabled);
+          }
+        });
+      }
+
+      if (dateInput) {
+        const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        dateInput.min = toDateStr(cutoff);
+        dateInput.addEventListener('change', () => {
+          if (dateInput.value) {
+            const day = new Date(dateInput.value + 'T00:00:00').getDay();
+            if (day === 0) {
+              dateInput.setCustomValidity('Sundays are unavailable. Please choose another day.');
+              dateInput.reportValidity();
+            } else {
+              dateInput.setCustomValidity('');
+            }
+          }
+          refreshTimeSlots();
+        });
+        refreshTimeSlots();
+      }
+
+      const form = document.querySelector('form[name="appointment-booking"]');
+      form?.addEventListener('submit', (e) => {
+        const d = document.getElementById('bookingDate') as HTMLInputElement;
+        if (d?.value && new Date(d.value + 'T00:00:00').getDay() === 0) {
+          e.preventDefault();
+          d.setCustomValidity('Sundays are unavailable. Please choose another day.');
+          d.reportValidity();
+          return;
+        }
+        const t = document.querySelector<HTMLInputElement>('input[name="timeslot"]:checked');
+        if (d?.value && t?.value) {
+          const slotMins = slotToMinutes(t.value);
+          const slotHours = Math.floor(slotMins / 60);
+          const slotMinutes = slotMins % 60;
+          const selectedDT = new Date(d.value + 'T00:00:00');
+          selectedDT.setHours(slotHours, slotMinutes, 0, 0);
+          const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          if (selectedDT < cutoff) {
+            e.preventDefault();
+            d.setCustomValidity('Please select a date and time at least 24 hours from now.');
+            d.reportValidity();
+            return;
+          }
+        } else if (d?.value) {
+          // No time selected yet — date-only check still applies
+          const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          const selectedDT = new Date(d.value + 'T00:00:00');
+          if (selectedDT < new Date(toDateStr(cutoff) + 'T00:00:00')) {
+            e.preventDefault();
+            d.setCustomValidity('Please select a date at least 24 hours from now.');
+            d.reportValidity();
+            return;
+          }
+        }
+        d?.setCustomValidity('');
+      });
+    })();
+  </script>
 </Layout>
