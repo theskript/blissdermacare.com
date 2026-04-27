@@ -399,6 +399,70 @@ import Layout from '../../layouts/Layout.astro';
               </p>
             </div>
 
+            <!-- Referral Source -->
+            <div>
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-4">How Did You Find Us?</h2>
+              <p class="text-sm text-neutral-500 mb-4">Let us know where you heard about Bliss Dermacare — it helps us a lot!</p>
+              <div class="space-y-2">
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="referral" value="groupon" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div>
+                    <p class="text-sm font-semibold text-neutral-900">Groupon</p>
+                    <p class="text-xs text-neutral-500">I found a deal or voucher on Groupon</p>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="referral" value="google" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div>
+                    <p class="text-sm font-semibold text-neutral-900">Google Search</p>
+                    <p class="text-xs text-neutral-500">I found you via Google or Google Maps</p>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="referral" value="instagram-facebook" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div>
+                    <p class="text-sm font-semibold text-neutral-900">Instagram / Facebook</p>
+                    <p class="text-xs text-neutral-500">I saw a post, reel, or ad on social media</p>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="referral" value="friend-family" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div>
+                    <p class="text-sm font-semibold text-neutral-900">Friend or Family</p>
+                    <p class="text-xs text-neutral-500">Someone referred me</p>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="referral" value="yelp" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div>
+                    <p class="text-sm font-semibold text-neutral-900">Yelp</p>
+                    <p class="text-xs text-neutral-500">I found a review or listing on Yelp</p>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="referral" value="other" class="w-4 h-4 accent-primary-600 shrink-0" />
+                  <div>
+                    <p class="text-sm font-semibold text-neutral-900">Other</p>
+                    <p class="text-xs text-neutral-500">Somewhere else — feel free to mention it in the notes</p>
+                  </div>
+                </label>
+
+              </div>
+
+              <!-- Groupon voucher code field, shown only when Groupon is selected -->
+              <div id="groupon-code-field" class="hidden mt-4">
+                <label for="grouponCode" class="block text-sm font-medium text-neutral-700 mb-1.5">Groupon Voucher Code <span class="text-neutral-400 font-normal">(optional)</span></label>
+                <input type="text" id="grouponCode" name="groupon-code" placeholder="e.g. GPN-XXXXX-XXXXX"
+                  class="w-full sm:w-80 px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+              </div>
+            </div>
+
             <!-- Confirmation -->
             <div>
               <label class="block text-sm font-medium text-neutral-700 mb-3">How would you like us to confirm?</label>
@@ -722,6 +786,16 @@ import Layout from '../../layouts/Layout.astro';
         });
         refreshTimeSlots();
       }
+
+      // Show/hide Groupon voucher code field based on referral selection
+      const grouponCodeField = document.getElementById('groupon-code-field');
+      document.querySelectorAll<HTMLInputElement>('input[name="referral"]').forEach(input => {
+        input.addEventListener('change', () => {
+          if (grouponCodeField) {
+            grouponCodeField.classList.toggle('hidden', input.value !== 'groupon');
+          }
+        });
+      });
 
       const form = document.querySelector('form[name="appointment-booking"]');
       form?.addEventListener('submit', (e) => {
