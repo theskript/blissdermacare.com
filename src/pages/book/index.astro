@@ -158,14 +158,31 @@ import Layout from '../../layouts/Layout.astro';
 
                   <div>
                     <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Body &amp; Wax</p>
-                    <label class="cursor-pointer block">
-                      <input type="radio" name="service" value="body-waxing" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Body Waxing</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$45</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">30–45 min</p>
-                      </div>
-                    </label>
+                    <div class="flex items-start gap-2 mb-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+                      <svg class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2m0-14a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <p class="text-xs text-amber-800"><strong>Age 21+</strong> required for waxing services</p>
+                    </div>
+                    <div class="space-y-2">
+                      <label class="cursor-pointer block">
+                        <input type="radio" name="service" value="body-and-face-waxing" class="sr-only peer" />
+                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                          <p class="font-semibold text-sm text-neutral-900">Body &amp; Face Waxing</p>
+                          <p class="text-xs text-neutral-600 mt-1">Facial, arms, legs, underarms</p>
+                          <p class="text-primary-600 font-bold text-sm mt-1.5">$59</p>
+                          <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer block">
+                        <input type="radio" name="service" value="brazilian-wax" class="sr-only peer" />
+                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                          <p class="font-semibold text-sm text-neutral-900">Brazilian Wax</p>
+                          <p class="text-xs text-neutral-600 mt-1">Complete bikini area hair removal</p>
+                          <p class="text-primary-600 font-bold text-sm mt-1.5">$85</p>
+                          <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
+                        </div>
+                      </label>
+                    </div>
                   </div>
 
                   <div>
@@ -232,15 +249,6 @@ import Layout from '../../layouts/Layout.astro';
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Ultimate Transformation</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$1,425</p>
                         <p class="text-xs text-neutral-400 mt-0.5">12 sessions</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                      <input type="radio" name="service" value="luxury-in-home" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Luxury In-Home</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$170</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">90 min</p>
                       </div>
                     </label>
 
@@ -501,6 +509,12 @@ import Layout from '../../layouts/Layout.astro';
             <a href="/consultation/" class="inline-block text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Free Consultation &rarr;</a>
           </div>
 
+          <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+            <h3 class="font-semibold text-neutral-900 mb-2">Complete Your Pre-Service Form</h3>
+            <p class="text-sm text-neutral-600 mb-4">First-time clients should fill out our pre-service questionnaire to ensure your safety and the best results.</p>
+            <a href="/pre-service-form/" class="inline-block text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">Start Form &rarr;</a>
+          </div>
+
           <div class="bg-white rounded-2xl p-6 border border-neutral-200">
             <h3 class="font-semibold text-neutral-900 mb-3">Payment Methods</h3>
             <div class="flex flex-wrap gap-2">
@@ -531,14 +545,14 @@ import Layout from '../../layouts/Layout.astro';
         'lash-extensions': 153,
         'lash-extensions-fill': 43,
         'lash-lift-brow-lamination': 72,
-        'body-waxing': 45,
+        'body-and-face-waxing': 59,
+        'brazilian-wax': 85,
         'vampire-facial-prp': 380,
         'scalp-therapy': 213,
         'hairline-restoration': 680,
         'fresh-start-collection': 280,
         'radiant-glow-ritual': 665,
         'ultimate-transformation': 1425,
-        'luxury-in-home': 170,
       };
 
       const SERVICE_LABELS: Record<string, string> = {
@@ -551,14 +565,14 @@ import Layout from '../../layouts/Layout.astro';
         'lash-extensions': 'Lash Extensions',
         'lash-extensions-fill': 'Lash Extensions Fill',
         'lash-lift-brow-lamination': 'Lash Lift & Brow Lamination',
-        'body-waxing': 'Body Waxing',
+        'body-and-face-waxing': 'Body & Face Waxing',
+        'brazilian-wax': 'Brazilian Wax',
         'vampire-facial-prp': 'Vampire Facial (PRP)',
         'scalp-therapy': 'Scalp Therapy',
         'hairline-restoration': 'Hairline Restoration',
         'fresh-start-collection': 'Fresh Start (3 sessions)',
         'radiant-glow-ritual': 'Radiant Glow Ritual (6 sessions)',
         'ultimate-transformation': 'Ultimate Transformation (12 sessions)',
-        'luxury-in-home': 'Luxury In-Home',
         'other': 'Other / Not Sure',
       };
 
