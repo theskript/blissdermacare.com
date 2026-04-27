@@ -324,47 +324,63 @@ import Layout from '../../layouts/Layout.astro';
                   <p class="text-sm font-medium text-neutral-700">No discount — standard rate applies</p>
                 </label>
 
-                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
-                  <input type="radio" name="discount" value="first-responder-veteran" class="w-4 h-4 accent-primary-600 shrink-0" />
-                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
-                    <div class="min-w-0">
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="first-responder-veteran" class="w-4 h-4 accent-primary-600 shrink-0 mt-0.5" />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-3 mb-1.5">
                       <p class="text-sm font-semibold text-neutral-900">First Responder / Veteran</p>
-                      <p class="text-xs text-neutral-500 mt-0.5">Active or retired military, police, fire, EMT, paramedic</p>
+                      <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">15% off</span>
                     </div>
-                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">15% off</span>
+                    <p class="text-xs text-neutral-500">Active or retired military, police, fire, EMT, paramedic</p>
+                    <div class="mt-2 flex items-start gap-1.5">
+                      <svg class="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                      <p class="text-xs text-amber-700"><span class="font-semibold">Proof required:</span> Military ID, DD-214, badge, or official department ID. Must be presented at appointment.</p>
+                    </div>
                   </div>
                 </label>
 
-                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
-                  <input type="radio" name="discount" value="teacher-educator" class="w-4 h-4 accent-primary-600 shrink-0" />
-                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
-                    <div class="min-w-0">
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="teacher-educator" class="w-4 h-4 accent-primary-600 shrink-0 mt-0.5" />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-3 mb-1.5">
                       <p class="text-sm font-semibold text-neutral-900">Teacher / Educator</p>
-                      <p class="text-xs text-neutral-500 mt-0.5">K–12, college, university, or licensed childcare professional</p>
+                      <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
                     </div>
-                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
+                    <p class="text-xs text-neutral-500">K–12, college, university, or licensed childcare professional</p>
+                    <div class="mt-2 flex items-start gap-1.5">
+                      <svg class="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                      <p class="text-xs text-amber-700"><span class="font-semibold">Proof required:</span> School-issued ID, pay stub, or official employment letter. Must be presented at appointment.</p>
+                    </div>
                   </div>
                 </label>
 
-                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
-                  <input type="radio" name="discount" value="senior-65-plus" class="w-4 h-4 accent-primary-600 shrink-0" />
-                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
-                    <div class="min-w-0">
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="senior-65-plus" class="w-4 h-4 accent-primary-600 shrink-0 mt-0.5" />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-3 mb-1.5">
                       <p class="text-sm font-semibold text-neutral-900">Senior</p>
-                      <p class="text-xs text-neutral-500 mt-0.5">Age 65 and older — valid government-issued ID required</p>
+                      <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
                     </div>
-                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
+                    <p class="text-xs text-neutral-500">Age 65 and older</p>
+                    <div class="mt-2 flex items-start gap-1.5">
+                      <svg class="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                      <p class="text-xs text-amber-700"><span class="font-semibold">Proof required:</span> Government-issued photo ID (driver's license, passport, or state ID) showing date of birth. Must be presented at appointment.</p>
+                    </div>
                   </div>
                 </label>
 
-                <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
-                  <input type="radio" name="discount" value="student" class="w-4 h-4 accent-primary-600 shrink-0" />
-                  <div class="flex-1 flex items-center justify-between gap-3 min-w-0">
-                    <div class="min-w-0">
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                  <input type="radio" name="discount" value="student" class="w-4 h-4 accent-primary-600 shrink-0 mt-0.5" />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-3 mb-1.5">
                       <p class="text-sm font-semibold text-neutral-900">Student</p>
-                      <p class="text-xs text-neutral-500 mt-0.5">Enrolled full- or part-time at any accredited institution</p>
+                      <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
                     </div>
-                    <span class="shrink-0 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">10% off</span>
+                    <p class="text-xs text-neutral-500">Enrolled full- or part-time at any accredited institution</p>
+                    <div class="mt-2 flex items-start gap-1.5">
+                      <svg class="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                      <p class="text-xs text-amber-700"><span class="font-semibold">Proof required:</span> Valid student ID or current class schedule/enrollment letter. Must be presented at appointment.</p>
+                    </div>
                   </div>
                 </label>
 
