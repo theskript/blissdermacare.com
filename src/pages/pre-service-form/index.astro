@@ -490,16 +490,16 @@ import Layout from '../../layouts/Layout.astro';
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const ageRadios = document.querySelectorAll('input[name="age_category"]');
-    const teenSection = document.getElementById('teen-section');
-    const adultSection = document.getElementById('adult-section');
-    const guardianInputs = document.querySelectorAll('#teen-section input, #teen-section select');
+    const teenSection = document.getElementById('teen-section') as HTMLElement | null;
+    const adultSection = document.getElementById('adult-section') as HTMLElement | null;
+    const guardianInputs = document.querySelectorAll<HTMLInputElement>('#teen-section input, #teen-section select');
 
     function updateAgeDisplay() {
-      const selectedAge = document.querySelector('input[name="age_category"]:checked');
+      const selectedAge = document.querySelector('input[name="age_category"]:checked') as HTMLInputElement | null;
       
       if (selectedAge?.value === 'under-18') {
-        teenSection.classList.remove('hidden');
-        adultSection.classList.add('hidden');
+        teenSection?.classList.remove('hidden');
+        adultSection?.classList.add('hidden');
         // Make guardian fields required
         guardianInputs.forEach(input => {
           if (input.name.startsWith('guardian_') && input.type !== 'checkbox') {
@@ -507,8 +507,8 @@ import Layout from '../../layouts/Layout.astro';
           }
         });
       } else if (selectedAge?.value === '18-plus') {
-        teenSection.classList.add('hidden');
-        adultSection.classList.remove('hidden');
+        teenSection?.classList.add('hidden');
+        adultSection?.classList.remove('hidden');
         // Remove required from guardian fields
         guardianInputs.forEach(input => {
           if (input.name.startsWith('guardian_') && input.type !== 'checkbox') {
