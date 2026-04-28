@@ -1,0 +1,284 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const roles = [
+  {
+    title: 'Licensed Esthetician',
+    type: 'Full-time or Part-time',
+    typeColor: 'bg-primary-100 text-primary-700',
+    description: "Join our client-facing team delivering customized facials, chemical peels, and advanced skin treatments. You'll work one-on-one with clients in a private, calm studio setting — no rushed medspa energy.",
+    requirements: [
+      'Active Florida State Esthetician License (required)',
+      '1+ years of professional experience preferred (new grads welcome to apply)',
+      'Experience with facials, extractions, and chemical peels',
+      'Strong communication and client care skills',
+      'Passion for skincare education and results-driven care',
+    ],
+    preferred: [
+      'Experience with microneedling, LED therapy, or lash/brow services',
+      'Familiarity with professional skincare brands (PCA Skin, Dermalogica, etc.)',
+    ],
+  },
+  {
+    title: 'Client Experience Coordinator',
+    type: 'Part-time',
+    typeColor: 'bg-neutral-100 text-neutral-700',
+    description: "Be the first point of contact for our clients — managing bookings, responding to inquiries, and keeping the studio running smoothly. This is a key role for someone who loves people, is organized, and takes pride in delivering a warm first impression.",
+    requirements: [
+      'Excellent written and verbal communication skills',
+      'Highly organized with strong attention to detail',
+      'Comfortable managing scheduling, follow-ups, and client communication',
+      'Professional demeanor and reliability',
+    ],
+    preferred: [
+      'Background in beauty, wellness, or hospitality',
+      'Experience with booking platforms or CRM tools',
+      'Social media savvy (helpful for occasional content support)',
+    ],
+  },
+  {
+    title: 'Part-time / Seasonal Esthetician',
+    type: 'Flexible',
+    typeColor: 'bg-amber-100 text-amber-700',
+    description: "Looking for flexible, high-quality work without a rigid schedule? We schedule part-time and seasonal estheticians to support demand during peak periods. Great for licensed estheticians who want supplemental income and a great working environment.",
+    requirements: [
+      'Active Florida State Esthetician License (required)',
+      'Availability for at least 2 days per week',
+      'Reliable, professional, and client-focused',
+    ],
+    preferred: [
+      'At least one specialized service beyond basic facials',
+      'Comfortable working independently in a private studio setting',
+    ],
+  },
+];
+---
+
+<Layout title="Careers – Bliss Dermacare" description="Join the Bliss Dermacare team in Pebble Creek, FL. We're hiring licensed estheticians and a client experience coordinator. Apply online today.">
+
+  <!-- Page Header -->
+  <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">We're Growing</span>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4">Join Our Team</h1>
+      <p class="text-lg text-neutral-600">We're looking for passionate, skilled professionals who care deeply about skincare and the people they serve.</p>
+    </div>
+  </section>
+
+  <!-- Why Join Us -->
+  <section class="py-14 bg-white">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Life at Bliss Dermacare</span>
+        <h2 class="text-4xl font-serif text-neutral-900">What it's like to work here.</h2>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-6">
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-neutral-900 mb-2">Small Team, Real Impact</h3>
+          <p class="text-sm text-neutral-600 leading-relaxed">You're not a number here. Every team member is valued, heard, and instrumental in how we operate and grow.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-neutral-900 mb-2">Professional-Grade Tools</h3>
+          <p class="text-sm text-neutral-600 leading-relaxed">We invest in quality — from the products we use to the equipment in the studio. You'll have what you need to do your best work.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-neutral-900 mb-2">Flexible Scheduling</h3>
+          <p class="text-sm text-neutral-600 leading-relaxed">We work with your life, not against it. Scheduling is built around availability and mutual respect — no last-minute chaos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open Roles -->
+  <section class="py-14 bg-[#faf9f7]">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Current Openings</span>
+        <h2 class="text-4xl font-serif text-neutral-900">Open positions.</h2>
+        <p class="text-neutral-600 mt-2">All roles are based out of our Pebble Creek, FL studio. Apply using the form below — no cover letter required, but tell us about yourself.</p>
+      </div>
+
+      <div class="space-y-6">
+        {roles.map((role, i) => (
+          <div class="bg-white rounded-2xl border border-neutral-200 p-8 hover:border-primary-200 hover:shadow-sm transition-all">
+            <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 class="text-2xl font-serif text-neutral-900">{role.title}</h3>
+                <span class={`inline-block mt-2 text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full ${role.typeColor}`}>{role.type}</span>
+              </div>
+              <a href="#apply" class="flex-shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors font-medium text-sm">
+                Apply for this role
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </a>
+            </div>
+            <p class="text-neutral-600 mb-6 leading-relaxed">{role.description}</p>
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-3">Requirements</p>
+                <ul class="space-y-2">
+                  {role.requirements.map(req => (
+                    <li class="flex items-start gap-2 text-sm text-neutral-600">
+                      <svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      {req}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-3">Nice to Have</p>
+                <ul class="space-y-2">
+                  {role.preferred.map(pref => (
+                    <li class="flex items-start gap-2 text-sm text-neutral-500">
+                      <svg class="w-4 h-4 text-neutral-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                      {pref}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Application Form -->
+  <section id="apply" class="py-14 bg-white">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid lg:grid-cols-5 gap-12">
+
+        <!-- Left: context -->
+        <div class="lg:col-span-2 space-y-6">
+          <div>
+            <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Apply Now</span>
+            <h2 class="text-4xl font-serif text-neutral-900 leading-tight">Tell us about yourself.</h2>
+          </div>
+          <p class="text-neutral-600 leading-relaxed">No lengthy cover letter required. Just give us an honest picture of who you are, your experience, and why Bliss Dermacare interests you.</p>
+          <p class="text-neutral-600 leading-relaxed">We review every application and will follow up within 3–5 business days if there's a potential fit — regardless of which role you apply for.</p>
+
+          <div class="bg-primary-50 border border-primary-100 rounded-2xl p-6 space-y-3">
+            <h3 class="font-semibold text-neutral-900 text-sm">What happens after you apply?</h3>
+            <ol class="space-y-2 text-sm text-neutral-600">
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-5 h-5 rounded-full bg-primary-200 text-primary-700 text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+                We review your application and experience.
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-5 h-5 rounded-full bg-primary-200 text-primary-700 text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+                If there's a fit, we'll reach out within 3–5 business days to schedule a brief intro call.
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-5 h-5 rounded-full bg-primary-200 text-primary-700 text-xs font-bold flex items-center justify-center mt-0.5">3</span>
+                A short in-studio meet where you'll see our space and we'll discuss the role in more detail.
+              </li>
+            </ol>
+          </div>
+
+          <div class="text-sm text-neutral-500">
+            Questions before applying? <a href="/contact/" class="text-primary-600 hover:text-primary-700 font-medium transition-colors">Reach out directly</a> and we'll be happy to chat.
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div class="lg:col-span-3">
+          <form
+            name="careers-application"
+            method="POST"
+            data-netlify="true"
+            action="/careers/?submitted=careers"
+            class="space-y-5"
+          >
+            <input type="hidden" name="form-name" value="careers-application" />
+
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label for="careerName" class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name *</label>
+                <input type="text" id="careerName" name="name" required placeholder="Jane Smith"
+                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+              </div>
+              <div>
+                <label for="careerPhone" class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number *</label>
+                <input type="tel" id="careerPhone" name="phone" required placeholder="(555) 000-0000"
+                  class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+              </div>
+            </div>
+
+            <div>
+              <label for="careerEmail" class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address *</label>
+              <input type="email" id="careerEmail" name="email" required placeholder="jane@example.com"
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+            </div>
+
+            <div>
+              <label for="careerRole" class="block text-sm font-medium text-neutral-700 mb-1.5">Position of Interest *</label>
+              <select id="careerRole" name="role" required
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
+                <option value="">Select a position...</option>
+                <option value="licensed-esthetician">Licensed Esthetician (Full-time or Part-time)</option>
+                <option value="client-experience-coordinator">Client Experience Coordinator (Part-time)</option>
+                <option value="seasonal-esthetician">Part-time / Seasonal Esthetician</option>
+                <option value="open">Open to any role — let's chat</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="careerLicense" class="block text-sm font-medium text-neutral-700 mb-1.5">Florida Esthetician License # <span class="text-neutral-400 font-normal">(if applicable)</span></label>
+              <input type="text" id="careerLicense" name="license_number" placeholder="FL-XXXXXXX"
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+            </div>
+
+            <div>
+              <label for="careerExperience" class="block text-sm font-medium text-neutral-700 mb-1.5">Your Background & Experience *</label>
+              <textarea id="careerExperience" name="experience" required rows="4"
+                placeholder="Tell us about your training, certifications, past roles, and the services you're most comfortable with. (New grads: describe your education and any hands-on practice.)"
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm resize-none"></textarea>
+            </div>
+
+            <div>
+              <label for="careerWhy" class="block text-sm font-medium text-neutral-700 mb-1.5">Why Bliss Dermacare? *</label>
+              <textarea id="careerWhy" name="why_bliss" required rows="3"
+                placeholder="What draws you to our studio specifically? What are you looking for in your next role?"
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm resize-none"></textarea>
+            </div>
+
+            <div>
+              <label for="careerPortfolio" class="block text-sm font-medium text-neutral-700 mb-1.5">LinkedIn or Portfolio URL <span class="text-neutral-400 font-normal">(optional)</span></label>
+              <input type="url" id="careerPortfolio" name="portfolio_url" placeholder="https://linkedin.com/in/yourname"
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+            </div>
+
+            <div>
+              <label for="careerAvailability" class="block text-sm font-medium text-neutral-700 mb-1.5">Availability *</label>
+              <select id="careerAvailability" name="availability" required
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
+                <option value="">Select your availability...</option>
+                <option value="full-time">Full-time (30–40 hrs/week)</option>
+                <option value="part-time-consistent">Part-time, consistent days (15–25 hrs/week)</option>
+                <option value="part-time-flexible">Part-time, flexible schedule (under 15 hrs/week)</option>
+                <option value="weekends-only">Weekends only</option>
+                <option value="open">Open / flexible — let's discuss</option>
+              </select>
+            </div>
+
+            <button type="submit"
+              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 transition-all font-semibold text-base shadow-sm hover:shadow-md">
+              Submit Application
+            </button>
+
+            <p class="text-xs text-neutral-500 text-center">We review every application personally and respond within 3–5 business days if there's a fit. Thank you for your interest in Bliss Dermacare.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Layout>

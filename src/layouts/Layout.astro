@@ -47,10 +47,306 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     </script>
     
     <title>{title}</title>
+
+    <style is:global>
+      /* ============================================================
+         DARK MODE OVERRIDES — currently disabled (light mode is default)
+         To re-enable: change tailwind.config.mjs darkMode to 'media'
+         and restore the @media (prefers-color-scheme: dark) wrapper.
+         Palette: warm charcoal (#1a1714) base, dusty rose accents
+         ============================================================ */
+      @media (max-width: 0px) { /* disabled — change to prefers-color-scheme: dark to re-enable */
+
+        /* === Scrollbar === */
+        :root {
+          color-scheme: dark;
+        }
+
+        /* === Base body (Tailwind bg-white override) === */
+        body {
+          background-color: #1a1714;
+          color: #f0ebe6;
+        }
+
+        /* === Navigation === */
+        #main-nav {
+          background-color: #1a1714 !important;
+          border-color: #2b2824 !important;
+        }
+
+        /* === Section backgrounds (bg-white) === */
+        main section.bg-white,
+        main .bg-white:not(button):not(a):not(input):not(select):not(textarea):not([class*="bg-neutral-9"]) {
+          background-color: #1e1b18;
+        }
+
+        /* === Inline hex backgrounds: #faf9f7 (off-white sections) === */
+        main [class*="bg-[#faf9f7]"] {
+          background-color: #191710 !important;
+        }
+
+        /* === bg-neutral-50 (used on about/why-us, contact location block) === */
+        main .bg-neutral-50 {
+          background-color: #191710 !important;
+        }
+
+        /* === Hero section: #f6f1eb (warm cream) === */
+        main [class*="bg-[#f6f1eb]"] {
+          background-color: #1d1a16 !important;
+        }
+
+        /* === Hero image frame: #e8ddd2 (warm tan) === */
+        main [class*="bg-[#e8ddd2]"] {
+          background-color: #2a2420 !important;
+        }
+
+        /* === White cards (rounded-2xl etc.) === */
+        main .rounded-2xl.bg-white,
+        main .rounded-xl.bg-white {
+          background-color: #252220 !important;
+        }
+
+        /* === Primary-tinted backgrounds === */
+        main .bg-primary-50 {
+          background-color: #2b1e21 !important;
+        }
+        main .bg-primary-100 {
+          background-color: #361f23 !important;
+        }
+        /* bg-primary-50/50 opacity variant (most popular package banner) */
+        main [class*="bg-primary-50\/50"],
+        main [class*="bg-primary-50/50"] {
+          background-color: #2b1e21 !important;
+        }
+
+        /* === Neutral-800/900 IN MAIN (dark CTAs) — keep but soften slightly for dark bg === */
+        main .bg-neutral-900 {
+          background-color: #2c2825 !important;
+        }
+        main .bg-neutral-900:hover,
+        main .hover\:bg-neutral-800:hover {
+          background-color: #352f2b !important;
+        }
+
+        /* === BORDERS === */
+        main .border-neutral-100,
+        main .border-t.border-neutral-100,
+        main .border-b.border-neutral-100,
+        main .border-y.border-neutral-100,
+        main .border-x.border-neutral-100 {
+          border-color: #2e2a26 !important;
+        }
+        main .border-neutral-200 {
+          border-color: #3a3530 !important;
+        }
+        main .border-neutral-300 {
+          border-color: #46403b !important;
+        }
+        main .border-2.border-neutral-200 {
+          border-color: #3a3530 !important;
+        }
+        /* Service page "Most Popular" card border */
+        main .border-2.border-primary-500 {
+          border-color: #c94d63 !important;
+        }
+
+        /* === TEXT COLORS === */
+        main .text-neutral-900,
+        main h1.text-neutral-900,
+        main h2.text-neutral-900,
+        main h3.text-neutral-900,
+        main h4.text-neutral-900 {
+          color: #f0ebe6 !important;
+        }
+        main .text-neutral-700 {
+          color: #d6cec7 !important;
+        }
+        main .text-neutral-600 {
+          color: #b4aaa3 !important;
+        }
+        main .text-neutral-500 {
+          color: #8e867f !important;
+        }
+        main .text-neutral-400 {
+          color: #7a726b !important;
+        }
+        /* White text stays white */
+        main .text-white {
+          color: #ffffff !important;
+        }
+        /* Neutral-400 on dark CTAs stays muted */
+        main .bg-neutral-900 .text-neutral-400,
+        main .bg-neutral-800 .text-neutral-400 {
+          color: #9e9590 !important;
+        }
+
+        /* === FORM INPUTS === */
+        main input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="hidden"]),
+        main textarea,
+        main select {
+          background-color: #252220 !important;
+          border-color: #46403b !important;
+          color: #f0ebe6 !important;
+        }
+        main input::placeholder,
+        main textarea::placeholder {
+          color: #6b635c !important;
+        }
+        main select option {
+          background-color: #252220;
+          color: #f0ebe6;
+        }
+        /* Focus ring in dark mode */
+        main input:focus,
+        main textarea:focus,
+        main select:focus {
+          border-color: #c94d63 !important;
+          --tw-ring-color: rgba(201, 77, 99, 0.25) !important;
+        }
+        /* Form section headings */
+        main .font-semibold.text-neutral-900 {
+          color: #f0ebe6 !important;
+        }
+        main label.text-neutral-700,
+        main .text-sm.font-medium.text-neutral-700 {
+          color: #c8c0b8 !important;
+        }
+
+        /* === FAQ ACCORDION items (#faf9f7 bg + border) === */
+        main [class*="bg-[#faf9f7]"].rounded-2xl {
+          background-color: #201d1a !important;
+          border-color: #2e2a26 !important;
+        }
+        /* FAQ hover */
+        main .hover\:bg-neutral-100\/60:hover {
+          background-color: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        /* === INFO PANELS (amber / blue) === */
+        main .bg-amber-50 {
+          background-color: #211a0e !important;
+          border-color: #3d2a0d !important;
+        }
+        main .bg-amber-50 .text-amber-900 {
+          color: #f3c467 !important;
+        }
+        main .bg-amber-50 .text-amber-800 {
+          color: #d4a84a !important;
+        }
+        /* Blue info (pre-service minor consent block) */
+        main .bg-blue-50 {
+          background-color: #0f1a28 !important;
+          border-color: #1e3a5f !important;
+        }
+        main .bg-blue-50 .text-blue-800,
+        main .bg-blue-50 strong {
+          color: #7fb9f5 !important;
+        }
+        main .bg-blue-50 .text-blue-600 {
+          color: #5ba3f5 !important;
+        }
+
+        /* === HOVER BORDER UPGRADES (cards) === */
+        main .hover\:border-primary-200:hover {
+          border-color: #7a3d4d !important;
+        }
+        main .hover\:border-primary-300:hover {
+          border-color: #9b4d5f !important;
+        }
+        main .hover\:border-primary-400:hover {
+          border-color: #b85570 !important;
+        }
+
+        /* === ABOUT PAGE: stats dividers === */
+        main .border-y.border-neutral-100 {
+          border-color: #2e2a26 !important;
+        }
+        main .border-x.border-neutral-100 {
+          border-color: #2e2a26 !important;
+        }
+
+        /* === ABOUT PAGE: skill badges === */
+        main .bg-primary-50.text-primary-700 {
+          background-color: #2b1e21 !important;
+          color: #e0849a !important;
+        }
+
+        /* === Contact page location/hours card (bg-neutral-50) === */
+        main .bg-neutral-50.rounded-2xl {
+          background-color: #201d1a !important;
+          border-color: #2e2a26 !important;
+        }
+
+        /* === Demo model form card (bg-[#faf9f7] inside section) === */
+        main [class*="bg-[#faf9f7]"].rounded-2xl.p-8 {
+          background-color: #201d1a !important;
+        }
+
+        /* === Service page "What's included" neutral-50 box === */
+        main .bg-neutral-50.rounded-2xl.p-6 {
+          background-color: #201d1a !important;
+        }
+
+        /* === Booking page: service picker radio card === */
+        main .rounded-xl.border-2.border-neutral-200 {
+          background-color: #201d1a !important;
+          border-color: #3a3530 !important;
+        }
+        main .peer-checked\:bg-primary-50 {
+          background-color: #2b1e21 !important;
+        }
+        /* Service category label */
+        main .text-neutral-400.uppercase {
+          color: #7a726b !important;
+        }
+
+        /* === Page header sections (bg-[#faf9f7] + border-b border-neutral-100) === */
+        main section[class*="border-b"] .text-neutral-900 {
+          color: #f0ebe6 !important;
+        }
+        main section[class*="border-b"] .text-neutral-600 {
+          color: #b4aaa3 !important;
+        }
+
+        /* === Shadows: softer on dark === */
+        main .shadow-sm {
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+        }
+        main .shadow-xl {
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+        }
+        main .hover\:shadow-md:hover {
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        }
+        main .hover\:shadow-lg:hover {
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55) !important;
+        }
+
+        /* === Footer stays mostly dark — adjust only subtle contrasts === */
+        footer.bg-neutral-900 {
+          background-color: #131110 !important;
+        }
+        footer .border-neutral-800 {
+          border-color: #2b2824 !important;
+        }
+
+        /* === Keep success banner readable === */
+        .bg-green-600 {
+          background-color: #166534 !important;
+        }
+      }
+    </style>
   </head>
-  <body class="bg-white text-neutral-900 antialiased font-serif font-semibold text-xl leading-tight">
+  <body class="bg-white dark:bg-[#1a1714] text-neutral-900 dark:text-stone-100 antialiased font-serif font-semibold text-xl leading-tight">
     <!-- Navigation -->
-    <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-neutral-200 shadow-sm transition-transform duration-300">
+    <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white dark:bg-[#1a1714] border-b border-neutral-200 dark:border-neutral-800 shadow-sm transition-transform duration-300">
+      <!-- Hiring Announcement Bar -->
+      <div class="bg-primary-600 text-white py-2.5 px-4 flex items-center justify-center gap-3 font-sans font-medium text-sm">
+        <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="hidden sm:inline">We're hiring &mdash; join the Bliss Dermacare team.</span>
+        <span class="sm:hidden">We're hiring!</span>
+        <a href="/careers/" class="underline underline-offset-2 font-semibold hover:text-primary-100 transition-colors whitespace-nowrap">View open roles &rarr;</a>
+      </div>
       <div class="max-w-7xl mx-auto px-6 py-2">
         <div class="flex items-center justify-between">
           <!-- Logo -->
@@ -60,45 +356,49 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-6">
-            <a href="/services/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base">Services</a>
+            <a href="/services/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Services</a>
 
             <!-- About dropdown -->
             <div class="relative group">
-              <button class="flex items-center gap-1 text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base py-1" aria-haspopup="true">
+              <button class="flex items-center gap-1 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base py-1" aria-haspopup="true">
                 About
                 <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
               </button>
               <div class="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
-                <div class="bg-white rounded-2xl shadow-xl border border-neutral-100 py-2 min-w-[180px]">
-                  <a href="/about/" class="block px-5 py-2.5 text-sm text-neutral-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">About Us</a>
-                  <a href="/about/#why-us" class="block px-5 py-2.5 text-sm text-neutral-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">Why Choose Us</a>
+                <div class="bg-white dark:bg-[#211e1b] rounded-2xl shadow-xl border border-neutral-100 dark:border-neutral-700 py-2 min-w-[180px]">
+                  <a href="/about/" class="block px-5 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">About Us</a>
+                  <a href="/about/#why-us" class="block px-5 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Why Choose Us</a>
                 </div>
               </div>
             </div>
 
             <!-- Programs dropdown -->
             <div class="relative group">
-              <button class="flex items-center gap-1 text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base py-1" aria-haspopup="true">
+              <button class="flex items-center gap-1 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base py-1" aria-haspopup="true">
                 Programs
                 <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
               </button>
               <div class="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
-                <div class="bg-white rounded-2xl shadow-xl border border-neutral-100 py-2 min-w-[200px]">
-                  <a href="/demo-model/" class="block px-5 py-2.5 text-sm text-neutral-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">Demo Model Program</a>
-                  <a href="/consultation/" class="block px-5 py-2.5 text-sm text-neutral-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">Free Consultation</a>
+                <div class="bg-white dark:bg-[#211e1b] rounded-2xl shadow-xl border border-neutral-100 dark:border-neutral-700 py-2 min-w-[200px]">
+                  <a href="/demo-model/" class="block px-5 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Demo Model Program</a>
+                  <a href="/consultation/" class="block px-5 py-2.5 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Free Consultation</a>
                 </div>
               </div>
             </div>
 
-            <a href="/faq/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base">FAQ</a>
-            <a href="/contact/" class="text-neutral-600 hover:text-primary-600 transition-colors font-medium text-base">Contact</a>
+            <a href="/faq/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">FAQ</a>
+            <a href="/contact/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Contact</a>
+            <a href="/careers/" class="relative text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">
+              Careers
+              <span class="absolute -top-2 -right-4 bg-primary-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span>
+            </a>
             <a href="/book/" class="bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-all font-medium text-base shadow-sm hover:shadow-md whitespace-nowrap">
               Book Appointment
             </a>
           </div>
           
           <!-- Mobile Menu Button -->
-          <button id="mobile-menu-button" class="md:hidden p-2 text-neutral-600 hover:text-primary-600">
+          <button id="mobile-menu-button" class="md:hidden p-2 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
@@ -106,35 +406,39 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-100 pt-3 pb-3">
-          <a href="/services/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 hover:text-primary-600 transition-colors">Services</a>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-100 dark:border-neutral-800 pt-3 pb-3">
+          <a href="/services/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Services</a>
 
           <!-- About accordion -->
           <div>
-            <button id="mob-about-btn" class="flex items-center justify-between w-full py-2.5 px-1 text-sm font-medium text-neutral-600 hover:text-primary-600 transition-colors">
+            <button id="mob-about-btn" class="flex items-center justify-between w-full py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               About
               <svg id="mob-about-icon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
-            <div id="mob-about-sub" class="hidden pl-4 pb-1 border-l border-neutral-100 ml-1 space-y-0.5">
-              <a href="/about/" class="block py-2 text-sm text-neutral-500 hover:text-primary-600 transition-colors">About Us</a>
-              <a href="/about/#why-us" class="block py-2 text-sm text-neutral-500 hover:text-primary-600 transition-colors">Why Choose Us</a>
+            <div id="mob-about-sub" class="hidden pl-4 pb-1 border-l border-neutral-100 dark:border-neutral-700 ml-1 space-y-0.5">
+              <a href="/about/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">About Us</a>
+              <a href="/about/#why-us" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Why Choose Us</a>
             </div>
           </div>
 
           <!-- Programs accordion -->
           <div>
-            <button id="mob-programs-btn" class="flex items-center justify-between w-full py-2.5 px-1 text-sm font-medium text-neutral-600 hover:text-primary-600 transition-colors">
+            <button id="mob-programs-btn" class="flex items-center justify-between w-full py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               Programs
               <svg id="mob-programs-icon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
-            <div id="mob-programs-sub" class="hidden pl-4 pb-1 border-l border-neutral-100 ml-1 space-y-0.5">
-              <a href="/demo-model/" class="block py-2 text-sm text-neutral-500 hover:text-primary-600 transition-colors">Demo Model Program</a>
-              <a href="/consultation/" class="block py-2 text-sm text-neutral-500 hover:text-primary-600 transition-colors">Free Consultation</a>
+            <div id="mob-programs-sub" class="hidden pl-4 pb-1 border-l border-neutral-100 dark:border-neutral-700 ml-1 space-y-0.5">
+              <a href="/demo-model/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Demo Model Program</a>
+              <a href="/consultation/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Free Consultation</a>
             </div>
           </div>
 
-          <a href="/faq/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 hover:text-primary-600 transition-colors">FAQ</a>
-          <a href="/contact/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 hover:text-primary-600 transition-colors">Contact</a>
+          <a href="/faq/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">FAQ</a>
+          <a href="/contact/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contact</a>
+          <a href="/careers/" class="flex items-center gap-2 py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            Careers
+            <span class="bg-primary-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span>
+          </a>
           <a href="/book/" class="block mt-3 bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium text-center text-sm">
             Book Appointment
           </a>
@@ -143,7 +447,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-24">
+    <main class="pt-36">
       <slot />
     </main>
 
@@ -177,6 +481,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               <li><a href="/pre-service-form/" class="hover:text-primary-400 transition-colors">Pre-Service Form</a></li>
               <li><a href="/faq/" class="hover:text-primary-400 transition-colors">FAQ</a></li>
               <li><a href="/contact/" class="hover:text-primary-400 transition-colors">Contact</a></li>
+              <li><a href="/careers/" class="hover:text-primary-400 transition-colors flex items-center gap-1.5">Join Our Team <span class="inline-block bg-primary-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span></a></li>
             </ul>
           </div>
           
@@ -335,7 +640,8 @@ const { title, description = 'Professional aesthetician services in a serene, mo
             'booking': 'Your booking request has been submitted! We\'ll confirm your appointment by phone, text, or email shortly.',
             'demo-model': 'Thank you for your Demo Model application! We\'ll be in touch within 24-48 hours.',
             'consultation': 'Thank you for requesting a consultation! We\'ll contact you within 24 hours to schedule your free skin assessment.',
-            'true': 'Your pre-service questionnaire has been submitted! We\'ll review it before your appointment.'
+            'true': 'Your pre-service questionnaire has been submitted! We\'ll review it before your appointment.',
+            'careers': 'Thank you for applying! We\'ll review your application and reach out within 3–5 business days if there\'s a match.'
           };
           
           const message = messages[submitted];
