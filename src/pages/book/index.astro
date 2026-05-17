@@ -21,13 +21,11 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Form -->
         <div class="lg:col-span-2"> 
           <form
+            id="booking-form"
             name="appointment-booking"
-            method="POST"
-            data-netlify="true"
-            action="/book/?submitted=booking"
             class="space-y-10"
+            novalidate
           >
-            <input type="hidden" name="form-name" value="appointment-booking" />
 
             <!-- Contact -->
             <div class="space-y-5">
@@ -505,12 +503,25 @@ import Layout from '../../layouts/Layout.astro';
               <p class="text-xs text-neutral-400 px-5 pb-4 -mt-1">Estimate only — final price confirmed at your appointment.</p>
             </div>
 
-            <button type="submit"
-              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 transition-all font-semibold text-base shadow-sm hover:shadow-md">
-              Request Appointment
+            <!-- Error banner -->
+            <div id="booking-error" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
+              <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="booking-error-text"></span>
+            </div>
+
+            <button id="booking-submit" type="submit"
+              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold text-base shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+              <svg id="booking-spinner" class="hidden animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              </svg>
+              <span id="booking-submit-label">Pay &amp; Book Appointment</span>
             </button>
 
-            <p class="text-xs text-neutral-500 text-center">This is a booking request — not an instant confirmation. We'll reach out within 24 hours to confirm your slot.</p>
+            <p class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Secure payment via Stripe. We'll confirm your appointment within 24 hours.
+            </p>
           </form>
         </div>
 
@@ -580,16 +591,16 @@ import Layout from '../../layouts/Layout.astro';
           </div>
 
           <div class="bg-white rounded-2xl p-6 border border-neutral-200">
-            <h3 class="font-semibold text-neutral-900 mb-3">Payment Methods</h3>
-            <div class="flex flex-wrap gap-2">
+            <h3 class="font-semibold text-neutral-900 mb-1">Secure Online Payment</h3>
+            <p class="text-xs text-neutral-500 mb-3">Payments processed securely via Stripe.</p>
+            <div class="flex flex-wrap gap-2 mb-3">
               <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Visa</span>
               <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Mastercard</span>
               <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Amex</span>
-              <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Cash</span>
-              <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Zelle</span>
-              <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Venmo</span>
               <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Apple Pay</span>
+              <span class="text-xs bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-full font-medium">Google Pay</span>
             </div>
+            <p class="text-xs text-neutral-400">Cash, Zelle &amp; Venmo accepted in person.</p>
           </div>
         </div>
 
@@ -797,11 +808,37 @@ import Layout from '../../layouts/Layout.astro';
         });
       });
 
-      const form = document.querySelector('form[name="appointment-booking"]');
-      form?.addEventListener('submit', (e) => {
+      const submitBtn   = document.getElementById('booking-submit') as HTMLButtonElement | null;
+      const submitLabel = document.getElementById('booking-submit-label')!;
+      const spinner     = document.getElementById('booking-spinner')!;
+      const errorBox    = document.getElementById('booking-error')!;
+      const errorText   = document.getElementById('booking-error-text')!;
+
+      function showError(msg: string) {
+        errorText.textContent = msg;
+        errorBox.classList.remove('hidden');
+        errorBox.classList.add('flex');
+        errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      function clearError() {
+        errorBox.classList.add('hidden');
+        errorBox.classList.remove('flex');
+      }
+      function setLoading(on: boolean) {
+        if (!submitBtn) return;
+        submitBtn.disabled = on;
+        submitLabel.textContent = on ? 'Redirecting to payment…' : 'Pay & Book Appointment';
+        spinner.classList.toggle('hidden', !on);
+      }
+
+      const form = document.getElementById('booking-form') as HTMLFormElement | null;
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError();
+
+        // Date / time validation (preserved from original)
         const d = document.getElementById('bookingDate') as HTMLInputElement;
         if (d?.value && new Date(d.value + 'T00:00:00').getDay() === 0) {
-          e.preventDefault();
           d.setCustomValidity('Sundays are unavailable. Please choose another day.');
           d.reportValidity();
           return;
@@ -815,23 +852,77 @@ import Layout from '../../layouts/Layout.astro';
           selectedDT.setHours(slotHours, slotMinutes, 0, 0);
           const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
           if (selectedDT < cutoff) {
-            e.preventDefault();
             d.setCustomValidity('Please select a date and time at least 24 hours from now.');
             d.reportValidity();
             return;
           }
         } else if (d?.value) {
-          // No time selected yet — date-only check still applies
           const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
           const selectedDT = new Date(d.value + 'T00:00:00');
           if (selectedDT < new Date(toDateStr(cutoff) + 'T00:00:00')) {
-            e.preventDefault();
             d.setCustomValidity('Please select a date at least 24 hours from now.');
             d.reportValidity();
             return;
           }
         }
         d?.setCustomValidity('');
+
+        // Service + time required
+        const serviceInput = document.querySelector<HTMLInputElement>('input[name="service"]:checked');
+        if (!serviceInput || serviceInput.value === 'other') {
+          showError(
+            serviceInput?.value === 'other'
+              ? 'Online payment is not available for “Other / Not Sure”. Please call us at (609) 366-0857.'
+              : 'Please select a service before continuing.'
+          );
+          return;
+        }
+        if (!t) {
+          showError('Please select a time slot before continuing.');
+          return;
+        }
+
+        const discountInput     = document.querySelector<HTMLInputElement>('input[name="discount"]:checked');
+        const nameInput         = document.querySelector<HTMLInputElement>('[name="name"]');
+        const emailInput        = document.querySelector<HTMLInputElement>('[name="email"]');
+        const phoneInput        = document.querySelector<HTMLInputElement>('[name="phone"]');
+        const notesInput        = document.querySelector<HTMLTextAreaElement>('[name="notes"]');
+        const referralInput     = document.querySelector<HTMLInputElement>('input[name="referral"]:checked');
+        const grouponInput      = document.querySelector<HTMLInputElement>('[name="groupon-code"]');
+        const confirmPhoneInput = document.querySelector<HTMLInputElement>('[name="confirm-phone"]');
+        const confirmTextInput  = document.querySelector<HTMLInputElement>('[name="confirm-text"]');
+        const confirmEmailInput = document.querySelector<HTMLInputElement>('[name="confirm-email"]');
+
+        const payload = {
+          service:         serviceInput.value,
+          discount:        discountInput?.value ?? 'none',
+          customerName:    nameInput?.value ?? '',
+          customerEmail:   emailInput?.value ?? '',
+          customerPhone:   phoneInput?.value ?? '',
+          appointmentDate: d?.value ?? '',
+          appointmentTime: t.value,
+          notes:           notesInput?.value ?? '',
+          referral:        referralInput?.value ?? '',
+          grouponCode:     grouponInput?.value ?? '',
+          confirmPhone:    confirmPhoneInput?.checked ? 'yes' : '',
+          confirmText:     confirmTextInput?.checked  ? 'yes' : '',
+          confirmEmail:    confirmEmailInput?.checked ? 'yes' : '',
+        };
+
+        setLoading(true);
+        try {
+          const res  = await fetch('/.netlify/functions/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json().catch(() => ({ error: 'Unexpected server response.' }));
+          if (!res.ok) throw new Error(data.error ?? 'Payment setup failed. Please try again.');
+          window.location.href = data.url;
+        } catch (err: unknown) {
+          showError(err instanceof Error ? err.message : 'Something went wrong. Please try again or call (609) 366-0857.');
+          setLoading(false);
+        }
       });
     })();
   </script>
