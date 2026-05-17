@@ -5,6 +5,12 @@
 [functions]
   directory = "netlify/functions"
 
+[dev]
+  command = "npm run dev"
+  port = 8888
+  targetPort = 4321
+  autoLaunch = false
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
