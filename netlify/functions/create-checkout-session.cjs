@@ -7,6 +7,7 @@ const Stripe = require('stripe');
 
 // Prices in cents — must mirror the booking page UI
 const PRICES = {
+  'other':                        100,
   'signature-radiance-facial':   9900,
   'age-defying-renewal':        14900,
   'brightening-peel':           12800,
@@ -27,6 +28,7 @@ const PRICES = {
 };
 
 const SERVICE_LABELS = {
+  'other':                      'Other / Not Sure',
   'signature-radiance-facial':  'Signature Radiance Facial',
   'age-defying-renewal':        'Age-Defying Renewal',
   'brightening-peel':           'Brightening Peel',

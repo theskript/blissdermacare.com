@@ -258,6 +258,7 @@ import Layout from '../../layouts/Layout.astro';
                   <input type="radio" name="service" value="other" class="sr-only peer" />
                   <div class="rounded-xl border-2 border-neutral-200 px-5 py-3.5 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                     <p class="font-semibold text-sm text-neutral-900">Other / Not Sure</p>
+                    <p class="text-primary-600 font-bold text-sm mt-1">$1</p>
                     <p class="text-xs text-neutral-400 mt-0.5">Describe in the notes section below</p>
                   </div>
                 </label>
@@ -611,6 +612,7 @@ import Layout from '../../layouts/Layout.astro';
   <script>
     (function () {
       const PRICES: Record<string, number> = {
+        'other': 1,
         'signature-radiance-facial': 99,
         'age-defying-renewal': 149,
         'brightening-peel': 128,
@@ -869,12 +871,8 @@ import Layout from '../../layouts/Layout.astro';
 
         // Service + time required
         const serviceInput = document.querySelector<HTMLInputElement>('input[name="service"]:checked');
-        if (!serviceInput || serviceInput.value === 'other') {
-          showError(
-            serviceInput?.value === 'other'
-              ? 'Online payment is not available for “Other / Not Sure”. Please call us at (609) 366-0857.'
-              : 'Please select a service before continuing.'
-          );
+        if (!serviceInput) {
+          showError('Please select a service before continuing.');
           return;
         }
         if (!t) {
