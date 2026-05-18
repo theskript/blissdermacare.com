@@ -392,17 +392,28 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               Careers
               <span class="absolute -top-2 -right-4 bg-primary-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span>
             </a>
+            <!-- Cart Button -->
+            <button id="cart-btn" aria-label="View selected services" class="relative p-2 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span class="cart-badge hidden absolute -top-0.5 -right-0.5 bg-primary-600 text-white text-[9px] font-bold min-w-[16px] h-4 rounded-full items-center justify-center leading-none px-0.5 transition-transform">0</span>
+            </button>
             <a href="/book/" class="bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-all font-medium text-base shadow-sm hover:shadow-md whitespace-nowrap">
               Book Appointment
             </a>
           </div>
           
           <!-- Mobile Menu Button -->
-          <button id="mobile-menu-button" class="md:hidden p-2 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400">
+          <div class="md:hidden flex items-center gap-1">
+          <button id="cart-btn-mobile" aria-label="View selected services" class="relative p-2 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="cart-badge hidden absolute top-0 right-0 bg-primary-600 text-white text-[9px] font-bold min-w-[16px] h-4 rounded-full items-center justify-center leading-none px-0.5">0</span>
+          </button>
+          <button id="mobile-menu-button" class="p-2 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
+          </div>
         </div>
         
         <!-- Mobile Menu -->
@@ -445,6 +456,45 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         </div>
       </div>
     </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         GLOBAL CART DRAWER
+    ═══════════════════════════════════════════════════════════════ -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/40 z-[150] hidden opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-[360px] bg-white dark:bg-[#1e1b18] z-[160] shadow-2xl translate-x-full transition-transform duration-300 flex flex-col font-sans" role="dialog" aria-label="Selected services">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <h2 class="font-semibold text-neutral-900 dark:text-neutral-100 text-base">My Services</h2>
+          <span id="cart-count-label" class="text-sm text-neutral-400">(0)</span>
+        </div>
+        <button id="cart-close" class="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Close">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <!-- Empty state -->
+      <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mb-4 mx-auto">
+          <svg class="w-8 h-8 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <p class="font-semibold text-neutral-700 dark:text-neutral-200 mb-1">No services selected yet</p>
+        <p class="text-sm text-neutral-400 mb-6">Browse our services and click <strong class="font-semibold text-neutral-500">Add</strong> to build your visit.</p>
+        <a href="/services/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Browse Services &rarr;</a>
+      </div>
+      <!-- Items list -->
+      <div id="cart-items" class="hidden flex-1 overflow-y-auto px-5 py-3"></div>
+      <!-- Footer -->
+      <div id="cart-footer" class="hidden border-t border-neutral-100 dark:border-neutral-800 px-5 py-5 space-y-4">
+        <div class="flex items-baseline justify-between">
+          <span class="text-sm text-neutral-500 dark:text-neutral-400">Estimated Total</span>
+          <span class="text-xl font-bold text-neutral-900 dark:text-neutral-100" id="cart-subtotal">$0.00</span>
+        </div>
+        <p class="text-xs text-neutral-400 -mt-2">Estimate only &mdash; final price confirmed at your appointment. Choose date &amp; time on the next step.</p>
+        <a href="/book/" class="block w-full text-center bg-primary-600 text-white py-3.5 rounded-xl hover:bg-primary-700 transition-all font-semibold text-sm shadow-sm">Proceed to Book &rarr;</a>
+        <button id="cart-clear-btn" class="block w-full text-center text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors py-1">Remove all services</button>
+      </div>
+    </aside>
 
     <!-- Main Content -->
     <main class="pt-36">
@@ -675,6 +725,227 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           }
         }
       })();
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         GLOBAL CART SCRIPT
+         Manages service cart via localStorage, renders the drawer,
+         and injects Add-to-Cart buttons next to any
+         <a data-service-id="..."> Book links on the page.
+    ═══════════════════════════════════════════════════════════════ -->
+    <script is:inline>
+    (function () {
+      const KEY = 'bliss_cart_v1';
+      const SERVICES = {
+        'signature-radiance-facial':       { name: 'Signature Radiance Facial',         price: 99,  duration: '60 min' },
+        'brightening-peel':                { name: 'Brightening Peel',                  price: 128, duration: '45 min' },
+        'diamond-glow':                    { name: 'Diamond Glow',                       price: 119, duration: '50 min' },
+        'teen-skincare-facial':            { name: 'Teen Skincare Facial',               price: 64,  duration: '45 min' },
+        'high-frequency-skin-tightening':  { name: 'High Frequency Skin Tightening',    price: 95,  duration: '45 min' },
+        'pumpkin-enzyme-facial':           { name: 'Pumpkin Enzyme Facial',              price: 85,  duration: '60 min' },
+        'chlorophyll-skin-tightening-facial': { name: 'Chlorophyll Skin Tightening Facial', price: 105, duration: '60 min' },
+        'pineapple-enzyme-facial':         { name: 'Pineapple Enzyme Facial',            price: 88,  duration: '60 min' },
+        'skin-recovery-facial':            { name: 'Skin Recovery Facial',               price: 92,  duration: '60 min' },
+        'vampire-facial-prp':              { name: 'Vampire Facial (PRP)',               price: 380, duration: '75 min' },
+        'lash-lift-brow-lamination':       { name: 'Lash Lift & Brow Lamination',        price: 79,  duration: '60 min' },
+        'lash-extensions':                 { name: 'Lash Extensions',                    price: 159, duration: '2 hr' },
+        'lash-extensions-fill':            { name: 'Lash Extensions Fill',               price: 43,  duration: '1 hr' },
+        'body-and-face-waxing':            { name: 'Body & Face Waxing',                 price: 65,  duration: '45–60 min' },
+        'brazilian-wax':                   { name: 'Brazilian Wax',                      price: 87,  duration: '45–60 min' },
+        'scalp-therapy':                   { name: 'Scalp Therapy',                      price: 219, duration: '60 min' },
+        'hairline-restoration':            { name: 'Hairline Restoration',               price: 680, duration: '2–3 sessions' },
+        'lash-body-smooth':                { name: 'Lash & Body Smooth Package',         price: 185, duration: '~2 hrs 15 min' },
+        'brow-lash-wax-ritual':            { name: 'Brow, Lash & Wax Ritual Package',    price: 115, duration: '~2 hrs 15 min' },
+        'glow-smooth-escape':              { name: 'Glow & Smooth Escape Package',       price: 135, duration: '~2 hrs 15 min' },
+        'mix-match-package':               { name: 'Mix & Match Escape Package',         price: 129, duration: '~2 hrs 15 min' },
+      };
+
+      // ── Storage ────────────────────────────────────────────────────────────
+      function getCart() {
+        try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+      }
+      function saveCart(items) {
+        try { localStorage.setItem(KEY, JSON.stringify(items)); } catch {}
+      }
+      function isInCart(id) { return getCart().some(i => i.id === id); }
+
+      // ── Mutations ──────────────────────────────────────────────────────────
+      function addItem(id) {
+        const svc = SERVICES[id];
+        if (!svc) return;
+        const items = getCart();
+        if (items.some(i => i.id === id)) { openDrawer(); return; }
+        items.push({ id, name: svc.name, price: svc.price, duration: svc.duration });
+        saveCart(items);
+        renderAll();
+        pulseBadge();
+        openDrawer();
+      }
+      function removeItem(id) {
+        saveCart(getCart().filter(i => i.id !== id));
+        renderAll();
+      }
+      function clearAll() { saveCart([]); renderAll(); }
+
+      function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+      // ── Badge ──────────────────────────────────────────────────────────────
+      function updateBadge() {
+        const count = getCart().length;
+        document.querySelectorAll('.cart-badge').forEach(b => {
+          b.textContent = count;
+          b.classList.toggle('hidden', count === 0);
+          b.classList.toggle('flex', count > 0);
+        });
+        const cl = document.getElementById('cart-count-label');
+        if (cl) cl.textContent = '(' + count + ')';
+      }
+      function pulseBadge() {
+        document.querySelectorAll('.cart-badge').forEach(b => {
+          b.classList.add('scale-125');
+          setTimeout(() => b.classList.remove('scale-125'), 200);
+        });
+      }
+
+      // ── Drawer rendering ───────────────────────────────────────────────────
+      function renderDrawer() {
+        const items  = getCart();
+        const empty  = document.getElementById('cart-empty');
+        const list   = document.getElementById('cart-items');
+        const foot   = document.getElementById('cart-footer');
+        if (!empty || !list || !foot) return;
+
+        if (items.length === 0) {
+          empty.classList.remove('hidden');
+          list.classList.add('hidden');
+          foot.classList.add('hidden');
+          return;
+        }
+        empty.classList.add('hidden');
+        list.classList.remove('hidden');
+        foot.classList.remove('hidden');
+
+        list.innerHTML = items.map(item => `
+          <div class="flex items-start gap-3 py-3.5 border-b border-neutral-100 last:border-0">
+            <div class="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-neutral-900 leading-snug">${item.name}</p>
+              <p class="text-xs text-neutral-400 mt-0.5">${item.duration}&nbsp;&middot;&nbsp;<span class="font-semibold text-primary-600">${fmt(item.price)}</span></p>
+            </div>
+            <button onclick="window.BlissCart.remove('${item.id}')" class="p-1.5 text-neutral-300 hover:text-red-400 transition-colors rounded hover:bg-red-50 shrink-0 mt-0.5" aria-label="Remove">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>`).join('');
+
+        const total = items.reduce((s, i) => s + i.price, 0);
+        const sub = document.getElementById('cart-subtotal');
+        if (sub) sub.textContent = fmt(total);
+      }
+
+      function renderAll() { updateBadge(); renderDrawer(); updateAddButtons(); }
+
+      // ── Add-to-cart button state sync ──────────────────────────────────────
+      function updateAddButtons() {
+        document.querySelectorAll('[data-add-to-cart]').forEach(btn => {
+          const inCart = isInCart(btn.getAttribute('data-add-to-cart'));
+          const textEl  = btn.querySelector('.cart-btn-text');
+          const plusEl  = btn.querySelector('.cart-btn-icon');
+          const checkEl = btn.querySelector('.cart-check-icon');
+          if (textEl)  textEl.textContent = inCart ? 'Added' : 'Add';
+          if (plusEl)  plusEl.classList.toggle('hidden', inCart);
+          if (checkEl) checkEl.classList.toggle('hidden', !inCart);
+          btn.classList.toggle('!border-emerald-300', inCart);
+          btn.classList.toggle('!text-emerald-700',   inCart);
+          btn.classList.toggle('!bg-emerald-50',       inCart);
+        });
+      }
+
+      // ── Inject Add buttons next to <a data-service-id> links ──────────────
+      function injectCartButtons() {
+        document.querySelectorAll('a[data-service-id]:not([data-cart-injected])').forEach(link => {
+          link.setAttribute('data-cart-injected', '1');
+          const id        = link.getAttribute('data-service-id');
+          const isPackage = link.classList.contains('block');
+
+          const btn = document.createElement('button');
+          btn.setAttribute('data-add-to-cart', id);
+          btn.innerHTML = `
+            <svg class="cart-btn-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <svg class="cart-check-icon hidden w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            <span class="cart-btn-text">Add</span>`;
+
+          if (isPackage) {
+            // Package card: split full-width button into flex pair
+            btn.className = 'flex-1 flex items-center justify-center gap-1.5 border border-primary-200 text-primary-600 text-xs font-medium py-2.5 rounded-full hover:bg-primary-50 transition-all';
+            link.classList.remove('block');
+            link.classList.add('flex-1');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-2';
+            link.parentNode.insertBefore(wrapper, link);
+            wrapper.appendChild(btn);
+            wrapper.appendChild(link);
+          } else {
+            // Regular card: insert Add button before the Book link in its flex row
+            btn.className = 'flex items-center gap-1 px-2.5 py-1.5 border border-neutral-200 text-neutral-500 text-[11px] font-medium rounded-full hover:border-primary-400 hover:text-primary-600 transition-all';
+            link.parentNode.insertBefore(btn, link);
+          }
+        });
+        updateAddButtons();
+      }
+
+      // ── Drawer open / close ────────────────────────────────────────────────
+      let drawerOpen = false;
+      function openDrawer() {
+        drawerOpen = true;
+        const overlay = document.getElementById('cart-overlay');
+        const drawer  = document.getElementById('cart-drawer');
+        if (!overlay || !drawer) return;
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          overlay.classList.remove('opacity-0');
+          overlay.classList.add('opacity-100');
+          drawer.classList.remove('translate-x-full');
+        });
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        drawerOpen = false;
+        const overlay = document.getElementById('cart-overlay');
+        const drawer  = document.getElementById('cart-drawer');
+        if (!overlay || !drawer) return;
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        drawer.classList.add('translate-x-full');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+        document.body.style.overflow = '';
+      }
+
+      // ── Click delegation ───────────────────────────────────────────────────
+      document.addEventListener('click', e => {
+        const addBtn = e.target.closest('[data-add-to-cart]');
+        if (addBtn) { e.preventDefault(); addItem(addBtn.getAttribute('data-add-to-cart')); return; }
+        if (e.target.closest('#cart-btn, #cart-btn-mobile')) { drawerOpen ? closeDrawer() : openDrawer(); return; }
+        if (e.target.closest('#cart-close'))                 { closeDrawer(); return; }
+        if (e.target.id === 'cart-overlay')                  { closeDrawer(); return; }
+        if (e.target.closest('#cart-clear-btn'))             { clearAll(); return; }
+      });
+
+      // ── Keyboard close ─────────────────────────────────────────────────────
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawerOpen) closeDrawer(); });
+
+      // ── Public API ─────────────────────────────────────────────────────────
+      window.BlissCart = { add: addItem, remove: removeItem, clear: clearAll, get: getCart, open: openDrawer, close: closeDrawer };
+
+      // ── Init ───────────────────────────────────────────────────────────────
+      function init() { renderAll(); injectCartButtons(); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
     </script>
   </body>
 </html>

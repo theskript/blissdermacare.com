@@ -19,7 +19,18 @@ import Layout from '../../layouts/Layout.astro';
       <div class="grid lg:grid-cols-3 gap-10">
 
         <!-- Form -->
-        <div class="lg:col-span-2"> 
+        <div class="lg:col-span-2">
+
+          <!-- Cart Pre-fill Banner -->
+          <div id="cart-prefill-banner" class="hidden mb-6 items-start gap-3 bg-primary-50 border border-primary-200 rounded-xl px-4 py-3">
+            <svg class="w-5 h-5 text-primary-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-primary-800"><span id="cart-prefill-count">Your services</span> from your saved list have been pre-selected.</p>
+              <p class="text-xs text-primary-600 mt-0.5">Review your selections below, pick a date &amp; time, then submit to request your booking.</p>
+            </div>
+            <button onclick="document.getElementById('cart-prefill-banner').classList.remove('flex');document.getElementById('cart-prefill-banner').classList.add('hidden')" class="text-primary-400 hover:text-primary-600 transition-colors shrink-0 text-lg leading-none">&times;</button>
+          </div>
+
           <form
             id="booking-form"
             name="appointment-booking"
@@ -1036,6 +1047,27 @@ import Layout from '../../layouts/Layout.astro';
         update();
         enforceAvailability();
       }
+
+      // ── Cart Pre-population ────────────────────────────────────────────────
+      try {
+        const cartItems: Array<{id: string}> = JSON.parse(localStorage.getItem('bliss_cart_v1') || '[]');
+        if (cartItems.length > 0) {
+          const banner    = document.getElementById('cart-prefill-banner');
+          const countEl   = document.getElementById('cart-prefill-count');
+          if (banner && countEl) {
+            countEl.textContent = cartItems.length === 1 ? '1 service' : cartItems.length + ' services';
+            banner.classList.remove('hidden');
+            banner.classList.add('flex');
+          }
+          cartItems.forEach(item => {
+            const cb = document.querySelector<HTMLInputElement>(`input[name="service"][value="${item.id}"]`);
+            if (cb) cb.checked = true;
+          });
+          enforceAvailability();
+          update();
+        }
+      } catch (_) {}
+      // ── End Cart Pre-population ────────────────────────────────────────────
 
       document.querySelectorAll<HTMLInputElement>('input[name="service"]')
         .forEach(el => el.addEventListener('change', () => onServiceChange(el)));
