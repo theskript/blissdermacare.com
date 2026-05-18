@@ -502,7 +502,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         <div class="flex items-start justify-between p-5 border-b border-neutral-100">
           <div>
             <h3 class="font-bold text-neutral-900 text-base">Mix &amp; Match Escape Package</h3>
-            <p class="text-xs text-neutral-500 mt-0.5">Pick <strong>exactly 2</strong> services &mdash; get <span class="text-emerald-600 font-semibold">$15 off</span> the combined total.</p>
+            <p class="text-xs text-neutral-500 mt-0.5">Pick <strong>1 facial + 1 lash or wax service</strong> &mdash; get <span class="text-emerald-600 font-semibold">$15 off</span> the combined total.</p>
           </div>
           <button id="mm-modal-close" class="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 shrink-0 ml-3" aria-label="Close">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -811,20 +811,21 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       ]);
 
       // Services eligible for Mix & Match (mirrors booking page checkboxes)
+      // cat: 'facial' | 'lash' | 'wax' — the 2 chosen services must be from different categories
       const MM_OPTIONS = [
-        { value: 'mm-signature-radiance', label: 'Signature Radiance Facial',            price: 99,  dur: '60 min' },
-        { value: 'mm-brightening-peel',   label: 'Brightening Peel',                    price: 128, dur: '45 min' },
-        { value: 'mm-diamond-glow',       label: 'Diamond Glow',                         price: 119, dur: '50 min' },
-        { value: 'mm-high-freq',          label: 'High Frequency Skin Tightening',       price: 95,  dur: '45 min' },
-        { value: 'mm-teen-facial',        label: 'Teen Skincare Facial',                 price: 64,  dur: '45 min' },
-        { value: 'mm-pumpkin-enzyme',     label: 'Pumpkin Enzyme Facial',                price: 85,  dur: '60 min' },
-        { value: 'mm-chlorophyll',        label: 'Chlorophyll Skin Tightening Facial',   price: 105, dur: '60 min' },
-        { value: 'mm-pineapple-enzyme',   label: 'Pineapple Enzyme Facial',              price: 88,  dur: '60 min' },
-        { value: 'mm-skin-recovery',      label: 'Skin Recovery Facial',                 price: 92,  dur: '60 min' },
-        { value: 'mm-lash-lift',          label: 'Lash Lift & Brow Lamination',          price: 79,  dur: '60 min' },
-        { value: 'mm-lash-ext',           label: 'Lash Extensions',                      price: 159, dur: '120 min' },
-        { value: 'mm-body-wax',           label: 'Body & Face Waxing',                   price: 65,  dur: '60 min' },
-        { value: 'mm-brazilian',          label: 'Brazilian Wax',                        price: 87,  dur: '60 min' },
+        { value: 'mm-signature-radiance', label: 'Signature Radiance Facial',            price: 99,  dur: '60 min',  cat: 'facial' },
+        { value: 'mm-brightening-peel',   label: 'Brightening Peel',                    price: 128, dur: '45 min',  cat: 'facial' },
+        { value: 'mm-diamond-glow',       label: 'Diamond Glow',                         price: 119, dur: '50 min',  cat: 'facial' },
+        { value: 'mm-high-freq',          label: 'High Frequency Skin Tightening',       price: 95,  dur: '45 min',  cat: 'facial' },
+        { value: 'mm-teen-facial',        label: 'Teen Skincare Facial',                 price: 64,  dur: '45 min',  cat: 'facial' },
+        { value: 'mm-pumpkin-enzyme',     label: 'Pumpkin Enzyme Facial',                price: 85,  dur: '60 min',  cat: 'facial' },
+        { value: 'mm-chlorophyll',        label: 'Chlorophyll Skin Tightening Facial',   price: 105, dur: '60 min',  cat: 'facial' },
+        { value: 'mm-pineapple-enzyme',   label: 'Pineapple Enzyme Facial',              price: 88,  dur: '60 min',  cat: 'facial' },
+        { value: 'mm-skin-recovery',      label: 'Skin Recovery Facial',                 price: 92,  dur: '60 min',  cat: 'facial' },
+        { value: 'mm-lash-lift',          label: 'Lash Lift & Brow Lamination',          price: 79,  dur: '60 min',  cat: 'lash'   },
+        { value: 'mm-lash-ext',           label: 'Lash Extensions',                      price: 159, dur: '120 min', cat: 'lash'   },
+        { value: 'mm-body-wax',           label: 'Body & Face Waxing',                   price: 65,  dur: '60 min',  cat: 'wax'    },
+        { value: 'mm-brazilian',          label: 'Brazilian Wax',                        price: 87,  dur: '60 min',  cat: 'wax'    },
       ];
 
       // ── Storage ────────────────────────────────────────────────────────────
@@ -1016,7 +1017,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         grid.innerHTML = MM_OPTIONS.map(opt => `
           <button type="button"
             data-mm-val="${opt.value}" data-mm-price="${opt.price}"
-            data-mm-label="${opt.label}" data-mm-dur="${opt.dur}"
+            data-mm-label="${opt.label}" data-mm-dur="${opt.dur}" data-mm-cat="${opt.cat}"
             class="mm-opt-btn text-left rounded-xl border-2 border-neutral-200 bg-white p-3 hover:border-primary-300 transition-all">
             <p class="font-semibold text-xs text-neutral-900 leading-snug">${opt.label}</p>
             <p class="text-primary-600 font-bold text-xs mt-1">$${opt.price.toFixed(2)}</p>
@@ -1033,6 +1034,14 @@ const { title, description = 'Professional aesthetician services in a serene, mo
             btn.classList.remove('!border-primary-500', '!bg-primary-50');
           } else {
             if (mmModalSelected.length >= 2) { showToast('Select exactly 2 services.'); return; }
+            // Category rule: both services must be from different categories
+            if (mmModalSelected.length === 1) {
+              const existingCat = MM_OPTIONS.find(o => o.value === mmModalSelected[0].value)?.cat;
+              if (existingCat === btn.dataset.mmCat) {
+                showToast('Choose services from different categories — e.g. a facial + a wax or lash service.');
+                return;
+              }
+            }
             mmModalSelected.push({ value: val, label: btn.dataset.mmLabel, price: parseFloat(btn.dataset.mmPrice) });
             btn.classList.add('!border-primary-500', '!bg-primary-50');
           }
@@ -1044,11 +1053,17 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         const breakdown  = document.getElementById('mm-modal-breakdown');
         const confirmBtn = document.getElementById('mm-modal-confirm');
         const grid       = document.getElementById('mm-modal-grid');
-        const atMax = mmModalSelected.length >= 2;
+        const atMax       = mmModalSelected.length >= 2;
+        // Category of the already-selected item (when exactly 1 selected)
+        const takenCat    = mmModalSelected.length === 1
+          ? MM_OPTIONS.find(o => o.value === mmModalSelected[0].value)?.cat
+          : null;
         if (grid) grid.querySelectorAll('.mm-opt-btn').forEach(btn => {
-          const sel = mmModalSelected.some(s => s.value === btn.dataset.mmVal);
-          btn.classList.toggle('opacity-40',          atMax && !sel);
-          btn.classList.toggle('pointer-events-none',  atMax && !sel);
+          const sel      = mmModalSelected.some(s => s.value === btn.dataset.mmVal);
+          const sameCat  = !sel && takenCat && btn.dataset.mmCat === takenCat;
+          const blocked  = (atMax && !sel) || sameCat;
+          btn.classList.toggle('opacity-40',          blocked);
+          btn.classList.toggle('pointer-events-none',  blocked);
         });
         if (mmModalSelected.length === 2) {
           const total = mmModalSelected[0].price + mmModalSelected[1].price - 15;

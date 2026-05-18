@@ -316,8 +316,8 @@ import Layout from '../../layouts/Layout.astro';
                   <!-- Mix & Match Service Picker (shown when Mix & Match is selected) -->
                   <div id="mix-match-panel" class="hidden mt-4 p-5 bg-primary-50 border-2 border-primary-200 rounded-2xl">
                     <p class="text-sm font-semibold text-neutral-800 mb-1">Choose your 2 services for this package:</p>
-                    <p class="text-xs text-neutral-500 mb-4">Select exactly 2 services — you'll receive a <strong class="text-primary-600">$15 package discount</strong> off the combined total.</p>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4" id="mix-match-options">
+                    <p class="text-xs text-neutral-500 mb-4">Choose <strong class="text-neutral-700">1 facial + 1 lash or wax service</strong> — you'll receive a <strong class="text-primary-600">$15 package discount</strong> off the combined total.</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2" id="mix-match-options">
 
                       <label class="cursor-pointer">
                         <input type="checkbox" data-mm-value="mm-signature-radiance" data-mm-price="99" data-mm-label="Signature Radiance Facial" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
@@ -437,6 +437,11 @@ import Layout from '../../layouts/Layout.astro';
                       </label>
 
                     </div>
+
+                    <!-- Category conflict hint -->
+                    <p id="mm-category-hint" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
+                      ⚠️ Please choose services from different categories — e.g. a facial + a wax or lash service.
+                    </p>
 
                     <!-- Real-time Price Breakdown -->
                     <div id="mm-price-breakdown" class="hidden bg-white rounded-xl border border-primary-200 p-4 text-sm">
@@ -1087,8 +1092,31 @@ import Layout from '../../layouts/Layout.astro';
       const mmSvc2Price = document.getElementById('mm-svc2-price')!;
       const mmTotal = document.getElementById('mm-total')!;
 
-      // Track selected mix & match services (max 2)
+      // Track selected mix & match services (max 2, must be different categories)
       let mmSelected: Array<{value: string; label: string; price: number}> = [];
+
+      // Category map — mirrors MM_OPTIONS categories in Layout.astro
+      const MM_CAT: Record<string, string> = {
+        'mm-signature-radiance': 'facial', 'mm-brightening-peel':  'facial',
+        'mm-diamond-glow':       'facial', 'mm-high-freq':          'facial',
+        'mm-teen-facial':        'facial', 'mm-pumpkin-enzyme':     'facial',
+        'mm-chlorophyll':        'facial', 'mm-pineapple-enzyme':   'facial',
+        'mm-skin-recovery':      'facial',
+        'mm-lash-lift':          'lash',   'mm-lash-ext':           'lash',
+        'mm-body-wax':           'wax',    'mm-brazilian':          'wax',
+      };
+
+      // Visually grey out same-category labels after each selection change
+      function refreshMMLabels() {
+        const takenCat = mmSelected.length === 1 ? MM_CAT[mmSelected[0].value] : null;
+        document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => {
+          const label = cb.closest('label');
+          if (!label) return;
+          const sameCat = takenCat && MM_CAT[cb.dataset.mmValue ?? ''] === takenCat && !cb.checked;
+          label.classList.toggle('opacity-40', !!sameCat);
+          label.classList.toggle('pointer-events-none', !!sameCat);
+        });
+      }
 
       function updateMixMatchPanel() {
         const count = mmSelected.length;
@@ -1121,23 +1149,29 @@ import Layout from '../../layouts/Layout.astro';
 
       document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => {
         cb.addEventListener('change', () => {
-          const label = cb.dataset.mmLabel ?? '';
+          const lbl   = cb.dataset.mmLabel ?? '';
           const price = parseInt(cb.dataset.mmPrice ?? '0', 10);
           const value = cb.dataset.mmValue ?? '';
 
           if (cb.checked) {
             if (mmSelected.length >= 2) {
-              // Deselect the first one to enforce max 2
-              const oldest = mmSelected[0];
-              mmSelected.shift();
-              // Uncheck the first selected checkbox in the DOM
-              const oldCb = document.querySelector<HTMLInputElement>(`.mix-match-service-cb[data-mm-value="${oldest.value}"]`);
-              if (oldCb) oldCb.checked = false;
+              // Already full — reject and revert
+              cb.checked = false;
+              return;
             }
-            mmSelected.push({ value, label, price });
+            // Category rule: both must be different types
+            if (mmSelected.length === 1 && MM_CAT[mmSelected[0].value] === MM_CAT[value]) {
+              cb.checked = false;
+              // Show inline hint below the grid
+              const hint = document.getElementById('mm-category-hint');
+              if (hint) { hint.classList.remove('hidden'); setTimeout(() => hint.classList.add('hidden'), 3500); }
+              return;
+            }
+            mmSelected.push({ value, label: lbl, price });
           } else {
             mmSelected = mmSelected.filter(s => s.value !== value);
           }
+          refreshMMLabels();
           updateMixMatchPanel();
         });
       });
@@ -1152,6 +1186,7 @@ import Layout from '../../layouts/Layout.astro';
             // Clear all mix-match sub-selections
             mmSelected = [];
             document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => { cb.checked = false; });
+            refreshMMLabels();
             mmBreakdown?.classList.add('hidden');
             mmInstructions?.classList.remove('hidden');
             if (mmPriceLabel) mmPriceLabel.textContent = 'From $129';
@@ -1181,6 +1216,7 @@ import Layout from '../../layouts/Layout.astro';
           });
           if (mmSelected.length === 2) {
             updateMixMatchPanel();
+            refreshMMLabels();
             mmPanel?.classList.remove('hidden');
           }
         }
