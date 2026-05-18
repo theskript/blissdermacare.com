@@ -151,16 +151,17 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Individual Services Grid -->
-  <section class="py-14 bg-neutral-50">
+  <!-- Facials Section -->
+  <section class="py-14 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="mb-10">
-        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Individual Sessions</span>
-        <h2 class="text-3xl font-serif text-neutral-900">All Treatments</h2>
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Skin Treatments</span>
+        <h2 class="text-3xl font-serif text-neutral-900">Facials</h2>
+        <p class="text-neutral-500 mt-2">Professional facials tailored to every skin type and concern.</p>
       </div>
 
-      <!-- Featured 3 -->
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
+      <!-- Featured Facials (2-col) -->
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
         <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
           <div class="absolute top-4 right-4 z-10"><span class="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full">BESTSELLER</span></div>
           <div class="relative h-52 overflow-hidden">
@@ -192,43 +193,10 @@ import Layout from '../../layouts/Layout.astro';
             </div>
           </div>
         </div>
-
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
-          <div class="absolute top-4 right-4 z-10"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">TRENDING</span></div>
-          <div class="relative h-52 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Lash Lift &amp; Brow Lamination</h3>
-            <p class="text-neutral-600 text-sm mb-4">Wake up with lifted lashes &amp; sculpted brows — no mascara needed. Tint included. Lasts 6–8 weeks.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$79</p><p class="text-xs text-neutral-500">60 minutes</p></div>
-              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <!-- More Services -->
+      <!-- Facial Grid (4-col × 2 rows = 8 items, no negative space) -->
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Body & Face Waxing" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Body &amp; Face Waxing</h3>
-            <p class="text-neutral-500 text-xs mb-3">Silky-smooth results for face, arms, legs &amp; underarms. Long-lasting &amp; gentle on skin.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$65</p><p class="text-xs text-neutral-400">45–60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://res.cloudinary.com/liaison-inc/image/upload/f_auto/q_auto,w_1200/v1762764980/content/thervo/thervo-brazilian-wax-cost-beautician-applying-wax-on-client-as-part-of-hair-removal-treatment.jpg" alt="Brazilian Wax" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Brazilian Wax</h3>
-            <p class="text-neutral-500 text-xs mb-3">Complete bikini area removal with precision wax. Beach-ready results that last 3–4 weeks.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$87</p><p class="text-xs text-neutral-400">45–60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-
         <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
           <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/5069454/pexels-photo-5069454.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Brightening Peel" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
           <div class="p-4">
@@ -245,31 +213,6 @@ import Layout from '../../layouts/Layout.astro';
             <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$119</p><p class="text-xs text-neutral-400">50 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
           </div>
         </div>
-
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/23532307/pexels-photo-23532307.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Hairline Restoration" class="w-full h-full object-cover object-bottom group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Hairline Restoration</h3>
-            <p class="text-neutral-500 text-xs mb-3">SMP micropigmentation for natural hair follicle impressions.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$680</p><p class="text-xs text-neutral-400">2–3 sessions</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400&h=300&fit=crop&q=80" alt="Scalp Therapy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Scalp Therapy</h3>
-            <p class="text-neutral-500 text-xs mb-3">Microneedling + growth factor serums to reactivate follicles. Clinically proven to thicken and restore.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$219</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Lash Extensions" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Lash Extensions</h3>
-            <p class="text-neutral-500 text-xs mb-3">Full sets in classic, hybrid, volume &amp; mega volume. Wake up beautiful — zero effort.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$159</p><p class="text-xs text-neutral-400">2 hr | Fills $43</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
         <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
           <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Teen Skincare Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
           <div class="p-4">
@@ -279,11 +222,149 @@ import Layout from '../../layouts/Layout.astro';
           </div>
         </div>
         <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/7477680/pexels-photo-7477680.jpeg?auto=compress&cs=tinysrgb&w=400" alt="High Frequency Skin Tightening" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
+          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/3764013/pexels-photo-3764013.jpeg?auto=compress&cs=tinysrgb&w=400" alt="High Frequency Skin Tightening facial treatment with electrical device" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
           <div class="p-4">
             <h3 class="text-base font-bold text-neutral-900 mb-1">High Frequency Skin Tightening</h3>
             <p class="text-neutral-500 text-xs mb-3">Electrical current firms, tightens &amp; lifts. Reduces pores, stimulates collagen &amp; clears blemishes without downtime.</p>
             <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$95</p><p class="text-xs text-neutral-400">45 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
+          </div>
+        </div>
+
+        <!-- 4 New Facials -->
+        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
+          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pumpkin Enzyme Facial treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
+          <div class="p-4">
+            <h3 class="text-base font-bold text-neutral-900 mb-1">Pumpkin Enzyme Facial</h3>
+            <p class="text-neutral-500 text-xs mb-3">Gentle enzyme exfoliation that brightens and smooths — ideal for all skin types, including sensitive.</p>
+            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$85</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
+          </div>
+        </div>
+        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
+          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Chlorophyll Skin Tightening Facial green treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
+          <div class="p-4">
+            <h3 class="text-base font-bold text-neutral-900 mb-1">Chlorophyll Skin Tightening Facial</h3>
+            <p class="text-neutral-500 text-xs mb-3">Plant-powered formula visibly reduces fine lines &amp; wrinkles while firming the skin's surface.</p>
+            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$105</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
+          </div>
+        </div>
+        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
+          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/4047186/pexels-photo-4047186.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pineapple Enzyme Facial exfoliating treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
+          <div class="p-4">
+            <h3 class="text-base font-bold text-neutral-900 mb-1">Pineapple Enzyme Facial</h3>
+            <p class="text-neutral-500 text-xs mb-3">Bromelain-rich exfoliation that refines pores &amp; evens texture. Perfect for combination skin.</p>
+            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$88</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
+          </div>
+        </div>
+        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
+          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/5765828/pexels-photo-5765828.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Skin Recovery Facial multi-vitamin hydrating treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
+          <div class="p-4">
+            <h3 class="text-base font-bold text-neutral-900 mb-1">Skin Recovery Facial</h3>
+            <p class="text-neutral-500 text-xs mb-3">Multi-vitamin infusion deeply nourishes &amp; replenishes dry and dehydrated skin back to radiance.</p>
+            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$92</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Individual Treatments Section -->
+  <section class="py-14 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Individual Sessions</span>
+        <h2 class="text-3xl font-serif text-neutral-900">Treatments &amp; Services</h2>
+      </div>
+
+      <!-- 3-col grid of 6 services = 2 full rows, no negative space -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
+          <div class="absolute top-4 right-4 z-10"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">TRENDING</span></div>
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Lash Lift &amp; Brow Lamination</h3>
+            <p class="text-neutral-600 text-sm mb-4">Wake up with lifted lashes &amp; sculpted brows — no mascara needed. Tint included. Lasts 6–8 weeks.</p>
+            <div class="flex items-center justify-between">
+              <div><p class="text-2xl font-bold text-primary-600">$79</p><p class="text-xs text-neutral-500">60 minutes</p></div>
+              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Extensions" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Lash Extensions</h3>
+            <p class="text-neutral-600 text-sm mb-4">Full sets in classic, hybrid, volume &amp; mega volume. Wake up beautiful — zero effort.</p>
+            <div class="flex items-center justify-between">
+              <div><p class="text-2xl font-bold text-primary-600">$159</p><p class="text-xs text-neutral-500">2 hr | Fills $43</p></div>
+              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Body & Face Waxing" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Body &amp; Face Waxing</h3>
+            <p class="text-neutral-600 text-sm mb-4">Silky-smooth results for face, arms, legs &amp; underarms. Long-lasting &amp; gentle on skin.</p>
+            <div class="flex items-center justify-between">
+              <div><p class="text-2xl font-bold text-primary-600">$65</p><p class="text-xs text-neutral-500">45–60 min</p></div>
+              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://res.cloudinary.com/liaison-inc/image/upload/f_auto/q_auto,w_1200/v1762764980/content/thervo/thervo-brazilian-wax-cost-beautician-applying-wax-on-client-as-part-of-hair-removal-treatment.jpg" alt="Brazilian Wax" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Brazilian Wax</h3>
+            <p class="text-neutral-600 text-sm mb-4">Complete bikini area removal with precision wax. Beach-ready results that last 3–4 weeks.</p>
+            <div class="flex items-center justify-between">
+              <div><p class="text-2xl font-bold text-primary-600">$87</p><p class="text-xs text-neutral-500">45–60 min</p></div>
+              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.pexels.com/photos/3738338/pexels-photo-3738338.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Scalp therapy microneedling treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Scalp Therapy</h3>
+            <p class="text-neutral-600 text-sm mb-4">Microneedling + growth factor serums to reactivate follicles. Clinically proven to thicken and restore.</p>
+            <div class="flex items-center justify-between">
+              <div><p class="text-2xl font-bold text-primary-600">$219</p><p class="text-xs text-neutral-500">60 min</p></div>
+              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.pexels.com/photos/23532307/pexels-photo-23532307.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hairline Restoration" class="w-full h-full object-cover object-bottom group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Hairline Restoration</h3>
+            <p class="text-neutral-600 text-sm mb-4">SMP micropigmentation for natural hair follicle impressions. Restores confidence with zero surgery.</p>
+            <div class="flex items-center justify-between">
+              <div><p class="text-2xl font-bold text-primary-600">$680</p><p class="text-xs text-neutral-500">2–3 sessions</p></div>
+              <a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
           </div>
         </div>
       </div>

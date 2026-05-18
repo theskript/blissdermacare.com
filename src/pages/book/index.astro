@@ -113,6 +113,42 @@ import Layout from '../../layouts/Layout.astro';
                       </div>
                     </label>
 
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="pumpkin-enzyme-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Pumpkin Enzyme Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$85</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="chlorophyll-skin-tightening-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Chlorophyll Skin Tightening Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$105</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="pineapple-enzyme-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Pineapple Enzyme Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$88</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="skin-recovery-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Skin Recovery Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$92</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
                   </div>
                 </div>
 
@@ -255,15 +291,169 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="mix-match-package" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="mix-match-package" id="mix-match-checkbox" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Mix &amp; Match Escape</p>
                         <p class="text-xs text-neutral-500 mt-0.5">Waxing + Lash Lift, Lash Ext, or Facial</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">From $129</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5" id="mix-match-price-label">From $129</p>
                         <p class="text-xs text-neutral-400 mt-0.5">~2 hrs 15 min</p>
                       </div>
                     </label>
 
+                  </div>
+
+                  <!-- Mix & Match Service Picker (shown when Mix & Match is selected) -->
+                  <div id="mix-match-panel" class="hidden mt-4 p-5 bg-primary-50 border-2 border-primary-200 rounded-2xl">
+                    <p class="text-sm font-semibold text-neutral-800 mb-1">Choose your 2 services for this package:</p>
+                    <p class="text-xs text-neutral-500 mb-4">Select exactly 2 services — you'll receive a <strong class="text-primary-600">$15 package discount</strong> off the combined total.</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4" id="mix-match-options">
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-signature-radiance" data-mm-price="99" data-mm-label="Signature Radiance Facial" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Signature Radiance Facial</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$99</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-brightening-peel" data-mm-price="128" data-mm-label="Brightening Peel" data-mm-duration="45 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Brightening Peel</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$128</p>
+                          <p class="text-[10px] text-neutral-400">45 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-diamond-glow" data-mm-price="119" data-mm-label="Diamond Glow" data-mm-duration="50 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Diamond Glow</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$119</p>
+                          <p class="text-[10px] text-neutral-400">50 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-high-freq" data-mm-price="95" data-mm-label="High Frequency Skin Tightening" data-mm-duration="45 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">High Frequency Skin Tightening</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$95</p>
+                          <p class="text-[10px] text-neutral-400">45 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-teen-facial" data-mm-price="64" data-mm-label="Teen Skincare Facial" data-mm-duration="45 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Teen Skincare Facial</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$64</p>
+                          <p class="text-[10px] text-neutral-400">45 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-pumpkin-enzyme" data-mm-price="85" data-mm-label="Pumpkin Enzyme Facial" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Pumpkin Enzyme Facial</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$85</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-chlorophyll" data-mm-price="105" data-mm-label="Chlorophyll Skin Tightening Facial" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Chlorophyll Skin Tightening Facial</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$105</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-pineapple-enzyme" data-mm-price="88" data-mm-label="Pineapple Enzyme Facial" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Pineapple Enzyme Facial</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$88</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-skin-recovery" data-mm-price="92" data-mm-label="Skin Recovery Facial" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Skin Recovery Facial</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$92</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-lash-lift" data-mm-price="79" data-mm-label="Lash Lift & Brow Lamination" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Lash Lift &amp; Brow Lamination</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$79</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-lash-ext" data-mm-price="159" data-mm-label="Lash Extensions" data-mm-duration="120 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Lash Extensions</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$159</p>
+                          <p class="text-[10px] text-neutral-400">120 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-body-wax" data-mm-price="65" data-mm-label="Body & Face Waxing" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Body &amp; Face Waxing</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$65</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer">
+                        <input type="checkbox" data-mm-value="mm-brazilian" data-mm-price="87" data-mm-label="Brazilian Wax" data-mm-duration="60 min" class="sr-only peer mix-match-service-cb" />
+                        <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                          <p class="font-semibold text-xs text-neutral-900 leading-snug">Brazilian Wax</p>
+                          <p class="text-primary-600 font-bold text-xs mt-1">$87</p>
+                          <p class="text-[10px] text-neutral-400">60 min</p>
+                        </div>
+                      </label>
+
+                    </div>
+
+                    <!-- Real-time Price Breakdown -->
+                    <div id="mm-price-breakdown" class="hidden bg-white rounded-xl border border-primary-200 p-4 text-sm">
+                      <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-3">Package Breakdown</p>
+                      <div class="space-y-2">
+                        <div class="flex justify-between">
+                          <span class="text-neutral-600" id="mm-svc1-label">—</span>
+                          <span class="font-semibold text-neutral-900" id="mm-svc1-price">—</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-neutral-600" id="mm-svc2-label">—</span>
+                          <span class="font-semibold text-neutral-900" id="mm-svc2-price">—</span>
+                        </div>
+                        <div class="flex justify-between text-emerald-600">
+                          <span>Package Discount</span>
+                          <span class="font-semibold">−$15.00</span>
+                        </div>
+                        <div class="flex justify-between border-t border-neutral-200 pt-2 mt-2">
+                          <span class="font-bold text-neutral-900">Package Total</span>
+                          <span class="font-bold text-xl text-primary-600" id="mm-total">—</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p id="mm-instructions" class="text-xs text-neutral-500 mt-3 flex items-center gap-1.5">
+                      <svg class="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      Select exactly 2 services to see your final package price
+                    </p>
                   </div>
                 </div>
 
@@ -628,6 +818,10 @@ import Layout from '../../layouts/Layout.astro';
         'diamond-glow': 119,
         'teen-skincare-facial': 64,
         'high-frequency-skin-tightening': 95,
+        'pumpkin-enzyme-facial': 85,
+        'chlorophyll-skin-tightening-facial': 105,
+        'pineapple-enzyme-facial': 88,
+        'skin-recovery-facial': 92,
         'lash-extensions': 159,
         'lash-extensions-fill': 43,
         'lash-lift-brow-lamination': 79,
@@ -648,6 +842,10 @@ import Layout from '../../layouts/Layout.astro';
         'diamond-glow': 'Diamond Glow',
         'teen-skincare-facial': 'Teen Skincare Facial',
         'high-frequency-skin-tightening': 'High Frequency Skin Tightening',
+        'pumpkin-enzyme-facial': 'Pumpkin Enzyme Facial',
+        'chlorophyll-skin-tightening-facial': 'Chlorophyll Skin Tightening Facial',
+        'pineapple-enzyme-facial': 'Pineapple Enzyme Facial',
+        'skin-recovery-facial': 'Skin Recovery Facial',
         'lash-extensions': 'Lash Extensions',
         'lash-extensions-fill': 'Lash Extensions Fill',
         'lash-lift-brow-lamination': 'Lash Lift & Brow Lamination',
@@ -688,6 +886,10 @@ import Layout from '../../layouts/Layout.astro';
         'diamond-glow': 50,
         'teen-skincare-facial': 45,
         'high-frequency-skin-tightening': 45,
+        'pumpkin-enzyme-facial': 60,
+        'chlorophyll-skin-tightening-facial': 60,
+        'pineapple-enzyme-facial': 60,
+        'skin-recovery-facial': 60,
         'lash-extensions': 120,
         'lash-extensions-fill': 60,
         'lash-lift-brow-lamination': 60,
@@ -839,6 +1041,94 @@ import Layout from '../../layouts/Layout.astro';
         .forEach(el => el.addEventListener('change', () => onServiceChange(el)));
       document.querySelectorAll<HTMLInputElement>('input[name="discount"]')
         .forEach(el => el.addEventListener('change', update));
+
+      // ── Mix & Match Panel ──────────────────────────────────────────────────
+      const MM_DISCOUNT = 15;
+      const mmCheckbox = document.getElementById('mix-match-checkbox') as HTMLInputElement | null;
+      const mmPanel = document.getElementById('mix-match-panel');
+      const mmPriceLabel = document.getElementById('mix-match-price-label');
+      const mmBreakdown = document.getElementById('mm-price-breakdown');
+      const mmInstructions = document.getElementById('mm-instructions');
+      const mmSvc1Label = document.getElementById('mm-svc1-label')!;
+      const mmSvc1Price = document.getElementById('mm-svc1-price')!;
+      const mmSvc2Label = document.getElementById('mm-svc2-label')!;
+      const mmSvc2Price = document.getElementById('mm-svc2-price')!;
+      const mmTotal = document.getElementById('mm-total')!;
+
+      // Track selected mix & match services (max 2)
+      let mmSelected: Array<{value: string; label: string; price: number}> = [];
+
+      function updateMixMatchPanel() {
+        const count = mmSelected.length;
+
+        if (count === 2) {
+          const total = mmSelected[0].price + mmSelected[1].price - MM_DISCOUNT;
+          mmSvc1Label.textContent = mmSelected[0].label;
+          mmSvc1Price.textContent = '$' + mmSelected[0].price.toFixed(2);
+          mmSvc2Label.textContent = mmSelected[1].label;
+          mmSvc2Price.textContent = '$' + mmSelected[1].price.toFixed(2);
+          mmTotal!.textContent = '$' + total.toFixed(2);
+          mmBreakdown?.classList.remove('hidden');
+          mmInstructions?.classList.add('hidden');
+          // Update the main package price label and PRICES entry
+          if (mmPriceLabel) mmPriceLabel.textContent = '$' + total.toFixed(2);
+          PRICES['mix-match-package'] = total;
+          SERVICE_LABELS['mix-match-package'] = `Mix & Match: ${mmSelected[0].label} + ${mmSelected[1].label}`;
+        } else {
+          mmBreakdown?.classList.add('hidden');
+          mmInstructions?.classList.remove('hidden');
+          if (mmPriceLabel) mmPriceLabel.textContent = count === 1
+            ? `$${mmSelected[0].price} + 1 more`
+            : 'From $129';
+          PRICES['mix-match-package'] = 129;
+          SERVICE_LABELS['mix-match-package'] = 'Mix & Match Escape Package';
+        }
+        // Refresh main summary
+        update();
+      }
+
+      document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const label = cb.dataset.mmLabel ?? '';
+          const price = parseInt(cb.dataset.mmPrice ?? '0', 10);
+          const value = cb.dataset.mmValue ?? '';
+
+          if (cb.checked) {
+            if (mmSelected.length >= 2) {
+              // Deselect the first one to enforce max 2
+              const oldest = mmSelected[0];
+              mmSelected.shift();
+              // Uncheck the first selected checkbox in the DOM
+              const oldCb = document.querySelector<HTMLInputElement>(`.mix-match-service-cb[data-mm-value="${oldest.value}"]`);
+              if (oldCb) oldCb.checked = false;
+            }
+            mmSelected.push({ value, label, price });
+          } else {
+            mmSelected = mmSelected.filter(s => s.value !== value);
+          }
+          updateMixMatchPanel();
+        });
+      });
+
+      // Show/hide the panel when the main mix-match checkbox is toggled
+      if (mmCheckbox) {
+        mmCheckbox.addEventListener('change', () => {
+          if (mmCheckbox.checked) {
+            mmPanel?.classList.remove('hidden');
+          } else {
+            mmPanel?.classList.add('hidden');
+            // Clear all mix-match sub-selections
+            mmSelected = [];
+            document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => { cb.checked = false; });
+            mmBreakdown?.classList.add('hidden');
+            mmInstructions?.classList.remove('hidden');
+            if (mmPriceLabel) mmPriceLabel.textContent = 'From $129';
+            PRICES['mix-match-package'] = 129;
+            SERVICE_LABELS['mix-match-package'] = 'Mix & Match Escape Package';
+          }
+        });
+      }
+      // ── End Mix & Match Panel ──────────────────────────────────────────────
 
       // Enforce strict 24-hour advance booking (exact datetime, not just calendar day)
       const dateInput = document.getElementById('bookingDate') as HTMLInputElement;
@@ -995,6 +1285,11 @@ import Layout from '../../layouts/Layout.astro';
           showError('Please select at least one service before continuing.');
           return;
         }
+        if (checkedSvcs.includes('mix-match-package') && mmSelected.length < 2) {
+          showError('Please choose 2 services for your Mix & Match Escape package.');
+          document.getElementById('mix-match-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
         if (!t) {
           showError('Please select a time slot before continuing.');
           return;
@@ -1013,6 +1308,7 @@ import Layout from '../../layouts/Layout.astro';
 
         const payload = {
           services:        checkedSvcs,
+          mixMatchServices: checkedSvcs.includes('mix-match-package') ? mmSelected.map(s => s.label) : [],
           discount:        discountInput?.value ?? 'none',
           customerName:    nameInput?.value ?? '',
           customerEmail:   emailInput?.value ?? '',
