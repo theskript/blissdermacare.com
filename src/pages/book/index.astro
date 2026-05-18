@@ -1162,6 +1162,31 @@ import Layout from '../../layouts/Layout.astro';
       }
       // ── End Mix & Match Panel ──────────────────────────────────────────────
 
+      // ── Cart: MM Pre-population ────────────────────────────────────────────
+      // Runs AFTER mmSelected and updateMixMatchPanel are defined above
+      try {
+        const cartRaw = JSON.parse(localStorage.getItem('bliss_cart_v1') || '[]') as Array<any>;
+        const mmCart  = cartRaw.find((i: any) => i.id === 'mix-match-package');
+        if (mmCart && Array.isArray(mmCart.mmServices) && mmCart.mmServices.length === 2) {
+          const [v1, v2] = mmCart.mmServices as string[];
+          [v1, v2].forEach(val => {
+            const cb = document.querySelector<HTMLInputElement>(`.mix-match-service-cb[data-mm-value="${val}"]`);
+            if (!cb) return;
+            cb.checked = true;
+            const label = cb.dataset.mmLabel ?? '';
+            const price = parseInt(cb.dataset.mmPrice ?? '0', 10);
+            if (!mmSelected.some(s => s.value === val)) {
+              mmSelected.push({ value: val, label, price });
+            }
+          });
+          if (mmSelected.length === 2) {
+            updateMixMatchPanel();
+            mmPanel?.classList.remove('hidden');
+          }
+        }
+      } catch (_) {}
+      // ── End Cart: MM Pre-population ───────────────────────────────────────
+
       // Enforce strict 24-hour advance booking (exact datetime, not just calendar day)
       const dateInput = document.getElementById('bookingDate') as HTMLInputElement;
 

@@ -351,7 +351,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         <div class="flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="block flex-shrink-0">
-            <img src="/images/IMG_1350.JPG.jpeg" alt="Bliss Dermacare" class="h-20 w-auto object-contain" />
+            <img src="/images/logo.png" alt="Bliss Dermacare" class="h-20 w-auto object-contain" />
           </a>
           
           <!-- Desktop Navigation -->
@@ -495,6 +495,36 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         <button id="cart-clear-btn" class="block w-full text-center text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors py-1">Remove all services</button>
       </div>
     </aside>
+
+    <!-- Mix & Match Picker Modal (triggered from cart) -->
+    <div id="mm-modal-overlay" class="fixed inset-0 bg-black/50 z-[170] hidden items-center justify-center p-4" role="dialog" aria-label="Mix and Match service picker">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+        <div class="flex items-start justify-between p-5 border-b border-neutral-100">
+          <div>
+            <h3 class="font-bold text-neutral-900 text-base">Mix &amp; Match Escape Package</h3>
+            <p class="text-xs text-neutral-500 mt-0.5">Pick <strong>exactly 2</strong> services &mdash; get <span class="text-emerald-600 font-semibold">$15 off</span> the combined total.</p>
+          </div>
+          <button id="mm-modal-close" class="p-1.5 text-neutral-400 hover:text-neutral-700 rounded-lg hover:bg-neutral-100 shrink-0 ml-3" aria-label="Close">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="overflow-y-auto flex-1 p-5">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="mm-modal-grid"></div>
+          <div id="mm-modal-breakdown" class="hidden mt-4 bg-primary-50 border border-primary-200 rounded-xl p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-3">Package Summary</p>
+            <div class="space-y-1.5 text-sm font-sans">
+              <div class="flex justify-between"><span class="text-neutral-600" id="mm-m-svc1-label">&mdash;</span><span class="font-semibold text-neutral-900" id="mm-m-svc1-price">&mdash;</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600" id="mm-m-svc2-label">&mdash;</span><span class="font-semibold text-neutral-900" id="mm-m-svc2-price">&mdash;</span></div>
+              <div class="flex justify-between text-emerald-700 font-medium"><span>Package discount</span><span>&minus;$15.00</span></div>
+              <div class="flex justify-between border-t border-primary-200 pt-1.5 font-bold text-primary-700 text-base"><span>Total</span><span id="mm-m-total">&mdash;</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="p-5 border-t border-neutral-100">
+          <button id="mm-modal-confirm" disabled class="w-full py-3 bg-primary-600 text-white font-semibold text-sm rounded-xl hover:bg-primary-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed">Add Mix &amp; Match to Cart</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Content -->
     <main class="pt-36">
@@ -760,6 +790,43 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         'mix-match-package':               { name: 'Mix & Match Escape Package',         price: 129, duration: '~2 hrs 15 min' },
       };
 
+      // ── Mirrors booking-page rules exactly ────────────────────────────────
+      const DURATIONS = {
+        'signature-radiance-facial': 60, 'brightening-peel': 45, 'diamond-glow': 50,
+        'teen-skincare-facial': 45, 'high-frequency-skin-tightening': 45,
+        'pumpkin-enzyme-facial': 60, 'chlorophyll-skin-tightening-facial': 60,
+        'pineapple-enzyme-facial': 60, 'skin-recovery-facial': 60,
+        'vampire-facial-prp': 75, 'lash-lift-brow-lamination': 60,
+        'lash-extensions': 120, 'lash-extensions-fill': 60,
+        'body-and-face-waxing': 60, 'brazilian-wax': 60,
+        'scalp-therapy': 60, 'hairline-restoration': 180,
+        'lash-body-smooth': 135, 'brow-lash-wax-ritual': 135,
+        'glow-smooth-escape': 135, 'mix-match-package': 135,
+      };
+
+      // Solo = must be booked alone (matches booking page SOLO_SERVICES)
+      const SOLO = new Set([
+        'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
+        'mix-match-package', 'hairline-restoration',
+      ]);
+
+      // Services eligible for Mix & Match (mirrors booking page checkboxes)
+      const MM_OPTIONS = [
+        { value: 'mm-signature-radiance', label: 'Signature Radiance Facial',            price: 99,  dur: '60 min' },
+        { value: 'mm-brightening-peel',   label: 'Brightening Peel',                    price: 128, dur: '45 min' },
+        { value: 'mm-diamond-glow',       label: 'Diamond Glow',                         price: 119, dur: '50 min' },
+        { value: 'mm-high-freq',          label: 'High Frequency Skin Tightening',       price: 95,  dur: '45 min' },
+        { value: 'mm-teen-facial',        label: 'Teen Skincare Facial',                 price: 64,  dur: '45 min' },
+        { value: 'mm-pumpkin-enzyme',     label: 'Pumpkin Enzyme Facial',                price: 85,  dur: '60 min' },
+        { value: 'mm-chlorophyll',        label: 'Chlorophyll Skin Tightening Facial',   price: 105, dur: '60 min' },
+        { value: 'mm-pineapple-enzyme',   label: 'Pineapple Enzyme Facial',              price: 88,  dur: '60 min' },
+        { value: 'mm-skin-recovery',      label: 'Skin Recovery Facial',                 price: 92,  dur: '60 min' },
+        { value: 'mm-lash-lift',          label: 'Lash Lift & Brow Lamination',          price: 79,  dur: '60 min' },
+        { value: 'mm-lash-ext',           label: 'Lash Extensions',                      price: 159, dur: '120 min' },
+        { value: 'mm-body-wax',           label: 'Body & Face Waxing',                   price: 65,  dur: '60 min' },
+        { value: 'mm-brazilian',          label: 'Brazilian Wax',                        price: 87,  dur: '60 min' },
+      ];
+
       // ── Storage ────────────────────────────────────────────────────────────
       function getCart() {
         try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
@@ -769,12 +836,43 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       }
       function isInCart(id) { return getCart().some(i => i.id === id); }
 
+      // ── Validation (same rules as booking page) ────────────────────────────
+      function canAdd(id) {
+        const ids = getCart().map(i => i.id);
+        if (ids.some(i => SOLO.has(i)))          return 'Your cart has a package that must be booked alone. Remove it first.';
+        if (SOLO.has(id) && ids.length > 0)      return 'This package must be booked alone. Clear the cart first.';
+        if (!SOLO.has(id)) {
+          const dur     = DURATIONS[id] ?? 60;
+          const current = ids.reduce((s, i) => s + (DURATIONS[i] ?? 60), 0);
+          if (current + dur > 120) return 'Adding this exceeds the 2‑hour visit limit. Remove a service first.';
+        }
+        return null;
+      }
+
+      // ── Toast notification ─────────────────────────────────────────────────
+      function showToast(msg) {
+        let toast = document.getElementById('cart-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'cart-toast';
+          toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-neutral-900 text-white text-sm font-sans font-medium px-5 py-3 rounded-full shadow-xl transition-opacity duration-300 opacity-0 pointer-events-none max-w-[90vw] text-center';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 3200);
+      }
+
       // ── Mutations ──────────────────────────────────────────────────────────
       function addItem(id) {
+        if (id === 'mix-match-package') { openMMModal(); return; }
         const svc = SERVICES[id];
         if (!svc) return;
+        const err = canAdd(id);
+        if (err) { showToast(err); return; }
+        if (isInCart(id)) { openDrawer(); return; }
         const items = getCart();
-        if (items.some(i => i.id === id)) { openDrawer(); return; }
         items.push({ id, name: svc.name, price: svc.price, duration: svc.duration });
         saveCart(items);
         renderAll();
@@ -846,19 +944,33 @@ const { title, description = 'Professional aesthetician services in a serene, mo
 
       function renderAll() { updateBadge(); renderDrawer(); updateAddButtons(); }
 
-      // ── Add-to-cart button state sync ──────────────────────────────────────
+      // ── Add-button state (greyed = blocked by rules) ───────────────────────
       function updateAddButtons() {
+        const ids        = getCart().map(i => i.id);
+        const currentDur = ids.reduce((s, i) => s + (DURATIONS[i] ?? 60), 0);
+        const hasSolo    = ids.some(i => SOLO.has(i));
+
         document.querySelectorAll('[data-add-to-cart]').forEach(btn => {
-          const inCart = isInCart(btn.getAttribute('data-add-to-cart'));
+          const id     = btn.getAttribute('data-add-to-cart');
+          const inCart = ids.includes(id);
+          let blocked  = false;
+          if (!inCart) {
+            if (hasSolo)                              blocked = true;
+            else if (SOLO.has(id) && ids.length > 0)  blocked = true;
+            else if (!SOLO.has(id) && (currentDur + (DURATIONS[id] ?? 60)) > 120) blocked = true;
+          }
           const textEl  = btn.querySelector('.cart-btn-text');
           const plusEl  = btn.querySelector('.cart-btn-icon');
           const checkEl = btn.querySelector('.cart-check-icon');
-          if (textEl)  textEl.textContent = inCart ? 'Added' : 'Add';
-          if (plusEl)  plusEl.classList.toggle('hidden', inCart);
+          if (textEl)  textEl.textContent = inCart ? 'Added' : (blocked ? 'N/A' : 'Add');
+          if (plusEl)  plusEl.classList.toggle('hidden', inCart || blocked);
           if (checkEl) checkEl.classList.toggle('hidden', !inCart);
           btn.classList.toggle('!border-emerald-300', inCart);
           btn.classList.toggle('!text-emerald-700',   inCart);
           btn.classList.toggle('!bg-emerald-50',       inCart);
+          btn.classList.toggle('opacity-40',           blocked && !inCart);
+          btn.classList.toggle('cursor-not-allowed',   blocked && !inCart);
+          btn.disabled = blocked && !inCart;
         });
       }
 
@@ -895,6 +1007,113 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         updateAddButtons();
       }
 
+      // ── Mix & Match Modal ──────────────────────────────────────────────────
+      let mmModalSelected = [];
+
+      function buildMMGrid() {
+        const grid = document.getElementById('mm-modal-grid');
+        if (!grid) return;
+        grid.innerHTML = MM_OPTIONS.map(opt => `
+          <button type="button"
+            data-mm-val="${opt.value}" data-mm-price="${opt.price}"
+            data-mm-label="${opt.label}" data-mm-dur="${opt.dur}"
+            class="mm-opt-btn text-left rounded-xl border-2 border-neutral-200 bg-white p-3 hover:border-primary-300 transition-all">
+            <p class="font-semibold text-xs text-neutral-900 leading-snug">${opt.label}</p>
+            <p class="text-primary-600 font-bold text-xs mt-1">$${opt.price.toFixed(2)}</p>
+            <p class="text-[10px] text-neutral-400">${opt.dur}</p>
+          </button>`).join('');
+
+        grid.addEventListener('click', e => {
+          const btn = e.target.closest('.mm-opt-btn');
+          if (!btn) return;
+          const val = btn.dataset.mmVal;
+          const idx = mmModalSelected.findIndex(s => s.value === val);
+          if (idx >= 0) {
+            mmModalSelected.splice(idx, 1);
+            btn.classList.remove('!border-primary-500', '!bg-primary-50');
+          } else {
+            if (mmModalSelected.length >= 2) { showToast('Select exactly 2 services.'); return; }
+            mmModalSelected.push({ value: val, label: btn.dataset.mmLabel, price: parseFloat(btn.dataset.mmPrice) });
+            btn.classList.add('!border-primary-500', '!bg-primary-50');
+          }
+          updateMMModal();
+        });
+      }
+
+      function updateMMModal() {
+        const breakdown  = document.getElementById('mm-modal-breakdown');
+        const confirmBtn = document.getElementById('mm-modal-confirm');
+        const grid       = document.getElementById('mm-modal-grid');
+        const atMax = mmModalSelected.length >= 2;
+        if (grid) grid.querySelectorAll('.mm-opt-btn').forEach(btn => {
+          const sel = mmModalSelected.some(s => s.value === btn.dataset.mmVal);
+          btn.classList.toggle('opacity-40',          atMax && !sel);
+          btn.classList.toggle('pointer-events-none',  atMax && !sel);
+        });
+        if (mmModalSelected.length === 2) {
+          const total = mmModalSelected[0].price + mmModalSelected[1].price - 15;
+          document.getElementById('mm-m-svc1-label').textContent = mmModalSelected[0].label;
+          document.getElementById('mm-m-svc1-price').textContent = '$' + mmModalSelected[0].price.toFixed(2);
+          document.getElementById('mm-m-svc2-label').textContent = mmModalSelected[1].label;
+          document.getElementById('mm-m-svc2-price').textContent = '$' + mmModalSelected[1].price.toFixed(2);
+          document.getElementById('mm-m-total').textContent      = fmt(total);
+          breakdown?.classList.remove('hidden');
+          if (confirmBtn) confirmBtn.disabled = false;
+        } else {
+          breakdown?.classList.add('hidden');
+          if (confirmBtn) confirmBtn.disabled = true;
+        }
+      }
+
+      function openMMModal() {
+        const items = getCart();
+        if (items.some(i => i.id !== 'mix-match-package')) {
+          showToast('Mix & Match must be booked alone. Clear the cart first.');
+          return;
+        }
+        mmModalSelected = [];
+        buildMMGrid();
+        const existing = items.find(i => i.id === 'mix-match-package');
+        if (existing && existing.mmServices && existing.mmServices.length === 2) {
+          existing.mmServices.forEach(v => {
+            const opt = MM_OPTIONS.find(o => o.value === v);
+            if (!opt) return;
+            mmModalSelected.push({ value: opt.value, label: opt.label, price: opt.price });
+            const btn = document.querySelector('.mm-opt-btn[data-mm-val="' + v + '"]');
+            if (btn) btn.classList.add('!border-primary-500', '!bg-primary-50');
+          });
+          updateMMModal();
+        }
+        const overlay = document.getElementById('mm-modal-overlay');
+        if (overlay) { overlay.classList.remove('hidden'); overlay.classList.add('flex'); }
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMMModal() {
+        const overlay = document.getElementById('mm-modal-overlay');
+        if (overlay) { overlay.classList.remove('flex'); overlay.classList.add('hidden'); }
+        if (!drawerOpen) document.body.style.overflow = '';
+      }
+
+      function confirmMMModal() {
+        if (mmModalSelected.length !== 2) return;
+        const total = mmModalSelected[0].price + mmModalSelected[1].price - 15;
+        const newItem = {
+          id: 'mix-match-package',
+          name: 'Mix & Match: ' + mmModalSelected[0].label + ' + ' + mmModalSelected[1].label,
+          price: total,
+          duration: '~2 hrs 15 min',
+          mmServices: mmModalSelected.map(s => s.value),
+        };
+        const items = getCart().filter(i => i.id !== 'mix-match-package');
+        items.push(newItem);
+        saveCart(items);
+        closeMMModal();
+        renderAll();
+        pulseBadge();
+        openDrawer();
+      }
+
       // ── Drawer open / close ────────────────────────────────────────────────
       let drawerOpen = false;
       function openDrawer() {
@@ -925,15 +1144,23 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       // ── Click delegation ───────────────────────────────────────────────────
       document.addEventListener('click', e => {
         const addBtn = e.target.closest('[data-add-to-cart]');
-        if (addBtn) { e.preventDefault(); addItem(addBtn.getAttribute('data-add-to-cart')); return; }
+        if (addBtn && !addBtn.disabled) { e.preventDefault(); addItem(addBtn.getAttribute('data-add-to-cart')); return; }
         if (e.target.closest('#cart-btn, #cart-btn-mobile')) { drawerOpen ? closeDrawer() : openDrawer(); return; }
         if (e.target.closest('#cart-close'))                 { closeDrawer(); return; }
         if (e.target.id === 'cart-overlay')                  { closeDrawer(); return; }
         if (e.target.closest('#cart-clear-btn'))             { clearAll(); return; }
+        if (e.target.closest('#mm-modal-close'))             { closeMMModal(); return; }
+        if (e.target.id === 'mm-modal-overlay')              { closeMMModal(); return; }
+        if (e.target.closest('#mm-modal-confirm'))           { confirmMMModal(); return; }
       });
 
-      // ── Keyboard close ─────────────────────────────────────────────────────
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawerOpen) closeDrawer(); });
+      // ── Keyboard ───────────────────────────────────────────────────────────
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          if (document.getElementById('mm-modal-overlay')?.classList.contains('flex')) { closeMMModal(); return; }
+          if (drawerOpen) closeDrawer();
+        }
+      });
 
       // ── Public API ─────────────────────────────────────────────────────────
       window.BlissCart = { add: addItem, remove: removeItem, clear: clearAll, get: getCart, open: openDrawer, close: closeDrawer };

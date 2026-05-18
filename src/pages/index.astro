@@ -62,13 +62,13 @@ import Layout from '../layouts/Layout.astro';
       <div class="grid gap-5 md:grid-cols-3">
         <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
           <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">1</div>
-          <h3 class="mb-2 text-xl font-serif text-neutral-900">Pick your treatment</h3>
-          <p class="text-neutral-600">Review packages and services first so your booking request matches the care you actually want.</p>
+          <h3 class="mb-2 text-xl font-serif text-neutral-900">Browse & save services</h3>
+          <p class="text-neutral-600">Explore our services, click <strong class="font-semibold text-neutral-800">Add</strong> on any treatment you want, and view your saved list anytime using the calendar icon in the menu.</p>
         </div>
         <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
           <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">2</div>
           <h3 class="mb-2 text-xl font-serif text-neutral-900">Choose a time slot</h3>
-          <p class="text-neutral-600">Select your preferred day and time slot from the booking page.</p>
+          <p class="text-neutral-600">Select your preferred day and time slot from the booking page. Your saved services are pre-filled automatically.</p>
         </div>
         <div class="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
           <div class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold">3</div>
@@ -102,7 +102,7 @@ import Layout from '../layouts/Layout.astro';
             <p class="text-neutral-500 text-sm mb-4">Deep cleansing, exfoliation, extractions & custom mask. Tailored to your skin every visit.</p>
             <div class="flex items-center justify-between">
               <span class="text-2xl font-bold text-primary-600">$99</span>
-              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+              <a href="/book/" data-service-id="signature-radiance-facial" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
             </div>
           </div>
         </div>
@@ -112,10 +112,10 @@ import Layout from '../layouts/Layout.astro';
           </div>
           <div class="p-6">
             <h3 class="text-xl font-serif text-neutral-900 mb-2">Vampire Facial (PRP)</h3>
-            <p class="text-neutral-500 text-sm mb-4">Advanced PRP + microneedling for fines lines, scars & overall skin texture improvement.</p>
+            <p class="text-neutral-500 text-sm mb-4">Advanced PRP + microneedling for fine lines, scars & overall skin texture improvement.</p>
             <div class="flex items-center justify-between">
               <span class="text-2xl font-bold text-primary-600">$380</span>
-              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+              <a href="/book/" data-service-id="vampire-facial-prp" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
             </div>
           </div>
         </div>
@@ -127,8 +127,8 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="text-xl font-serif text-neutral-900 mb-2">Lash Lift & Brow Lamination</h3>
             <p class="text-neutral-500 text-sm mb-4">Define and lift your natural brows and lashes — no extensions required. Lasts 6–8 weeks.</p>
             <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$72</span>
-              <a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+              <span class="text-2xl font-bold text-primary-600">$79</span>
+              <a href="/book/" data-service-id="lash-lift-brow-lamination" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
             </div>
           </div>
         </div>
@@ -138,6 +138,116 @@ import Layout from '../layouts/Layout.astro';
           View all services
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- New This Season -->
+  <section class="py-14 bg-[#faf9f7] border-y border-neutral-100">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <span class="inline-flex items-center gap-2 bg-primary-100 text-primary-700 text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-4">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707"/></svg>
+            Summer 2026
+          </span>
+          <h2 class="text-4xl font-serif text-neutral-900">New facials & seasonal packages.</h2>
+          <p class="text-neutral-500 mt-2 max-w-lg">Four new enzyme facials just added, plus limited-time seasonal packages combining two full services in one visit.</p>
+        </div>
+        <a href="/services/" class="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors shrink-0 ml-6">
+          See all &rarr;
+        </a>
+      </div>
+
+      <!-- New Facials Row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="group bg-white rounded-2xl overflow-hidden border border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all">
+          <div class="h-32 overflow-hidden"><img src="/images/pumpkin-enzyme-facial.jpg" alt="Pumpkin Enzyme Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /></div>
+          <div class="p-4">
+            <p class="font-semibold text-sm text-neutral-900 leading-snug mb-1">Pumpkin Enzyme Facial</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-bold text-primary-600">$85</span>
+              <a href="/book/" data-service-id="pumpkin-enzyme-facial" class="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">Book →</a>
+            </div>
+          </div>
+        </div>
+        <div class="group bg-white rounded-2xl overflow-hidden border border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all">
+          <div class="h-32 overflow-hidden"><img src="/images/chlorophyll-skin-tightening-facial.jpg" alt="Chlorophyll Skin Tightening Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /></div>
+          <div class="p-4">
+            <p class="font-semibold text-sm text-neutral-900 leading-snug mb-1">Chlorophyll Skin Tightening</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-bold text-primary-600">$105</span>
+              <a href="/book/" data-service-id="chlorophyll-skin-tightening-facial" class="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">Book →</a>
+            </div>
+          </div>
+        </div>
+        <div class="group bg-white rounded-2xl overflow-hidden border border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all">
+          <div class="h-32 overflow-hidden"><img src="/images/pineapple-enzyme-facial.jpg" alt="Pineapple Enzyme Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /></div>
+          <div class="p-4">
+            <p class="font-semibold text-sm text-neutral-900 leading-snug mb-1">Pineapple Enzyme Facial</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-bold text-primary-600">$88</span>
+              <a href="/book/" data-service-id="pineapple-enzyme-facial" class="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">Book →</a>
+            </div>
+          </div>
+        </div>
+        <div class="group bg-white rounded-2xl overflow-hidden border border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all">
+          <div class="h-32 overflow-hidden"><img src="/images/skin-recovery-facial.jpg" alt="Skin Recovery Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /></div>
+          <div class="p-4">
+            <p class="font-semibold text-sm text-neutral-900 leading-snug mb-1">Skin Recovery Facial</p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-bold text-primary-600">$92</span>
+              <a href="/book/" data-service-id="skin-recovery-facial" class="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">Book →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seasonal Packages Strip -->
+      <div class="bg-gradient-to-r from-rose-50 via-primary-50 to-amber-50 rounded-2xl border border-primary-100 p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-5">
+          <div class="flex-1">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary-600 mb-1">Limited Seasonal Availability</p>
+            <h3 class="text-xl font-serif text-neutral-900">Summer face & body packages — two services, one visit.</h3>
+          </div>
+          <a href="/services/" class="shrink-0 text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1">
+            View all packages <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-white rounded-xl p-4 border border-primary-100">
+            <p class="font-semibold text-sm text-neutral-900 mb-0.5">Lash & Body Smooth</p>
+            <p class="text-xs text-neutral-500 mb-2">Lash Extensions + Body Waxing</p>
+            <div class="flex items-center justify-between">
+              <div><span class="font-bold text-primary-600">$185</span> <span class="text-xs text-neutral-400 line-through">$212</span></div>
+              <a href="/book/" data-service-id="lash-body-smooth" class="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors block">Book →</a>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-primary-100">
+            <p class="font-semibold text-sm text-neutral-900 mb-0.5">Brow, Lash & Wax Ritual</p>
+            <p class="text-xs text-neutral-500 mb-2">Lash Lift + Brow Lam + Waxing</p>
+            <div class="flex items-center justify-between">
+              <div><span class="font-bold text-primary-600">$115</span> <span class="text-xs text-neutral-400 line-through">$131</span></div>
+              <a href="/book/" data-service-id="brow-lash-wax-ritual" class="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors block">Book →</a>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-primary-100">
+            <p class="font-semibold text-sm text-neutral-900 mb-0.5">Glow & Smooth Escape</p>
+            <p class="text-xs text-neutral-500 mb-2">Dermaplane Facial + Body Waxing</p>
+            <div class="flex items-center justify-between">
+              <div><span class="font-bold text-primary-600">$135</span> <span class="text-xs text-neutral-400 line-through">$158</span></div>
+              <a href="/book/" data-service-id="glow-smooth-escape" class="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors block">Book →</a>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-primary-100">
+            <p class="font-semibold text-sm text-neutral-900 mb-0.5">Mix & Match Escape</p>
+            <p class="text-xs text-neutral-500 mb-2">Waxing + Your Choice of Service</p>
+            <div class="flex items-center justify-between">
+              <div><span class="font-bold text-primary-600">From $129</span></div>
+              <a href="/book/" data-service-id="mix-match-package" class="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors block">Book →</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
