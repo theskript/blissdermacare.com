@@ -25,7 +25,7 @@ import Layout from '../../layouts/Layout.astro';
         <p class="text-neutral-600 max-w-xl mx-auto">Two full services in one visit. Each package is a 2-hour experience — 60 min per service with a 15-minute break between sessions.</p>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
         <!-- Package 1: Lash Extensions + Body Waxing -->
         <div class="bg-white rounded-2xl overflow-hidden border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all group relative">
@@ -114,78 +114,39 @@ import Layout from '../../layouts/Layout.astro';
           </div>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- Treatment Packages -->
-  <section class="py-14 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-10 text-center">
-        <span class="inline-flex items-center gap-2 bg-primary-100 text-primary-700 text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707"/></svg>
-          Summer 2026
-        </span>
-        <h2 class="text-3xl font-serif text-neutral-900">Summer Treatment Packages</h2>
-        <p class="text-neutral-600 mt-2 max-w-xl mx-auto">Lock in a package this summer and save big. Designed for real, visible results — every single visit.</p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="border-2 border-neutral-200 rounded-2xl p-8 hover:border-primary-300 hover:shadow-lg transition-all relative">
-          <div class="absolute -top-3.5 right-6 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold">SUMMER DEAL</div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-1">Summer Starter</h3>
-          <p class="text-neutral-500 text-sm mb-5">Your skin's fresh start — ideal for first-timers ready to glow</p>
-          <div class="mb-5">
-            <span class="text-4xl font-bold text-neutral-900">$265</span>
-            <span class="text-neutral-500 text-sm ml-1">/ 3 sessions</span>
-            <p class="text-sm text-primary-600 mt-1 font-semibold">Save $32 &middot; Valid through Sep 30</p>
+        <!-- Package 4: Mix & Match -->
+        <div class="bg-white rounded-2xl overflow-hidden border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all group relative">
+          <div class="absolute top-4 right-4"><span class="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
+          <div class="h-44 overflow-hidden relative">
+            <img src="https://images.pexels.com/photos/3757942/pexels-photo-3757942.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Mix and Match Seasonal Spa Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           </div>
-          <ul class="space-y-2 mb-7 text-sm text-neutral-600">
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>3 Signature Radiance Facials</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Complimentary Skin Analysis</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>15% Off All Skincare Products</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Personalized Summer Skin Plan</li>
-          </ul>
-          <a href="/book/" class="block text-center bg-neutral-900 text-white px-5 py-2.5 rounded-full hover:bg-neutral-800 transition-colors text-sm font-medium">Get Started</a>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-1">Mix &amp; Match Escape</h3>
+            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Waxing + Your Choice of Service</p>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-bold text-neutral-900">From $129</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save up to $25</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-neutral-600 mb-4">
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Session 1: Body or Face Waxing (60 min)</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Session 2: Your choice — 60 min</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>15-min break between sessions</li>
+            </ul>
+            <div class="mb-4 bg-primary-50 rounded-xl p-3 text-xs space-y-1">
+              <p class="font-semibold text-neutral-700 mb-1.5">Pick your Session 2:</p>
+              <p class="text-neutral-600">+ Lash Lift &amp; Brow Lam &rarr; <span class="font-bold text-primary-600">$129</span> <span class="text-neutral-400">(save $15)</span></p>
+              <p class="text-neutral-600">+ Signature Radiance Facial &rarr; <span class="font-bold text-primary-600">$145</span> <span class="text-neutral-400">(save $19)</span></p>
+              <p class="text-neutral-600">+ Lash Extensions &rarr; <span class="font-bold text-primary-600">$199</span> <span class="text-neutral-400">(save $25)</span></p>
+            </div>
+            <div class="flex items-center justify-between text-xs text-neutral-400 mb-5">
+              <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~2 hrs 15 min</span>
+              <span>Limited seasonal availability</span>
+            </div>
+            <a href="/book/" class="block text-center bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors text-sm font-medium">Book This Package</a>
+          </div>
         </div>
 
-        <div class="border-2 border-primary-500 rounded-2xl p-8 relative bg-primary-50/50 shadow-md">
-          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary-600 text-white px-4 py-1 rounded-full text-xs font-semibold">Most Popular</div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-1">Summer Radiance Ritual</h3>
-          <p class="text-neutral-500 text-sm mb-5">The full glow-up — mix, match &amp; customize every session</p>
-          <div class="mb-5">
-            <span class="text-4xl font-bold text-neutral-900">$625</span>
-            <span class="text-neutral-500 text-sm ml-1">/ 6 sessions</span>
-            <p class="text-sm text-primary-600 mt-1 font-semibold">Save $167+ &middot; Valid through Dec 31</p>
-          </div>
-          <ul class="space-y-2 mb-7 text-sm text-neutral-600">
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>6 Mix &amp; Match Treatments</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Priority Booking &mdash; always get your slot</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>20% Off All Products</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Free LED Light Therapy Add-on</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Complimentary Brow Tint Session</li>
-          </ul>
-          <a href="/book/" class="block text-center bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors text-sm font-medium">Choose Package</a>
-        </div>
-
-        <div class="border-2 border-neutral-200 rounded-2xl p-8 hover:border-primary-300 hover:shadow-lg transition-all relative">
-          <div class="absolute -top-3.5 right-6 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold">SUMMER DEAL</div>
-          <h3 class="text-xl font-bold text-neutral-900 mb-1">Summer VIP Transformation</h3>
-          <p class="text-neutral-500 text-sm mb-5">The ultimate skin investment &mdash; total renewal, all year long</p>
-          <div class="mb-5">
-            <span class="text-4xl font-bold text-neutral-900">$1,295</span>
-            <span class="text-neutral-500 text-sm ml-1">/ 12 sessions</span>
-            <p class="text-sm text-primary-600 mt-1 font-semibold">Save $395+ &middot; Valid 12 months</p>
-          </div>
-          <ul class="space-y-2 mb-7 text-sm text-neutral-600">
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>12 Premium Treatments &mdash; your choice every visit</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>VIP Priority &amp; Flexible Scheduling</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>25% Off All Products &amp; Services</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>3 Free Upgrade Add-ons</li>
-            <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Deluxe Summer Home Care Kit</li>
-          </ul>
-          <a href="/book/" class="block text-center bg-neutral-900 text-white px-5 py-2.5 rounded-full hover:bg-neutral-800 transition-colors text-sm font-medium">Go VIP</a>
-        </div>
       </div>
     </div>
   </section>
@@ -317,20 +278,15 @@ import Layout from '../../layouts/Layout.astro';
             <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$64</p><p class="text-xs text-neutral-400">45 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
           </div>
         </div>
+        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
+          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/7477680/pexels-photo-7477680.jpeg?auto=compress&cs=tinysrgb&w=400" alt="High Frequency Skin Tightening" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
+          <div class="p-4">
+            <h3 class="text-base font-bold text-neutral-900 mb-1">High Frequency Skin Tightening</h3>
+            <p class="text-neutral-500 text-xs mb-3">Electrical current firms, tightens &amp; lifts. Reduces pores, stimulates collagen &amp; clears blemishes without downtime.</p>
+            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$95</p><p class="text-xs text-neutral-400">45 min</p></div><a href="/book/" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Add-Ons Promotion -->
-  <section class="py-14 bg-primary-50">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Enhance Any Treatment</span>
-      <h2 class="text-3xl font-serif text-neutral-900 mb-4">Maximize Your Results</h2>
-      <p class="text-neutral-600 mb-8 text-lg">Pair any service with premium add-ons like LED Light Therapy, High Frequency Skin Tightening, or Professional Waxing to amplify your results and extend benefits.</p>
-      <a href="/add-ons/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-full hover:bg-primary-700 transition-all font-medium shadow-lg">
-        Explore Add-Ons
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-      </a>
     </div>
   </section>
 
