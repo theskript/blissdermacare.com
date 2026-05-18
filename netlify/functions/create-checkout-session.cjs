@@ -92,7 +92,8 @@ exports.handler = async (event) => {
   }
 
   const {
-    service        = '',
+    services: servicesParam,
+    service:  serviceParam     = '',
     discount       = 'none',
     customerName   = '',
     customerEmail  = '',
@@ -107,9 +108,19 @@ exports.handler = async (event) => {
     confirmEmail   = '',
   } = body;
 
+  // Support both services (array) and legacy service (string)
+  const serviceList = Array.isArray(servicesParam) && servicesParam.length > 0
+    ? servicesParam
+    : (serviceParam ? [serviceParam] : []);
+
   // Server-side validation
-  if (!ALLOWED_SERVICES.has(service)) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid service selection.' }) };
+  if (serviceList.length === 0) {
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Please select at least one service.' }) };
+  }
+  for (const svc of serviceList) {
+    if (!ALLOWED_SERVICES.has(svc)) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid service selection.' }) };
+    }
   }
   if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'A valid email address is required.' }) };
@@ -119,36 +130,42 @@ exports.handler = async (event) => {
   }
 
   const discountKey       = ALLOWED_DISCOUNTS.has(discount) ? discount : 'none';
-  const basePriceCents    = PRICES[service];
+  const basePriceCents    = serviceList.reduce((sum, svc) => sum + (PRICES[svc] || 0), 0);
   const discountPct       = DISCOUNT_PCT[discountKey] ?? 0;
-  const serviceName       = SERVICE_LABELS[service] || service;
+  const serviceNames      = serviceList.map(svc => SERVICE_LABELS[svc] || svc);
   const discountLabel     = DISCOUNT_LABELS[discountKey];
   const siteUrl           = (process.env.URL || 'https://blissdermacare.com').replace(/\/$/, '');
   const stripe            = Stripe(process.env.STRIPE_SECRET_KEY);
 
   const apptDesc = `Appointment: ${appointmentDate} at ${appointmentTime} · Bliss Dermacare`;
-  const productDesc = discountPct > 0
-    ? `${apptDesc} · ${discountLabel} applied (credentials verified at appointment)`
-    : apptDesc;
 
   try {
+    const lineItems = serviceList.map((svc, i) => {
+      const desc = i === 0
+        ? (discountPct > 0
+            ? `${apptDesc} · ${discountLabel} applied (credentials verified at appointment)`
+            : apptDesc)
+        : undefined;
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: { name: SERVICE_LABELS[svc] || svc, ...(desc ? { description: desc } : {}) },
+          unit_amount: PRICES[svc],
+        },
+        quantity: 1,
+      };
+    });
+
     const sessionParams = {
       payment_method_types: ['card'],
       customer_email: customerEmail,
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: { name: serviceName, description: productDesc },
-          unit_amount: basePriceCents,
-        },
-        quantity: 1,
-      }],
+      line_items: lineItems,
       mode: 'payment',
       success_url: `${siteUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/book/cancel`,
       metadata: {
-        service,
-        serviceName,
+        services:     serviceList.join(', '),
+        serviceNames: serviceNames.join(', '),
         appointmentDate,
         appointmentTime,
         customerName:  customerName.substring(0, 200),
@@ -170,7 +187,7 @@ exports.handler = async (event) => {
         percent_off: discountPct,
         duration: 'once',
         name: discountLabel,
-        metadata: { service, discount: discountKey },
+        metadata: { services: serviceList.join(', '), discount: discountKey },
       });
       sessionParams.discounts = [{ coupon: coupon.id }];
     }

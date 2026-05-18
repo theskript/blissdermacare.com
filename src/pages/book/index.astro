@@ -51,7 +51,16 @@ import Layout from '../../layouts/Layout.astro';
 
             <!-- Service Picker -->
             <div>
-              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-6">Choose a Service *</h2>
+              <div class="border-b border-neutral-100 pb-3 mb-4 flex items-end justify-between gap-3">
+                <h2 class="text-lg font-semibold text-neutral-900">Choose Your Services *</h2>
+                <div id="duration-tracker" class="hidden items-center gap-2 pb-0.5">
+                  <span id="duration-text" class="text-xs font-medium text-neutral-400 tabular-nums whitespace-nowrap">0 / 120 min</span>
+                  <div class="h-1.5 bg-neutral-200 rounded-full w-20 overflow-hidden">
+                    <div id="duration-bar" class="h-full bg-primary-500 rounded-full transition-all duration-200" style="width:0%"></div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-sm text-neutral-500 mb-5">Select one or more services. <strong class="text-neutral-700">2-hour max</strong> for combined individual services. Packages are standalone bookings.</p>
               <div class="space-y-6">
 
                 <!-- Facials -->
@@ -60,7 +69,7 @@ import Layout from '../../layouts/Layout.astro';
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="signature-radiance-facial" class="sr-only peer" required />
+                      <input type="checkbox" name="service" value="signature-radiance-facial" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Signature Radiance Facial</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$99</p>
@@ -69,7 +78,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="brightening-peel" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="brightening-peel" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Brightening Peel</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$128</p>
@@ -78,7 +87,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="diamond-glow" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="diamond-glow" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Diamond Glow</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$119</p>
@@ -87,7 +96,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="high-frequency-skin-tightening" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="high-frequency-skin-tightening" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">High Frequency Skin Tightening</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$95</p>
@@ -96,7 +105,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="teen-skincare-facial" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="teen-skincare-facial" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Teen Skincare Facial</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$64</p>
@@ -113,7 +122,7 @@ import Layout from '../../layouts/Layout.astro';
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="lash-extensions" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="lash-extensions" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Extensions</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$159</p>
@@ -122,7 +131,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="lash-extensions-fill" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="lash-extensions-fill" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Extensions Fill</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$43</p>
@@ -131,7 +140,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="lash-lift-brow-lamination" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="lash-lift-brow-lamination" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Lift &amp; Brow Lamination</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$79</p>
@@ -153,7 +162,7 @@ import Layout from '../../layouts/Layout.astro';
                     </div>
                     <div class="space-y-2">
                       <label class="cursor-pointer block">
-                        <input type="radio" name="service" value="body-and-face-waxing" class="sr-only peer" />
+                        <input type="checkbox" name="service" value="body-and-face-waxing" class="sr-only peer" />
                         <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                           <p class="font-semibold text-sm text-neutral-900">Body &amp; Face Waxing</p>
                           <p class="text-xs text-neutral-600 mt-1">Facial, arms, legs, underarms</p>
@@ -163,7 +172,7 @@ import Layout from '../../layouts/Layout.astro';
                       </label>
 
                       <label class="cursor-pointer block">
-                        <input type="radio" name="service" value="brazilian-wax" class="sr-only peer" />
+                        <input type="checkbox" name="service" value="brazilian-wax" class="sr-only peer" />
                         <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                           <p class="font-semibold text-sm text-neutral-900">Brazilian Wax</p>
                           <p class="text-xs text-neutral-600 mt-1">Complete bikini area hair removal</p>
@@ -179,7 +188,7 @@ import Layout from '../../layouts/Layout.astro';
                     <div class="space-y-2">
 
                       <label class="cursor-pointer block">
-                        <input type="radio" name="service" value="vampire-facial-prp" class="sr-only peer" />
+                        <input type="checkbox" name="service" value="vampire-facial-prp" class="sr-only peer" />
                         <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                           <p class="font-semibold text-sm text-neutral-900">Vampire Facial (PRP)</p>
                           <p class="text-primary-600 font-bold text-sm mt-1.5">$380</p>
@@ -188,7 +197,7 @@ import Layout from '../../layouts/Layout.astro';
                       </label>
 
                       <label class="cursor-pointer block">
-                        <input type="radio" name="service" value="scalp-therapy" class="sr-only peer" />
+                        <input type="checkbox" name="service" value="scalp-therapy" class="sr-only peer" />
                         <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                           <p class="font-semibold text-sm text-neutral-900">Scalp Therapy</p>
                           <p class="text-primary-600 font-bold text-sm mt-1.5">$219</p>
@@ -197,7 +206,7 @@ import Layout from '../../layouts/Layout.astro';
                       </label>
 
                       <label class="cursor-pointer block">
-                        <input type="radio" name="service" value="hairline-restoration" class="sr-only peer" />
+                        <input type="checkbox" name="service" value="hairline-restoration" class="sr-only peer" />
                         <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                           <p class="font-semibold text-sm text-neutral-900">Hairline Restoration</p>
                           <p class="text-primary-600 font-bold text-sm mt-1.5">$680</p>
@@ -216,7 +225,7 @@ import Layout from '../../layouts/Layout.astro';
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="lash-body-smooth" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="lash-body-smooth" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash &amp; Body Smooth</p>
                         <p class="text-xs text-neutral-500 mt-0.5">Lash Extensions + Body Waxing</p>
@@ -226,7 +235,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="brow-lash-wax-ritual" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="brow-lash-wax-ritual" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Brow, Lash &amp; Wax Ritual</p>
                         <p class="text-xs text-neutral-500 mt-0.5">Lash Lift + Brow Lamination + Waxing</p>
@@ -236,7 +245,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="glow-smooth-escape" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="glow-smooth-escape" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Glow &amp; Smooth Escape</p>
                         <p class="text-xs text-neutral-500 mt-0.5">Dermaplane Facial + Body Waxing</p>
@@ -246,7 +255,7 @@ import Layout from '../../layouts/Layout.astro';
                     </label>
 
                     <label class="cursor-pointer">
-                      <input type="radio" name="service" value="mix-match-package" class="sr-only peer" />
+                      <input type="checkbox" name="service" value="mix-match-package" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Mix &amp; Match Escape</p>
                         <p class="text-xs text-neutral-500 mt-0.5">Waxing + Lash Lift, Lash Ext, or Facial</p>
@@ -260,7 +269,7 @@ import Layout from '../../layouts/Layout.astro';
 
                 <!-- Other -->
                 <label class="cursor-pointer inline-block">
-                  <input type="radio" name="service" value="other" class="sr-only peer" />
+                  <input type="checkbox" name="service" value="other" class="sr-only peer" />
                   <div class="rounded-xl border-2 border-neutral-200 px-5 py-3.5 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
                     <p class="font-semibold text-sm text-neutral-900">Other / Not Sure</p>
                     <p class="text-primary-600 font-bold text-sm mt-1">$1</p>
@@ -287,9 +296,6 @@ import Layout from '../../layouts/Layout.astro';
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Time *</h2>
               <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {[
-                  ['10:00am','10:00 AM'],
-                  ['10:30am','10:30 AM'],
-                  ['11:00am','11:00 AM'],
                   ['11:30am','11:30 AM'],
                   ['12:00pm','12:00 PM'],
                   ['12:30pm','12:30 PM'],
@@ -315,7 +321,7 @@ import Layout from '../../layouts/Layout.astro';
                   </label>
                 ))}
               </div>
-              <p class="text-xs text-neutral-400 mt-3">Mon–Fri 10 AM – 7 PM &middot; Sat 10 AM – 6 PM &middot; Sun by request</p>
+              <p class="text-xs text-neutral-400 mt-3">Mon–Fri 11:30 AM – 7 PM &middot; Sat 11:30 AM – 6 PM &middot; Sun by request</p>
             </div>
 
             <!-- Notes -->
@@ -493,9 +499,8 @@ import Layout from '../../layouts/Layout.astro';
                 <h2 class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">Booking Estimate</h2>
               </div>
               <div class="p-5 space-y-3">
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-neutral-600" id="summary-service-label">—</span>
-                  <span class="font-semibold text-neutral-900" id="summary-service-price">—</span>
+                <div id="summary-services-list" class="space-y-2">
+                  <!-- populated by JS -->
                 </div>
                 <div id="summary-discount-row" class="hidden flex justify-between items-center text-sm">
                   <span class="text-emerald-700" id="summary-discount-label">—</span>
@@ -677,54 +682,162 @@ import Layout from '../../layouts/Layout.astro';
         return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
 
+      const DURATIONS: Record<string, number> = {
+        'signature-radiance-facial': 60,
+        'brightening-peel': 45,
+        'diamond-glow': 50,
+        'teen-skincare-facial': 45,
+        'high-frequency-skin-tightening': 45,
+        'lash-extensions': 120,
+        'lash-extensions-fill': 60,
+        'lash-lift-brow-lamination': 60,
+        'body-and-face-waxing': 60,
+        'brazilian-wax': 60,
+        'vampire-facial-prp': 75,
+        'scalp-therapy': 60,
+        'hairline-restoration': 180,
+        'lash-body-smooth': 135,
+        'brow-lash-wax-ritual': 135,
+        'glow-smooth-escape': 135,
+        'mix-match-package': 135,
+        'other': 60,
+      };
+
+      // Services that must be booked alone (packages, hairline restoration, other)
+      const SOLO_SERVICES = new Set([
+        'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
+        'mix-match-package', 'hairline-restoration', 'other',
+      ]);
+
+      function getChecked(): string[] {
+        return Array.from(
+          document.querySelectorAll<HTMLInputElement>('input[name="service"]:checked')
+        ).map(el => el.value);
+      }
+
+      function totalDuration(svcs: string[]): number {
+        return svcs.reduce((s, v) => s + (DURATIONS[v] ?? 60), 0);
+      }
+
       function update() {
-        const serviceInput = document.querySelector<HTMLInputElement>('input[name="service"]:checked');
+        const checked = getChecked();
         const discountInput = document.querySelector<HTMLInputElement>('input[name="discount"]:checked');
         const summary = document.getElementById('price-summary')!;
+        const tracker = document.getElementById('duration-tracker') as HTMLElement | null;
+        const durationText = document.getElementById('duration-text') as HTMLElement | null;
+        const durationBar = document.getElementById('duration-bar') as HTMLElement | null;
 
-        if (!serviceInput) {
+        if (checked.length === 0) {
           summary.classList.add('hidden');
+          if (tracker) { tracker.classList.add('hidden'); tracker.classList.remove('flex'); }
           return;
         }
 
+        // Duration tracker
+        const totalMins = totalDuration(checked);
+        const isSolo = checked.length === 1 && SOLO_SERVICES.has(checked[0]);
+        if (tracker && durationText && durationBar) {
+          tracker.classList.remove('hidden');
+          tracker.classList.add('flex');
+          if (isSolo) {
+            durationText.textContent = 'Package / standalone';
+            durationBar.style.width = '100%';
+            durationBar.className = 'h-full bg-primary-500 rounded-full transition-all duration-200';
+          } else {
+            const pct = Math.min((totalMins / 120) * 100, 100);
+            durationText.textContent = `${totalMins} / 120 min`;
+            durationBar.style.width = pct + '%';
+            const color = totalMins > 120 ? 'bg-red-500' : totalMins > 90 ? 'bg-amber-500' : 'bg-primary-500';
+            durationBar.className = `h-full ${color} rounded-full transition-all duration-200`;
+          }
+        }
+
+        // Price summary
         summary.classList.remove('hidden');
-
-        const svc = serviceInput.value;
         const disc = discountInput?.value ?? 'none';
-        const basePrice = PRICES[svc];
+        const baseTotal = checked.reduce((s, v) => s + (PRICES[v] ?? 0), 0);
+        const listEl = document.getElementById('summary-services-list');
+        if (listEl) {
+          listEl.innerHTML = checked.map(v =>
+            `<div class="flex justify-between items-center text-sm">
+              <span class="text-neutral-600">${SERVICE_LABELS[v] ?? v}</span>
+              <span class="font-semibold text-neutral-900">${fmt(PRICES[v] ?? 0)}</span>
+            </div>`
+          ).join('');
+        }
 
-        const labelEl = document.getElementById('summary-service-label')!;
-        const priceEl = document.getElementById('summary-service-price')!;
         const discRow = document.getElementById('summary-discount-row')!;
         const discLabelEl = document.getElementById('summary-discount-label')!;
         const discAmtEl = document.getElementById('summary-discount-amount')!;
         const totalEl = document.getElementById('summary-total')!;
 
-        labelEl.textContent = SERVICE_LABELS[svc] ?? svc;
-
-        if (basePrice === undefined) {
-          priceEl.textContent = 'TBD';
-          discRow.classList.add('hidden');
-          totalEl.textContent = 'TBD';
-          return;
-        }
-
-        priceEl.textContent = fmt(basePrice);
-
         const pct = DISCOUNT_PCT[disc] ?? 0;
-        if (pct > 0) {
-          const savings = basePrice * pct / 100;
+        if (pct > 0 && baseTotal > 0) {
+          const savings = baseTotal * pct / 100;
           discLabelEl.textContent = DISCOUNT_LABELS[disc];
           discAmtEl.textContent = '−' + fmt(savings);
           discRow.classList.remove('hidden');
-          totalEl.textContent = fmt(basePrice - savings);
+          totalEl.textContent = fmt(baseTotal - savings);
         } else {
           discRow.classList.add('hidden');
-          totalEl.textContent = fmt(basePrice);
+          totalEl.textContent = fmt(baseTotal);
         }
       }
 
-      document.querySelectorAll<HTMLInputElement>('input[name="service"], input[name="discount"]')
+      function enforceAvailability() {
+        const checked = getChecked();
+        const currentTotal = totalDuration(checked);
+        const hasSolo = checked.some(s => SOLO_SERVICES.has(s));
+        const hasAny = checked.length > 0;
+
+        document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(input => {
+          if (input.checked) {
+            input.disabled = false;
+            const lbl = input.closest('label') as HTMLElement | null;
+            if (lbl) { lbl.classList.remove('opacity-40', 'pointer-events-none'); lbl.classList.add('cursor-pointer'); }
+            return;
+          }
+          const dur = DURATIONS[input.value] ?? 60;
+          let disable = false;
+          if (hasSolo) {
+            disable = true;
+          } else if (SOLO_SERVICES.has(input.value)) {
+            disable = hasAny;
+          } else {
+            disable = currentTotal + dur > 120;
+          }
+          input.disabled = disable;
+          const lbl = input.closest('label') as HTMLElement | null;
+          if (lbl) {
+            lbl.classList.toggle('opacity-40', disable);
+            lbl.classList.toggle('pointer-events-none', disable);
+            lbl.classList.toggle('cursor-pointer', !disable);
+          }
+        });
+      }
+
+      function onServiceChange(changed: HTMLInputElement) {
+        if (changed.checked) {
+          if (SOLO_SERVICES.has(changed.value)) {
+            document.querySelectorAll<HTMLInputElement>('input[name="service"]:checked').forEach(el => {
+              if (el !== changed) el.checked = false;
+            });
+          } else {
+            document.querySelectorAll<HTMLInputElement>('input[name="service"]:checked').forEach(el => {
+              if (SOLO_SERVICES.has(el.value) && el !== changed) el.checked = false;
+            });
+            if (totalDuration(getChecked()) > 120) {
+              changed.checked = false;
+            }
+          }
+        }
+        update();
+        enforceAvailability();
+      }
+
+      document.querySelectorAll<HTMLInputElement>('input[name="service"]')
+        .forEach(el => el.addEventListener('change', () => onServiceChange(el)));
+      document.querySelectorAll<HTMLInputElement>('input[name="discount"]')
         .forEach(el => el.addEventListener('change', update));
 
       // Enforce strict 24-hour advance booking (exact datetime, not just calendar day)
@@ -875,9 +988,11 @@ import Layout from '../../layouts/Layout.astro';
         d?.setCustomValidity('');
 
         // Service + time required
-        const serviceInput = document.querySelector<HTMLInputElement>('input[name="service"]:checked');
-        if (!serviceInput) {
-          showError('Please select a service before continuing.');
+        const checkedSvcs = Array.from(
+          document.querySelectorAll<HTMLInputElement>('input[name="service"]:checked')
+        ).map((el: HTMLInputElement) => el.value);
+        if (checkedSvcs.length === 0) {
+          showError('Please select at least one service before continuing.');
           return;
         }
         if (!t) {
@@ -897,7 +1012,7 @@ import Layout from '../../layouts/Layout.astro';
         const confirmEmailInput = document.querySelector<HTMLInputElement>('[name="confirm-email"]');
 
         const payload = {
-          service:         serviceInput.value,
+          services:        checkedSvcs,
           discount:        discountInput?.value ?? 'none',
           customerName:    nameInput?.value ?? '',
           customerEmail:   emailInput?.value ?? '',
