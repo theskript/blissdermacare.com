@@ -955,23 +955,31 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           const id     = btn.getAttribute('data-add-to-cart');
           const inCart = ids.includes(id);
           let blocked  = false;
+          let blockLabel = 'Cart Full';
           if (!inCart) {
-            if (hasSolo)                              blocked = true;
-            else if (SOLO.has(id) && ids.length > 0)  blocked = true;
-            else if (!SOLO.has(id) && (currentDur + (DURATIONS[id] ?? 60)) > 120) blocked = true;
+            if (hasSolo) {
+              blocked    = true;
+              blockLabel = 'Pkg Only';
+            } else if (SOLO.has(id) && ids.length > 0) {
+              blocked    = true;
+              blockLabel = 'Clear Cart';
+            } else if (!SOLO.has(id) && (currentDur + (DURATIONS[id] ?? 60)) > 120) {
+              blocked    = true;
+              blockLabel = 'Cart Full';
+            }
           }
           const textEl  = btn.querySelector('.cart-btn-text');
           const plusEl  = btn.querySelector('.cart-btn-icon');
           const checkEl = btn.querySelector('.cart-check-icon');
-          if (textEl)  textEl.textContent = inCart ? 'Added' : (blocked ? 'N/A' : 'Add');
+          if (textEl)  textEl.textContent = inCart ? 'Added' : (blocked ? blockLabel : 'Add');
           if (plusEl)  plusEl.classList.toggle('hidden', inCart || blocked);
           if (checkEl) checkEl.classList.toggle('hidden', !inCart);
           btn.classList.toggle('!border-emerald-300', inCart);
           btn.classList.toggle('!text-emerald-700',   inCart);
           btn.classList.toggle('!bg-emerald-50',       inCart);
-          btn.classList.toggle('opacity-40',           blocked && !inCart);
-          btn.classList.toggle('cursor-not-allowed',   blocked && !inCart);
-          btn.disabled = blocked && !inCart;
+          btn.classList.toggle('opacity-50',           blocked && !inCart);
+          // Keep clickable so the toast explanation fires — not disabled
+          btn.disabled = false;
         });
       }
 
@@ -1159,7 +1167,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       // ── Click delegation ───────────────────────────────────────────────────
       document.addEventListener('click', e => {
         const addBtn = e.target.closest('[data-add-to-cart]');
-        if (addBtn && !addBtn.disabled) { e.preventDefault(); addItem(addBtn.getAttribute('data-add-to-cart')); return; }
+        if (addBtn) { e.preventDefault(); addItem(addBtn.getAttribute('data-add-to-cart')); return; }
         if (e.target.closest('#cart-btn, #cart-btn-mobile')) { drawerOpen ? closeDrawer() : openDrawer(); return; }
         if (e.target.closest('#cart-close'))                 { closeDrawer(); return; }
         if (e.target.id === 'cart-overlay')                  { closeDrawer(); return; }
