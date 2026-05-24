@@ -1470,12 +1470,12 @@ import Layout from '../../layouts/Layout.astro';
         }
 
         const discountInput     = document.querySelector<HTMLInputElement>('input[name="discount"]:checked');
-        const nameInput         = document.querySelector<HTMLInputElement>('[name="name"]');
-        const emailInput        = document.querySelector<HTMLInputElement>('[name="email"]');
-        const phoneInput        = document.querySelector<HTMLInputElement>('[name="phone"]');
-        const notesInput        = document.querySelector<HTMLTextAreaElement>('[name="notes"]');
+        const nameInput         = document.querySelector<HTMLInputElement>('#booking-form [name="name"]');
+        const emailInput        = document.querySelector<HTMLInputElement>('#booking-form [name="email"]');
+        const phoneInput        = document.querySelector<HTMLInputElement>('#booking-form [name="phone"]');
+        const notesInput        = document.querySelector<HTMLTextAreaElement>('#booking-form [name="notes"]');
         const referralInput     = document.querySelector<HTMLInputElement>('input[name="referral"]:checked');
-        const grouponInput      = document.querySelector<HTMLInputElement>('[name="groupon-code"]');
+        const grouponInput      = document.querySelector<HTMLInputElement>('#booking-form [name="groupon-code"]');
         const confirmPhoneInput = document.querySelector<HTMLInputElement>('[name="confirm-phone"]');
         const confirmTextInput  = document.querySelector<HTMLInputElement>('[name="confirm-text"]');
         const confirmEmailInput = document.querySelector<HTMLInputElement>('[name="confirm-email"]');
