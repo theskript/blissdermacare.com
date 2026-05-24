@@ -527,7 +527,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     </div>
 
     <!-- Main Content -->
-    <main class="pt-36">
+    <main class="pt-44">
       <slot />
     </main>
 
@@ -644,7 +644,13 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       // Apply animations on load
       window.addEventListener('DOMContentLoaded', () => {
         // Animate sections on scroll - exclude nav-related elements
+        // Only hide elements that are BELOW the fold; elements already visible must not start at opacity:0
         document.querySelectorAll('main section, .service-card').forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight) {
+            // Already in the viewport — leave visible, no initial animation
+            return;
+          }
           el.style.opacity = '0';
           el.style.transform = 'translateY(30px)';
           el.style.transition = 'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)';
