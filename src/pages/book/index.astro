@@ -13,21 +13,6 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Hidden form for Netlify to detect in-person booking submissions -->
-  <form name="appointment-booking-inperson" data-netlify="true" netlify-honeypot="bot-field" hidden>
-    <input type="text" name="bot-field" />
-    <input type="text" name="name" />
-    <input type="email" name="email" />
-    <input type="tel" name="phone" />
-    <input type="text" name="services" />
-    <input type="text" name="date" />
-    <input type="text" name="time" />
-    <input type="text" name="discount" />
-    <textarea name="notes"></textarea>
-    <input type="text" name="referral" />
-    <input type="text" name="groupon-code" />
-  </form>
-
   <!-- Booking Form -->
   <section class="py-14 bg-white">
     <div class="max-w-6xl mx-auto px-6">
@@ -217,10 +202,10 @@ import Layout from '../../layouts/Layout.astro';
                 <div class="grid sm:grid-cols-2 gap-6">
 
                   <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Body &amp; Wax</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Body Treatments</p>
                     <div class="flex items-start gap-2 mb-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
                       <svg class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2m0-14a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      <p class="text-xs text-amber-800"><strong>Age 21+</strong> required for waxing services</p>
+                      <p class="text-xs text-amber-800"><strong>Age 21+</strong> required for waxing services only</p>
                     </div>
                     <div class="space-y-2">
                       <label class="cursor-pointer block">
@@ -240,6 +225,17 @@ import Layout from '../../layouts/Layout.astro';
                           <p class="text-xs text-neutral-600 mt-1">Complete bikini area hair removal</p>
                           <p class="text-primary-600 font-bold text-sm mt-1.5">$87</p>
                           <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
+                        </div>
+                      </label>
+
+                      <label class="cursor-pointer block">
+                        <input type="checkbox" name="service" value="spray-tan" class="sr-only peer" />
+                        <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all relative">
+                          <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                          <p class="font-semibold text-sm text-neutral-900">Custom Airbrush Spray Tan</p>
+                          <p class="text-xs text-neutral-600 mt-1">Streak-free, custom bronze glow &mdash; no age restriction</p>
+                          <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
+                          <p class="text-xs text-neutral-400 mt-0.5">30–45 min</p>
                         </div>
                       </label>
                     </div>
@@ -323,6 +319,17 @@ import Layout from '../../layouts/Layout.astro';
                         <p class="text-xs text-neutral-500 mt-0.5">Waxing + Lash Lift, Lash Ext, or Facial</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5" id="mix-match-price-label">From $129</p>
                         <p class="text-xs text-neutral-400 mt-0.5">~2 hrs 15 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="bronze-bare-glow" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Bronze &amp; Bare Glow</p>
+                        <p class="text-xs text-neutral-500 mt-0.5">Body Waxing + Custom Spray Tan</p>
+                        <p class="text-amber-600 font-bold text-sm mt-1.5">$110</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">~1 hr 45 min &middot; Waxing: Age 21+</p>
                       </div>
                     </label>
 
@@ -517,6 +524,8 @@ import Layout from '../../layouts/Layout.astro';
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Time *</h2>
               <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {[
+                  ['11:30am','11:30 AM'],
+                  ['12:00pm','12:00 PM'],
                   ['12:30pm','12:30 PM'],
                   ['1:00pm', '1:00 PM'],
                   ['1:30pm', '1:30 PM'],
@@ -540,7 +549,7 @@ import Layout from '../../layouts/Layout.astro';
                   </label>
                 ))}
               </div>
-              <p class="text-xs text-neutral-400 mt-3">Wed–Fri 12:30 PM – 7 PM &middot; Sat 12:30 PM – 6 PM</p>
+              <p class="text-xs text-neutral-400 mt-3">Mon–Fri 11:30 AM – 7 PM &middot; Sat 11:30 AM – 6 PM &middot; Sun by request</p>
             </div>
 
             <!-- Notes -->
@@ -733,42 +742,6 @@ import Layout from '../../layouts/Layout.astro';
               <p class="text-xs text-neutral-400 px-5 pb-4 -mt-1">Estimate only — final price confirmed at your appointment.</p>
             </div>
 
-            <!-- Payment Method -->
-            <div>
-              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-4">How Would You Like to Pay?</h2>
-              <div class="grid sm:grid-cols-2 gap-3">
-
-                <label class="flex items-start gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
-                  <input type="radio" name="payment-method" value="pay-online" checked class="w-4 h-4 accent-primary-600 shrink-0 mt-0.5" />
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-neutral-900 mb-0.5">Pay Online</p>
-                    <p class="text-xs text-neutral-500 mb-2.5">Securely pay now via Stripe — credit card, debit card, or bank account</p>
-                    <div class="flex flex-wrap gap-1.5">
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Visa</span>
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Mastercard</span>
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Amex</span>
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Apple Pay</span>
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Google Pay</span>
-                    </div>
-                  </div>
-                </label>
-
-                <label class="flex items-start gap-4 p-4 rounded-xl border-2 border-neutral-200 cursor-pointer hover:border-primary-300 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
-                  <input type="radio" name="payment-method" value="pay-in-person" class="w-4 h-4 accent-primary-600 shrink-0 mt-0.5" />
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-neutral-900 mb-0.5">Pay in Person</p>
-                    <p class="text-xs text-neutral-500 mb-2.5">Pay at your appointment — no upfront charge required</p>
-                    <div class="flex flex-wrap gap-1.5">
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Cash</span>
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Zelle</span>
-                      <span class="text-xs bg-neutral-100 text-neutral-700 px-2 py-1 rounded-md font-medium">Venmo</span>
-                    </div>
-                  </div>
-                </label>
-
-              </div>
-            </div>
-
             <!-- Error banner -->
             <div id="booking-error" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
               <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -784,13 +757,9 @@ import Layout from '../../layouts/Layout.astro';
               <span id="booking-submit-label">Pay &amp; Book Appointment</span>
             </button>
 
-            <p id="payment-note-online" class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
+            <p class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
               <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               Secure payment via Stripe. We'll confirm your appointment within 24 hours.
-            </p>
-            <p id="payment-note-inperson" class="hidden text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-              No payment collected now — pay cash, Zelle, or Venmo at your appointment. We'll confirm within 24 hours.
             </p>
           </form>
         </div>
@@ -800,9 +769,9 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-[#faf9f7] rounded-2xl p-6 border border-neutral-100">
             <h3 class="font-semibold text-neutral-900 mb-4">Appointment Hours</h3>
             <div class="space-y-3 text-sm">
-              <div class="flex justify-between"><span class="text-neutral-600">Wednesday – Friday</span><span class="font-medium text-neutral-900">12:30 PM – 7:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">12:30 PM – 6:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Sun – Tue</span><span class="font-medium text-neutral-900">Unavailable</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Monday – Friday</span><span class="font-medium text-neutral-900">10:00 AM – 7:00 PM</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">10:00 AM – 6:00 PM</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Sunday</span><span class="font-medium text-neutral-900">By request</span></div>
             </div>
             <div class="mt-4 pt-4 border-t border-neutral-200 text-xs text-neutral-500">
               Last appointment starts at 7:00 PM on weekdays, 6:00 PM on Saturdays.
@@ -903,6 +872,8 @@ import Layout from '../../layouts/Layout.astro';
         'brow-lash-wax-ritual': 115,
         'glow-smooth-escape': 135,
         'mix-match-package': 129,
+        'spray-tan': 65,
+        'bronze-bare-glow': 110,
       };
 
       const SERVICE_LABELS: Record<string, string> = {
@@ -927,6 +898,8 @@ import Layout from '../../layouts/Layout.astro';
         'brow-lash-wax-ritual': 'Brow, Lash & Wax Ritual Package',
         'glow-smooth-escape': 'Glow & Smooth Escape Package',
         'mix-match-package': 'Mix & Match Escape Package',
+        'spray-tan': 'Custom Airbrush Spray Tan',
+        'bronze-bare-glow': 'Bronze & Bare Glow Package',
         'other': 'Other / Not Sure',
       };
 
@@ -971,13 +944,15 @@ import Layout from '../../layouts/Layout.astro';
         'brow-lash-wax-ritual': 135,
         'glow-smooth-escape': 135,
         'mix-match-package': 135,
+        'spray-tan': 45,
+        'bronze-bare-glow': 105,
         'other': 60,
       };
 
       // Services that must be booked alone (packages, hairline restoration, other)
       const SOLO_SERVICES = new Set([
         'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
-        'mix-match-package', 'hairline-restoration', 'other',
+        'mix-match-package', 'bronze-bare-glow', 'hairline-restoration', 'other',
       ]);
 
       function getChecked(): string[] {
@@ -1304,25 +1279,21 @@ import Layout from '../../layouts/Layout.astro';
         const cutoffMinutes = cutoff.getHours() * 60 + cutoff.getMinutes();
         const selectedDate = dateInput?.value ?? '';
 
-        // Parse the selected weekday
+        // Check if selected date is a Saturday (day 6); parse as local date
         const parsedDay = selectedDate ? new Date(selectedDate + 'T00:00:00').getDay() : -1;
-        // 0=Sun, 1=Mon, 2=Tue are unavailable
-        const isClosedDay = parsedDay === 0 || parsedDay === 1 || parsedDay === 2;
+        const isSunday = parsedDay === 0;
         const isSaturday = parsedDay === 6;
         const SAT_LAST_SLOT = 18 * 60; // 6:00 PM in minutes
-        const EARLIEST_SLOT = 12 * 60 + 30; // 12:30 PM in minutes
 
         document.querySelectorAll<HTMLInputElement>('input[name="timeslot"]').forEach(input => {
           const slotMins = slotToMinutes(input.value);
-          // All slots unavailable on Sun / Mon / Tue
-          const isClosedDaySlot = isClosedDay;
+          // All slots unavailable on Sundays
+          const isSundaySlot = isSunday;
           // Disable slots past 6 PM on Saturdays
           const afterSatClose = isSaturday && slotMins > SAT_LAST_SLOT;
-          // Disable slots before 12:30 PM on all days
-          const beforeOpen = slotMins < EARLIEST_SLOT;
           // Disable slots that fall within the 24-hour window on the cutoff date
           const tooSoon = selectedDate === cutoffDateStr && slotMins !== -1 && slotMins <= cutoffMinutes;
-          const disabled = isClosedDaySlot || afterSatClose || beforeOpen || tooSoon;
+          const disabled = isSundaySlot || afterSatClose || tooSoon;
 
           input.disabled = disabled;
           if (disabled && input.checked) input.checked = false;
@@ -1346,9 +1317,8 @@ import Layout from '../../layouts/Layout.astro';
         dateInput.addEventListener('change', () => {
           if (dateInput.value) {
             const day = new Date(dateInput.value + 'T00:00:00').getDay();
-            if (day === 0 || day === 1 || day === 2) {
-              const dayName = day === 0 ? 'Sunday' : day === 1 ? 'Monday' : 'Tuesday';
-              dateInput.setCustomValidity(`${dayName}s are unavailable. We're open Wednesday – Saturday.`);
+            if (day === 0) {
+              dateInput.setCustomValidity('Sundays are unavailable. Please choose another day.');
               dateInput.reportValidity();
             } else {
               dateInput.setCustomValidity('');
@@ -1385,47 +1355,24 @@ import Layout from '../../layouts/Layout.astro';
         errorBox.classList.add('hidden');
         errorBox.classList.remove('flex');
       }
-      function getPaymentMethod(): string {
-        return document.querySelector<HTMLInputElement>('input[name="payment-method"]:checked')?.value ?? 'pay-online';
-      }
-
       function setLoading(on: boolean) {
         if (!submitBtn) return;
         submitBtn.disabled = on;
-        const isOnline = getPaymentMethod() === 'pay-online';
-        if (on) {
-          submitLabel.textContent = isOnline ? 'Redirecting to payment…' : 'Submitting request…';
-        } else {
-          submitLabel.textContent = isOnline ? 'Pay & Book Appointment' : 'Request Appointment';
-        }
+        submitLabel.textContent = on ? 'Redirecting to payment…' : 'Pay & Book Appointment';
         spinner.classList.toggle('hidden', !on);
       }
-
-      // Payment method toggle — update button label and footnote
-      document.querySelectorAll<HTMLInputElement>('input[name="payment-method"]').forEach(el => {
-        el.addEventListener('change', () => {
-          const isOnline = el.value === 'pay-online';
-          document.getElementById('payment-note-online')?.classList.toggle('hidden', !isOnline);
-          document.getElementById('payment-note-inperson')?.classList.toggle('hidden', isOnline);
-          submitLabel.textContent = isOnline ? 'Pay & Book Appointment' : 'Request Appointment';
-        });
-      });
 
       const form = document.getElementById('booking-form') as HTMLFormElement | null;
       form?.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearError();
 
-        // Date / time validation
+        // Date / time validation (preserved from original)
         const d = document.getElementById('bookingDate') as HTMLInputElement;
-        if (d?.value) {
-          const day = new Date(d.value + 'T00:00:00').getDay();
-          if (day === 0 || day === 1 || day === 2) {
-            const dayName = day === 0 ? 'Sunday' : day === 1 ? 'Monday' : 'Tuesday';
-            d.setCustomValidity(`${dayName}s are unavailable. We're open Wednesday – Saturday.`);
-            d.reportValidity();
-            return;
-          }
+        if (d?.value && new Date(d.value + 'T00:00:00').getDay() === 0) {
+          d.setCustomValidity('Sundays are unavailable. Please choose another day.');
+          d.reportValidity();
+          return;
         }
         const t = document.querySelector<HTMLInputElement>('input[name="timeslot"]:checked');
         if (d?.value && t?.value) {
@@ -1470,12 +1417,12 @@ import Layout from '../../layouts/Layout.astro';
         }
 
         const discountInput     = document.querySelector<HTMLInputElement>('input[name="discount"]:checked');
-        const nameInput         = document.querySelector<HTMLInputElement>('#booking-form [name="name"]');
-        const emailInput        = document.querySelector<HTMLInputElement>('#booking-form [name="email"]');
-        const phoneInput        = document.querySelector<HTMLInputElement>('#booking-form [name="phone"]');
-        const notesInput        = document.querySelector<HTMLTextAreaElement>('#booking-form [name="notes"]');
+        const nameInput         = document.querySelector<HTMLInputElement>('[name="name"]');
+        const emailInput        = document.querySelector<HTMLInputElement>('[name="email"]');
+        const phoneInput        = document.querySelector<HTMLInputElement>('[name="phone"]');
+        const notesInput        = document.querySelector<HTMLTextAreaElement>('[name="notes"]');
         const referralInput     = document.querySelector<HTMLInputElement>('input[name="referral"]:checked');
-        const grouponInput      = document.querySelector<HTMLInputElement>('#booking-form [name="groupon-code"]');
+        const grouponInput      = document.querySelector<HTMLInputElement>('[name="groupon-code"]');
         const confirmPhoneInput = document.querySelector<HTMLInputElement>('[name="confirm-phone"]');
         const confirmTextInput  = document.querySelector<HTMLInputElement>('[name="confirm-text"]');
         const confirmEmailInput = document.querySelector<HTMLInputElement>('[name="confirm-email"]');
@@ -1497,52 +1444,19 @@ import Layout from '../../layouts/Layout.astro';
           confirmEmail:    confirmEmailInput?.checked ? 'yes' : '',
         };
 
-        const paymentMethod = getPaymentMethod();
         setLoading(true);
-
-        if (paymentMethod === 'pay-in-person') {
-          // Submit booking request via Netlify Forms (no payment collected)
-          try {
-            const formParams = new URLSearchParams();
-            formParams.append('form-name', 'appointment-booking-inperson');
-            formParams.append('name', payload.customerName);
-            formParams.append('email', payload.customerEmail);
-            formParams.append('phone', payload.customerPhone);
-            formParams.append('services', payload.services.join(', '));
-            formParams.append('date', payload.appointmentDate);
-            formParams.append('time', payload.appointmentTime);
-            formParams.append('discount', payload.discount);
-            formParams.append('notes', payload.notes);
-            formParams.append('referral', payload.referral);
-            formParams.append('groupon-code', payload.grouponCode);
-            const res = await fetch('/', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: formParams.toString(),
-            });
-            if (!res.ok && res.status !== 303) {
-              throw new Error('Failed to submit booking request. Please try again or call (609) 366-0857.');
-            }
-            window.location.href = '/book/success/?payment=in-person';
-          } catch (err: unknown) {
-            showError(err instanceof Error ? err.message : 'Something went wrong. Please try again or call (609) 366-0857.');
-            setLoading(false);
-          }
-        } else {
-          // Online payment via Stripe
-          try {
-            const res  = await fetch('/.netlify/functions/create-checkout-session', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload),
-            });
-            const data = await res.json().catch(() => ({ error: 'Unexpected server response.' }));
-            if (!res.ok) throw new Error(data.error ?? 'Payment setup failed. Please try again.');
-            window.location.href = data.url;
-          } catch (err: unknown) {
-            showError(err instanceof Error ? err.message : 'Something went wrong. Please try again or call (609) 366-0857.');
-            setLoading(false);
-          }
+        try {
+          const res  = await fetch('/.netlify/functions/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json().catch(() => ({ error: 'Unexpected server response.' }));
+          if (!res.ok) throw new Error(data.error ?? 'Payment setup failed. Please try again.');
+          window.location.href = data.url;
+        } catch (err: unknown) {
+          showError(err instanceof Error ? err.message : 'Something went wrong. Please try again or call (609) 366-0857.');
+          setLoading(false);
         }
       });
     })();

@@ -14,7 +14,7 @@ import Layout from '../../layouts/Layout.astro';
   </section>
 
   <!-- Seasonal Face & Body Packages -->
-  <section class="py-14 bg-gradient-to-br from-rose-50 via-primary-50 to-amber-50 border-b border-primary-100">
+  <section id="seasonal-packages" class="py-14 bg-gradient-to-br from-rose-50 via-primary-50 to-amber-50 border-b border-primary-100">
     <div class="max-w-7xl mx-auto px-6">
       <div class="mb-10 text-center">
         <span class="inline-flex items-center gap-2 bg-primary-100 text-primary-700 text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4">
@@ -23,6 +23,43 @@ import Layout from '../../layouts/Layout.astro';
         </span>
         <h2 class="text-3xl font-serif text-neutral-900 mb-2">Seasonal Face &amp; Body Packages</h2>
         <p class="text-neutral-600 max-w-xl mx-auto">Two full services in one visit. Each package is a 2-hour experience — 60 min per service with a 15-minute break between sessions.</p>
+      </div>
+
+      <!-- Featured NEW Package: Bronze & Bare Glow -->
+      <div class="mb-6 rounded-2xl overflow-hidden border-2 border-amber-300 hover:border-amber-500 hover:shadow-2xl transition-all group relative bg-white">
+        <div class="absolute top-4 right-4 z-10 flex gap-2">
+          <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span>
+          <span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">SEASONAL</span>
+        </div>
+        <div class="grid md:grid-cols-[2fr_3fr]">
+          <div class="h-56 md:h-auto overflow-hidden relative">
+            <img src="/images/bronze-bare-glow-package.jpg" alt="Bronze &amp; Bare Glow — Body Waxing and Custom Airbrush Spray Tan Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r md:from-transparent md:to-transparent"></div>
+          </div>
+          <div class="p-6 md:p-8">
+            <span class="inline-block text-xs font-bold uppercase tracking-[0.15em] text-amber-600 mb-2">Summer's Hottest New Combo</span>
+            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">Bronze &amp; Bare Glow</h3>
+            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Body Waxing + Custom Airbrush Spray Tan</p>
+            <p class="text-sm text-neutral-600 mb-4 max-w-lg">Silky smooth skin meets a flawless, streak-free bronze. Get waxed for the ultimate exfoliated canvas, then receive a custom airbrush spray tan tailored to your skin tone — the perfect pre-event prep in one visit.</p>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-bold text-neutral-900">$110</span>
+              <span class="text-sm text-neutral-400 line-through">$130</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save $20</span>
+            </div>
+            <ul class="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-neutral-600 mb-5">
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Full body waxing (arms, legs, underarms)</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom airbrush spray tan application</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Personalized shade matching (light to ultra dark)</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Vegan, paraben-free DHA formula</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>15-min prep break between services</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Aftercare kit &amp; instructions included</li>
+            </ul>
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <span class="flex items-center gap-1 text-xs text-neutral-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~1 hr 45 min &middot; Waxing: Age 21+</span>
+              <a href="/book/" data-service-id="bronze-bare-glow" class="bg-amber-500 text-white px-6 py-2.5 rounded-full hover:bg-amber-600 transition-colors text-sm font-semibold shadow-md hover:shadow-lg">Book This Package</a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -275,7 +312,39 @@ import Layout from '../../layouts/Layout.astro';
         <h2 class="text-3xl font-serif text-neutral-900">Treatments &amp; Services</h2>
       </div>
 
-      <!-- 3-col grid of 6 services = 2 full rows, no negative space -->
+      <!-- Featured: Custom Airbrush Spray Tan -->
+      <div class="mb-8 group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-amber-200 hover:border-amber-400 relative">
+        <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
+        <div class="grid md:grid-cols-[5fr_7fr]">
+          <div class="relative h-56 md:h-auto overflow-hidden">
+            <img src="/images/spray-tan-service.jpg" alt="Custom Airbrush Spray Tan — professional sunless tanning at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6 md:p-8">
+            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-2">Custom Airbrush Spray Tan</h3>
+            <p class="text-neutral-600 text-sm mb-4 max-w-lg">Look sun-kissed without the UV damage. Our professional airbrush spray tan uses a premium, vegan DHA solution matched to your natural skin tone for a streak-free, natural-looking bronze that develops in 4–6 hours and lasts 7–10 days.</p>
+            <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-5">
+              <ul class="space-y-2 text-sm text-neutral-600">
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom shade selection (light to ultra dark)</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Barrier cream on palms, nails &amp; hairline</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Vegan, paraben-free, alcohol-free DHA</li>
+              </ul>
+              <ul class="space-y-2 text-sm text-neutral-600">
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Quick-dry — back to your day in minutes</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Results last 7–10 days with proper aftercare</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Prep instructions &amp; aftercare tips included</li>
+              </ul>
+            </div>
+            <div class="flex items-center gap-6 flex-wrap">
+              <div><p class="text-2xl font-bold text-primary-600">$65</p><p class="text-xs text-neutral-500">30–45 minutes</p></div>
+              <a href="/book/" data-service-id="spray-tan" class="px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">Book Now</a>
+              <span class="text-xs text-neutral-400">Pairs great with the <a href="#seasonal-packages" class="text-amber-600 hover:text-amber-700 font-medium">Bronze &amp; Bare Glow package ↑</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-col grid of existing services -->
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
           <div class="absolute top-4 right-4 z-10"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">TRENDING</span></div>
