@@ -340,12 +340,12 @@ const { title, description = 'Professional aesthetician services in a serene, mo
   <body class="bg-white dark:bg-[#1a1714] text-neutral-900 dark:text-stone-100 antialiased font-serif font-semibold text-xl leading-tight">
     <!-- Navigation -->
     <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white dark:bg-[#1a1714] border-b border-neutral-200 dark:border-neutral-800 shadow-sm transition-transform duration-300">
-      <!-- Hiring Announcement Bar -->
-      <div class="bg-primary-600 text-white py-2.5 px-4 flex items-center justify-center gap-3 font-sans font-medium text-sm">
-        <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        <span class="hidden sm:inline">We're hiring &mdash; join the Bliss Dermacare team.</span>
-        <span class="sm:hidden">We're hiring!</span>
-        <a href="/careers/" class="underline underline-offset-2 font-semibold hover:text-primary-100 transition-colors whitespace-nowrap">View open roles &rarr;</a>
+      <!-- Seasonal Promo Bar -->
+      <div class="bg-gradient-to-r from-amber-500 via-primary-600 to-rose-500 text-white py-2.5 px-4 flex items-center justify-center gap-3 font-sans font-medium text-sm">
+        <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        <span class="hidden sm:inline">Now offering: Dermaplane Glow Facial, Smooth Canvas Facial &amp; Custom Airbrush Spray Tan &mdash; Summer 2026.</span>
+        <span class="sm:hidden">New summer services available!</span>
+        <a href="/services/" class="underline underline-offset-2 font-semibold hover:text-amber-100 transition-colors whitespace-nowrap">See all services &rarr;</a>
       </div>
       <div class="max-w-7xl mx-auto px-6 py-2">
         <div class="flex items-center justify-between">
@@ -356,7 +356,35 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-6">
-            <a href="/services/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Services</a>
+
+            <!-- Services dropdown -->
+            <div class="relative group">
+              <button class="flex items-center gap-1 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base py-1" aria-haspopup="true">
+                Services
+                <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div class="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
+                <div class="bg-white dark:bg-[#211e1b] rounded-2xl shadow-xl border border-neutral-100 dark:border-neutral-700 py-3 min-w-[260px]">
+                  <p class="px-5 pb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">Facials</p>
+                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Signature Radiance Facial</a>
+                  <a href="/services/#facials" class="flex items-center justify-between px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Dermaplane Glow Facial <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">NEW</span></a>
+                  <a href="/services/#facials" class="flex items-center justify-between px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Smooth Canvas Facial <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">NEW</span></a>
+                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Diamond Glow &amp; Peels</a>
+                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Enzyme Facials</a>
+                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Vampire Facial (PRP)</a>
+                  <div class="my-2 mx-5 border-t border-neutral-100 dark:border-neutral-700"></div>
+                  <p class="px-5 pb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">Lash &amp; Brow</p>
+                  <a href="/services/#treatments" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Lash Extensions</a>
+                  <a href="/services/#treatments" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Lash Lift &amp; Brow Lamination</a>
+                  <div class="my-2 mx-5 border-t border-neutral-100 dark:border-neutral-700"></div>
+                  <p class="px-5 pb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">Body &amp; Tan</p>
+                  <a href="/services/#treatments" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Body &amp; Face Waxing</a>
+                  <a href="/services/#treatments" class="flex items-center justify-between px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Custom Airbrush Spray Tan <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">NEW</span></a>
+                  <div class="my-2 mx-5 border-t border-neutral-100 dark:border-neutral-700"></div>
+                  <a href="/services/" class="flex items-center gap-1 px-5 py-2 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors">View all services &rarr;</a>
+                </div>
+              </div>
+            </div>
 
             <!-- About dropdown -->
             <div class="relative group">
@@ -388,9 +416,8 @@ const { title, description = 'Professional aesthetician services in a serene, mo
 
             <a href="/faq/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">FAQ</a>
             <a href="/contact/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Contact</a>
-            <a href="/careers/" class="relative text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">
+            <a href="/careers/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">
               Careers
-              <span class="absolute -top-2 -right-4 bg-primary-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span>
             </a>
             <!-- Cart Button -->
             <button id="cart-btn" aria-label="View selected services" class="relative p-2 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800">
@@ -418,7 +445,9 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-100 dark:border-neutral-800 pt-3 pb-3">
-          <a href="/services/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Services</a>
+          <a href="/services/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Facials</a>
+          <a href="/services/#treatments" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Lash, Brow &amp; Body</a>
+          <a href="/services/#seasonal-packages" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
 
           <!-- About accordion -->
           <div>
@@ -448,7 +477,6 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           <a href="/contact/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contact</a>
           <a href="/careers/" class="flex items-center gap-2 py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             Careers
-            <span class="bg-primary-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span>
           </a>
           <a href="/book/" class="block mt-3 bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium text-center text-sm">
             Book Appointment
@@ -561,7 +589,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               <li><a href="/pre-service-form/" class="hover:text-primary-400 transition-colors">Pre-Service Form</a></li>
               <li><a href="/faq/" class="hover:text-primary-400 transition-colors">FAQ</a></li>
               <li><a href="/contact/" class="hover:text-primary-400 transition-colors">Contact</a></li>
-              <li><a href="/careers/" class="hover:text-primary-400 transition-colors flex items-center gap-1.5">Join Our Team <span class="inline-block bg-primary-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide leading-none">Hiring</span></a></li>
+              <li><a href="/careers/" class="hover:text-primary-400 transition-colors flex items-center gap-1.5">Join Our Team</a></li>
               <li><a href="/pricelist/" class="hover:text-primary-400 transition-colors">Price List</a></li>
             </ul>
           </div>

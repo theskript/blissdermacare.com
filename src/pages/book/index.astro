@@ -160,6 +160,26 @@ import Layout from '../../layouts/Layout.astro';
                       </div>
                     </label>
 
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="dermaplane-glow-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Dermaplane Glow Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$105</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                      <input type="checkbox" name="service" value="smooth-canvas-facial" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Smooth Canvas Facial</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$89</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">45 min</p>
+                      </div>
+                    </label>
+
                   </div>
                 </div>
 
@@ -874,6 +894,8 @@ import Layout from '../../layouts/Layout.astro';
         'mix-match-package': 129,
         'spray-tan': 65,
         'bronze-bare-glow': 110,
+        'dermaplane-glow-facial': 105,
+        'smooth-canvas-facial': 89,
       };
 
       const SERVICE_LABELS: Record<string, string> = {
@@ -900,6 +922,8 @@ import Layout from '../../layouts/Layout.astro';
         'mix-match-package': 'Mix & Match Escape Package',
         'spray-tan': 'Custom Airbrush Spray Tan',
         'bronze-bare-glow': 'Bronze & Bare Glow Package',
+        'dermaplane-glow-facial': 'Dermaplane Glow Facial',
+        'smooth-canvas-facial': 'Smooth Canvas Facial',
         'other': 'Other / Not Sure',
       };
 
@@ -946,6 +970,8 @@ import Layout from '../../layouts/Layout.astro';
         'mix-match-package': 135,
         'spray-tan': 45,
         'bronze-bare-glow': 105,
+        'dermaplane-glow-facial': 60,
+        'smooth-canvas-facial': 45,
         'other': 60,
       };
 

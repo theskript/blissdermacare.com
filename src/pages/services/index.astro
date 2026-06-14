@@ -189,12 +189,44 @@ import Layout from '../../layouts/Layout.astro';
   </section>
 
   <!-- Facials Section -->
-  <section class="py-14 bg-white">
+  <section id="facials" class="py-14 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="mb-10">
         <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Skin Treatments</span>
         <h2 class="text-3xl font-serif text-neutral-900">Facials</h2>
         <p class="text-neutral-500 mt-2">Professional facials tailored to every skin type and concern.</p>
+      </div>
+
+      <!-- Featured: Dermaplane Glow Facial -->
+      <div class="mb-8 group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-amber-200 hover:border-amber-400 relative">
+        <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
+        <div class="grid md:grid-cols-[5fr_7fr]">
+          <div class="relative h-56 md:h-auto overflow-hidden">
+            <img src="/images/dermaplane-glow-facial.jpg" alt="Dermaplane Glow Facial — professional dermaplaning treatment at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6 md:p-8">
+            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-2">Dermaplane Glow Facial</h3>
+            <p class="text-neutral-600 text-sm mb-4 max-w-lg">The gold standard of facial exfoliation. A precise surgical scalpel painlessly removes dead skin cells and vellus hair (peach fuzz), revealing a smoother, brighter complexion — and priming your skin to absorb serums up to 70% more effectively. Finishes with a custom brightening serum and hydrating glow mask.</p>
+            <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-5">
+              <ul class="space-y-2 text-sm text-neutral-600">
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Deep dermaplaning exfoliation</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Painless peach fuzz &amp; dead cell removal</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom brightening serum infusion</li>
+              </ul>
+              <ul class="space-y-2 text-sm text-neutral-600">
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Hydrating glow mask included</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Instantly smoother, more radiant skin</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Zero downtime — back to your day immediately</li>
+              </ul>
+            </div>
+            <div class="flex items-center gap-6 flex-wrap">
+              <div><p class="text-2xl font-bold text-primary-600">$105</p><p class="text-xs text-neutral-500">60 minutes</p></div>
+              <a href="/book/" data-service-id="dermaplane-glow-facial" class="px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">Book Now</a>
+              <span class="text-xs text-neutral-400">Pairs beautifully with the <a href="#seasonal-packages" class="text-amber-600 hover:text-amber-700 font-medium">Glow &amp; Smooth Escape package ↑</a></span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Featured Facials (2-col) -->
@@ -227,6 +259,37 @@ import Layout from '../../layouts/Layout.astro';
             <div class="flex items-center justify-between">
               <div><p class="text-2xl font-bold text-primary-600">$380</p><p class="text-xs text-neutral-500">75 min | Series of 3</p></div>
               <a href="/book/" data-service-id="vampire-facial-prp" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured: Smooth Canvas Facial -->
+      <div class="mb-8 group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-amber-200 hover:border-amber-400 relative">
+        <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
+        <div class="grid md:grid-cols-[5fr_7fr]">
+          <div class="relative h-56 md:h-auto overflow-hidden">
+            <img src="/images/smooth-canvas-facial.jpg" alt="Smooth Canvas Facial — pore-refining texture treatment at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="p-6 md:p-8">
+            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-2">Smooth Canvas Facial</h3>
+            <p class="text-neutral-600 text-sm mb-4 max-w-lg">The ultimate skin-prep treatment. A targeted 45-minute ritual that deep-cleanses pores, removes congestion, and refines skin texture so your complexion looks flawless — whether you’re prepping for an event, a photoshoot, or simply want consistently smooth, even skin. Finishes with a pore-minimizing serum and barrier-balancing moisturizer.</p>
+            <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-5">
+              <ul class="space-y-2 text-sm text-neutral-600">
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Deep-cleanse &amp; pore decongestion</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>BHA exfoliation for texture refinement</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Clay mask to absorb excess oil &amp; minimize pores</li>
+              </ul>
+              <ul class="space-y-2 text-sm text-neutral-600">
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Niacinamide serum for pore tightening</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Barrier-balancing moisturizer to finish</li>
+                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Ideal for oily, combo &amp; pre-event skin prep</li>
+              </ul>
+            </div>
+            <div class="flex items-center gap-6 flex-wrap">
+              <div><p class="text-2xl font-bold text-primary-600">$89</p><p class="text-xs text-neutral-500">45 minutes</p></div>
+              <a href="/book/" data-service-id="smooth-canvas-facial" class="px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">Book Now</a>
             </div>
           </div>
         </div>
@@ -305,7 +368,7 @@ import Layout from '../../layouts/Layout.astro';
   </section>
 
   <!-- Individual Treatments Section -->
-  <section class="py-14 bg-neutral-50">
+  <section id="treatments" class="py-14 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-6">
       <div class="mb-10">
         <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Individual Sessions</span>
