@@ -1,0 +1,39 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Membership Confirmed – Bliss Dermacare" description="Welcome to your Bliss Dermacare membership. Your plan is now active.">
+  <section class="min-h-[70vh] flex items-center justify-center py-20 bg-[#faf9f7]">
+    <div class="max-w-lg mx-auto px-6 text-center">
+      <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h1 class="text-4xl font-serif text-neutral-900 mb-4">Welcome to Bliss!</h1>
+      <p class="text-lg text-neutral-600 mb-3">Your membership is confirmed and your first month's credits are ready to use.</p>
+      <p class="text-sm text-neutral-500 mb-8">You'll receive a confirmation email shortly. We'll reach out within 24 hours to welcome you and help you schedule your first visit.</p>
+      <div class="bg-white rounded-2xl border border-neutral-200 p-6 mb-8 text-left space-y-3">
+        <h3 class="font-semibold text-neutral-900 mb-3 text-center">Your Next Steps</h3>
+        <div class="flex items-start gap-3 text-sm text-neutral-600">
+          <div class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</div>
+          <span>Check your email for your membership confirmation and plan details.</span>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-neutral-600">
+          <div class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</div>
+          <span>Book your first appointment using your credits — mention your membership when booking.</span>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-neutral-600">
+          <div class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</div>
+          <span>Enjoy priority scheduling and your member discount on all additional services.</span>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/book/" class="bg-primary-600 text-white px-7 py-3 rounded-full hover:bg-primary-700 transition-all font-semibold text-sm shadow-sm">
+          Book Your First Appointment
+        </a>
+        <a href="/memberships/" class="text-sm text-neutral-500 hover:text-primary-600 transition-colors">
+          View your plan details →
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -30,6 +30,10 @@ import Layout from '../layouts/Layout.astro';
               </svg>
             </a>
           </div>
+          <a href="/memberships/" class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-primary-600 transition-colors mt-1">
+            <svg class="w-3.5 h-3.5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            Or save monthly &mdash; member plans from <span class="font-semibold text-primary-600">$89/mo</span> &rarr;
+          </a>
         </div>
 
         <div class="order-1 lg:order-2">
@@ -334,11 +338,83 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- Membership Feature Section -->
+  <section class="py-16 bg-neutral-900 text-white overflow-hidden relative">
+    <!-- Background decoration -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-primary-600/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-rose-600/10 rounded-full translate-y-1/3 -translate-x-1/4 blur-2xl pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-6 lg:px-12 relative">
+      <div class="grid lg:grid-cols-[1fr_auto] gap-10 items-start">
+
+        <!-- Left: Copy -->
+        <div class="max-w-xl">
+          <span class="inline-flex items-center gap-2 bg-primary-500/20 border border-primary-500/30 text-primary-300 text-xs font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full mb-6">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            Introducing Bliss Memberships
+          </span>
+          <h2 class="text-4xl lg:text-5xl font-serif leading-tight mb-5">Your skin deserves consistency.<br class="hidden sm:block" /><span class="text-primary-400"> Make it a ritual.</span></h2>
+          <p class="text-neutral-400 text-lg leading-relaxed mb-6">Stop booking one-off appointments at full price. Our monthly plans lock in your favorite treatments at significant savings — with priority scheduling and exclusive member discounts every time you visit.</p>
+          <div class="space-y-3 mb-8">
+            <div class="flex items-center gap-3 text-sm text-neutral-300">
+              <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
+              Monthly facial, lash &amp; body credits — all in one plan
+            </div>
+            <div class="flex items-center gap-3 text-sm text-neutral-300">
+              <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
+              Up to 20% off all additional services you book
+            </div>
+            <div class="flex items-center gap-3 text-sm text-neutral-300">
+              <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
+              Priority booking — skip the waitlist, every month
+            </div>
+            <div class="flex items-center gap-3 text-sm text-neutral-300">
+              <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
+              No contracts — cancel or pause anytime
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4 items-start">
+            <a href="/memberships/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-7 py-3.5 rounded-full hover:bg-primary-700 transition-all font-semibold text-sm shadow-lg hover:shadow-xl">
+              See All Membership Plans
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <a href="/memberships/#plans" class="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors pt-3.5">
+              Compare all plans &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Plan Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4 lg:w-64">
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/8 hover:border-white/20 transition-all">
+            <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-2">Tier 1</p>
+            <p class="text-xl font-serif text-white mb-1">The Glow Ritual</p>
+            <p class="text-2xl font-bold text-primary-400 mb-2">$89<span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-xs text-neutral-400">1 facial credit/month + 10% off</p>
+          </div>
+          <div class="bg-primary-600/20 border-2 border-primary-500/50 rounded-2xl p-5 relative">
+            <span class="absolute -top-2.5 left-4 text-[10px] font-bold bg-primary-500 text-white px-2.5 py-0.5 rounded-full">Most Popular</span>
+            <p class="text-xs font-bold uppercase tracking-[0.15em] text-primary-300 mb-2">Tier 2</p>
+            <p class="text-xl font-serif text-white mb-1">The Radiance Plan</p>
+            <p class="text-2xl font-bold text-primary-400 mb-2">$159<span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-xs text-neutral-400">Facial + lash/brow/body + 15% off</p>
+          </div>
+          <div class="bg-white/5 border border-amber-500/20 rounded-2xl p-5 hover:bg-white/8 hover:border-amber-500/40 transition-all">
+            <p class="text-xs font-bold uppercase tracking-[0.15em] text-amber-400 mb-2">Tier 3 — VIP</p>
+            <p class="text-xl font-serif text-white mb-1">The Bliss VIP</p>
+            <p class="text-2xl font-bold text-amber-400 mb-2">$249<span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-xs text-neutral-400">3 credits + 20% off + quarterly bonus</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- CTA Strip -->
   <section class="py-14 bg-[#faf9f7]">
     <div class="max-w-5xl mx-auto px-6">
-      <div class="grid md:grid-cols-3 gap-5">
-        <a href="/book/" class="group rounded-2xl bg-neutral-900 text-white p-8 flex flex-col hover:bg-neutral-800 transition-colors">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <a href="/book/" class="group rounded-2xl bg-neutral-900 text-white p-7 flex flex-col hover:bg-neutral-800 transition-colors">
           <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-5">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </div>
@@ -346,7 +422,15 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-400 text-sm mb-5 flex-1">Choose your service, pick a date and time, and submit your request. We'll confirm shortly.</p>
           <span class="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">Request Booking <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
         </a>
-        <a href="/consultation/" class="group rounded-2xl bg-primary-50 border border-primary-100 text-neutral-900 p-8 flex flex-col hover:bg-primary-100 transition-colors">
+        <a href="/memberships/" class="group rounded-2xl bg-gradient-to-br from-primary-600 to-rose-600 text-white p-7 flex flex-col hover:from-primary-700 hover:to-rose-700 transition-all shadow-lg hover:shadow-xl">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Membership Plans</h3>
+          <p class="text-rose-100 text-sm mb-5 flex-1">Monthly service credits, priority booking, and up to 20% off. Plans from $89/mo. Cancel anytime.</p>
+          <span class="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">See Plans <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/consultation/" class="group rounded-2xl bg-primary-50 border border-primary-100 text-neutral-900 p-7 flex flex-col hover:bg-primary-100 transition-colors">
           <div class="w-10 h-10 bg-primary-200 rounded-xl flex items-center justify-center mb-5">
             <svg class="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
@@ -354,7 +438,7 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-neutral-600 text-sm mb-5 flex-1">Not sure where to start? Tell us about your skin and we'll reach out with a personalized plan.</p>
           <span class="text-sm font-medium text-primary-600 flex items-center gap-2 group-hover:gap-3 transition-all">Get Started <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
         </a>
-        <a href="/demo-model/" class="group rounded-2xl bg-white border border-neutral-200 text-neutral-900 p-8 flex flex-col hover:border-primary-300 hover:shadow-md transition-all">
+        <a href="/demo-model/" class="group rounded-2xl bg-white border border-neutral-200 text-neutral-900 p-7 flex flex-col hover:border-primary-300 hover:shadow-md transition-all">
           <div class="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center mb-5">
             <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>

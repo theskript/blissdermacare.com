@@ -3,6 +3,10 @@ import Layout from '../../layouts/Layout.astro';
 
 const faqs = [
   {
+    q: "Do you offer membership or recurring plans?",
+    a: "Yes — we offer three monthly membership tiers: The Glow Ritual ($89/mo), The Radiance Plan ($159/mo), and The Bliss VIP ($249/mo). Each plan includes monthly service credits, priority booking, and a member discount on additional services. Credits roll over 30 days, and you can cancel or pause anytime. Visit our <a href='/memberships/' class='text-primary-600 hover:underline'>memberships page</a> to compare plans and sign up."
+  },
+  {
     q: "Do I need an appointment, or can I walk in?",
     a: "Appointments are required. We're a private studio, not a drop-in salon. Book online through our booking page or reach out directly by phone or text. Same-day appointments may be available depending on the schedule — just ask."
   },
@@ -61,7 +65,7 @@ const faqs = [
               </svg>
             </button>
             <div class="hidden px-6 pb-5" data-faq-answer>
-              <p class="text-neutral-600 leading-relaxed">{faq.a}</p>
+              <p class="text-neutral-600 leading-relaxed" set:html={faq.a} />
             </div>
           </div>
         ))}
@@ -73,6 +77,10 @@ const faqs = [
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a href="/contact/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium text-sm">
             Contact Us
+          </a>
+          <a href="/memberships/" class="inline-flex items-center gap-2 border border-primary-300 text-primary-700 bg-white px-6 py-3 rounded-full hover:bg-primary-50 transition-all font-medium text-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            View Membership Plans
           </a>
           <a href="/consultation/" class="inline-flex items-center gap-2 border border-neutral-300 text-neutral-700 px-6 py-3 rounded-full hover:border-primary-400 hover:text-primary-600 transition-all font-medium text-sm">
             Free Consultation

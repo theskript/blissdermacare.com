@@ -340,12 +340,20 @@ const { title, description = 'Professional aesthetician services in a serene, mo
   <body class="bg-white dark:bg-[#1a1714] text-neutral-900 dark:text-stone-100 antialiased font-serif font-semibold text-xl leading-tight">
     <!-- Navigation -->
     <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white dark:bg-[#1a1714] border-b border-neutral-200 dark:border-neutral-800 shadow-sm transition-transform duration-300">
-      <!-- Seasonal Promo Bar -->
-      <div class="bg-gradient-to-r from-amber-500 via-primary-600 to-rose-500 text-white py-2.5 px-4 flex items-center justify-center gap-3 font-sans font-medium text-sm">
-        <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-        <span class="hidden sm:inline">Now offering: Dermaplane Glow Facial, Smooth Canvas Facial &amp; Custom Airbrush Spray Tan &mdash; Summer 2026.</span>
-        <span class="sm:hidden">New summer services available!</span>
-        <a href="/services/" class="underline underline-offset-2 font-semibold hover:text-amber-100 transition-colors whitespace-nowrap">See all services &rarr;</a>
+      <!-- Promo Bar -->
+      <div class="bg-gradient-to-r from-amber-500 via-primary-600 to-rose-500 text-white py-2.5 px-4 font-sans font-medium text-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-4 flex-wrap">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            <span class="hidden sm:inline">New: Member plans from <strong>$89/mo</strong> &mdash; plus Dermaplane, Smooth Canvas &amp; Spray Tan now available.</span>
+            <span class="sm:hidden">Member plans from $89/mo &amp; new summer services!</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <a href="/memberships/" class="underline underline-offset-2 font-bold hover:text-amber-100 transition-colors whitespace-nowrap">See member plans &rarr;</a>
+            <span class="hidden sm:inline text-white/40">|</span>
+            <a href="/services/" class="hidden sm:inline underline underline-offset-2 font-medium hover:text-amber-100 transition-colors whitespace-nowrap">All services &rarr;</a>
+          </div>
+        </div>
       </div>
       <div class="max-w-7xl mx-auto px-6 py-2">
         <div class="flex items-center justify-between">
@@ -400,6 +408,12 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               </div>
             </div>
 
+            <!-- Memberships link -->
+            <a href="/memberships/" class="flex items-center gap-1.5 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors font-semibold text-base whitespace-nowrap">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+              Memberships
+            </a>
+
             <!-- Programs dropdown -->
             <div class="relative group">
               <button class="flex items-center gap-1 text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base py-1" aria-haspopup="true">
@@ -448,6 +462,10 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           <a href="/services/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Facials</a>
           <a href="/services/#treatments" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Lash, Brow &amp; Body</a>
           <a href="/services/#seasonal-packages" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
+          <a href="/memberships/" class="flex items-center gap-2 py-2.5 px-1 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            Memberships
+          </a>
 
           <!-- About accordion -->
           <div>
@@ -581,6 +599,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
             <h4 class="text-white font-semibold mb-4">Quick Links</h4>
             <ul class="space-y-2">
               <li><a href="/book/" class="hover:text-primary-400 transition-colors">Book Appointment</a></li>
+              <li><a href="/memberships/" class="hover:text-primary-400 transition-colors text-primary-400">Membership Plans</a></li>
               <li><a href="/services/" class="hover:text-primary-400 transition-colors">Services</a></li>
               <li><a href="/about/" class="hover:text-primary-400 transition-colors">About Us</a></li>
               <li><a href="/about/#why-us" class="hover:text-primary-400 transition-colors">Why Choose Us</a></li>
