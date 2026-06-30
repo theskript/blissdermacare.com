@@ -2,503 +2,119 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Services – Bliss Dermacare" description="Browse all skincare treatments and packages at Bliss Dermacare in Pebble Creek, FL. Facials, PRP, waxing, lash extensions, scalp therapy & more.">
+<Layout title="Services – Bliss Dermacare" description="Browse all skincare, aesthetic, and wellness services at Bliss Dermacare in Pebble Creek, FL — facials, lash, brow, body, advanced treatments, semipermanent makeup, ancillary wellness, and seasonal packages.">
 
   <!-- Page Header -->
   <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
-      <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Treatments & Packages</span>
+      <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Treatments &amp; Packages</span>
       <h1 class="text-5xl font-serif text-neutral-900 mb-4">Our Services</h1>
-      <p class="text-lg text-neutral-600">Every treatment is personalized. Browse what we offer, then book your appointment below.</p>
+      <p class="text-lg text-neutral-600 max-w-xl mx-auto">Every treatment is personalized. Browse by category to find what's right for you, then book your appointment.</p>
     </div>
   </section>
 
-  <!-- Seasonal Face & Body Packages -->
-  <section id="seasonal-packages" class="py-14 bg-gradient-to-br from-rose-50 via-primary-50 to-amber-50 border-b border-primary-100">
+  <!-- Service Category Hub -->
+  <section class="py-14 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-10 text-center">
-        <span class="inline-flex items-center gap-2 bg-primary-100 text-primary-700 text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707"/></svg>
-          Summer 2026
-        </span>
-        <h2 class="text-3xl font-serif text-neutral-900 mb-2">Seasonal Face &amp; Body Packages</h2>
-        <p class="text-neutral-600 max-w-xl mx-auto">Two full services in one visit. Each package is a 2-hour experience — 60 min per service with a 15-minute break between sessions.</p>
-      </div>
-
-      <!-- Featured NEW Package: Bronze & Bare Glow -->
-      <div class="mb-6 rounded-2xl overflow-hidden border-2 border-amber-300 hover:border-amber-500 hover:shadow-2xl transition-all group relative bg-white">
-        <div class="absolute top-4 right-4 z-10 flex gap-2">
-          <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span>
-          <span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">SEASONAL</span>
-        </div>
-        <div class="grid md:grid-cols-[2fr_3fr]">
-          <div class="h-56 md:h-auto overflow-hidden relative">
-            <img src="/images/bronze-bare-glow-package.jpg" alt="Bronze &amp; Bare Glow — Body Waxing and Custom Airbrush Spray Tan Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r md:from-transparent md:to-transparent"></div>
-          </div>
-          <div class="p-6 md:p-8">
-            <span class="inline-block text-xs font-bold uppercase tracking-[0.15em] text-amber-600 mb-2">Summer's Hottest New Combo</span>
-            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">Bronze &amp; Bare Glow</h3>
-            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Body Waxing + Custom Airbrush Spray Tan</p>
-            <p class="text-sm text-neutral-600 mb-4 max-w-lg">Silky smooth skin meets a flawless, streak-free bronze. Get waxed for the ultimate exfoliated canvas, then receive a custom airbrush spray tan tailored to your skin tone — the perfect pre-event prep in one visit.</p>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-3xl font-bold text-neutral-900">$110</span>
-              <span class="text-sm text-neutral-400 line-through">$130</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save $20</span>
-            </div>
-            <ul class="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-neutral-600 mb-5">
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Full body waxing (arms, legs, underarms)</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom airbrush spray tan application</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Personalized shade matching (light to ultra dark)</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Vegan, paraben-free DHA formula</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>15-min prep break between services</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Aftercare kit &amp; instructions included</li>
-            </ul>
-            <div class="flex items-center justify-between flex-wrap gap-4">
-              <span class="flex items-center gap-1 text-xs text-neutral-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~1 hr 45 min &middot; Waxing: Age 21+</span>
-              <a href="/book/" data-service-id="bronze-bare-glow" class="bg-amber-500 text-white px-6 py-2.5 rounded-full hover:bg-amber-600 transition-colors text-sm font-semibold shadow-md hover:shadow-lg">Book This Package</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-        <!-- Package 1: Lash Extensions + Body Waxing -->
-        <div class="bg-white rounded-2xl overflow-hidden border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all group relative">
-          <div class="absolute top-4 right-4"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">SEASONAL</span></div>
-          <div class="h-44 overflow-hidden relative">
-            <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Extensions and Body Waxing Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-1">Lash &amp; Body Smooth</h3>
-            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Lash Extensions + Body Waxing</p>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-3xl font-bold text-neutral-900">$185</span>
-              <span class="text-sm text-neutral-400 line-through">$212</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save $27</span>
-            </div>
-            <ul class="space-y-2 text-sm text-neutral-600 mb-5">
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Classic, hybrid, volume or mega lash set</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Full body &amp; face waxing (arms, legs, underarms)</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>2 sessions · 60 min each · 15 min break</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Age 21+ required for waxing services</li>
-            </ul>
-            <div class="flex items-center justify-between text-xs text-neutral-400 mb-5">
-              <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~2 hrs 15 min</span>
-              <span>Limited seasonal availability</span>
-            </div>
-            <a href="/book/" data-service-id="lash-body-smooth" class="block text-center bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors text-sm font-medium">Book This Package</a>
-          </div>
-        </div>
-
-        <!-- Package 2: Brow & Lash Lamination + Waxing -->
-        <div class="bg-white rounded-2xl overflow-hidden border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all group relative">
-          <div class="absolute top-4 right-4"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">SEASONAL</span></div>
-          <div class="h-44 overflow-hidden relative">
-            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Brow Lamination, Lash Lift and Waxing Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-1">Brow, Lash &amp; Wax Ritual</h3>
-            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Lash Lift + Brow Lamination + Waxing</p>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-3xl font-bold text-neutral-900">$115</span>
-              <span class="text-sm text-neutral-400 line-through">$131</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save $16</span>
-            </div>
-            <ul class="space-y-2 text-sm text-neutral-600 mb-5">
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Lash lift &amp; brow lamination (lasts 6–8 wks)</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Brow tinting &amp; waxing included</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>2 sessions · 60 min each · 15 min break</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Age 21+ required for waxing services</li>
-            </ul>
-            <div class="flex items-center justify-between text-xs text-neutral-400 mb-5">
-              <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~2 hrs 15 min</span>
-              <span>Limited seasonal availability</span>
-            </div>
-            <a href="/book/" data-service-id="brow-lash-wax-ritual" class="block text-center bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors text-sm font-medium">Book This Package</a>
-          </div>
-        </div>
-
-        <!-- Package 3: Dermaplane Facial + Body Waxing -->
-        <div class="bg-white rounded-2xl overflow-hidden border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all group relative">
-          <div class="absolute top-4 right-4"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">SEASONAL</span></div>
-          <div class="h-44 overflow-hidden relative">
-            <img src="https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dermaplane Facial and Body Waxing Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-1">Glow &amp; Smooth Escape</h3>
-            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Dermaplane Facial + Body Waxing</p>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-3xl font-bold text-neutral-900">$135</span>
-              <span class="text-sm text-neutral-400 line-through">$158</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save $23</span>
-            </div>
-            <ul class="space-y-2 text-sm text-neutral-600 mb-5">
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Dermaplaning exfoliation &amp; peach fuzz removal</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom serum &amp; hydration mask included</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Full body &amp; face waxing</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>2 sessions · 60 min each · 15 min break</li>
-            </ul>
-            <div class="flex items-center justify-between text-xs text-neutral-400 mb-5">
-              <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~2 hrs 15 min</span>
-              <span>Limited seasonal availability</span>
-            </div>
-            <a href="/book/" data-service-id="glow-smooth-escape" class="block text-center bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors text-sm font-medium">Book This Package</a>
-          </div>
-        </div>
-
-        <!-- Package 4: Mix & Match -->
-        <div class="bg-white rounded-2xl overflow-hidden border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all group relative">
-          <div class="absolute top-4 right-4"><span class="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
-          <div class="h-44 overflow-hidden relative">
-            <img src="https://images.pexels.com/photos/3757942/pexels-photo-3757942.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Mix and Match Seasonal Spa Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-1">Mix &amp; Match Escape</h3>
-            <p class="text-xs text-primary-600 font-semibold uppercase tracking-wide mb-3">Waxing + Your Choice of Service</p>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-3xl font-bold text-neutral-900">From $129</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save up to $25</span>
-            </div>
-            <ul class="space-y-1.5 text-sm text-neutral-600 mb-4">
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Session 1: Body or Face Waxing (60 min)</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Session 2: Your choice — 60 min</li>
-              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>15-min break between sessions</li>
-            </ul>
-            <div class="mb-4 bg-primary-50 rounded-xl p-3 text-xs space-y-1">
-              <p class="font-semibold text-neutral-700 mb-1.5">Pick your Session 2:</p>
-              <p class="text-neutral-600">+ Lash Lift &amp; Brow Lam &rarr; <span class="font-bold text-primary-600">$129</span> <span class="text-neutral-400">(save $15)</span></p>
-              <p class="text-neutral-600">+ Signature Radiance Facial &rarr; <span class="font-bold text-primary-600">$145</span> <span class="text-neutral-400">(save $19)</span></p>
-              <p class="text-neutral-600">+ Lash Extensions &rarr; <span class="font-bold text-primary-600">$199</span> <span class="text-neutral-400">(save $25)</span></p>
-            </div>
-            <div class="flex items-center justify-between text-xs text-neutral-400 mb-5">
-              <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>~2 hrs 15 min</span>
-              <span>Limited seasonal availability</span>
-            </div>
-            <a href="/book/" data-service-id="mix-match-package" class="block text-center bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors text-sm font-medium">Book This Package</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Facials Section -->
-  <section id="facials" class="py-14 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-10">
-        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Skin Treatments</span>
-        <h2 class="text-3xl font-serif text-neutral-900">Facials</h2>
-        <p class="text-neutral-500 mt-2">Professional facials tailored to every skin type and concern.</p>
-      </div>
-
-      <!-- Featured: Dermaplane Glow Facial -->
-      <div class="mb-8 group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-amber-200 hover:border-amber-400 relative">
-        <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
-        <div class="grid md:grid-cols-[5fr_7fr]">
-          <div class="relative h-56 md:h-auto overflow-hidden">
-            <img src="/images/dermaplane-glow-facial.jpg" alt="Dermaplane Glow Facial — professional dermaplaning treatment at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6 md:p-8">
-            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-2">Dermaplane Glow Facial</h3>
-            <p class="text-neutral-600 text-sm mb-4 max-w-lg">The gold standard of facial exfoliation. A precise surgical scalpel painlessly removes dead skin cells and vellus hair (peach fuzz), revealing a smoother, brighter complexion — and priming your skin to absorb serums up to 70% more effectively. Finishes with a custom brightening serum and hydrating glow mask.</p>
-            <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-5">
-              <ul class="space-y-2 text-sm text-neutral-600">
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Deep dermaplaning exfoliation</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Painless peach fuzz &amp; dead cell removal</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom brightening serum infusion</li>
-              </ul>
-              <ul class="space-y-2 text-sm text-neutral-600">
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Hydrating glow mask included</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Instantly smoother, more radiant skin</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Zero downtime — back to your day immediately</li>
-              </ul>
-            </div>
-            <div class="flex items-center gap-6 flex-wrap">
-              <div><p class="text-2xl font-bold text-primary-600">$105</p><p class="text-xs text-neutral-500">60 minutes</p></div>
-              <a href="/book/" data-service-id="dermaplane-glow-facial" class="px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">Book Now</a>
-              <span class="text-xs text-neutral-400">Pairs beautifully with the <a href="#seasonal-packages" class="text-amber-600 hover:text-amber-700 font-medium">Glow &amp; Smooth Escape package ↑</a></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Featured Facials (2-col) -->
-      <div class="grid md:grid-cols-2 gap-6 mb-8">
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
-          <div class="absolute top-4 right-4 z-10"><span class="bg-primary-600 text-white text-xs font-bold px-3 py-1 rounded-full">BESTSELLER</span></div>
-          <div class="relative h-52 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Signature Radiance Facial</h3>
-            <p class="text-neutral-600 text-sm mb-4">Deep cleanse, steam, extractions, custom mask &amp; gua sha massage. Visibly brighter skin — every skin type, every time.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$99</p><p class="text-xs text-neutral-500">60 minutes</p></div>
-              <a href="/book/" data-service-id="signature-radiance-facial" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
-          <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">PREMIUM</span></div>
-          <div class="relative h-52 overflow-hidden">
-            <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vampire Facial PRP" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Vampire Facial (PRP)</h3>
-            <p class="text-neutral-600 text-sm mb-4">Harness your own growth factors. PRP + microneedling fades scars, reverses aging &amp; resurfaces skin. Visible after 1 session.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$380</p><p class="text-xs text-neutral-500">75 min | Series of 3</p></div>
-              <a href="/book/" data-service-id="vampire-facial-prp" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Featured: Smooth Canvas Facial -->
-      <div class="mb-8 group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-amber-200 hover:border-amber-400 relative">
-        <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
-        <div class="grid md:grid-cols-[5fr_7fr]">
-          <div class="relative h-56 md:h-auto overflow-hidden">
-            <img src="/images/smooth-canvas-facial.jpg" alt="Smooth Canvas Facial — pore-refining texture treatment at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6 md:p-8">
-            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-2">Smooth Canvas Facial</h3>
-            <p class="text-neutral-600 text-sm mb-4 max-w-lg">The ultimate skin-prep treatment. A targeted 45-minute ritual that deep-cleanses pores, removes congestion, and refines skin texture so your complexion looks flawless — whether you’re prepping for an event, a photoshoot, or simply want consistently smooth, even skin. Finishes with a pore-minimizing serum and barrier-balancing moisturizer.</p>
-            <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-5">
-              <ul class="space-y-2 text-sm text-neutral-600">
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Deep-cleanse &amp; pore decongestion</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>BHA exfoliation for texture refinement</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Clay mask to absorb excess oil &amp; minimize pores</li>
-              </ul>
-              <ul class="space-y-2 text-sm text-neutral-600">
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Niacinamide serum for pore tightening</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Barrier-balancing moisturizer to finish</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Ideal for oily, combo &amp; pre-event skin prep</li>
-              </ul>
-            </div>
-            <div class="flex items-center gap-6 flex-wrap">
-              <div><p class="text-2xl font-bold text-primary-600">$89</p><p class="text-xs text-neutral-500">45 minutes</p></div>
-              <a href="/book/" data-service-id="smooth-canvas-facial" class="px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">Book Now</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Facial Grid (4-col × 2 rows = 8 items, no negative space) -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/5069454/pexels-photo-5069454.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Brightening Peel" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Brightening Peel</h3>
-            <p class="text-neutral-500 text-xs mb-3">Medical-grade chemical exfoliation for texture &amp; hyperpigmentation.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$128</p><p class="text-xs text-neutral-400">45 min</p></div><a href="/book/" data-service-id="brightening-peel" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="/images/diamond-glow.jpg" alt="Diamond Glow" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Diamond Glow</h3>
-            <p class="text-neutral-500 text-xs mb-3">Diamond-tip resurfacing that buffs away dullness &amp; reveals smoother, glowing skin instantly.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$119</p><p class="text-xs text-neutral-400">50 min</p></div><a href="/book/" data-service-id="diamond-glow" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/3985329/pexels-photo-3985329.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Teen Skincare Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Teen Skincare Facial</h3>
-            <p class="text-neutral-500 text-xs mb-3">Gentle facial for teens targeting acne &amp; oiliness.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$64</p><p class="text-xs text-neutral-400">45 min</p></div><a href="/book/" data-service-id="teen-skincare-facial" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="https://images.pexels.com/photos/3764013/pexels-photo-3764013.jpeg?auto=compress&cs=tinysrgb&w=400" alt="High Frequency Skin Tightening facial treatment with electrical device" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">High Frequency Skin Tightening</h3>
-            <p class="text-neutral-500 text-xs mb-3">Electrical current firms, tightens &amp; lifts. Reduces pores, stimulates collagen &amp; clears blemishes without downtime.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$95</p><p class="text-xs text-neutral-400">45 min</p></div><a href="/book/" data-service-id="high-frequency-skin-tightening" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-
-        <!-- 4 New Facials -->
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="/images/pumpkin-enzyme-facial.jpg" alt="Pumpkin Enzyme Facial treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Pumpkin Enzyme Facial</h3>
-            <p class="text-neutral-500 text-xs mb-3">Gentle enzyme exfoliation that brightens and smooths — ideal for all skin types, including sensitive.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$85</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" data-service-id="pumpkin-enzyme-facial" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="/images/chlorophyll-skin-tightening-facial.jpg" alt="Chlorophyll Skin Tightening Facial green treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Chlorophyll Skin Tightening Facial</h3>
-            <p class="text-neutral-500 text-xs mb-3">Plant-powered formula visibly reduces fine lines &amp; wrinkles while firming the skin's surface.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$105</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" data-service-id="chlorophyll-skin-tightening-facial" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="/images/pineapple-enzyme-facial.jpg" alt="Pineapple Enzyme Facial exfoliating treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Pineapple Enzyme Facial</h3>
-            <p class="text-neutral-500 text-xs mb-3">Bromelain-rich exfoliation that refines pores &amp; evens texture. Perfect for combination skin.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$88</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" data-service-id="pineapple-enzyme-facial" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-        <div class="group bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all border border-neutral-200">
-          <div class="relative h-32 overflow-hidden"><img src="/images/skin-recovery-facial.jpg" alt="Skin Recovery Facial multi-vitamin hydrating treatment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div></div>
-          <div class="p-4">
-            <h3 class="text-base font-bold text-neutral-900 mb-1">Skin Recovery Facial</h3>
-            <p class="text-neutral-500 text-xs mb-3">Multi-vitamin infusion deeply nourishes &amp; replenishes dry and dehydrated skin back to radiance.</p>
-            <div class="flex items-center justify-between"><div><p class="text-lg font-bold text-primary-600">$92</p><p class="text-xs text-neutral-400">60 min</p></div><a href="/book/" data-service-id="skin-recovery-facial" class="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-full hover:bg-primary-700 transition-colors">Book</a></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Individual Treatments Section -->
-  <section id="treatments" class="py-14 bg-neutral-50">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-10">
-        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Individual Sessions</span>
-        <h2 class="text-3xl font-serif text-neutral-900">Treatments &amp; Services</h2>
-      </div>
-
-      <!-- Featured: Custom Airbrush Spray Tan -->
-      <div class="mb-8 group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-amber-200 hover:border-amber-400 relative">
-        <div class="absolute top-4 right-4 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">NEW</span></div>
-        <div class="grid md:grid-cols-[5fr_7fr]">
-          <div class="relative h-56 md:h-auto overflow-hidden">
-            <img src="/images/spray-tan-service.jpg" alt="Custom Airbrush Spray Tan — professional sunless tanning at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6 md:p-8">
-            <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-2">Custom Airbrush Spray Tan</h3>
-            <p class="text-neutral-600 text-sm mb-4 max-w-lg">Look sun-kissed without the UV damage. Our professional airbrush spray tan uses a premium, vegan DHA solution matched to your natural skin tone for a streak-free, natural-looking bronze that develops in 4–6 hours and lasts 7–10 days.</p>
-            <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-5">
-              <ul class="space-y-2 text-sm text-neutral-600">
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom shade selection (light to ultra dark)</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Barrier cream on palms, nails &amp; hairline</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Vegan, paraben-free, alcohol-free DHA</li>
-              </ul>
-              <ul class="space-y-2 text-sm text-neutral-600">
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Quick-dry — back to your day in minutes</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Results last 7–10 days with proper aftercare</li>
-                <li class="flex items-start gap-2"><svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Prep instructions &amp; aftercare tips included</li>
-              </ul>
-            </div>
-            <div class="flex items-center gap-6 flex-wrap">
-              <div><p class="text-2xl font-bold text-primary-600">$65</p><p class="text-xs text-neutral-500">30–45 minutes</p></div>
-              <a href="/book/" data-service-id="spray-tan" class="px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">Book Now</a>
-              <span class="text-xs text-neutral-400">Pairs great with the <a href="#seasonal-packages" class="text-amber-600 hover:text-amber-700 font-medium">Bronze &amp; Bare Glow package ↑</a></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3-col grid of existing services -->
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300 relative">
-          <div class="absolute top-4 right-4 z-10"><span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">TRENDING</span></div>
-          <div class="relative h-44 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Lash Lift &amp; Brow Lamination</h3>
-            <p class="text-neutral-600 text-sm mb-4">Wake up with lifted lashes &amp; sculpted brows — no mascara needed. Tint included. Lasts 6–8 weeks.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$79</p><p class="text-xs text-neutral-500">60 minutes</p></div>
-              <a href="/book/" data-service-id="lash-lift-brow-lamination" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
-            </div>
-          </div>
-        </div>
 
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
-          <div class="relative h-44 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Extensions" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Lash Extensions</h3>
-            <p class="text-neutral-600 text-sm mb-4">Full sets in classic, hybrid, volume &amp; mega volume. Wake up beautiful — zero effort.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$159</p><p class="text-xs text-neutral-500">2 hr | Fills $43</p></div>
-              <a href="/book/" data-service-id="lash-extensions" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+        <!-- Facials -->
+        <a href="/services/facials/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
+          <div class="h-52 overflow-hidden relative">
+            <img src="/images/dermaplane-glow-facial.jpg" alt="Facials at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 class="text-xl font-serif font-bold mb-0.5">Facials</h2>
+              <p class="text-xs text-neutral-300">Dermaplaning · Enzyme Facials · Peels · PRP · &amp; more</p>
             </div>
           </div>
-        </div>
+          <div class="p-5 flex items-center justify-between">
+            <div><p class="text-sm font-semibold text-neutral-800">12 treatments</p><p class="text-xs text-neutral-500">From $64</p></div>
+            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+          </div>
+        </a>
 
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
-          <div class="relative h-44 overflow-hidden">
-            <img src="https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Body & Face Waxing" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Body &amp; Face Waxing</h3>
-            <p class="text-neutral-600 text-sm mb-4">Silky-smooth results for face, arms, legs &amp; underarms. Long-lasting &amp; gentle on skin.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$65</p><p class="text-xs text-neutral-500">45–60 min</p></div>
-              <a href="/book/" data-service-id="body-and-face-waxing" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+        <!-- Lash, Brow & Body -->
+        <a href="/services/lash-brow-body/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
+          <div class="h-52 overflow-hidden relative">
+            <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash, Brow & Body at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 class="text-xl font-serif font-bold mb-0.5">Lash, Brow &amp; Body</h2>
+              <p class="text-xs text-neutral-300">Lash Extensions · Waxing · Spray Tan · Scalp Therapy</p>
             </div>
           </div>
-        </div>
+          <div class="p-5 flex items-center justify-between">
+            <div><p class="text-sm font-semibold text-neutral-800">7 treatments</p><p class="text-xs text-neutral-500">From $43</p></div>
+            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+          </div>
+        </a>
 
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
-          <div class="relative h-44 overflow-hidden">
-            <img src="https://res.cloudinary.com/liaison-inc/image/upload/f_auto/q_auto,w_1200/v1762764980/content/thervo/thervo-brazilian-wax-cost-beautician-applying-wax-on-client-as-part-of-hair-removal-treatment.jpg" alt="Brazilian Wax" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Brazilian Wax</h3>
-            <p class="text-neutral-600 text-sm mb-4">Complete bikini area removal with precision wax. Beach-ready results that last 3–4 weeks.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$87</p><p class="text-xs text-neutral-500">45–60 min</p></div>
-              <a href="/book/" data-service-id="brazilian-wax" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+        <!-- Advanced Treatments -->
+        <a href="/services/advanced-treatments/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
+          <div class="h-52 overflow-hidden relative">
+            <img src="/images/collagen-induction-therapy.jpg" alt="Advanced Treatments — medical-grade injectables and skin procedures at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 class="text-xl font-serif font-bold mb-0.5">Advanced Treatments</h2>
+              <p class="text-xs text-neutral-300">PRP · Lip Filler · Injectables · CIT · Weight Loss</p>
             </div>
           </div>
-        </div>
+          <div class="p-5 flex items-center justify-between">
+            <div><p class="text-sm font-semibold text-neutral-800">5 treatments</p><p class="text-xs text-neutral-500">From $299</p></div>
+            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+          </div>
+        </a>
 
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
-          <div class="relative h-44 overflow-hidden">
-            <img src="https://images.pexels.com/photos/3738338/pexels-photo-3738338.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Scalp therapy microneedling treatment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Scalp Therapy</h3>
-            <p class="text-neutral-600 text-sm mb-4">Microneedling + growth factor serums to reactivate follicles. Clinically proven to thicken and restore.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$219</p><p class="text-xs text-neutral-500">60 min</p></div>
-              <a href="/book/" data-service-id="scalp-therapy" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+        <!-- Semipermanent Makeup -->
+        <a href="/services/semipermanent-makeup/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
+          <div class="h-52 overflow-hidden relative">
+            <img src="/images/eyebrow-permanent-makeup.jpg" alt="Semipermanent Makeup — brows, lip blush, scalp micropigmentation at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 class="text-xl font-serif font-bold mb-0.5">Semipermanent Makeup</h2>
+              <p class="text-xs text-neutral-300">Nano Brows · Powder Brows · Lip Blush · Scalp SMP</p>
             </div>
           </div>
-        </div>
+          <div class="p-5 flex items-center justify-between">
+            <div><p class="text-sm font-semibold text-neutral-800">6 treatments</p><p class="text-xs text-neutral-500">From $250</p></div>
+            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+          </div>
+        </a>
 
-        <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary-100 hover:border-primary-300">
-          <div class="relative h-44 overflow-hidden">
-            <img src="https://images.pexels.com/photos/23532307/pexels-photo-23532307.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hairline Restoration" class="w-full h-full object-cover object-bottom group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">Hairline Restoration</h3>
-            <p class="text-neutral-600 text-sm mb-4">SMP micropigmentation for natural hair follicle impressions. Restores confidence with zero surgery.</p>
-            <div class="flex items-center justify-between">
-              <div><p class="text-2xl font-bold text-primary-600">$680</p><p class="text-xs text-neutral-500">2–3 sessions</p></div>
-              <a href="/book/" data-service-id="hairline-restoration" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+        <!-- Ancillary Services -->
+        <a href="/services/ancillary/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
+          <div class="h-52 overflow-hidden relative">
+            <img src="/images/ancillary-services-hub.jpg" alt="Ancillary Services — medical lab, IV therapy and wellness at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 class="text-xl font-serif font-bold mb-0.5">Ancillary Services</h2>
+              <p class="text-xs text-neutral-300">IV Hydration · Lab Collection · Hormone Panel · Regenerative</p>
             </div>
           </div>
-        </div>
+          <div class="p-5 flex items-center justify-between">
+            <div><p class="text-sm font-semibold text-neutral-800">4 services</p><p class="text-xs text-neutral-500">From $149</p></div>
+            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+          </div>
+        </a>
+
+        <!-- Seasonal Packages -->
+        <a href="/services/packages/" class="group block rounded-2xl overflow-hidden border-2 border-amber-200 hover:border-amber-400 hover:shadow-xl transition-all relative">
+          <div class="absolute top-3 right-3 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">SUMMER 2026</span></div>
+          <div class="h-52 overflow-hidden relative">
+            <img src="/images/bronze-bare-glow-package.jpg" alt="Seasonal Packages at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 class="text-xl font-serif font-bold mb-0.5">Seasonal Packages</h2>
+              <p class="text-xs text-neutral-300">Two services · One visit · Up to $27 savings</p>
+            </div>
+          </div>
+          <div class="p-5 flex items-center justify-between">
+            <div><p class="text-sm font-semibold text-neutral-800">5 packages</p><p class="text-xs text-neutral-500">From $110</p></div>
+            <span class="inline-flex items-center gap-1 text-sm font-semibold text-amber-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+          </div>
+        </a>
+
       </div>
     </div>
   </section>
@@ -515,12 +131,8 @@ import Layout from '../../layouts/Layout.astro';
           <h2 class="text-3xl font-serif mb-4">Love these services?<br/>Get them on a monthly plan.</h2>
           <p class="text-rose-100 mb-6">Our membership plans lock in monthly credits for your favorite services at a fraction of the regular price — with priority booking, exclusive discounts, and no long-term commitment.</p>
           <div class="flex flex-col sm:flex-row gap-3">
-            <a href="/memberships/" class="inline-block bg-white text-primary-700 px-7 py-3 rounded-full hover:bg-rose-50 transition-colors font-semibold text-sm shadow-md">
-              View Membership Plans
-            </a>
-            <a href="/book/" class="inline-block border border-white/40 text-white px-7 py-3 rounded-full hover:bg-white/10 transition-colors font-medium text-sm">
-              Book Single Appointment
-            </a>
+            <a href="/memberships/" class="inline-block bg-white text-primary-700 px-7 py-3 rounded-full hover:bg-rose-50 transition-colors font-semibold text-sm shadow-md">View Membership Plans</a>
+            <a href="/book/" class="inline-block border border-white/40 text-white px-7 py-3 rounded-full hover:bg-white/10 transition-colors font-medium text-sm">Book Single Appointment</a>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-3">
@@ -559,4 +171,5 @@ import Layout from '../../layouts/Layout.astro';
       </a>
     </div>
   </section>
+
 </Layout>

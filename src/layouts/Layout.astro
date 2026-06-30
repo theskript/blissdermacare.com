@@ -345,8 +345,8 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         <div class="max-w-7xl mx-auto flex items-center justify-center gap-4 flex-wrap">
           <div class="flex items-center gap-2">
             <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-            <span class="hidden sm:inline">New: Member plans from <strong>$89/mo</strong> &mdash; plus Dermaplane, Smooth Canvas &amp; Spray Tan now available.</span>
-            <span class="sm:hidden">Member plans from $89/mo &amp; new summer services!</span>
+            <span class="hidden sm:inline">Now offering Advanced Treatments &amp; Semipermanent Makeup &mdash; plus member plans from <strong>$89/mo</strong>.</span>
+            <span class="sm:hidden">Advanced Treatments &amp; Semipermanent Makeup — now booking!</span>
           </div>
           <div class="flex items-center gap-3">
             <a href="/memberships/" class="underline underline-offset-2 font-bold hover:text-amber-100 transition-colors whitespace-nowrap">See member plans &rarr;</a>
@@ -372,24 +372,68 @@ const { title, description = 'Professional aesthetician services in a serene, mo
                 <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
               </button>
               <div class="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
-                <div class="bg-white dark:bg-[#211e1b] rounded-2xl shadow-xl border border-neutral-100 dark:border-neutral-700 py-3 min-w-[260px]">
-                  <p class="px-5 pb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">Facials</p>
-                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Signature Radiance Facial</a>
-                  <a href="/services/#facials" class="flex items-center justify-between px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Dermaplane Glow Facial <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">NEW</span></a>
-                  <a href="/services/#facials" class="flex items-center justify-between px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Smooth Canvas Facial <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">NEW</span></a>
-                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Diamond Glow &amp; Peels</a>
-                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Enzyme Facials</a>
-                  <a href="/services/#facials" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Vampire Facial (PRP)</a>
+                <div class="bg-white dark:bg-[#211e1b] rounded-2xl shadow-xl border border-neutral-100 dark:border-neutral-700 py-3 min-w-[280px]">
+                  <!-- Hub link -->
+                  <a href="/services/" class="flex items-center justify-between px-5 py-2.5 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors rounded-lg mx-2">
+                    All Services
+                    <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                  </a>
                   <div class="my-2 mx-5 border-t border-neutral-100 dark:border-neutral-700"></div>
-                  <p class="px-5 pb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">Lash &amp; Brow</p>
-                  <a href="/services/#treatments" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Lash Extensions</a>
-                  <a href="/services/#treatments" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Lash Lift &amp; Brow Lamination</a>
-                  <div class="my-2 mx-5 border-t border-neutral-100 dark:border-neutral-700"></div>
-                  <p class="px-5 pb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400">Body &amp; Tan</p>
-                  <a href="/services/#treatments" class="block px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Body &amp; Face Waxing</a>
-                  <a href="/services/#treatments" class="flex items-center justify-between px-5 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors">Custom Airbrush Spray Tan <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">NEW</span></a>
-                  <div class="my-2 mx-5 border-t border-neutral-100 dark:border-neutral-700"></div>
-                  <a href="/services/" class="flex items-center gap-1 px-5 py-2 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors">View all services &rarr;</a>
+                  <!-- Category links -->
+                  <a href="/services/facials/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                    <div class="w-7 h-7 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 group-hover/item:text-primary-600 dark:group-hover/item:text-primary-400 transition-colors">Facials</p>
+                      <p class="text-[11px] text-neutral-400 leading-snug">Dermaplaning · Peels · PRP · Enzyme</p>
+                    </div>
+                  </a>
+                  <a href="/services/lash-brow-body/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                    <div class="w-7 h-7 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 group-hover/item:text-primary-600 dark:group-hover/item:text-primary-400 transition-colors">Lash, Brow &amp; Body</p>
+                      <p class="text-[11px] text-neutral-400 leading-snug">Extensions · Waxing · Spray Tan · Scalp</p>
+                    </div>
+                  </a>
+                  <a href="/services/advanced-treatments/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                    <div class="w-7 h-7 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 group-hover/item:text-primary-600 dark:group-hover/item:text-primary-400 transition-colors">Advanced Treatments</p>
+                      <p class="text-[11px] text-neutral-400 leading-snug">PRP · Lip Filler · Injectables · CIT · GLP-1</p>
+                    </div>
+                  </a>
+                  <a href="/services/semipermanent-makeup/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                    <div class="w-7 h-7 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 group-hover/item:text-primary-600 dark:group-hover/item:text-primary-400 transition-colors">Semipermanent Makeup</p>
+                      <p class="text-[11px] text-neutral-400 leading-snug">Nano &amp; Powder Brows · Lip Blush · Scalp SMP</p>
+                    </div>
+                  </a>
+                  <a href="/services/ancillary/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-primary-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                    <div class="w-7 h-7 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 group-hover/item:text-primary-600 dark:group-hover/item:text-primary-400 transition-colors">Ancillary Services</p>
+                      <p class="text-[11px] text-neutral-400 leading-snug">IV Hydration · Lab Collection · Hormone · Regenerative</p>
+                    </div>
+                  </a>
+                  <a href="/services/packages/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-amber-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                    <div class="w-7 h-7 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 group-hover/item:text-amber-600 dark:group-hover/item:text-amber-400 transition-colors">Seasonal Packages <span class="text-[9px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full ml-1">SUMMER</span></p>
+                      <p class="text-[11px] text-neutral-400 leading-snug">Two services · One visit · Save up to $27</p>
+                    </div>
+                  </a>
                 </div>
               </div>
             </div>
@@ -459,9 +503,12 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-100 dark:border-neutral-800 pt-3 pb-3">
-          <a href="/services/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Facials</a>
-          <a href="/services/#treatments" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Lash, Brow &amp; Body</a>
-          <a href="/services/#seasonal-packages" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
+          <a href="/services/facials/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Facials</a>
+          <a href="/services/lash-brow-body/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Lash, Brow &amp; Body</a>
+          <a href="/services/advanced-treatments/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Advanced Treatments</a>
+          <a href="/services/semipermanent-makeup/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Semipermanent Makeup</a>
+          <a href="/services/ancillary/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Ancillary Services</a>
+          <a href="/services/packages/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
           <a href="/memberships/" class="flex items-center gap-2 py-2.5 px-1 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
             Memberships
@@ -837,12 +884,25 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         'lash-extensions-fill':            { name: 'Lash Extensions Fill',               price: 43,  duration: '1 hr' },
         'body-and-face-waxing':            { name: 'Body & Face Waxing',                 price: 65,  duration: '45–60 min' },
         'brazilian-wax':                   { name: 'Brazilian Wax',                      price: 87,  duration: '45–60 min' },
-        'scalp-therapy':                   { name: 'Scalp Therapy',                      price: 219, duration: '60 min' },
-        'hairline-restoration':            { name: 'Hairline Restoration',               price: 680, duration: '2–3 sessions' },
         'lash-body-smooth':                { name: 'Lash & Body Smooth Package',         price: 185, duration: '~2 hrs 15 min' },
         'brow-lash-wax-ritual':            { name: 'Brow, Lash & Wax Ritual Package',    price: 115, duration: '~2 hrs 15 min' },
         'glow-smooth-escape':              { name: 'Glow & Smooth Escape Package',       price: 135, duration: '~2 hrs 15 min' },
         'mix-match-package':               { name: 'Mix & Match Escape Package',         price: 129, duration: '~2 hrs 15 min' },
+        'prp-treatment':                   { name: 'PRP (Platelet-Rich Plasma)',          price: 399, duration: '60 min' },
+        'lip-filler':                      { name: 'Lip Filler',                          price: 599, duration: '45 min' },
+        'ed-injectables':                  { name: 'Erectile Dysfunction Injectables',    price: 499, duration: '60 min' },
+        'collagen-induction-therapy':      { name: 'Collagen Induction Therapy',          price: 299, duration: '60 min' },
+        'weight-loss-program':             { name: 'Weight Loss Program (GLP-1)',         price: 299, duration: '30 min' },
+        'scalp-micropigmentation':         { name: 'Scalp Micropigmentation',             price: 650, duration: '3 hr' },
+        'lip-neutralization': { name: 'Lip Neutralization', price: 399, duration: '2 hr' },
+        'lip-blush':                       { name: 'Lip Blush',                           price: 499, duration: '2 hr' },
+        'nano-brows':                      { name: 'Nano Brows',                          price: 499, duration: '2.5 hr' },
+        'powder-brows':                    { name: 'Powder Brows',                        price: 549, duration: '2.5 hr' },
+        'custom-semipermanent-makeup':     { name: 'Custom Semipermanent Makeup',         price: 450, duration: '2 hr' },
+        'iv-hydration-therapy':            { name: 'IV Hydration Therapy',                 price: 149, duration: '60 min' },
+        'lab-collection':                  { name: 'Personalized Lab Collection',          price: 199, duration: '30 min' },
+        'hormone-lab-panel':               { name: 'Hormone Lab Panel Support',            price: 349, duration: '45 min' },
+        'regenerative-blood-services':     { name: 'Regenerative Blood-Based Services',   price: 450, duration: '60 min' },
       };
 
       // ── Mirrors booking-page rules exactly ────────────────────────────────
@@ -854,15 +914,22 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         'vampire-facial-prp': 75, 'lash-lift-brow-lamination': 60,
         'lash-extensions': 120, 'lash-extensions-fill': 60,
         'body-and-face-waxing': 60, 'brazilian-wax': 60,
-        'scalp-therapy': 60, 'hairline-restoration': 180,
         'lash-body-smooth': 135, 'brow-lash-wax-ritual': 135,
         'glow-smooth-escape': 135, 'mix-match-package': 135,
+        'prp-treatment': 60, 'lip-filler': 45, 'ed-injectables': 60,
+        'collagen-induction-therapy': 60, 'weight-loss-program': 30,
+        'scalp-micropigmentation': 180, 'lip-neutralization': 120,
+        'lip-blush': 120, 'nano-brows': 150, 'powder-brows': 150, 'custom-semipermanent-makeup': 120,
+        'iv-hydration-therapy': 60, 'lab-collection': 30, 'hormone-lab-panel': 45, 'regenerative-blood-services': 60,
       };
 
       // Solo = must be booked alone (matches booking page SOLO_SERVICES)
       const SOLO = new Set([
         'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
-        'mix-match-package', 'hairline-restoration',
+        'mix-match-package',
+        'prp-treatment', 'lip-filler', 'ed-injectables', 'collagen-induction-therapy', 'weight-loss-program',
+        'scalp-micropigmentation', 'lip-neutralization', 'lip-blush', 'nano-brows', 'powder-brows', 'custom-semipermanent-makeup',
+        'iv-hydration-therapy', 'lab-collection', 'hormone-lab-panel', 'regenerative-blood-services',
       ]);
 
       // Services eligible for Mix & Match (mirrors booking page checkboxes)
