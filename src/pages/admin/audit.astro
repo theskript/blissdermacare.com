@@ -1,0 +1,132 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Audit Log" activeNav="audit">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Audit Log</h1>
+        <p class="text-sm text-neutral-500 mt-1">Every action taken in the admin panel — logins, changes, deletions.</p>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <input id="filter-username" type="text" placeholder="Filter by username…"
+          class="px-3 py-2 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm w-44" />
+        <select id="filter-action"
+          class="px-3 py-2 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm">
+          <option value="">All actions</option>
+          <option value="Login">Login</option>
+          <option value="Failed Login">Failed Login</option>
+          <option value="Create Appointment">Create Appointment</option>
+          <option value="Update Appointment">Update Appointment</option>
+          <option value="Delete Appointment">Delete Appointment</option>
+          <option value="Create Staff">Create Staff</option>
+          <option value="Activate Staff">Activate Staff</option>
+          <option value="Deactivate Staff">Deactivate Staff</option>
+          <option value="Reset Password">Reset Password</option>
+        </select>
+        <button id="apply-filter"
+          class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors">
+          Apply
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div id="audit-table-wrap" class="overflow-x-auto">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading audit log…</div>
+      </div>
+      <div class="px-6 py-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
+        <span id="audit-count">—</span>
+        <span>Showing most recent 200 entries</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { requireLogin, getRole, apiFetch } from '../../scripts/adminAuth.js';
+    requireLogin();
+    if (getRole() !== 'owner') window.location.href = '/admin/';
+
+    const ACTION_COLORS: Record<string, string> = {
+      'Login':                'bg-emerald-100 text-emerald-700',
+      'Failed Login':         'bg-red-100 text-red-700',
+      'Create Appointment':   'bg-blue-100 text-blue-700',
+      'Update Appointment':   'bg-amber-100 text-amber-700',
+      'Delete Appointment':   'bg-red-100 text-red-700',
+      'Create Staff':         'bg-purple-100 text-purple-700',
+      'Activate Staff':       'bg-emerald-100 text-emerald-700',
+      'Deactivate Staff':     'bg-orange-100 text-orange-700',
+      'Reset Password':       'bg-amber-100 text-amber-700',
+      'Update Staff':         'bg-neutral-100 text-neutral-600',
+    };
+
+    async function loadAudit() {
+      const username = (document.getElementById('filter-username') as HTMLInputElement).value.trim();
+      const action   = (document.getElementById('filter-action')   as HTMLSelectElement).value;
+
+      const wrap = document.getElementById('audit-table-wrap')!;
+      wrap.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>';
+
+      try {
+        const params: Record<string, string> = {};
+        if (username) params.username = username;
+        if (action)   params.action   = action;
+
+        const data = await apiFetch('admin-audit', { params });
+        const records = data?.records || [];
+
+        document.getElementById('audit-count')!.textContent = `${records.length} entries`;
+
+        if (records.length === 0) {
+          wrap.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No log entries match your filter.</div>';
+          return;
+        }
+
+        wrap.innerHTML = `
+          <table class="w-full text-sm min-w-[700px]">
+            <thead>
+              <tr class="border-b border-neutral-100 bg-neutral-50">
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400 whitespace-nowrap">Timestamp</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Action</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">User</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Role</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Details</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">IP</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100">
+              ${records.map((rec: any) => {
+                const f = rec.fields;
+                const ts = f['Timestamp']
+                  ? new Date(f['Timestamp']).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit' })
+                  : '—';
+                const actionCls = ACTION_COLORS[f['Action']] || 'bg-neutral-100 text-neutral-600';
+                return `
+                  <tr class="hover:bg-neutral-50 transition-colors">
+                    <td class="px-5 py-3 text-xs text-neutral-400 whitespace-nowrap font-mono">${ts}</td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${actionCls}">${f['Action'] || '—'}</span>
+                    </td>
+                    <td class="px-5 py-3 font-mono text-xs text-neutral-700">${f['Username'] || '—'}</td>
+                    <td class="px-5 py-3 text-xs text-neutral-500 capitalize">${f['Role'] || '—'}</td>
+                    <td class="px-5 py-3 text-xs text-neutral-600 max-w-xs truncate" title="${(f['Details'] || '').replace(/"/g, '&quot;')}">${f['Details'] || '—'}</td>
+                    <td class="px-5 py-3 text-xs text-neutral-400 font-mono">${f['IP Address'] || '—'}</td>
+                  </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`;
+      } catch (err: any) {
+        wrap.innerHTML = `<div class="px-6 py-10 text-center text-red-400 text-sm">Error: ${err.message}</div>`;
+      }
+    }
+
+    document.getElementById('apply-filter')?.addEventListener('click', loadAudit);
+    document.getElementById('filter-username')?.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter') loadAudit();
+    });
+
+    loadAudit();
+  </script>
+
+</AdminLayout>

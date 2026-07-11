@@ -225,6 +225,32 @@ function etOffsetHours(date = new Date()) {
   return month >= 3 && month <= 11 ? -4 : -5;
 }
 
+// ── Audit logging ─────────────────────────────────────────────────────────────
+
+/**
+ * Fire-and-forget audit log entry written to Airtable.
+ * Never throws — failures are logged to console only.
+ */
+function logAudit({ action, username = '', role = '', details = '', targetId = '', ip = '' }) {
+  const table = process.env.AIRTABLE_AUDIT_TABLE || 'Audit Log';
+  return airtableCreate(table, {
+    'Action':    action,
+    'Username':  username,
+    'Role':      role,
+    'Details':   String(details).substring(0, 1000),
+    'Target ID': targetId,
+    'IP Address': ip,
+  }).catch(err => console.error('[audit] Failed to write log:', err.message));
+}
+
+/** Extract client IP from Netlify function event headers. */
+function getClientIP(event) {
+  return (event.headers['x-forwarded-for'] || '')
+    .split(',')[0].trim()
+    || event.headers['client-ip']
+    || 'unknown';
+}
+
 module.exports = {
   jwtSign,
   jwtVerify,
@@ -240,4 +266,6 @@ module.exports = {
   formatTime,
   timeToMinutes,
   etOffsetHours,
+  logAudit,
+  getClientIP,
 };

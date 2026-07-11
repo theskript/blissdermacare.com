@@ -11,7 +11,7 @@
  * All methods require: Authorization: Bearer <token>
  */
 
-const { requireAuth, airtableList, airtableCreate, airtablePatch, airtableDelete } = require('./_utils.cjs');
+const { requireAuth, airtableList, airtableCreate, airtablePatch, airtableDelete, logAudit, getClientIP } = require('./_utils.cjs');
 
 const TABLE = () => process.env.AIRTABLE_APPOINTMENTS_TABLE || 'Appointments';
 
@@ -106,6 +106,12 @@ exports.handler = async (event) => {
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
       }
       const record = await airtableCreate(TABLE(), sanitize(body));
+      logAudit({
+        action: 'Create Appointment',
+        username: user.username, role: user.role,
+        details: `Client: ${body['Client Name'] || '?'}, Date: ${body['Date'] || '?'}, Services: ${(body['Services'] || '').substring(0, 80)}`,
+        targetId: record.id, ip,
+      });
       return { statusCode: 201, headers: CORS, body: JSON.stringify(record) };
     }
 
@@ -126,6 +132,12 @@ exports.handler = async (event) => {
           );
 
       const record = await airtablePatch(TABLE(), id, allowed);
+      logAudit({
+        action: 'Update Appointment',
+        username: user.username, role: user.role,
+        details: `Updated fields: ${Object.keys(allowed).join(', ')}`,
+        targetId: id, ip,
+      });
       return { statusCode: 200, headers: CORS, body: JSON.stringify(record) };
     }
 
@@ -142,6 +154,12 @@ exports.handler = async (event) => {
       if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Record ID required' }) };
 
       const result = await airtableDelete(TABLE(), id);
+      logAudit({
+        action: 'Delete Appointment',
+        username: user.username, role: user.role,
+        details: `Deleted appointment record ${id}`,
+        targetId: id, ip,
+      });
       return { statusCode: 200, headers: CORS, body: JSON.stringify(result) };
     }
 

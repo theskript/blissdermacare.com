@@ -14,9 +14,13 @@
     "@astrojs/node": "^8.3.4",
     "@astrojs/tailwind": "^5.1.2",
     "astro": "^6.2.2",
+    "bcryptjs": "^3.0.3",
     "stripe": "^22.1.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.6.3"
   },
-  "description": "Modern aesthetician services website built with Astro and StudioCMS"
+  "description": "Modern aesthetician services website built with Astro and StudioCMS",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6"
+  }
 }

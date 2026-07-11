@@ -1,7 +1,7 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'clients' | 'new-appointment';
+  activeNav?: 'dashboard' | 'calendar' | 'clients' | 'new-appointment' | 'staff' | 'audit';
 }
 const { title, activeNav } = Astro.props;
 ---
@@ -79,6 +79,24 @@ const { title, activeNav } = Astro.props;
           </svg>
           New Appointment
         </a>
+        <!-- Owner-only nav items (shown via JS) -->
+        <div class="owner-only-nav hidden">
+          <div class="my-2 border-t border-neutral-100"></div>
+          <a href="/admin/staff"
+             class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeNav === 'staff' ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}`}>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            Staff Management
+          </a>
+          <a href="/admin/audit"
+             class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeNav === 'audit' ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}`}>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+            </svg>
+            Audit Log
+          </a>
+        </div>
       </nav>
 
       <!-- User info + logout -->
@@ -157,6 +175,11 @@ const { title, activeNav } = Astro.props;
     const roleEl = document.getElementById('sidebar-role');
     if (usernameEl && payload) usernameEl.textContent = payload.username || role || '—';
     if (roleEl && role) roleEl.textContent = role;
+
+    // Show owner-only nav items
+    if (role === 'owner') {
+      document.querySelectorAll('.owner-only-nav').forEach(el => el.classList.remove('hidden'));
+    }
 
     // Logout
     function doLogout() {
