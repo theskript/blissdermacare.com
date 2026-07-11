@@ -1,0 +1,260 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="New Appointment" activeNav="new-appointment">
+
+  <div class="p-6 lg:p-8 max-w-2xl">
+    <div class="mb-8">
+      <h1 class="text-2xl font-serif font-semibold text-neutral-900">New Appointment</h1>
+      <p class="text-sm text-neutral-500 mt-1">Manually add a booking from any source — walk-in, phone, Groupon, ClassPass, etc.</p>
+    </div>
+
+    <!-- Success banner -->
+    <div id="success-banner" class="hidden mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+      <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      <div>
+        <p class="text-sm font-semibold text-emerald-800">Appointment added successfully!</p>
+        <p class="text-xs text-emerald-600 mt-0.5">The booking has been saved to Airtable.</p>
+      </div>
+    </div>
+
+    <!-- Error banner -->
+    <div id="error-banner" class="hidden mb-6 flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+      <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <p id="error-text" class="text-sm text-red-700">An error occurred.</p>
+    </div>
+
+    <form id="appt-form" class="bg-white rounded-2xl border border-neutral-200 divide-y divide-neutral-100">
+
+      <!-- Source -->
+      <div class="px-6 py-5">
+        <h2 class="text-sm font-semibold text-neutral-900 mb-4">Booking Source</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {['Walk-in','Phone','Groupon','ClassPass','Membership','Website'].map(src => (
+            <label class="cursor-pointer">
+              <input type="radio" name="source" value={src} class="sr-only peer" />
+              <div class="text-center rounded-lg border-2 border-neutral-200 py-2.5 px-2 text-xs font-medium peer-checked:border-primary-600 peer-checked:bg-primary-600 peer-checked:text-white hover:border-primary-300 transition-all">
+                {src}
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <!-- Client info -->
+      <div class="px-6 py-5">
+        <h2 class="text-sm font-semibold text-neutral-900 mb-4">Client Information</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Full Name *</label>
+            <input id="f-name" type="text" required placeholder="Jane Smith"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Email</label>
+            <input id="f-email" type="email" placeholder="jane@example.com"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Phone</label>
+            <input id="f-phone" type="tel" placeholder="(609) 366-0857"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Date & Time -->
+      <div class="px-6 py-5">
+        <h2 class="text-sm font-semibold text-neutral-900 mb-4">Date & Time</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Date *</label>
+            <input id="f-date" type="date" required
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Time *</label>
+            <select id="f-time" required
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm">
+              <option value="">Select time…</option>
+              {['12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM',
+                '4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM'].map(t => (
+                <option value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="px-6 py-5">
+        <h2 class="text-sm font-semibold text-neutral-900 mb-4">Services</h2>
+        <div>
+          <label class="block text-xs font-medium text-neutral-600 mb-1.5">Service(s) *</label>
+          <textarea id="f-services" required rows="2" placeholder="e.g., Signature Radiance Facial, Brow Lamination"
+            class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Status & Price -->
+      <div class="px-6 py-5">
+        <h2 class="text-sm font-semibold text-neutral-900 mb-4">Booking Details</h2>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Status *</label>
+            <select id="f-status" required
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm">
+              <option value="Confirmed">Confirmed</option>
+              <option value="Pending Payment">Pending Payment</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Price ($)</label>
+            <input id="f-price" type="number" min="0" step="0.01" placeholder="0.00"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Discount</label>
+            <input id="f-discount" type="text" placeholder="e.g., Military 15%"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Referral / Voucher Code</label>
+            <input id="f-referral" type="text" placeholder="e.g., Groupon code or referral name"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Groupon Code</label>
+            <input id="f-groupon" type="text" placeholder="Optional Groupon voucher code"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="px-6 py-5">
+        <h2 class="text-sm font-semibold text-neutral-900 mb-4">Notes</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Client Notes / Special Requests</label>
+            <textarea id="f-notes" rows="2" placeholder="Skin concerns, allergies, preferences…"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm resize-none"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Internal Staff Notes</label>
+            <textarea id="f-internal-notes" rows="2" placeholder="Private staff notes (not visible to client)…"
+              class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm resize-none"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="px-6 py-5 flex items-center justify-between gap-4">
+        <a href="/admin/" class="text-sm text-neutral-500 hover:text-neutral-700 transition-colors">← Back to Dashboard</a>
+        <button type="submit" id="submit-btn"
+          class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2">
+          <span id="btn-label">Save Appointment</span>
+          <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+          </svg>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    import { requireLogin, apiFetch } from '../../scripts/adminAuth.js';
+    requireLogin();
+
+    // Pre-fill from URL params (e.g., "Book Again" from clients page)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('email')) (document.getElementById('f-email') as HTMLInputElement).value = params.get('email')!;
+    if (params.get('name'))  (document.getElementById('f-name')  as HTMLInputElement).value = params.get('name')!;
+    if (params.get('phone')) (document.getElementById('f-phone') as HTMLInputElement).value = params.get('phone')!;
+
+    const form       = document.getElementById('appt-form') as HTMLFormElement;;
+    const submitBtn  = document.getElementById('submit-btn') as HTMLButtonElement;
+    const btnLabel   = document.getElementById('btn-label')!;
+    const spinner    = document.getElementById('btn-spinner')!;
+    const successEl  = document.getElementById('success-banner')!;
+    const errorEl    = document.getElementById('error-banner')!;
+    const errorText  = document.getElementById('error-text')!;
+
+    function setLoading(on: boolean) {
+      submitBtn.disabled = on;
+      btnLabel.textContent = on ? 'Saving…' : 'Save Appointment';
+      spinner.classList.toggle('hidden', !on);
+    }
+    function showSuccess() {
+      successEl.classList.remove('hidden');
+      successEl.classList.add('flex');
+      errorEl.classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function showError(msg: string) {
+      errorText.textContent = msg;
+      errorEl.classList.remove('hidden');
+      errorEl.classList.add('flex');
+      successEl.classList.add('hidden');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.add('hidden');
+      setLoading(true);
+
+      const source = (document.querySelector('input[name="source"]:checked') as HTMLInputElement)?.value || 'Walk-in';
+      const name    = (document.getElementById('f-name')    as HTMLInputElement).value.trim();
+      const email   = (document.getElementById('f-email')   as HTMLInputElement).value.trim();
+      const phone   = (document.getElementById('f-phone')   as HTMLInputElement).value.trim();
+      const date    = (document.getElementById('f-date')    as HTMLInputElement).value;
+      const time    = (document.getElementById('f-time')    as HTMLSelectElement).value;
+      const services= (document.getElementById('f-services')as HTMLTextAreaElement).value.trim();
+      const status  = (document.getElementById('f-status')  as HTMLSelectElement).value;
+      const priceRaw= (document.getElementById('f-price')   as HTMLInputElement).value;
+      const discount= (document.getElementById('f-discount')as HTMLInputElement).value.trim();
+      const referral= (document.getElementById('f-referral')as HTMLInputElement).value.trim();
+      const groupon = (document.getElementById('f-groupon') as HTMLInputElement).value.trim();
+      const notes   = (document.getElementById('f-notes')   as HTMLTextAreaElement).value.trim();
+      const inNotes = (document.getElementById('f-internal-notes') as HTMLTextAreaElement).value.trim();
+
+      const fields: Record<string, any> = {
+        'Client Name':    name,
+        'Client Email':   email,
+        'Client Phone':   phone,
+        'Date':           date,
+        'Time':           time,
+        'Services':       services,
+        'Status':         status,
+        'Source':         source,
+        'Discount':       discount || 'None',
+        'Referral':       referral,
+        'Groupon Code':   groupon,
+        'Notes':          notes,
+        'Internal Notes': inNotes,
+      };
+      if (priceRaw) fields['Price'] = parseFloat(priceRaw);
+
+      try {
+        await apiFetch('admin-appointments', { method: 'POST', body: fields });
+        showSuccess();
+        form.reset();
+      } catch (err: any) {
+        showError(err.message || 'Failed to save appointment. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+
+</AdminLayout>

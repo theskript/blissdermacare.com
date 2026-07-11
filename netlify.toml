@@ -4,12 +4,29 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [dev]
   command = "npm run dev"
   port = 8888
   targetPort = 4321
   autoLaunch = false
+
+# Scheduled function cron jobs (all times UTC; business is ET = UTC-4/UTC-5)
+[functions."morning-summary"]
+  schedule = "0 12 * * *"      # 8 AM EDT / 7 AM EST — daily schedule summary to owner
+
+[functions."reminder-24h"]
+  schedule = "0 14 * * *"      # 10 AM EDT / 9 AM EST — 24h SMS reminders to clients
+
+[functions."reminder-2h"]
+  schedule = "0 * * * *"       # Every hour — 2h SMS reminders to clients
+
+# Admin panel — serve built static files; let Astro handle nested routes
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"

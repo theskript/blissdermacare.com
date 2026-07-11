@@ -4,6 +4,9 @@
 // Required env var: STRIPE_SECRET_KEY (set in Netlify dashboard)
 
 const Stripe = require('stripe');
+const { airtableCreate, formatTime } = require('./_utils.cjs');
+
+const APPOINTMENTS_TABLE = () => process.env.AIRTABLE_APPOINTMENTS_TABLE || 'Appointments';
 
 // Prices in cents — must mirror the booking page UI
 const PRICES = {
@@ -235,6 +238,33 @@ exports.handler = async (event) => {
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
+
+    // ── Write to Airtable (non-blocking; status starts as Pending Payment) ──
+    const discountedCents = Math.round(basePriceCents * (1 - discountPct / 100));
+    const sourceMap = { groupon: 'Groupon', classpass: 'ClassPass' };
+    const bookingSource = sourceMap[referral] || 'Website';
+
+    airtableCreate(APPOINTMENTS_TABLE(), {
+      'Client Name':      customerName,
+      'Client Email':     customerEmail,
+      'Client Phone':     customerPhone,
+      'Date':             appointmentDate,
+      'Time':             formatTime(appointmentTime),
+      'Services':         serviceNames.join(', '),
+      'Status':           'Pending Payment',
+      'Price':            discountedCents / 100,
+      'Notes':            notes,
+      'Source':           bookingSource,
+      'Discount':         discountLabel || 'None',
+      'Referral':         referral,
+      'Groupon Code':     grouponCode,
+      'Stripe Session ID': session.id,
+      'Confirm Phone':    confirmPhone === 'yes',
+      'Confirm Text':     confirmText  === 'yes',
+      'Confirm Email':    confirmEmail === 'yes',
+    }).catch(err => console.error('Airtable write error (non-fatal):', err.message));
+    // ─────────────────────────────────────────────────────────────────────────
+
     return { statusCode: 200, headers, body: JSON.stringify({ url: session.url }) };
   } catch (err) {
     console.error('Stripe error:', err);

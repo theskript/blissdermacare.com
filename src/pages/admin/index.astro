@@ -1,0 +1,304 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Dashboard" activeNav="dashboard">
+
+  <div class="p-6 lg:p-8">
+
+    <!-- Page header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-serif font-semibold text-neutral-900">Dashboard</h1>
+      <p id="today-label" class="text-sm text-neutral-500 mt-1">Loading…</p>
+    </div>
+
+    <!-- Stats row (owner only) -->
+    <div id="stats-row" class="hidden grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
+        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Today</div>
+        <div id="stat-today" class="text-3xl font-bold text-neutral-900">—</div>
+        <div class="text-xs text-neutral-500 mt-1">appointments</div>
+      </div>
+      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
+        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">This Week</div>
+        <div id="stat-week" class="text-3xl font-bold text-neutral-900">—</div>
+        <div class="text-xs text-neutral-500 mt-1">appointments</div>
+      </div>
+      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
+        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Revenue Today</div>
+        <div id="stat-revenue-today" class="text-3xl font-bold text-primary-600">—</div>
+        <div class="text-xs text-neutral-500 mt-1">confirmed only</div>
+      </div>
+      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
+        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Revenue This Week</div>
+        <div id="stat-revenue-week" class="text-3xl font-bold text-primary-600">—</div>
+        <div class="text-xs text-neutral-500 mt-1">confirmed only</div>
+      </div>
+    </div>
+
+    <!-- Today's appointments -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+        <h2 class="font-semibold text-neutral-900">Today's Schedule</h2>
+        <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">View Calendar →</a>
+      </div>
+      <div id="today-list" class="divide-y divide-neutral-100">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading appointments…</div>
+      </div>
+    </div>
+
+    <!-- Upcoming (next 7 days) -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+        <h2 class="font-semibold text-neutral-900">Upcoming (Next 7 Days)</h2>
+        <a href="/admin/new-appointment" class="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-full font-medium hover:bg-primary-700 transition-colors">+ New Booking</a>
+      </div>
+      <div id="upcoming-list" class="divide-y divide-neutral-100">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Appointment detail slide-over -->
+  <div id="detail-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+      <h3 class="font-semibold text-neutral-900">Appointment Details</h3>
+      <button id="close-detail" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div id="detail-content" class="flex-1 overflow-y-auto p-6"></div>
+  </div>
+  <div id="detail-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
+
+  <script>
+    import { requireLogin, apiFetch, getRole, formatDate } from '../../scripts/adminAuth.js';
+    requireLogin();
+
+    const role = getRole();
+
+    // ── Date helpers ──────────────────────────────────────────────────────────
+    function todayStr() {
+      return new Date().toISOString().split('T')[0];
+    }
+    function addDays(dateStr: string, days: number) {
+      const d = new Date(dateStr + 'T12:00:00');
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+    function fullDateLabel(dateStr: string) {
+      return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+      });
+    }
+
+    const STATUS_COLORS: Record<string, string> = {
+      'Confirmed':       'bg-emerald-100 text-emerald-700',
+      'Completed':       'bg-blue-100 text-blue-700',
+      'Pending Payment': 'bg-amber-100 text-amber-700',
+      'Cancelled':       'bg-red-100 text-red-700',
+      'No-Show':         'bg-purple-100 text-purple-700',
+    };
+
+    function statusBadge(status: string) {
+      const cls = STATUS_COLORS[status] || 'bg-neutral-100 text-neutral-600';
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">${status || '—'}</span>`;
+    }
+
+    // ── Render appointment row ─────────────────────────────────────────────
+    function apptRow(rec: any, showDate = false) {
+      const f = rec.fields;
+      return `
+        <div class="px-6 py-4 hover:bg-neutral-50 transition-colors cursor-pointer appt-row" data-id="${rec.id}" data-rec='${JSON.stringify(rec).replace(/'/g, "&#39;")}'>
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || 'Unknown'}</span>
+                ${statusBadge(f['Status'])}
+              </div>
+              <div class="text-xs text-neutral-500 mt-0.5">
+                ${showDate ? `${formatDate(f['Date'])} · ` : ''}${f['Time'] || '—'} · ${(f['Services'] || '—').substring(0, 60)}${(f['Services'] || '').length > 60 ? '…' : ''}
+              </div>
+              ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
+            </div>
+            <svg class="w-4 h-4 text-neutral-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>`;
+    }
+
+    // ── Detail panel ─────────────────────────────────────────────────────────
+    let currentRec: any = null;
+
+    function openDetail(rec: any) {
+      currentRec = rec;
+      const f = rec.fields;
+      const panel = document.getElementById('detail-panel');
+      const overlay = document.getElementById('detail-overlay');
+      const content = document.getElementById('detail-content');
+
+      const canDelete = role === 'owner';
+      const statusOptions = ['Pending Payment', 'Confirmed', 'Completed', 'Cancelled', 'No-Show'];
+
+      content!.innerHTML = `
+        <div class="space-y-5">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Client</div>
+            <div class="text-base font-semibold text-neutral-900">${f['Client Name'] || '—'}</div>
+            <div class="text-sm text-neutral-500">${f['Client Email'] || ''}</div>
+            <div class="text-sm text-neutral-500">${f['Client Phone'] || ''}</div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Date</div>
+              <div class="text-sm text-neutral-800">${formatDate(f['Date'])}</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Time</div>
+              <div class="text-sm text-neutral-800">${f['Time'] || '—'}</div>
+            </div>
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Services</div>
+            <div class="text-sm text-neutral-800">${f['Services'] || '—'}</div>
+          </div>
+          ${role === 'owner' && f['Price'] != null ? `
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price</div>
+            <div class="text-sm font-semibold text-primary-700">$${Number(f['Price']).toFixed(2)}</div>
+          </div>` : ''}
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Source</div>
+            <div class="text-sm text-neutral-800">${f['Source'] || 'Website'}</div>
+          </div>
+          ${f['Notes'] ? `
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Client Notes</div>
+            <div class="text-sm text-neutral-800 bg-neutral-50 rounded-lg p-3">${f['Notes']}</div>
+          </div>` : ''}
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Status</div>
+            <select id="status-select" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none">
+              ${statusOptions.map(s => `<option value="${s}" ${f['Status'] === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Internal Notes</div>
+            <textarea id="internal-notes" rows="3" placeholder="Add staff notes…"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none resize-none">${f['Internal Notes'] || ''}</textarea>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button id="save-detail-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors">Save Changes</button>
+            ${canDelete ? `<button id="delete-detail-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
+          </div>
+          <div id="detail-msg" class="text-xs text-center text-neutral-400"></div>
+        </div>`;
+
+      panel?.classList.remove('hidden');
+      panel?.classList.add('flex');
+      overlay?.classList.remove('hidden');
+
+      document.getElementById('save-detail-btn')?.addEventListener('click', saveDetail);
+      document.getElementById('delete-detail-btn')?.addEventListener('click', deleteDetail);
+    }
+
+    async function saveDetail() {
+      const status = (document.getElementById('status-select') as HTMLSelectElement)?.value;
+      const notes  = (document.getElementById('internal-notes') as HTMLTextAreaElement)?.value;
+      const msg    = document.getElementById('detail-msg');
+      try {
+        await apiFetch('admin-appointments', {
+          method: 'PATCH',
+          body: { id: currentRec.id, fields: { Status: status, 'Internal Notes': notes } },
+        });
+        if (msg) msg.textContent = '✓ Saved';
+        currentRec.fields['Status'] = status;
+        currentRec.fields['Internal Notes'] = notes;
+        loadData(); // refresh list
+      } catch (err: any) {
+        if (msg) msg.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    async function deleteDetail() {
+      if (!confirm(`Delete appointment for ${currentRec.fields['Client Name']}? This cannot be undone.`)) return;
+      try {
+        await apiFetch('admin-appointments', { method: 'DELETE', body: { id: currentRec.id } });
+        closeDetail();
+        loadData();
+      } catch (err: any) {
+        alert(`Delete failed: ${err.message}`);
+      }
+    }
+
+    function closeDetail() {
+      document.getElementById('detail-panel')?.classList.add('hidden');
+      document.getElementById('detail-panel')?.classList.remove('flex');
+      document.getElementById('detail-overlay')?.classList.add('hidden');
+      currentRec = null;
+    }
+
+    document.getElementById('close-detail')?.addEventListener('click', closeDetail);
+    document.getElementById('detail-overlay')?.addEventListener('click', closeDetail);
+
+    // ── Load data ─────────────────────────────────────────────────────────────
+    async function loadData() {
+      const today = todayStr();
+      const weekEnd = addDays(today, 7);
+
+      document.getElementById('today-label')!.textContent = fullDateLabel(today);
+
+      const [todayData, weekData] = await Promise.all([
+        apiFetch('admin-appointments', { params: { date: today } }),
+        apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
+      ]);
+
+      const todayRecs = todayData?.records || [];
+      const weekRecs  = weekData?.records  || [];
+
+      // Stats (owner only)
+      if (role === 'owner') {
+        const statsRow = document.getElementById('stats-row');
+        statsRow?.classList.remove('hidden');
+        statsRow?.classList.add('grid');
+        document.getElementById('stat-today')!.textContent = String(todayRecs.length);
+        document.getElementById('stat-week')!.textContent  = String(todayRecs.length + weekRecs.length);
+        const rev = (recs: any[]) => recs
+          .filter(r => r.fields['Status'] === 'Confirmed' || r.fields['Status'] === 'Completed')
+          .reduce((s, r) => s + (r.fields['Price'] || 0), 0);
+        document.getElementById('stat-revenue-today')!.textContent = `$${rev(todayRecs).toFixed(0)}`;
+        document.getElementById('stat-revenue-week')!.textContent  = `$${rev([...todayRecs, ...weekRecs]).toFixed(0)}`;
+      }
+
+      // Today list
+      const todayEl = document.getElementById('today-list')!;
+      if (todayRecs.length === 0) {
+        todayEl.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No appointments today 🌸</div>';
+      } else {
+        todayEl.innerHTML = todayRecs.map((r: any) => apptRow(r)).join('');
+      }
+
+      // Upcoming list
+      const upcomingEl = document.getElementById('upcoming-list')!;
+      if (weekRecs.length === 0) {
+        upcomingEl.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Nothing scheduled in the next 7 days.</div>';
+      } else {
+        upcomingEl.innerHTML = weekRecs.map((r: any) => apptRow(r, true)).join('');
+      }
+
+      // Attach click handlers
+      document.querySelectorAll('.appt-row').forEach(el => {
+        el.addEventListener('click', () => {
+          const rec = JSON.parse((el as HTMLElement).dataset.rec || '{}');
+          openDetail(rec);
+        });
+      });
+    }
+
+    loadData().catch(err => console.error('Dashboard load error:', err));
+  </script>
+
+</AdminLayout>

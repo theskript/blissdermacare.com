@@ -1,0 +1,251 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Calendar" activeNav="calendar">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Calendar</h1>
+        <p class="text-sm text-neutral-500 mt-1">Click any day to see appointments</p>
+      </div>
+      <a href="/admin/new-appointment"
+        class="text-xs bg-primary-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-primary-700 transition-colors">
+        + New Booking
+      </a>
+    </div>
+
+    <div class="grid lg:grid-cols-5 gap-6">
+
+      <!-- Month calendar -->
+      <div class="lg:col-span-3 bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+        <!-- Month nav -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+          <button id="prev-month" class="p-2 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <h2 id="month-title" class="font-semibold text-neutral-900 text-sm">—</h2>
+          <button id="next-month" class="p-2 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Day-of-week headers -->
+        <div class="grid grid-cols-7 border-b border-neutral-100">
+          {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
+            <div class="py-2 text-center text-xs font-semibold text-neutral-400 uppercase tracking-widest">{d}</div>
+          ))}
+        </div>
+        <!-- Calendar grid -->
+        <div id="calendar-grid" class="grid grid-cols-7"></div>
+      </div>
+
+      <!-- Day panel -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-neutral-200 overflow-hidden flex flex-col">
+        <div class="px-5 py-4 border-b border-neutral-100">
+          <h3 id="day-panel-title" class="font-semibold text-neutral-900 text-sm">Select a day</h3>
+        </div>
+        <div id="day-panel-list" class="flex-1 overflow-y-auto divide-y divide-neutral-100">
+          <div class="px-5 py-10 text-center text-neutral-400 text-sm">Click a day on the calendar</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    import { requireLogin, apiFetch, formatDate } from '../../scripts/adminAuth.js';
+    requireLogin();
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth(); // 0-indexed
+    let allAppts: Record<string, any[]> = {};  // keyed by YYYY-MM-DD
+    let selectedDate: string | null = null;
+
+    const STATUS_COLORS: Record<string, string> = {
+      'Confirmed':       'bg-emerald-100 text-emerald-700',
+      'Completed':       'bg-blue-100 text-blue-700',
+      'Pending Payment': 'bg-amber-100 text-amber-700',
+      'Cancelled':       'bg-red-100 text-red-700',
+      'No-Show':         'bg-purple-100 text-purple-700',
+    };
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function padZ(n: number) { return String(n).padStart(2, '0'); }
+    function monthStartEnd(year: number, month: number) {
+      const start = `${year}-${padZ(month + 1)}-01`;
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      const end   = `${year}-${padZ(month + 1)}-${padZ(lastDay)}`;
+      return { start, end };
+    }
+
+    // ── Fetch appointments for the visible month ──────────────────────────────
+    async function fetchMonth(year: number, month: number) {
+      const { start, end } = monthStartEnd(year, month);
+      const data = await apiFetch('admin-appointments', { params: { startDate: start, endDate: end } });
+      allAppts = {};
+      for (const rec of (data?.records || [])) {
+        const d = rec.fields['Date'];
+        if (!d) continue;
+        if (!allAppts[d]) allAppts[d] = [];
+        allAppts[d].push(rec);
+      }
+      // Also include today if it's not in range
+      const today = new Date().toISOString().split('T')[0];
+      if (!allAppts[today]) {
+        const todayData = await apiFetch('admin-appointments', { params: { date: today } });
+        if (todayData?.records?.length) allAppts[today] = todayData.records;
+      }
+    }
+
+    // ── Render calendar grid ──────────────────────────────────────────────────
+    function renderCalendar() {
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      document.getElementById('month-title')!.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const today = new Date().toISOString().split('T')[0];
+      const grid = document.getElementById('calendar-grid')!;
+
+      let html = '';
+      // Empty leading cells
+      for (let i = 0; i < firstDay; i++) {
+        html += `<div class="min-h-[64px] border-b border-r border-neutral-100 bg-neutral-50/50"></div>`;
+      }
+      // Day cells
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${currentYear}-${padZ(currentMonth + 1)}-${padZ(day)}`;
+        const isToday = dateStr === today;
+        const isSelected = dateStr === selectedDate;
+        const count = allAppts[dateStr]?.length || 0;
+        const confirmed = allAppts[dateStr]?.filter(r => r.fields['Status'] === 'Confirmed').length || 0;
+
+        html += `
+          <div class="min-h-[64px] border-b border-r border-neutral-100 p-1.5 cursor-pointer hover:bg-primary-50 transition-colors day-cell ${isSelected ? 'bg-primary-50 ring-1 ring-primary-300 ring-inset' : ''}"
+            data-date="${dateStr}">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium ${isToday ? 'w-6 h-6 flex items-center justify-center rounded-full bg-primary-600 text-white' : 'text-neutral-700'}">${day}</span>
+              ${count > 0 ? `<span class="text-xs font-bold text-primary-600">${count}</span>` : ''}
+            </div>
+            ${confirmed > 0 ? `<div class="w-1.5 h-1.5 rounded-full bg-emerald-400 mx-auto"></div>` : ''}
+          </div>`;
+      }
+      // Trailing cells
+      const totalCells = firstDay + daysInMonth;
+      const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (let i = 0; i < trailing; i++) {
+        html += `<div class="min-h-[64px] border-b border-r border-neutral-100 bg-neutral-50/50"></div>`;
+      }
+
+      grid.innerHTML = html;
+
+      // Attach click handlers
+      grid.querySelectorAll('.day-cell').forEach(cell => {
+        cell.addEventListener('click', () => {
+          const date = (cell as HTMLElement).dataset.date!;
+          showDayPanel(date);
+          // Update selected highlighting
+          grid.querySelectorAll('.day-cell').forEach(c => {
+            c.classList.remove('bg-primary-50', 'ring-1', 'ring-primary-300', 'ring-inset');
+          });
+          cell.classList.add('bg-primary-50', 'ring-1', 'ring-primary-300', 'ring-inset');
+          selectedDate = date;
+        });
+      });
+    }
+
+    // ── Day panel ─────────────────────────────────────────────────────────────
+    async function showDayPanel(dateStr: string) {
+      selectedDate = dateStr;
+      const title = document.getElementById('day-panel-title')!;
+      const list  = document.getElementById('day-panel-list')!;
+      const d = new Date(dateStr + 'T12:00:00');
+      title.textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+      // Fetch if not cached
+      if (!allAppts[dateStr]) {
+        list.innerHTML = '<div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>';
+        const data = await apiFetch('admin-appointments', { params: { date: dateStr } });
+        allAppts[dateStr] = data?.records || [];
+      }
+
+      const recs = allAppts[dateStr] || [];
+      if (recs.length === 0) {
+        list.innerHTML = '<div class="px-5 py-10 text-center text-neutral-400 text-sm">No appointments this day.</div>';
+        return;
+      }
+
+      list.innerHTML = recs.map((rec: any) => {
+        const f = rec.fields;
+        const statusCls = STATUS_COLORS[f['Status']] || 'bg-neutral-100 text-neutral-600';
+        return `
+          <div class="px-5 py-4 appt-day-row cursor-pointer hover:bg-neutral-50 transition-colors" data-id="${rec.id}" data-rec='${JSON.stringify(rec).replace(/'/g, "&#39;")}'>
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || '—'}</span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusCls}">${f['Status'] || '—'}</span>
+                </div>
+                <div class="text-xs text-neutral-500 mt-0.5">${f['Time'] || '—'} · ${(f['Services'] || '—').substring(0, 50)}</div>
+                ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
+              </div>
+              <select class="status-quick text-xs border border-neutral-200 rounded-lg px-1.5 py-1 text-neutral-600 focus:outline-none focus:border-primary-400 shrink-0" data-id="${rec.id}">
+                <option value="Pending Payment" ${f['Status'] === 'Pending Payment' ? 'selected' : ''}>Pending</option>
+                <option value="Confirmed"       ${f['Status'] === 'Confirmed'       ? 'selected' : ''}>Confirmed</option>
+                <option value="Completed"       ${f['Status'] === 'Completed'       ? 'selected' : ''}>Completed</option>
+                <option value="Cancelled"       ${f['Status'] === 'Cancelled'       ? 'selected' : ''}>Cancelled</option>
+                <option value="No-Show"         ${f['Status'] === 'No-Show'         ? 'selected' : ''}>No-Show</option>
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Status quick-change
+      list.querySelectorAll('.status-quick').forEach(sel => {
+        sel.addEventListener('change', async (e) => {
+          const id = (sel as HTMLElement).dataset.id!;
+          const newStatus = (sel as HTMLSelectElement).value;
+          try {
+            await apiFetch('admin-appointments', { method: 'PATCH', body: { id, fields: { Status: newStatus } } });
+            // Update cached record
+            const recs = allAppts[dateStr];
+            const idx = recs?.findIndex((r: any) => r.id === id);
+            if (idx >= 0) recs[idx].fields['Status'] = newStatus;
+            renderCalendar();
+          } catch (err: any) {
+            alert(`Update failed: ${err.message}`);
+          }
+        });
+        // Stop row click when interacting with dropdown
+        sel.addEventListener('click', e => e.stopPropagation());
+      });
+    }
+
+    // ── Month navigation ──────────────────────────────────────────────────────
+    async function changeMonth(delta: number) {
+      currentMonth += delta;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+      await fetchMonth(currentYear, currentMonth);
+      renderCalendar();
+    }
+
+    document.getElementById('prev-month')?.addEventListener('click', () => changeMonth(-1));
+    document.getElementById('next-month')?.addEventListener('click', () => changeMonth(+1));
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    (async () => {
+      await fetchMonth(currentYear, currentMonth);
+      renderCalendar();
+      // Auto-open today
+      const today = new Date().toISOString().split('T')[0];
+      showDayPanel(today);
+    })();
+  </script>
+
+</AdminLayout>
