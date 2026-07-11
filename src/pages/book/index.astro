@@ -718,8 +718,6 @@ import Layout from '../../layouts/Layout.astro';
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Time *</h2>
               <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {[
-                  ['11:30am','11:30 AM'],
-                  ['12:00pm','12:00 PM'],
                   ['12:30pm','12:30 PM'],
                   ['1:00pm', '1:00 PM'],
                   ['1:30pm', '1:30 PM'],
@@ -743,7 +741,7 @@ import Layout from '../../layouts/Layout.astro';
                   </label>
                 ))}
               </div>
-              <p class="text-xs text-neutral-400 mt-3">Mon–Fri 11:30 AM – 7 PM &middot; Sat 11:30 AM – 6 PM &middot; Sun by request</p>
+              <p class="text-xs text-neutral-400 mt-3">Wed–Fri 12:30 PM – 7 PM &middot; Sat 12:30 PM – 6 PM</p>
             </div>
 
             <!-- Notes -->
@@ -979,9 +977,9 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-[#faf9f7] rounded-2xl p-6 border border-neutral-100">
             <h3 class="font-semibold text-neutral-900 mb-4">Appointment Hours</h3>
             <div class="space-y-3 text-sm">
-              <div class="flex justify-between"><span class="text-neutral-600">Monday – Friday</span><span class="font-medium text-neutral-900">10:00 AM – 7:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">10:00 AM – 6:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Sunday</span><span class="font-medium text-neutral-900">By request</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Wednesday – Friday</span><span class="font-medium text-neutral-900">12:30 PM – 7:00 PM</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">12:30 PM – 6:00 PM</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Sun – Tue</span><span class="font-medium text-neutral-900">Closed</span></div>
             </div>
             <div class="mt-4 pt-4 border-t border-neutral-200 text-xs text-neutral-500">
               Last appointment starts at 7:00 PM on weekdays, 6:00 PM on Saturdays.
@@ -1545,19 +1543,19 @@ import Layout from '../../layouts/Layout.astro';
 
         // Check if selected date is a Saturday (day 6); parse as local date
         const parsedDay = selectedDate ? new Date(selectedDate + 'T00:00:00').getDay() : -1;
-        const isSunday = parsedDay === 0;
+        const isClosedDay = parsedDay === 0 || parsedDay === 1 || parsedDay === 2; // Sun, Mon, Tue
         const isSaturday = parsedDay === 6;
         const SAT_LAST_SLOT = 18 * 60; // 6:00 PM in minutes
 
         document.querySelectorAll<HTMLInputElement>('input[name="timeslot"]').forEach(input => {
           const slotMins = slotToMinutes(input.value);
-          // All slots unavailable on Sundays
-          const isSundaySlot = isSunday;
+          // All slots unavailable on Sun/Mon/Tue
+          const isClosedDaySlot = isClosedDay;
           // Disable slots past 6 PM on Saturdays
           const afterSatClose = isSaturday && slotMins > SAT_LAST_SLOT;
           // Disable slots that fall within the 24-hour window on the cutoff date
           const tooSoon = selectedDate === cutoffDateStr && slotMins !== -1 && slotMins <= cutoffMinutes;
-          const disabled = isSundaySlot || afterSatClose || tooSoon;
+          const disabled = isClosedDaySlot || afterSatClose || tooSoon;
 
           input.disabled = disabled;
           if (disabled && input.checked) input.checked = false;
@@ -1581,8 +1579,8 @@ import Layout from '../../layouts/Layout.astro';
         dateInput.addEventListener('change', () => {
           if (dateInput.value) {
             const day = new Date(dateInput.value + 'T00:00:00').getDay();
-            if (day === 0) {
-              dateInput.setCustomValidity('Sundays are unavailable. Please choose another day.');
+            if (day === 0 || day === 1 || day === 2) {
+              dateInput.setCustomValidity('Sunday, Monday, and Tuesday are unavailable. Please choose another day.');
               dateInput.reportValidity();
             } else {
               dateInput.setCustomValidity('');
@@ -1633,8 +1631,8 @@ import Layout from '../../layouts/Layout.astro';
 
         // Date / time validation (preserved from original)
         const d = document.getElementById('bookingDate') as HTMLInputElement;
-        if (d?.value && new Date(d.value + 'T00:00:00').getDay() === 0) {
-          d.setCustomValidity('Sundays are unavailable. Please choose another day.');
+        if (d?.value && [0, 1, 2].includes(new Date(d.value + 'T00:00:00').getDay())) {
+          d.setCustomValidity('Sunday, Monday, and Tuesday are unavailable. Please choose another day.');
           d.reportValidity();
           return;
         }

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sL https://www.pharmaceutical-technology.com/wp-content/uploads/sites/24/2020/02/shutterstock_1505506487-e1599225972688.jpg -o public/images/ed-injectables-treatment.jpg)",
+      "Bash(curl -sL https://practice-happiness.com/wp-content/uploads/2023/07/benefits-of-IV-hydration-and-vitamin-therapy-scaled.jpeg -o public/images/iv-hydration-therapy.jpg)",
+      "Bash(sed -i '' 's|src=\"/images/eyebrow-permanent-makeup.jpg\" alt=\"Nano brows ultra-fine permanent hair stroke eyebrow technique\"|src=\"/images/nano-brows-treatment.jpg\" alt=\"Nano brows ultra-fine permanent hair stroke eyebrow technique\"|g' src/pages/services/semipermanent-makeup/index.astro)",
+      "Bash(sed -i '' 's|https://images.pexels.com/photos/6629735/pexels-photo-6629735\\\\.jpeg?auto=compress&cs=tinysrgb&w=600|/images/powder-brows-treatment.jpg|g' src/pages/services/semipermanent-makeup/index.astro)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
