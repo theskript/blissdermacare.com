@@ -1,13 +1,117 @@
 'use strict';
 
 /**
- * Shared utilities for Bliss Dermacare admin functions.
- * Covers: JWT (sign/verify), Airtable REST, Twilio SMS, SendGrid email.
+ * Shared utilities — JWT, Supabase, Twilio SMS, SendGrid email.
+ * Includes Airtable-style ↔ snake_case field translation so admin panel
+ * pages require no changes when switching databases.
  */
 
 const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
-// ── JWT ──────────────────────────────────────────────────────────────────────
+// ── Supabase client ───────────────────────────────────────────────────────────
+
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not configured');
+  return createClient(url, key, { auth: { persistSession: false } });
+}
+
+// ── Field mapping: Appointments ───────────────────────────────────────────────
+// Admin panel uses Airtable-style names; DB uses snake_case.
+
+const APPT_TO_DB = {
+  'Client Name':       'client_name',
+  'Client Email':      'client_email',
+  'Client Phone':      'client_phone',
+  'Date':              'date',
+  'Time':              'time',
+  'Services':          'services',
+  'Status':            'status',
+  'Price':             'price',
+  'Notes':             'notes',
+  'Internal Notes':    'internal_notes',
+  'Source':            'source',
+  'Discount':          'discount',
+  'Referral':          'referral',
+  'Groupon Code':      'groupon_code',
+  'Stripe Session ID': 'stripe_session_id',
+  'Reminder 24h Sent': 'reminder_24h_sent',
+  'Reminder 2h Sent':  'reminder_2h_sent',
+  'Confirm Phone':     'confirm_phone',
+  'Confirm Text':      'confirm_text',
+  'Confirm Email':     'confirm_email',
+};
+const DB_TO_APPT = Object.fromEntries(Object.entries(APPT_TO_DB).map(([k, v]) => [v, k]));
+
+/** DB row → Airtable-style { id, fields } record for the admin panel API. */
+function apptFromDB(row) {
+  if (!row) return null;
+  const fields = {};
+  for (const [col, name] of Object.entries(DB_TO_APPT)) {
+    if (row[col] !== undefined) fields[name] = row[col];
+  }
+  return { id: row.id, fields };
+}
+
+/** Airtable-style fields object → DB columns for insert/update. */
+function apptToDB(fields) {
+  const row = {};
+  for (const [name, col] of Object.entries(APPT_TO_DB)) {
+    if (fields[name] !== undefined) row[col] = fields[name];
+  }
+  return row;
+}
+
+// ── Field mapping: Staff ──────────────────────────────────────────────────────
+
+const STAFF_TO_DB = {
+  'Username':      'username',
+  'Name':          'name',
+  'Password Hash': 'password_hash',
+  'Role':          'role',
+  'Active':        'active',
+  'Last Login':    'last_login',
+};
+const DB_TO_STAFF = Object.fromEntries(Object.entries(STAFF_TO_DB).map(([k, v]) => [v, k]));
+
+function staffFromDB(row) {
+  if (!row) return null;
+  const fields = {};
+  for (const [col, name] of Object.entries(DB_TO_STAFF)) {
+    if (row[col] !== undefined) fields[name] = row[col];
+  }
+  return { id: row.id, fields };
+}
+
+function staffToDB(fields) {
+  const row = {};
+  for (const [name, col] of Object.entries(STAFF_TO_DB)) {
+    if (fields[name] !== undefined) row[col] = fields[name];
+  }
+  return row;
+}
+
+// ── Field mapping: Audit Log ──────────────────────────────────────────────────
+
+function auditFromDB(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    fields: {
+      'Action':     row.action,
+      'Username':   row.username,
+      'Role':       row.role,
+      'Details':    row.details,
+      'Target ID':  row.target_id,
+      'IP Address': row.ip_address,
+      'Timestamp':  row.created_at, // maps created_at → Timestamp for frontend
+    },
+  };
+}
+
+// ── JWT ───────────────────────────────────────────────────────────────────────
 
 function jwtSign(payload, secret, expiresInSeconds = 86400) {
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
@@ -33,8 +137,6 @@ function jwtVerify(token, secret) {
   return data;
 }
 
-// ── Auth middleware ───────────────────────────────────────────────────────────
-
 function requireAuth(event, requiredRole = null) {
   const authHeader = event.headers['authorization'] || event.headers['Authorization'] || '';
   const token = authHeader.replace(/^Bearer\s+/i, '').trim();
@@ -48,85 +150,6 @@ function requireAuth(event, requiredRole = null) {
   return decoded;
 }
 
-// ── Airtable ──────────────────────────────────────────────────────────────────
-
-function airtableBase() {
-  const baseId = process.env.AIRTABLE_BASE_ID;
-  if (!baseId) throw new Error('AIRTABLE_BASE_ID is not configured');
-  return `https://api.airtable.com/v0/${baseId}`;
-}
-
-function airtableHeaders() {
-  const key = process.env.AIRTABLE_API_KEY;
-  if (!key) throw new Error('AIRTABLE_API_KEY is not configured');
-  return { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
-}
-
-async function airtableList(table, params = {}) {
-  const url = new URL(`${airtableBase()}/${encodeURIComponent(table)}`);
-  for (const [k, v] of Object.entries(params)) {
-    if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, String(v));
-  }
-  const res = await fetch(url.toString(), { headers: airtableHeaders() });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Airtable list ${res.status}: ${err}`);
-  }
-  return res.json();
-}
-
-async function airtableCreate(table, fields) {
-  const res = await fetch(`${airtableBase()}/${encodeURIComponent(table)}`, {
-    method: 'POST',
-    headers: airtableHeaders(),
-    body: JSON.stringify({ fields }),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Airtable create ${res.status}: ${err}`);
-  }
-  return res.json();
-}
-
-async function airtablePatch(table, recordId, fields) {
-  const res = await fetch(`${airtableBase()}/${encodeURIComponent(table)}/${recordId}`, {
-    method: 'PATCH',
-    headers: airtableHeaders(),
-    body: JSON.stringify({ fields }),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Airtable patch ${res.status}: ${err}`);
-  }
-  return res.json();
-}
-
-async function airtableDelete(table, recordId) {
-  const res = await fetch(`${airtableBase()}/${encodeURIComponent(table)}/${recordId}`, {
-    method: 'DELETE',
-    headers: airtableHeaders(),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Airtable delete ${res.status}: ${err}`);
-  }
-  return res.json();
-}
-
-/** Fetches all records handling Airtable pagination automatically. */
-async function airtableListAll(table, params = {}) {
-  let records = [];
-  let offset;
-  do {
-    const p = { ...params };
-    if (offset) p.offset = offset;
-    const data = await airtableList(table, p);
-    records = records.concat(data.records || []);
-    offset = data.offset;
-  } while (offset);
-  return records;
-}
-
 // ── Twilio SMS ────────────────────────────────────────────────────────────────
 
 async function sendSMS(to, body) {
@@ -135,7 +158,6 @@ async function sendSMS(to, body) {
     console.warn('[SMS] Twilio not configured — skipping SMS to', to);
     return null;
   }
-  // Normalize to E.164
   const digits = String(to).replace(/\D/g, '');
   const phone = digits.startsWith('1') ? `+${digits}` : `+1${digits}`;
   const auth = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64');
@@ -147,11 +169,7 @@ async function sendSMS(to, body) {
       body: new URLSearchParams({ To: phone, From: TWILIO_FROM_NUMBER, Body: body }).toString(),
     }
   );
-  if (!res.ok) {
-    const err = await res.text();
-    console.error(`[SMS] Twilio error → ${phone}:`, err);
-    return null;
-  }
+  if (!res.ok) { console.error(`[SMS] Twilio error → ${phone}:`, await res.text()); return null; }
   return res.json();
 }
 
@@ -165,10 +183,7 @@ async function sendEmail({ to, subject, html, text }) {
   const toArr = (Array.isArray(to) ? to : [to]).filter(Boolean);
   const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       personalizations: [{ to: toArr.map(e => ({ email: e })) }],
       from: { email: 'noreply@blissdermacare.com', name: 'Bliss Dermacare' },
@@ -180,34 +195,45 @@ async function sendEmail({ to, subject, html, text }) {
       ],
     }),
   });
-  if (!res.ok) {
-    const err = await res.text();
-    console.error('[Email] SendGrid error:', err);
-    return null;
-  }
+  if (!res.ok) { console.error('[Email] SendGrid error:', await res.text()); return null; }
   return true;
 }
 
-// ── Date/time helpers ─────────────────────────────────────────────────────────
+// ── Audit logging ─────────────────────────────────────────────────────────────
 
-function toDateStr(d) {
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+async function logAudit({ action, username = '', role = '', details = '', targetId = '', ip = '' }) {
+  try {
+    const { error } = await getSupabase().from('audit_log').insert({
+      action,
+      username,
+      role,
+      details: String(details).substring(0, 1000),
+      target_id: targetId,
+      ip_address: ip,
+    });
+    if (error) console.error('[audit] Supabase insert error:', error.message);
+  } catch (err) {
+    console.error('[audit] Failed to write log:', err.message);
+  }
 }
 
-/**
- * Convert slot value like "12:30pm" → display string "12:30 PM".
- */
+function getClientIP(event) {
+  return (event.headers['x-forwarded-for'] || '').split(',')[0].trim()
+    || event.headers['client-ip']
+    || 'unknown';
+}
+
+// ── Date / time helpers ───────────────────────────────────────────────────────
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function formatTime(raw) {
   if (!raw) return '';
   return raw.trim().replace(/([ap]m)$/i, m => ' ' + m.toUpperCase());
 }
 
-/**
- * Parse display time "12:30 PM" → minutes since midnight.
- */
 function timeToMinutes(timeStr) {
   if (!timeStr) return -1;
   const m = String(timeStr).match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -219,53 +245,18 @@ function timeToMinutes(timeStr) {
   return h * 60 + min;
 }
 
-/** Current Eastern Time offset (simplified: EDT = UTC-4 Mar–Nov, EST = UTC-5 otherwise). */
 function etOffsetHours(date = new Date()) {
   const month = date.getUTCMonth() + 1;
   return month >= 3 && month <= 11 ? -4 : -5;
 }
 
-// ── Audit logging ─────────────────────────────────────────────────────────────
-
-/**
- * Fire-and-forget audit log entry written to Airtable.
- * Never throws — failures are logged to console only.
- */
-function logAudit({ action, username = '', role = '', details = '', targetId = '', ip = '' }) {
-  const table = process.env.AIRTABLE_AUDIT_TABLE || 'Audit Log';
-  return airtableCreate(table, {
-    'Action':    action,
-    'Username':  username,
-    'Role':      role,
-    'Details':   String(details).substring(0, 1000),
-    'Target ID': targetId,
-    'IP Address': ip,
-  }).catch(err => console.error('[audit] Failed to write log:', err.message));
-}
-
-/** Extract client IP from Netlify function event headers. */
-function getClientIP(event) {
-  return (event.headers['x-forwarded-for'] || '')
-    .split(',')[0].trim()
-    || event.headers['client-ip']
-    || 'unknown';
-}
-
 module.exports = {
-  jwtSign,
-  jwtVerify,
-  requireAuth,
-  airtableList,
-  airtableCreate,
-  airtablePatch,
-  airtableDelete,
-  airtableListAll,
-  sendSMS,
-  sendEmail,
-  toDateStr,
-  formatTime,
-  timeToMinutes,
-  etOffsetHours,
-  logAudit,
-  getClientIP,
+  getSupabase,
+  apptFromDB, apptToDB,
+  staffFromDB, staffToDB,
+  auditFromDB,
+  jwtSign, jwtVerify, requireAuth,
+  sendSMS, sendEmail,
+  logAudit, getClientIP,
+  toDateStr, formatTime, timeToMinutes, etOffsetHours,
 };

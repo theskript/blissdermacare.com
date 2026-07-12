@@ -1,16 +1,6 @@
 'use strict';
 
-/**
- * GET /.netlify/functions/admin-clients?search=...
- *
- * Derives client profiles by grouping all appointment records by email.
- * Returns unique clients with visit history summary.
- * Requires: Authorization: Bearer <token>
- */
-
-const { requireAuth, airtableListAll } = require('./_utils.cjs');
-
-const TABLE = () => process.env.AIRTABLE_APPOINTMENTS_TABLE || 'Appointments';
+const { requireAuth, getSupabase } = require('./_utils.cjs');
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -33,62 +23,58 @@ exports.handler = async (event) => {
 
   try {
     const q = event.queryStringParameters || {};
-    const search = (q.search || '').toLowerCase().replace(/"/g, '').substring(0, 100);
+    const search = (q.search || '').replace(/'/g, '').substring(0, 100);
 
-    const params = {
-      'sort[0][field]': 'Date',
-      'sort[0][direction]': 'desc',
-    };
+    let query = getSupabase()
+      .from('appointments')
+      .select('id,client_name,client_email,client_phone,date,status,source,services,notes,internal_notes,price')
+      .order('date', { ascending: false });
 
     if (search) {
-      params.filterByFormula =
-        `OR(SEARCH("${search}",LOWER({Client Name})),SEARCH("${search}",LOWER({Client Email})),SEARCH("${search}",LOWER({Client Phone})))`;
+      query = query.or(`client_name.ilike.%${search}%,client_email.ilike.%${search}%,client_phone.ilike.%${search}%`);
     }
 
-    const records = await airtableListAll(TABLE(), params);
+    const { data: rows, error } = await query;
+    if (error) throw new Error(error.message);
 
-    // Group appointments by client email (fall back to name if no email)
+    // Group by email to build client profiles
     const clientMap = new Map();
-
-    for (const rec of records) {
-      const f = rec.fields;
-      const email = (f['Client Email'] || '').toLowerCase().trim();
-      const key = email || (f['Client Name'] || '').toLowerCase().trim() || rec.id;
+    for (const row of (rows || [])) {
+      const email = (row.client_email || '').toLowerCase().trim();
+      const key = email || (row.client_name || '').toLowerCase().trim() || row.id;
 
       if (!clientMap.has(key)) {
         clientMap.set(key, {
-          email: f['Client Email'] || '',
-          name: f['Client Name'] || '',
-          phone: f['Client Phone'] || '',
-          source: f['Source'] || '',
+          email: row.client_email || '',
+          name: row.client_name || '',
+          phone: row.client_phone || '',
+          source: row.source || '',
           totalVisits: 0,
-          firstVisit: f['Date'] || null,
-          lastVisit: f['Date'] || null,
+          firstVisit: row.date || null,
+          lastVisit: row.date || null,
           appointments: [],
         });
       }
 
       const c = clientMap.get(key);
-      // Keep latest name/phone in case it was updated on a more recent booking
-      if (f['Date'] && f['Date'] >= (c.lastVisit || '')) {
-        if (f['Client Name']) c.name = f['Client Name'];
-        if (f['Client Phone']) c.phone = f['Client Phone'];
+      if (row.date && row.date >= (c.lastVisit || '')) {
+        if (row.client_name) c.name = row.client_name;
+        if (row.client_phone) c.phone = row.client_phone;
       }
       c.totalVisits += 1;
-      if (f['Date'] && (!c.firstVisit || f['Date'] < c.firstVisit)) c.firstVisit = f['Date'];
-      if (f['Date'] && (!c.lastVisit || f['Date'] > c.lastVisit)) c.lastVisit = f['Date'];
+      if (row.date && (!c.firstVisit || row.date < c.firstVisit)) c.firstVisit = row.date;
+      if (row.date && (!c.lastVisit  || row.date > c.lastVisit))  c.lastVisit  = row.date;
 
       c.appointments.push({
-        id: rec.id,
-        date: f['Date'] || '',
-        time: f['Time'] || '',
-        services: f['Services'] || '',
-        status: f['Status'] || '',
-        source: f['Source'] || '',
-        notes: f['Notes'] || '',
-        internalNotes: f['Internal Notes'] || '',
-        // Only include price for owner role
-        ...(user.role === 'owner' ? { price: f['Price'] || 0 } : {}),
+        id:            row.id,
+        date:          row.date || '',
+        time:          row.time || '',
+        services:      row.services || '',
+        status:        row.status || '',
+        source:        row.source || '',
+        notes:         row.notes || '',
+        internalNotes: row.internal_notes || '',
+        ...(user.role === 'owner' ? { price: row.price || 0 } : {}),
       });
     }
 
@@ -98,6 +84,6 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ clients, total: clients.length }) };
   } catch (err) {
     console.error('admin-clients error:', err);
-    return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message || 'Internal server error' }) };
+    return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message }) };
   }
 };

@@ -1,20 +1,7 @@
 'use strict';
 
-/**
- * POST /.netlify/functions/admin-login
- * Body: { username, password }
- *
- * Auth priority:
- *   1. Look up username in Airtable Staff table (bcrypt compare)
- *   2. Fall back to ADMIN_PASSWORD env var for the owner bootstrap account
- *
- * Returns: { token, role, name, expiresIn }
- */
-
 const bcrypt = require('bcryptjs');
-const { jwtSign, airtableList, airtablePatch, logAudit, getClientIP } = require('./_utils.cjs');
-
-const STAFF_TABLE = () => process.env.AIRTABLE_STAFF_TABLE || 'Staff';
+const { jwtSign, getSupabase, logAudit, getClientIP } = require('./_utils.cjs');
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -47,32 +34,29 @@ exports.handler = async (event) => {
     return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: 'Invalid username or password' }) };
   };
 
-  // 1. Airtable Staff table lookup
+  // 1. Supabase staff table lookup
   try {
-    const data = await airtableList(STAFF_TABLE(), {
-      filterByFormula: `LOWER({Username})="${username.toLowerCase().replace(/"/g, '')}"`,
-      maxRecords: 1,
-    });
+    const { data: staffRow } = await getSupabase()
+      .from('staff')
+      .select('*')
+      .ilike('username', username.replace(/'/g, ''))
+      .maybeSingle();
 
-    if (data.records && data.records.length > 0) {
-      const rec = data.records[0];
-      const f = rec.fields;
-
-      if (!f['Active']) {
-        logAudit({ action: 'Failed Login', username, role: f['Role'] || '', details: 'Account is deactivated', ip });
+    if (staffRow) {
+      if (!staffRow.active) {
+        logAudit({ action: 'Failed Login', username, role: staffRow.role || '', details: 'Account is deactivated', ip });
         return deny();
       }
-
-      const match = await bcrypt.compare(password, f['Password Hash'] || '');
+      const match = await bcrypt.compare(password, staffRow.password_hash || '');
       if (!match) {
-        logAudit({ action: 'Failed Login', username, role: f['Role'] || '', details: 'Wrong password', ip });
+        logAudit({ action: 'Failed Login', username, role: staffRow.role || '', details: 'Wrong password', ip });
         return deny();
       }
+      const role = staffRow.role || 'staff';
+      const name = staffRow.name || username;
 
-      const role = f['Role'] || 'staff';
-      const name = f['Name'] || username;
-
-      airtablePatch(STAFF_TABLE(), rec.id, { 'Last Login': new Date().toISOString() }).catch(() => {});
+      // Update last_login (non-blocking)
+      getSupabase().from('staff').update({ last_login: new Date().toISOString() }).eq('id', staffRow.id).then(() => {});
       logAudit({ action: 'Login', username, role, details: `Successful login — ${name}`, ip });
 
       const expiresIn = role === 'owner' ? 86400 : 28800;
@@ -80,7 +64,7 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers: CORS, body: JSON.stringify({ token, role, name, expiresIn }) };
     }
   } catch (err) {
-    console.warn('[login] Airtable staff lookup unavailable, falling back to env var:', err.message);
+    console.warn('[login] Supabase staff lookup failed, falling back to env var:', err.message);
   }
 
   // 2. Owner env var bootstrap fallback
@@ -94,6 +78,6 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ token, role: 'owner', name: 'Owner', expiresIn: 86400 }) };
   }
 
-  logAudit({ action: 'Failed Login', username, role: '', details: 'Username not found in Staff table or env var', ip });
+  logAudit({ action: 'Failed Login', username, role: '', details: 'Username not found in staff table or env var', ip });
   return deny();
 };
