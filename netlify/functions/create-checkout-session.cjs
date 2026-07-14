@@ -243,25 +243,29 @@ exports.handler = async (event) => {
     const discountedCents = Math.round(basePriceCents * (1 - discountPct / 100));
     const sourceMap = { groupon: 'Groupon', classpass: 'ClassPass' };
 
-    getSupabase().from(APPOINTMENTS_TABLE).insert({
-      client_name:       customerName,
-      client_email:      customerEmail,
-      client_phone:      customerPhone,
-      date:              appointmentDate,
-      time:              formatTime(appointmentTime),
-      services:          serviceNames.join(', '),
-      status:            'Pending Payment',
-      price:             discountedCents / 100,
-      notes:             notes,
-      source:            sourceMap[referral] || 'Website',
-      discount:          discountLabel || 'None',
-      referral:          referral,
-      groupon_code:      grouponCode,
-      stripe_session_id: session.id,
-      confirm_phone:     confirmPhone === 'yes',
-      confirm_text:      confirmText  === 'yes',
-      confirm_email:     confirmEmail === 'yes',
-    }).then(({ error }) => { if (error) console.error('Supabase write error (non-fatal):', error.message); });
+    try {
+      getSupabase().from(APPOINTMENTS_TABLE).insert({
+        client_name:       customerName,
+        client_email:      customerEmail,
+        client_phone:      customerPhone,
+        date:              appointmentDate,
+        time:              formatTime(appointmentTime),
+        services:          serviceNames.join(', '),
+        status:            'Pending Payment',
+        price:             discountedCents / 100,
+        notes:             notes,
+        source:            sourceMap[referral] || 'Website',
+        discount:          discountLabel || 'None',
+        referral:          referral,
+        groupon_code:      grouponCode,
+        stripe_session_id: session.id,
+        confirm_phone:     confirmPhone === 'yes',
+        confirm_text:      confirmText  === 'yes',
+        confirm_email:     confirmEmail === 'yes',
+      }).then(({ error }) => { if (error) console.error('Supabase write error (non-fatal):', error.message); });
+    } catch (dbErr) {
+      console.error('Supabase init error (non-fatal):', dbErr.message);
+    }
     // ─────────────────────────────────────────────────────────────────────────
 
     return { statusCode: 200, headers, body: JSON.stringify({ url: session.url }) };
