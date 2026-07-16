@@ -934,6 +934,36 @@ import Layout from '../../layouts/Layout.astro';
               <p class="text-xs text-neutral-400 px-5 pb-4 -mt-1">Estimate only — final price confirmed at your appointment.</p>
             </div>
 
+            <!-- Payment Method -->
+            <div>
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">How Would You Like to Pay?</h2>
+              <div class="grid sm:grid-cols-2 gap-3">
+
+                <label class="cursor-pointer block">
+                  <input type="radio" name="paymentMethod" value="online" checked class="sr-only peer" id="pay-online" />
+                  <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                    <div class="flex items-center gap-2.5 mb-2">
+                      <svg class="w-5 h-5 text-primary-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                      <p class="font-semibold text-sm text-neutral-900">Pay Online Now</p>
+                    </div>
+                    <p class="text-xs text-neutral-500 leading-relaxed">Secure checkout via Stripe. Card, Apple Pay, Google Pay accepted. You'll be redirected to complete payment.</p>
+                  </div>
+                </label>
+
+                <label class="cursor-pointer block">
+                  <input type="radio" name="paymentMethod" value="in-person" class="sr-only peer" id="pay-in-person" />
+                  <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-amber-400 peer-checked:bg-amber-50 hover:border-amber-300 transition-all h-full">
+                    <div class="flex items-center gap-2.5 mb-2">
+                      <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                      <p class="font-semibold text-sm text-neutral-900">Pay In Person</p>
+                    </div>
+                    <p class="text-xs text-neutral-500 leading-relaxed">Submit your request now, pay at your appointment. We accept cash, Zelle, Venmo, and cards in person.</p>
+                  </div>
+                </label>
+
+              </div>
+            </div>
+
             <!-- Error banner -->
             <div id="booking-error" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
               <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -949,7 +979,7 @@ import Layout from '../../layouts/Layout.astro';
               <span id="booking-submit-label">Pay &amp; Book Appointment</span>
             </button>
 
-            <p class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
+            <p id="booking-submit-note" class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
               <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               Secure payment via Stripe. We'll confirm your appointment within 24 hours.
             </p>
@@ -1617,10 +1647,44 @@ import Layout from '../../layouts/Layout.astro';
         errorBox.classList.add('hidden');
         errorBox.classList.remove('flex');
       }
+      const payOnlineRadio    = document.getElementById('pay-online')    as HTMLInputElement | null;
+      const payInPersonRadio  = document.getElementById('pay-in-person') as HTMLInputElement | null;
+      const submitNote        = document.getElementById('booking-submit-note')!;
+
+      function getPaymentMethod(): 'online' | 'in-person' {
+        const sel = document.querySelector<HTMLInputElement>('input[name="paymentMethod"]:checked');
+        return sel?.value === 'in-person' ? 'in-person' : 'online';
+      }
+
+      function syncSubmitButton() {
+        const method = getPaymentMethod();
+        if (method === 'in-person') {
+          submitLabel.textContent = 'Request Appointment';
+          submitBtn!.className = submitBtn!.className
+            .replace('bg-primary-600', 'bg-amber-600')
+            .replace('hover:bg-primary-700', 'hover:bg-amber-700');
+          submitNote.innerHTML = '<svg class="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>No payment required now — pay cash, Zelle, or Venmo at your appointment.';
+        } else {
+          submitLabel.textContent = 'Pay \u0026 Book Appointment';
+          submitBtn!.className = submitBtn!.className
+            .replace('bg-amber-600', 'bg-primary-600')
+            .replace('hover:bg-amber-700', 'hover:bg-primary-700');
+          submitNote.innerHTML = '<svg class="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Secure payment via Stripe. We&apos;ll confirm your appointment within 24 hours.';
+        }
+      }
+
+      payOnlineRadio?.addEventListener('change', syncSubmitButton);
+      payInPersonRadio?.addEventListener('change', syncSubmitButton);
+
       function setLoading(on: boolean) {
         if (!submitBtn) return;
         submitBtn.disabled = on;
-        submitLabel.textContent = on ? 'Redirecting to payment…' : 'Pay & Book Appointment';
+        const method = getPaymentMethod();
+        if (on) {
+          submitLabel.textContent = method === 'in-person' ? 'Submitting request…' : 'Redirecting to payment…';
+        } else {
+          syncSubmitButton();
+        }
         spinner.classList.toggle('hidden', !on);
       }
 
@@ -1707,15 +1771,27 @@ import Layout from '../../layouts/Layout.astro';
         };
 
         setLoading(true);
+        const paymentMethod = getPaymentMethod();
         try {
-          const res  = await fetch('/.netlify/functions/create-checkout-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json().catch(() => ({ error: 'Unexpected server response.' }));
-          if (!res.ok) throw new Error(data.error ?? 'Payment setup failed. Please try again.');
-          window.location.href = data.url;
+          if (paymentMethod === 'in-person') {
+            const res  = await fetch('/.netlify/functions/book-request', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            const data = await res.json().catch(() => ({ error: 'Unexpected server response.' }));
+            if (!res.ok) throw new Error(data.error ?? 'Booking request failed. Please try again.');
+            window.location.href = data.redirect ?? '/book/success?payment=in-person';
+          } else {
+            const res  = await fetch('/.netlify/functions/create-checkout-session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            const data = await res.json().catch(() => ({ error: 'Unexpected server response.' }));
+            if (!res.ok) throw new Error(data.error ?? 'Payment setup failed. Please try again.');
+            window.location.href = data.url;
+          }
         } catch (err: unknown) {
           showError(err instanceof Error ? err.message : 'Something went wrong. Please try again or call (609) 366-0857.');
           setLoading(false);
