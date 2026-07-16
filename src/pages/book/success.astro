@@ -116,6 +116,17 @@ import Layout from '../../layouts/Layout.astro';
         </div>
       </div>
 
+      <!-- IN-PERSON ONLY: appointment confirmed -->
+      <div class="ip-only rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-5 flex gap-4">
+        <div class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <p class="font-semibold text-neutral-900 text-sm mb-1">Your appointment is booked — we'll see you then.</p>
+          <p class="text-sm text-neutral-600 leading-relaxed">Your slot is reserved. You'll receive a confirmation with the studio address and full details shortly. Just show up and we'll take care of everything — payment is settled at the end of your visit.</p>
+        </div>
+      </div>
+
       <!-- IN-PERSON ONLY: nothing was charged -->
       <div class="ip-only rounded-2xl border-2 border-amber-200 bg-amber-50 p-5 flex gap-4">
         <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
