@@ -410,13 +410,32 @@ import Layout from '../../layouts/Layout.astro';
               <li>Non-compliance with health and safety protocols</li>
               <li>Failure to disclose relevant medical information</li>
             </ul>
-            <p class="text-xs text-neutral-600 mt-3">If service is refused, payment will be refunded in full.</p>
+            <p class="text-xs text-neutral-600 mt-3">If service is refused due to a contraindication identified before treatment begins, any deposit paid will be refunded. No refund is issued if service is declined mid-treatment or due to client conduct.</p>
           </div>
 
           <label class="flex items-start">
             <input type="checkbox" name="refuse_service_acknowledgment" value="acknowledged" 
               class="mt-1 w-4 h-4 rounded border-neutral-300 text-primary-600" required />
             <span class="ml-2 text-sm text-neutral-700">I acknowledge that Bliss Dermacare has the right to refuse service and understand the conditions listed above.</span>
+          </label>
+        </div>
+
+        <!-- Cancellation & Refund Policy Acknowledgment -->
+        <div class="space-y-5">
+          <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3">Cancellation &amp; Refund Policy</h2>
+
+          <div class="p-5 bg-[#faf9f7] rounded-xl border border-neutral-200 space-y-3 text-sm text-neutral-700 leading-relaxed">
+            <p><strong class="text-neutral-900">No refunds on completed services.</strong> Once a treatment has been performed, the fee is final. Results vary based on skin type, health, lifestyle, and aftercare — dissatisfaction with results is not grounds for a refund.</p>
+            <p><strong class="text-neutral-900">Cancellation policy.</strong> Cancellations require at least <strong>24 hours' notice</strong>. Late cancellations (under 24 hours) are subject to a <strong>50% fee</strong>. No-shows are charged <strong>100%</strong> of the service price. Repeated cancellations require prepayment for all future bookings.</p>
+            <p><strong class="text-neutral-900">Deposits are non-refundable.</strong> A deposit secures your appointment slot. If you cancel for any reason, the deposit is forfeited. With 24+ hours' notice, your deposit rolls over to a rescheduled appointment (one transfer only).</p>
+            <p><strong class="text-neutral-900">Semipermanent makeup.</strong> PMU results require 4–6 weeks to heal. Requesting a refund before healing is complete is not accommodated. A complimentary touch-up is included at 6–8 weeks.</p>
+            <p>Read our full <a href="/refund-policy/" target="_blank" class="text-primary-600 hover:underline font-medium">Refund &amp; Cancellation Policy</a> for complete details.</p>
+          </div>
+
+          <label class="flex items-start">
+            <input type="checkbox" name="refund_policy_acknowledgment" value="acknowledged"
+              class="mt-1 w-4 h-4 rounded border-neutral-300 text-primary-600" required />
+            <span class="ml-2 text-sm text-neutral-700">I have read and agree to the <a href="/refund-policy/" target="_blank" class="text-primary-600 hover:underline">Refund &amp; Cancellation Policy</a>. I understand that completed services are non-refundable, that late cancellations and no-shows incur fees, and that deposits are non-refundable. *</span>
           </label>
         </div>
 
