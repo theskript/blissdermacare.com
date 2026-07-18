@@ -1566,9 +1566,9 @@ import Layout from '../../layouts/Layout.astro';
       }
 
       function refreshTimeSlots() {
-        const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000); // now + 24 h
-        const cutoffDateStr = toDateStr(cutoff);
-        const cutoffMinutes = cutoff.getHours() * 60 + cutoff.getMinutes();
+        const now = new Date();
+        const cutoffDateStr = toDateStr(now);
+        const cutoffMinutes = now.getHours() * 60 + now.getMinutes();
         const selectedDate = dateInput?.value ?? '';
 
         // Check if selected date is a Saturday (day 6); parse as local date
@@ -1583,7 +1583,7 @@ import Layout from '../../layouts/Layout.astro';
           const isClosedDaySlot = isClosedDay;
           // Disable slots past 6 PM on Saturdays
           const afterSatClose = isSaturday && slotMins > SAT_LAST_SLOT;
-          // Disable slots that fall within the 24-hour window on the cutoff date
+          // Disable slots that have already passed today
           const tooSoon = selectedDate === cutoffDateStr && slotMins !== -1 && slotMins <= cutoffMinutes;
           const disabled = isClosedDaySlot || afterSatClose || tooSoon;
 
@@ -1604,8 +1604,7 @@ import Layout from '../../layouts/Layout.astro';
       }
 
       if (dateInput) {
-        const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        dateInput.min = toDateStr(cutoff);
+        dateInput.min = toDateStr(new Date());
         dateInput.addEventListener('change', () => {
           if (dateInput.value) {
             const day = new Date(dateInput.value + 'T00:00:00').getDay();
@@ -1707,17 +1706,15 @@ import Layout from '../../layouts/Layout.astro';
           const slotMinutes = slotMins % 60;
           const selectedDT = new Date(d.value + 'T00:00:00');
           selectedDT.setHours(slotHours, slotMinutes, 0, 0);
-          const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
-          if (selectedDT < cutoff) {
-            d.setCustomValidity('Please select a date and time at least 24 hours from now.');
+          if (selectedDT < new Date()) {
+            d.setCustomValidity('Please select a date and time in the future.');
             d.reportValidity();
             return;
           }
         } else if (d?.value) {
-          const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
           const selectedDT = new Date(d.value + 'T00:00:00');
-          if (selectedDT < new Date(toDateStr(cutoff) + 'T00:00:00')) {
-            d.setCustomValidity('Please select a date at least 24 hours from now.');
+          if (selectedDT < new Date(toDateStr(new Date()) + 'T00:00:00')) {
+            d.setCustomValidity('Please select a date in the future.');
             d.reportValidity();
             return;
           }
