@@ -2,14 +2,14 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Book an Appointment – Bliss Dermacare" description="Request a skincare appointment at Bliss Dermacare in Pebble Creek, FL. Choose your service, preferred date and time, and we'll confirm within 24 hours.">
+<Layout title="Book an Appointment – Bliss Dermacare" description="Request a skincare appointment at Bliss Dermacare in Pebble Creek, FL. Choose your service, preferred date and time, and we'll confirm your appointment shortly.">
 
   <!-- Page Header -->
   <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Schedule Your Visit</span>
       <h1 class="text-5xl font-serif text-neutral-900 mb-4">Book an Appointment</h1>
-      <p class="text-lg text-neutral-600">Choose your service and a time that works for you. We'll confirm within 24 hours.</p>
+      <p class="text-lg text-neutral-600">Choose your service and a time that works for you. Same-day bookings are welcome!</p>
     </div>
   </section>
 
@@ -707,7 +707,7 @@ import Layout from '../../layouts/Layout.astro';
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Date *</h2>
               <div class="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
                 <svg class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <p class="text-sm text-amber-800">Appointments must be booked at least <strong>24 hours in advance</strong>. Same-day bookings are not available.</p>
+                <p class="text-sm text-amber-800">Same-day bookings are welcome! Select today's date and choose an available time slot.</p>
               </div>
               <input type="date" id="bookingDate" name="date" required
                 class="px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
@@ -981,7 +981,7 @@ import Layout from '../../layouts/Layout.astro';
 
             <p id="booking-submit-note" class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
               <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-              Secure, encrypted payment. We'll confirm your appointment within 24 hours.
+              Secure, encrypted payment. We'll confirm your appointment shortly.
             </p>
           </form>
         </div>
@@ -1668,7 +1668,7 @@ import Layout from '../../layouts/Layout.astro';
           submitBtn!.className = submitBtn!.className
             .replace('bg-amber-600', 'bg-primary-600')
             .replace('hover:bg-amber-700', 'hover:bg-primary-700');
-          submitNote.innerHTML = '<svg class="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Secure, encrypted payment. We&apos;ll confirm your appointment within 24 hours.';
+          submitNote.innerHTML = '<svg class="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Secure, encrypted payment. We&apos;ll confirm your appointment shortly.';
         }
       }
 
