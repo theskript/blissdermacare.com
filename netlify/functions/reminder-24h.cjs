@@ -33,7 +33,7 @@ exports.handler = async () => {
         `you have an appointment tomorrow, ${dateLabel} at ${row.time || 'your scheduled time'} ` +
         `for ${row.services || 'your appointment'}. ` +
         `We're at 29007 Bridgegrove Dr, Wesley Chapel, FL 33543. ` +
-        `Questions? Call or text (609) 366-0857. See you soon!`;
+        `Questions? Call or text (813) 766-6416. See you soon!`;
       try {
         await sendSMS(row.client_phone, message);
         await sb.from('appointments').update({ reminder_24h_sent: true }).eq('id', row.id);

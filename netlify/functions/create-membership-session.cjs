@@ -156,7 +156,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Failed to create membership session. Please try again or call (609) 366-0857.' }),
+      body: JSON.stringify({ error: 'Failed to create membership session. Please try again or call (813) 766-6416.' }),
     };
   }
 };
