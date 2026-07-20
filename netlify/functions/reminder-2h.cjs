@@ -1,6 +1,6 @@
 'use strict';
 
-const { getSupabase, sendSMS, timeToMinutes, etOffsetHours } = require('./_utils.cjs');
+const { getSupabase, sendSMS, sendEmail, timeToMinutes, etOffsetHours } = require('./_utils.cjs');
 
 exports.handler = async () => {
   const now = new Date();
@@ -14,12 +14,10 @@ exports.handler = async () => {
   try {
     const { data: rows, error } = await getSupabase()
       .from('appointments')
-      .select('id,client_name,client_phone,time,services')
+      .select('id,client_name,client_phone,client_email,time,services')
       .eq('date', todayStr)
       .eq('status', 'Confirmed')
-      .eq('reminder_2h_sent', false)
-      .not('client_phone', 'is', null)
-      .neq('client_phone', '');
+      .eq('reminder_2h_sent', false);
     if (error) throw new Error(error.message);
 
     let sent = 0;
@@ -34,14 +32,30 @@ exports.handler = async () => {
       if (!inWindow) continue;
 
       const firstName = (row.client_name || 'there').split(' ')[0];
-      const message =
+      const smsBody =
         `Hi ${firstName}! Quick reminder — your Bliss Dermacare appointment is in about 2 hours ` +
         `(${row.time} today) for ${row.services || 'your appointment'}. ` +
         `We're at 29007 Bridgegrove Dr, Wesley Chapel, FL 33543. See you soon! 💗`;
+      const emailHtml =
+        `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;line-height:1.6">` +
+        `<h2 style="font-size:18px;color:#c26b7a;margin-bottom:8px">Your appointment is in ~2 hours!</h2>` +
+        `<p>Hi ${firstName},</p>` +
+        `<p>Just a reminder that your appointment is coming up <strong>today at ${row.time}</strong>` +
+        ` for <strong>${row.services || 'your appointment'}</strong>.</p>` +
+        `<p>📍 <strong>29007 Bridgegrove Dr, Wesley Chapel, FL 33543</strong></p>` +
+        `<p>See you soon! Call or text (813) 766-6416 if you need anything.</p>` +
+        `<p style="color:#999;font-size:12px;margin-top:24px;border-top:1px solid #eee;padding-top:12px">Bliss Dermacare &middot; Wesley Chapel, FL</p></div>`;
       try {
-        await sendSMS(row.client_phone, message);
-        await sb.from('appointments').update({ reminder_2h_sent: true }).eq('id', row.id);
-        sent++;
+        let notified = false;
+        if (row.client_phone) { await sendSMS(row.client_phone, smsBody); notified = true; }
+        if (row.client_email) {
+          await sendEmail({ to: row.client_email, subject: `Your Bliss Dermacare appointment is in ~2 hours`, html: emailHtml, text: smsBody });
+          notified = true;
+        }
+        if (notified) {
+          await sb.from('appointments').update({ reminder_2h_sent: true }).eq('id', row.id);
+          sent++;
+        }
       } catch (err) { console.error(`[reminder-2h] Failed for record ${row.id}:`, err.message); }
     }
 

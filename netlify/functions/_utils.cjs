@@ -42,6 +42,7 @@ const APPT_TO_DB = {
   'Confirm Phone':     'confirm_phone',
   'Confirm Text':      'confirm_text',
   'Confirm Email':     'confirm_email',
+  'Payment Method':    'payment_method',
 };
 const DB_TO_APPT = Object.fromEntries(Object.entries(APPT_TO_DB).map(([k, v]) => [v, k]));
 

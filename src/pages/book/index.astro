@@ -716,32 +716,10 @@ import Layout from '../../layouts/Layout.astro';
             <!-- Time Picker -->
             <div>
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Time *</h2>
-              <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-                {[
-                  ['12:30pm','12:30 PM'],
-                  ['1:00pm', '1:00 PM'],
-                  ['1:30pm', '1:30 PM'],
-                  ['2:00pm', '2:00 PM'],
-                  ['2:30pm', '2:30 PM'],
-                  ['3:00pm', '3:00 PM'],
-                  ['3:30pm', '3:30 PM'],
-                  ['4:00pm', '4:00 PM'],
-                  ['4:30pm', '4:30 PM'],
-                  ['5:00pm', '5:00 PM'],
-                  ['5:30pm', '5:30 PM'],
-                  ['6:00pm', '6:00 PM'],
-                  ['6:30pm', '6:30 PM'],
-                  ['7:00pm', '7:00 PM'],
-                ].map(([value, label]) => (
-                  <label class="cursor-pointer">
-                    <input type="radio" name="timeslot" value={value} class="sr-only peer" required />
-                    <div class="text-center rounded-lg border-2 border-neutral-200 py-3 px-1 text-sm font-medium peer-checked:border-primary-600 peer-checked:bg-primary-600 peer-checked:text-white hover:border-primary-300 transition-all">
-                      {label}
-                    </div>
-                  </label>
-                ))}
+              <div id="time-slots-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                <div class="col-span-full text-sm text-neutral-400 text-center py-6">Select a date above to see available time slots.</div>
               </div>
-              <p class="text-xs text-neutral-400 mt-3">Wed–Fri 12:30 PM – 7 PM &middot; Sat 12:30 PM – 6 PM</p>
+              <p id="hours-hint" class="text-xs text-neutral-400 mt-3"></p>
             </div>
 
             <!-- Notes -->
@@ -1565,51 +1543,116 @@ import Layout from '../../layouts/Layout.astro';
         return h * 60 + min;
       }
 
+      // ── Availability (dynamic from DB) ─────────────────────────────────────
+      const DEFAULT_SCHEDULE = [
+        { day_of_week: 0, is_open: false, open_time: '12:30', close_time: '19:00', slot_interval: 30 },
+        { day_of_week: 1, is_open: false, open_time: '12:30', close_time: '19:00', slot_interval: 30 },
+        { day_of_week: 2, is_open: false, open_time: '12:30', close_time: '19:00', slot_interval: 30 },
+        { day_of_week: 3, is_open: true,  open_time: '12:30', close_time: '19:00', slot_interval: 30 },
+        { day_of_week: 4, is_open: true,  open_time: '12:30', close_time: '19:00', slot_interval: 30 },
+        { day_of_week: 5, is_open: true,  open_time: '12:30', close_time: '19:00', slot_interval: 30 },
+        { day_of_week: 6, is_open: true,  open_time: '12:30', close_time: '18:00', slot_interval: 30 },
+      ];
+      let avail: { schedule: any[], overrides: any[] } = { schedule: DEFAULT_SCHEDULE, overrides: [] };
+      (async () => {
+        try {
+          const resp = await fetch('/.netlify/functions/get-availability');
+          if (resp.ok) { const d = await resp.json(); if (d.schedule?.length) avail = d; }
+        } catch {}
+        if (dateInput?.value) refreshTimeSlots();
+      })();
+
+      function getAvailForDate(dateStr: string) {
+        const override = avail.overrides.find((o: any) => o.date === dateStr);
+        if (override) {
+          if (override.is_closed) return null;
+          return { open_time: override.open_time, close_time: override.close_time, slot_interval: 30 };
+        }
+        const day = new Date(dateStr + 'T00:00:00').getDay();
+        const sched = avail.schedule.find((s: any) => s.day_of_week === day);
+        if (!sched || !sched.is_open) return null;
+        return sched;
+      }
+
+      function parseHHMM(t: string): number {
+        const [h, m] = (t || '').split(':').map(Number);
+        return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
+      }
+
+      function minsToLabel(mins: number): { value: string; label: string } {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        const period = h >= 12 ? 'PM' : 'AM';
+        const h12 = h > 12 ? h - 12 : h === 0 ? 12 : h;
+        const label = `${h12}:${String(m).padStart(2, '0')} ${period}`;
+        const value = `${h12}:${String(m).padStart(2, '0')}${period.toLowerCase()}`;
+        return { value, label };
+      }
+
+      function fmt24to12(t: string): string {
+        if (!t) return '';
+        const [h, m] = t.split(':').map(Number);
+        const period = h >= 12 ? 'PM' : 'AM';
+        const h12 = h > 12 ? h - 12 : h === 0 ? 12 : h;
+        return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+      }
+
       function refreshTimeSlots() {
-        const now = new Date();
-        const cutoffDateStr = toDateStr(now);
-        const cutoffMinutes = now.getHours() * 60 + now.getMinutes();
+        const grid    = document.getElementById('time-slots-grid')!;
+        const hint    = document.getElementById('hours-hint')!;
+        const now     = new Date();
+        const todayStr = toDateStr(now);
+        const nowMins  = now.getHours() * 60 + now.getMinutes();
         const selectedDate = dateInput?.value ?? '';
 
-        // Check if selected date is a Saturday (day 6); parse as local date
-        const parsedDay = selectedDate ? new Date(selectedDate + 'T00:00:00').getDay() : -1;
-        const isClosedDay = parsedDay === 0 || parsedDay === 1 || parsedDay === 2; // Sun, Mon, Tue
-        const isSaturday = parsedDay === 6;
-        const SAT_LAST_SLOT = 18 * 60; // 6:00 PM in minutes
+        if (!selectedDate) {
+          grid.innerHTML = '<div class="col-span-full text-sm text-neutral-400 text-center py-6">Select a date above to see available time slots.</div>';
+          hint.textContent = '';
+          return;
+        }
 
-        document.querySelectorAll<HTMLInputElement>('input[name="timeslot"]').forEach(input => {
-          const slotMins = slotToMinutes(input.value);
-          // All slots unavailable on Sun/Mon/Tue
-          const isClosedDaySlot = isClosedDay;
-          // Disable slots past 6 PM on Saturdays
-          const afterSatClose = isSaturday && slotMins > SAT_LAST_SLOT;
-          // Disable slots that have already passed today
-          const tooSoon = selectedDate === cutoffDateStr && slotMins !== -1 && slotMins <= cutoffMinutes;
-          const disabled = isClosedDaySlot || afterSatClose || tooSoon;
+        const dayAvail = getAvailForDate(selectedDate);
+        if (!dayAvail) {
+          grid.innerHTML = '<div class="col-span-full text-sm text-amber-700 bg-amber-50 rounded-lg px-4 py-3">This date is unavailable for booking. Please choose another day.</div>';
+          hint.textContent = '';
+          return;
+        }
 
-          input.disabled = disabled;
-          if (disabled && input.checked) input.checked = false;
+        const openMins  = parseHHMM(dayAvail.open_time  || '12:30');
+        const closeMins = parseHHMM(dayAvail.close_time || '19:00');
+        const interval  = dayAvail.slot_interval || 30;
+        const slots: Array<{ value: string; label: string; disabled: boolean }> = [];
 
-          const label = input.closest('label') as HTMLElement | null;
-          const card = input.nextElementSibling as HTMLElement | null;
-          if (label) {
-            label.classList.toggle('cursor-not-allowed', disabled);
-            label.classList.toggle('cursor-pointer', !disabled);
-          }
-          if (card) {
-            card.classList.toggle('opacity-30', disabled);
-            card.classList.toggle('pointer-events-none', disabled);
-          }
-        });
+        for (let t = openMins; t < closeMins; t += interval) {
+          const { value, label } = minsToLabel(t);
+          const tooSoon = selectedDate === todayStr && t <= nowMins;
+          slots.push({ value, label, disabled: tooSoon });
+        }
+
+        if (slots.length === 0) {
+          grid.innerHTML = '<div class="col-span-full text-sm text-neutral-400 text-center py-6">No time slots available for this date.</div>';
+          hint.textContent = '';
+          return;
+        }
+
+        grid.innerHTML = slots.map(s => `
+          <label class="${s.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}">
+            <input type="radio" name="timeslot" value="${s.value}" class="sr-only peer" ${s.disabled ? 'disabled' : ''} />
+            <div class="text-center rounded-lg border-2 border-neutral-200 py-3 px-1 text-sm font-medium peer-checked:border-primary-600 peer-checked:bg-primary-600 peer-checked:text-white hover:border-primary-300 transition-all">
+              ${s.label}
+            </div>
+          </label>`).join('');
+
+        hint.textContent = `${fmt24to12(dayAvail.open_time)} – ${fmt24to12(dayAvail.close_time)}`;
       }
 
       if (dateInput) {
         dateInput.min = toDateStr(new Date());
         dateInput.addEventListener('change', () => {
           if (dateInput.value) {
-            const day = new Date(dateInput.value + 'T00:00:00').getDay();
-            if (day === 0 || day === 1 || day === 2) {
-              dateInput.setCustomValidity('Sunday, Monday, and Tuesday are unavailable. Please choose another day.');
+            const dayAvail = getAvailForDate(dateInput.value);
+            if (!dayAvail) {
+              dateInput.setCustomValidity('This date is unavailable for booking. Please choose another day.');
               dateInput.reportValidity();
             } else {
               dateInput.setCustomValidity('');
@@ -1692,12 +1735,15 @@ import Layout from '../../layouts/Layout.astro';
         e.preventDefault();
         clearError();
 
-        // Date / time validation (preserved from original)
+        // Date / time validation using dynamic availability
         const d = document.getElementById('bookingDate') as HTMLInputElement;
-        if (d?.value && [0, 1, 2].includes(new Date(d.value + 'T00:00:00').getDay())) {
-          d.setCustomValidity('Sunday, Monday, and Tuesday are unavailable. Please choose another day.');
-          d.reportValidity();
-          return;
+        if (d?.value) {
+          const dayAvail = getAvailForDate(d.value);
+          if (!dayAvail) {
+            d.setCustomValidity('This date is unavailable for booking. Please choose another day.');
+            d.reportValidity();
+            return;
+          }
         }
         const t = document.querySelector<HTMLInputElement>('input[name="timeslot"]:checked');
         if (d?.value && t?.value) {

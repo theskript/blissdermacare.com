@@ -1,0 +1,281 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Booking Availability" activeNav="availability">
+
+  <div class="p-6 lg:p-8 max-w-3xl">
+    <div class="mb-8">
+      <h1 class="text-2xl font-serif font-semibold text-neutral-900">Booking Availability</h1>
+      <p class="text-sm text-neutral-500 mt-1">Set your weekly open hours and add date-specific overrides (holidays, closures, special hours).</p>
+    </div>
+
+    <!-- Weekly Schedule -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+        <h2 class="font-semibold text-neutral-900 text-sm">Weekly Schedule</h2>
+        <span class="text-xs text-neutral-400">Changes save immediately</span>
+      </div>
+      <div id="schedule-list">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Date Overrides -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+        <div>
+          <h2 class="font-semibold text-neutral-900 text-sm">Date Overrides</h2>
+          <p class="text-xs text-neutral-400 mt-0.5">Holidays, closures, or special hours for specific dates</p>
+        </div>
+        <button id="open-override-modal"
+          class="px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Add Override
+        </button>
+      </div>
+      <div id="overrides-list">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Override Modal -->
+  <div id="override-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" id="override-modal-overlay"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10">
+      <h3 class="font-semibold text-neutral-900 mb-5">Add Date Override</h3>
+      <div id="override-error" class="hidden mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-neutral-600 mb-1.5">Date *</label>
+          <input id="override-date" type="date"
+            class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-600 mb-1.5">Type *</label>
+          <select id="override-type"
+            class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm">
+            <option value="closed">Closed (holiday / day off)</option>
+            <option value="special">Special hours (open with different times)</option>
+          </select>
+        </div>
+        <div id="override-hours-row" class="hidden grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Open Time (HH:MM, 24h)</label>
+            <input id="override-open" type="text" placeholder="12:30"
+              class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Close Time (HH:MM, 24h)</label>
+            <input id="override-close" type="text" placeholder="18:00"
+              class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-600 mb-1.5">Notes (optional)</label>
+          <input id="override-notes" type="text" placeholder="e.g. Thanksgiving, vacation"
+            class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button id="cancel-override" class="flex-1 py-2.5 border border-neutral-300 text-neutral-700 text-sm font-semibold rounded-xl hover:bg-neutral-50 transition-colors">Cancel</button>
+        <button id="confirm-override" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors">Save Override</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { requireLogin, getRole, apiFetch } from '../../scripts/adminAuth.js';
+    requireLogin();
+    if (getRole() !== 'owner') window.location.href = '/admin/';
+
+    const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    function fmt24to12(t: string) {
+      if (!t) return '—';
+      const [h, m] = t.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+      return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+    }
+
+    async function loadAll() {
+      try {
+        const data = await apiFetch('admin-availability');
+        renderSchedule(data.schedule || []);
+        renderOverrides(data.overrides || []);
+      } catch (err: any) {
+        document.getElementById('schedule-list')!.innerHTML =
+          `<div class="px-6 py-8 text-center text-red-400 text-sm">Error: ${err.message}</div>`;
+      }
+    }
+
+    function renderSchedule(schedule: any[]) {
+      const el = document.getElementById('schedule-list')!;
+      if (schedule.length === 0) {
+        el.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No schedule data. Run the SQL setup first.</div>';
+        return;
+      }
+      el.innerHTML = schedule.map(row => `
+        <div class="flex items-center gap-4 px-6 py-4 border-b border-neutral-50 last:border-0" data-dow="${row.day_of_week}">
+          <div class="w-24 text-sm font-medium text-neutral-900">${DAYS[row.day_of_week]}</div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only day-toggle" data-dow="${row.day_of_week}" ${row.is_open ? 'checked' : ''}>
+            <div class="w-10 h-5 bg-neutral-200 rounded-full peer peer-checked:bg-primary-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
+          </label>
+          <div class="hours-row flex items-center gap-2 flex-1 ${row.is_open ? '' : 'opacity-40 pointer-events-none'}">
+            <input type="text" class="open-time w-20 px-2 py-1.5 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none"
+              value="${row.open_time || '12:30'}" placeholder="12:30" data-dow="${row.day_of_week}" />
+            <span class="text-neutral-400 text-xs">to</span>
+            <input type="text" class="close-time w-20 px-2 py-1.5 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none"
+              value="${row.close_time || '19:00'}" placeholder="19:00" data-dow="${row.day_of_week}" />
+            <span class="text-xs text-neutral-400">(24h format)</span>
+            <button class="save-day-btn ml-auto px-3 py-1.5 text-xs bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors hidden" data-dow="${row.day_of_week}">Save</button>
+            <span class="save-day-ok text-xs text-emerald-600 hidden" data-dow="${row.day_of_week}">✓ Saved</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Toggle open/closed
+      el.querySelectorAll<HTMLInputElement>('.day-toggle').forEach(cb => {
+        cb.addEventListener('change', async () => {
+          const dow = Number(cb.dataset.dow);
+          const row = cb.closest('[data-dow]') as HTMLElement;
+          const hoursRow = row.querySelector('.hours-row') as HTMLElement;
+          hoursRow.classList.toggle('opacity-40', !cb.checked);
+          hoursRow.classList.toggle('pointer-events-none', !cb.checked);
+          try {
+            await apiFetch('admin-availability', { method: 'PATCH', body: { day_of_week: dow, is_open: cb.checked } });
+            showSaveOk(dow);
+          } catch (err: any) { alert(`Error: ${err.message}`); cb.checked = !cb.checked; }
+        });
+      });
+
+      // Show save button when times change
+      el.querySelectorAll<HTMLInputElement>('.open-time, .close-time').forEach(input => {
+        input.addEventListener('input', () => {
+          const dow = Number(input.dataset.dow);
+          el.querySelector<HTMLButtonElement>(`.save-day-btn[data-dow="${dow}"]`)?.classList.remove('hidden');
+          el.querySelector<HTMLElement>(`.save-day-ok[data-dow="${dow}"]`)?.classList.add('hidden');
+        });
+      });
+
+      // Save times
+      el.querySelectorAll<HTMLButtonElement>('.save-day-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const dow = Number(btn.dataset.dow);
+          const row = el.querySelector(`[data-dow="${dow}"]`) as HTMLElement;
+          const openTime  = (row.querySelector('.open-time')  as HTMLInputElement).value.trim();
+          const closeTime = (row.querySelector('.close-time') as HTMLInputElement).value.trim();
+          if (!/^\d{1,2}:\d{2}$/.test(openTime) || !/^\d{1,2}:\d{2}$/.test(closeTime)) {
+            alert('Times must be in HH:MM format (e.g. 12:30 or 19:00)');
+            return;
+          }
+          try {
+            await apiFetch('admin-availability', { method: 'PATCH', body: { day_of_week: dow, open_time: openTime, close_time: closeTime } });
+            btn.classList.add('hidden');
+            showSaveOk(dow);
+          } catch (err: any) { alert(`Error: ${err.message}`); }
+        });
+      });
+    }
+
+    function showSaveOk(dow: number) {
+      const el = document.querySelector(`.save-day-ok[data-dow="${dow}"]`) as HTMLElement | null;
+      if (!el) return;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 2000);
+    }
+
+    function renderOverrides(overrides: any[]) {
+      const el = document.getElementById('overrides-list')!;
+      if (overrides.length === 0) {
+        el.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No overrides set. Add one above to mark holidays or special hours.</div>';
+        return;
+      }
+      el.innerHTML = `<table class="w-full text-sm">
+        <thead><tr class="border-b border-neutral-100">
+          <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Date</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Type</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Hours</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Notes</th>
+          <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-widest text-neutral-400"></th>
+        </tr></thead>
+        <tbody class="divide-y divide-neutral-100">
+          ${overrides.map(o => {
+            const dateLabel = new Date(o.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            return `<tr>
+              <td class="px-6 py-3 font-medium text-neutral-900">${dateLabel}</td>
+              <td class="px-6 py-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${o.is_closed ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}">
+                  ${o.is_closed ? 'Closed' : 'Special Hours'}
+                </span>
+              </td>
+              <td class="px-6 py-3 text-neutral-500 text-xs">${o.is_closed ? '—' : `${fmt24to12(o.open_time)} – ${fmt24to12(o.close_time)}`}</td>
+              <td class="px-6 py-3 text-neutral-500 text-xs">${o.notes || '—'}</td>
+              <td class="px-6 py-3 text-right">
+                <button class="delete-override-btn text-xs text-red-500 hover:text-red-700 font-medium" data-id="${o.id}">Remove</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+
+      el.querySelectorAll<HTMLButtonElement>('.delete-override-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Remove this override?')) return;
+          try {
+            await apiFetch('admin-availability', { method: 'DELETE', body: { id: btn.dataset.id } });
+            loadAll();
+          } catch (err: any) { alert(`Error: ${err.message}`); }
+        });
+      });
+    }
+
+    // Override modal
+    const modal = document.getElementById('override-modal')!;
+    document.getElementById('open-override-modal')?.addEventListener('click', () => {
+      (document.getElementById('override-date') as HTMLInputElement).value = '';
+      (document.getElementById('override-notes') as HTMLInputElement).value = '';
+      document.getElementById('override-hours-row')!.classList.add('hidden');
+      document.getElementById('override-error')!.classList.add('hidden');
+      modal.classList.remove('hidden');
+    });
+    document.getElementById('override-modal-overlay')?.addEventListener('click', () => modal.classList.add('hidden'));
+    document.getElementById('cancel-override')?.addEventListener('click', () => modal.classList.add('hidden'));
+
+    document.getElementById('override-type')?.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value;
+      document.getElementById('override-hours-row')!.classList.toggle('hidden', val !== 'special');
+    });
+
+    document.getElementById('confirm-override')?.addEventListener('click', async () => {
+      const date  = (document.getElementById('override-date')   as HTMLInputElement).value;
+      const type  = (document.getElementById('override-type')   as HTMLSelectElement).value;
+      const notes = (document.getElementById('override-notes')  as HTMLInputElement).value.trim();
+      const open  = (document.getElementById('override-open')   as HTMLInputElement).value.trim();
+      const close = (document.getElementById('override-close')  as HTMLInputElement).value.trim();
+      const errEl = document.getElementById('override-error')!;
+
+      if (!date) { errEl.textContent = 'Please select a date.'; errEl.classList.remove('hidden'); return; }
+      if (type === 'special' && (!open || !close)) {
+        errEl.textContent = 'Please enter open and close times for special hours.';
+        errEl.classList.remove('hidden'); return;
+      }
+
+      const payload: any = { date, is_closed: type === 'closed', notes };
+      if (type === 'special') { payload.open_time = open; payload.close_time = close; }
+
+      try {
+        await apiFetch('admin-availability', { method: 'POST', body: payload });
+        modal.classList.add('hidden');
+        loadAll();
+      } catch (err: any) { errEl.textContent = err.message; errEl.classList.remove('hidden'); }
+    });
+
+    loadAll();
+  </script>
+
+</AdminLayout>

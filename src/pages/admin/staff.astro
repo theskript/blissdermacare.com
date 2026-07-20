@@ -162,6 +162,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                           data-id="${rec.id}" data-active="${active}">
                           ${active ? 'Deactivate' : 'Activate'}
                         </button>
+                        <button class="delete-staff-btn text-xs text-red-600 hover:text-red-800 font-medium"
+                          data-id="${rec.id}" data-name="${f['Name'] || f['Username']}">
+                          Delete
+                        </button>
                       </div>
                     </td>
                   </tr>`;
@@ -191,6 +195,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             (document.getElementById('reset-password') as HTMLInputElement).value = '';
             document.getElementById('reset-error')!.classList.add('hidden');
             document.getElementById('reset-modal')!.classList.remove('hidden');
+          });
+        });
+
+        // Delete staff
+        list.querySelectorAll('.delete-staff-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id   = (btn as HTMLElement).dataset.id!;
+            const name = (btn as HTMLElement).dataset.name!;
+            if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+            try {
+              await apiFetch('admin-staff', { method: 'DELETE', body: { id } });
+              loadStaff();
+            } catch (err: any) { alert(`Delete failed: ${err.message}`); }
           });
         });
 

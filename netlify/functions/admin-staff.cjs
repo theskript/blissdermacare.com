@@ -8,7 +8,7 @@ const CORS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
 };
 
 function stripHash(rec) {
@@ -104,6 +104,28 @@ exports.handler = async (event) => {
                    : 'Update Staff';
       logAudit({ action, username: user.username, role: user.role, details: `Updated staff ${id}: ${JSON.stringify(allowed)}`, targetId: id, ip });
       return { statusCode: 200, headers: CORS, body: JSON.stringify(stripHash(staffFromDB(data))) };
+    }
+
+    // DELETE — permanently remove staff account
+    if (event.httpMethod === 'DELETE') {
+      let body;
+      try { body = JSON.parse(event.body || '{}'); } catch {
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
+      }
+      const { id } = body;
+      if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Record ID required' }) };
+
+      // Look up account before deleting (for audit log + self-delete guard)
+      const { data: target } = await sb.from('staff').select('username,name').eq('id', id).maybeSingle();
+      if (target?.username?.toLowerCase() === (user.username || '').toLowerCase()) {
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'You cannot delete your own account' }) };
+      }
+
+      const { error } = await sb.from('staff').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+
+      logAudit({ action: 'Delete Staff', username: user.username, role: user.role, details: `Deleted account: ${target?.username || id} (${target?.name || ''})`, targetId: id, ip });
+      return { statusCode: 200, headers: CORS, body: JSON.stringify({ deleted: true, id }) };
     }
 
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };

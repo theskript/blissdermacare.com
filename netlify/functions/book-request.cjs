@@ -202,6 +202,7 @@ exports.handler = async (event) => {
       referral:       referral,
       groupon_code:   grouponCode,
       stripe_session_id: null,
+      payment_method: 'in_person',
       confirm_phone:  confirmPhone === 'yes',
       confirm_text:   confirmText  === 'yes',
       confirm_email:  confirmEmail === 'yes',

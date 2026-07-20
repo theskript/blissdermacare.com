@@ -1,7 +1,7 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'clients' | 'new-appointment' | 'staff' | 'audit';
+  activeNav?: 'dashboard' | 'calendar' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability';
 }
 const { title, activeNav } = Astro.props;
 ---
@@ -89,6 +89,13 @@ const { title, activeNav } = Astro.props;
             </svg>
             Staff Management
           </a>
+          <a href="/admin/availability"
+             class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeNav === 'availability' ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}`}>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Availability
+          </a>
           <a href="/admin/audit"
              class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeNav === 'audit' ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}`}>
             <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,6 +156,7 @@ const { title, activeNav } = Astro.props;
           <a href="/admin/calendar" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Calendar</a>
           <a href="/admin/clients" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Clients</a>
           <a href="/admin/new-appointment" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">New Appointment</a>
+          <a href="/admin/availability" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Availability</a>
         </nav>
         <div class="px-4 py-4 border-t border-neutral-100">
           <button id="mobile-logout-btn" class="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Log Out</button>

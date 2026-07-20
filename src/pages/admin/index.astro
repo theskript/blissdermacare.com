@@ -166,9 +166,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <div class="text-sm text-neutral-800">${f['Services'] || '—'}</div>
           </div>
           ${role === 'owner' && f['Price'] != null ? `
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price</div>
-            <div class="text-sm font-semibold text-primary-700">$${Number(f['Price']).toFixed(2)}</div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price</div>
+              <div class="text-sm font-semibold text-primary-700">$${Number(f['Price']).toFixed(2)}</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Payment</div>
+              ${f['Payment Method'] === 'stripe'
+                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Stripe (Online)</span>'
+                : f['Payment Method'] === 'in_person'
+                  ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">In Person</span>'
+                  : '<span class="text-sm text-neutral-500">—</span>'}
+            </div>
           </div>` : ''}
           <div>
             <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Source</div>
@@ -195,6 +205,27 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             ${canDelete ? `<button id="delete-detail-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
           </div>
           <div id="detail-msg" class="text-xs text-center text-neutral-400"></div>
+
+          <!-- Send Reminder -->
+          <div class="border-t border-neutral-100 pt-5 mt-2">
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-3">Send Reminder</div>
+            <div class="space-y-3">
+              <div class="flex gap-2">
+                <select id="reminder-channel" class="flex-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none">
+                  <option value="sms">SMS only</option>
+                  <option value="email">Email only</option>
+                  <option value="both">SMS + Email</option>
+                </select>
+                <button id="fill-template-btn" class="px-3 py-2 text-xs border border-neutral-300 rounded-lg text-neutral-600 hover:bg-neutral-50 transition-colors whitespace-nowrap">Use Template</button>
+              </div>
+              <input id="reminder-subject" type="text" placeholder="Email subject (optional)" value="Your Appointment Reminder — Bliss Dermacare"
+                class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
+              <textarea id="reminder-message" rows="4" placeholder="Message to client…"
+                class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none resize-none"></textarea>
+              <button id="send-reminder-btn" class="w-full py-2.5 border border-primary-400 text-primary-600 hover:bg-primary-50 text-sm font-semibold rounded-xl transition-colors">Send Reminder</button>
+              <div id="reminder-msg" class="text-xs text-center text-neutral-400 hidden"></div>
+            </div>
+          </div>
         </div>`;
 
       panel?.classList.remove('hidden');
@@ -203,6 +234,46 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       document.getElementById('save-detail-btn')?.addEventListener('click', saveDetail);
       document.getElementById('delete-detail-btn')?.addEventListener('click', deleteDetail);
+
+      // Fill reminder template
+      document.getElementById('fill-template-btn')?.addEventListener('click', () => {
+        const dateLabel = f['Date'] ? new Date(f['Date'] + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : 'your scheduled date';
+        const template =
+          `Hi ${(f['Client Name'] || 'there').split(' ')[0]}! 💗 This is a friendly reminder from Bliss Dermacare — ` +
+          `you have an appointment on ${dateLabel} at ${f['Time'] || 'your scheduled time'} ` +
+          `for ${f['Services'] || 'your appointment'}. ` +
+          `We're at 29007 Bridgegrove Dr, Wesley Chapel, FL 33543. ` +
+          `Questions? Call or text (813) 766-6416. See you soon!`;
+        (document.getElementById('reminder-message') as HTMLTextAreaElement).value = template;
+      });
+
+      // Send reminder
+      document.getElementById('send-reminder-btn')?.addEventListener('click', async () => {
+        const channel = (document.getElementById('reminder-channel') as HTMLSelectElement).value;
+        const message = (document.getElementById('reminder-message') as HTMLTextAreaElement).value.trim();
+        const subject = (document.getElementById('reminder-subject') as HTMLInputElement).value.trim();
+        const msgEl   = document.getElementById('reminder-msg')!;
+        if (!message) { msgEl.textContent = 'Please enter a message.'; msgEl.classList.remove('hidden', 'text-green-600', 'text-red-500'); msgEl.classList.add('text-red-500'); return; }
+        const btn = document.getElementById('send-reminder-btn') as HTMLButtonElement;
+        btn.disabled = true; btn.textContent = 'Sending…';
+        try {
+          const result = await apiFetch('admin-send-reminder', { method: 'POST', body: { appointmentId: rec.id, channel, message, subject } });
+          const parts: string[] = [];
+          if (result.smsSent)   parts.push('SMS sent');
+          if (result.emailSent) parts.push('Email sent');
+          if (result.errors?.length) parts.push(...result.errors);
+          msgEl.textContent = parts.join(' · ') || 'Sent';
+          msgEl.classList.remove('hidden', 'text-red-500');
+          msgEl.classList.add('text-green-600');
+        } catch (err: any) {
+          msgEl.textContent = `Error: ${err.message}`;
+          msgEl.classList.remove('hidden', 'text-green-600');
+          msgEl.classList.add('text-red-500');
+        } finally {
+          btn.disabled = false; btn.textContent = 'Send Reminder';
+          msgEl.classList.remove('hidden');
+        }
+      });
     }
 
     async function saveDetail() {
