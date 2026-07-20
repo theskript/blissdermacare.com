@@ -12,7 +12,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <!-- Weekly Schedule -->
     <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
       <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-        <h2 class="font-semibold text-neutral-900 text-sm">Weekly Schedule</h2>
+        <div>
+          <h2 class="font-semibold text-neutral-900 text-sm">Weekly Schedule</h2>
+          <p class="text-xs text-neutral-400 mt-0.5">All times are Eastern Time (ET)</p>
+        </div>
         <span class="text-xs text-neutral-400">Changes save immediately</span>
       </div>
       <div id="schedule-list">
@@ -63,13 +66,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </div>
         <div id="override-hours-row" class="hidden grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Open Time (HH:MM, 24h)</label>
-            <input id="override-open" type="text" placeholder="12:30"
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Open Time (ET)</label>
+            <input id="override-open" type="time"
               class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Close Time (HH:MM, 24h)</label>
-            <input id="override-close" type="text" placeholder="18:00"
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Close Time (ET)</label>
+            <input id="override-close" type="time"
               class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
           </div>
         </div>
@@ -118,37 +121,66 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         el.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No schedule data. Run the SQL setup first.</div>';
         return;
       }
+      const ON_COLOR  = '#df6377'; // primary-500
+      const OFF_COLOR = '#e7e5e4'; // neutral-200
       el.innerHTML = schedule.map(row => `
         <div class="flex items-center gap-4 px-6 py-4 border-b border-neutral-50 last:border-0" data-dow="${row.day_of_week}">
           <div class="w-24 text-sm font-medium text-neutral-900">${DAYS[row.day_of_week]}</div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only day-toggle" data-dow="${row.day_of_week}" ${row.is_open ? 'checked' : ''}>
-            <div class="w-10 h-5 bg-neutral-200 rounded-full peer peer-checked:bg-primary-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
-          </label>
+          <button type="button" role="switch" aria-checked="${row.is_open}"
+            class="day-toggle-btn relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
+            style="background-color:${row.is_open ? ON_COLOR : OFF_COLOR}"
+            data-dow="${row.day_of_week}" data-open="${row.is_open ? '1' : '0'}">
+            <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+              style="transform:translateX(${row.is_open ? '1.25rem' : '0px'})"></span>
+          </button>
+          <span class="text-xs font-medium w-8 ${row.is_open ? 'text-emerald-600' : 'text-neutral-400'}" data-dow-label="${row.day_of_week}">${row.is_open ? 'Open' : 'Closed'}</span>
           <div class="hours-row flex items-center gap-2 flex-1 ${row.is_open ? '' : 'opacity-40 pointer-events-none'}">
-            <input type="text" class="open-time w-20 px-2 py-1.5 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none"
-              value="${row.open_time || '12:30'}" placeholder="12:30" data-dow="${row.day_of_week}" />
+            <input type="time" class="open-time px-2 py-1.5 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none"
+              value="${row.open_time || '12:30'}" data-dow="${row.day_of_week}" />
             <span class="text-neutral-400 text-xs">to</span>
-            <input type="text" class="close-time w-20 px-2 py-1.5 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none"
-              value="${row.close_time || '19:00'}" placeholder="19:00" data-dow="${row.day_of_week}" />
-            <span class="text-xs text-neutral-400">(24h format)</span>
+            <input type="time" class="close-time px-2 py-1.5 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none"
+              value="${row.close_time || '19:00'}" data-dow="${row.day_of_week}" />
+            <span class="text-xs text-neutral-400 shrink-0">ET</span>
             <button class="save-day-btn ml-auto px-3 py-1.5 text-xs bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors hidden" data-dow="${row.day_of_week}">Save</button>
             <span class="save-day-ok text-xs text-emerald-600 hidden" data-dow="${row.day_of_week}">✓ Saved</span>
           </div>
         </div>
       `).join('');
 
+      const ON_CLR  = '#df6377';
+      const OFF_CLR = '#e7e5e4';
+
       // Toggle open/closed
-      el.querySelectorAll<HTMLInputElement>('.day-toggle').forEach(cb => {
-        cb.addEventListener('change', async () => {
-          const dow = Number(cb.dataset.dow);
+      el.querySelectorAll<HTMLButtonElement>('.day-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const dow     = Number(btn.dataset.dow);
+          const wasOpen = btn.dataset.open === '1';
+          const nowOpen = !wasOpen;
+          const knob    = btn.querySelector('span') as HTMLElement;
+          const label   = el.querySelector(`[data-dow-label="${dow}"]`) as HTMLElement | null;
           const hoursRow = el.querySelector(`[data-dow="${dow}"] .hours-row`) as HTMLElement | null;
-          hoursRow?.classList.toggle('opacity-40', !cb.checked);
-          hoursRow?.classList.toggle('pointer-events-none', !cb.checked);
+
+          function applyState(open: boolean) {
+            btn.dataset.open = open ? '1' : '0';
+            btn.setAttribute('aria-checked', String(open));
+            btn.style.backgroundColor = open ? ON_CLR : OFF_CLR;
+            knob.style.transform = `translateX(${open ? '1.25rem' : '0px'})`;
+            if (label) {
+              label.textContent = open ? 'Open' : 'Closed';
+              label.className = `text-xs font-medium w-8 ${open ? 'text-emerald-600' : 'text-neutral-400'}`;
+            }
+            hoursRow?.classList.toggle('opacity-40', !open);
+            hoursRow?.classList.toggle('pointer-events-none', !open);
+          }
+
+          applyState(nowOpen);
           try {
-            await apiFetch('admin-availability', { method: 'PATCH', body: { day_of_week: dow, is_open: cb.checked } });
+            await apiFetch('admin-availability', { method: 'PATCH', body: { day_of_week: dow, is_open: nowOpen } });
             showSaveOk(dow);
-          } catch (err: any) { alert(`Error: ${err.message}`); cb.checked = !cb.checked; }
+          } catch (err: any) {
+            applyState(wasOpen); // revert
+            alert(`Error: ${err.message}`);
+          }
         });
       });
 
@@ -164,12 +196,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       // Save times
       el.querySelectorAll<HTMLButtonElement>('.save-day-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-          const dow = Number(btn.dataset.dow);
-          const row = el.querySelector(`[data-dow="${dow}"]`) as HTMLElement;
-          const openTime  = (row.querySelector('.open-time')  as HTMLInputElement).value.trim();
-          const closeTime = (row.querySelector('.close-time') as HTMLInputElement).value.trim();
-          if (!/^\d{1,2}:\d{2}$/.test(openTime) || !/^\d{1,2}:\d{2}$/.test(closeTime)) {
-            alert('Times must be in HH:MM format (e.g. 12:30 or 19:00)');
+          const dow       = Number(btn.dataset.dow);
+          const openTime  = (el.querySelector(`.open-time[data-dow="${dow}"]`)  as HTMLInputElement).value.trim();
+          const closeTime = (el.querySelector(`.close-time[data-dow="${dow}"]`) as HTMLInputElement).value.trim();
+          if (!openTime || !closeTime) {
+            alert('Please set both open and close times.');
             return;
           }
           try {
