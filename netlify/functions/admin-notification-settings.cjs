@@ -11,8 +11,8 @@ const CORS = {
 
 // Metadata for the settings UI
 const SETTING_META = {
-  owner_emails:                   { label: 'Owner email recipients', description: 'Comma-separated. Leave empty to use OWNER_EMAIL env var.', type: 'text' },
-  owner_phones:                   { label: 'Owner SMS recipients', description: 'Comma-separated. Leave empty to use OWNER_PHONE env var.', type: 'text' },
+  owner_emails:                   { label: 'Additional email recipients', description: 'Owner staff account emails are included automatically. Add extra addresses here (comma-separated) if needed.', type: 'text' },
+  owner_phones:                   { label: 'Additional SMS recipients', description: 'Owner staff account phone numbers are included automatically. Add extra numbers here (comma-separated) if needed.', type: 'text' },
   notify_owner_on_new_booking:    { label: 'Notify owner on new in-person booking', description: 'Send SMS + email to owner when a pay-in-person booking is submitted.', type: 'bool' },
   notify_owner_on_stripe_payment: { label: 'Notify owner when Stripe payment completes', description: 'Send SMS + email to owner when a client pays online.', type: 'bool' },
   notify_client_email_on_booking: { label: 'Send confirmation email to client on booking', description: 'Client receives an email when their booking request is received.', type: 'bool' },

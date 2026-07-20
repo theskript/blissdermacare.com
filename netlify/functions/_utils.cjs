@@ -70,6 +70,8 @@ function apptToDB(fields) {
 const STAFF_TO_DB = {
   'Username':      'username',
   'Name':          'name',
+  'Email':         'email',
+  'Phone':         'phone',
   'Password Hash': 'password_hash',
   'Role':          'role',
   'Active':        'active',
@@ -256,39 +258,40 @@ function etOffsetHours(date = new Date()) {
 async function getNotificationSettings() {
   const envEmails = (process.env.OWNER_EMAIL || '').split(',').map(e => e.trim()).filter(Boolean);
   const envPhones = (process.env.OWNER_PHONE || '').split(',').map(p => p.trim()).filter(Boolean);
-  const defaults = {
-    ownerEmails:  envEmails,
-    ownerPhones:  envPhones,
-    notifyOwnerOnNewBooking:    true,
-    notifyOwnerOnStripePayment: true,
-    notifyClientSmsOnBooking:   true,
-    notifyClientEmailOnBooking: true,
-    reminderStatuses:  ['Confirmed', 'Pending Payment'],
-    reminder24hEnabled: true,
-    reminder2hEnabled:  true,
-  };
+
+  let staffEmails = [];
+  let staffPhones = [];
+  let settingsMap = {};
+
   try {
-    const { data } = await getSupabase().from('notification_settings').select('key,value');
-    if (!data?.length) return defaults;
-    const s = {};
-    for (const { key, value } of data) s[key] = value;
-    const dbEmails = (s.owner_emails || '').split(',').map(e => e.trim()).filter(Boolean);
-    const dbPhones = (s.owner_phones || '').split(',').map(p => p.trim()).filter(Boolean);
-    return {
-      ownerEmails:  dbEmails.length ? dbEmails : envEmails,
-      ownerPhones:  dbPhones.length ? dbPhones : envPhones,
-      notifyOwnerOnNewBooking:    s.notify_owner_on_new_booking    !== 'false',
-      notifyOwnerOnStripePayment: s.notify_owner_on_stripe_payment !== 'false',
-      notifyClientSmsOnBooking:   s.notify_client_sms_on_booking   !== 'false',
-      notifyClientEmailOnBooking: s.notify_client_email_on_booking !== 'false',
-      reminderStatuses: (s.reminder_statuses || 'Confirmed,Pending Payment').split(',').map(x => x.trim()).filter(Boolean),
-      reminder24hEnabled: s.reminder_24h_enabled !== 'false',
-      reminder2hEnabled:  s.reminder_2h_enabled  !== 'false',
-    };
+    const [staffResult, settingsResult] = await Promise.all([
+      getSupabase().from('staff').select('email,phone').eq('role', 'owner').eq('active', true),
+      getSupabase().from('notification_settings').select('key,value'),
+    ]);
+    staffEmails = (staffResult.data || []).map(o => o.email).filter(Boolean);
+    staffPhones = (staffResult.data || []).map(o => o.phone).filter(Boolean);
+    for (const { key, value } of (settingsResult.data || [])) settingsMap[key] = value;
   } catch (err) {
-    console.warn('[getNotificationSettings] Fallback to env vars:', err.message);
-    return defaults;
+    console.warn('[getNotificationSettings] DB error, using env fallback:', err.message);
   }
+
+  // Additional recipients from notification_settings (merged with staff owners)
+  const extraEmails = (settingsMap.owner_emails || '').split(',').map(e => e.trim()).filter(Boolean);
+  const extraPhones = (settingsMap.owner_phones || '').split(',').map(p => p.trim()).filter(Boolean);
+  const mergedEmails = [...new Set([...staffEmails, ...extraEmails])];
+  const mergedPhones = [...new Set([...staffPhones, ...extraPhones])];
+
+  return {
+    ownerEmails:  mergedEmails.length  ? mergedEmails  : envEmails,
+    ownerPhones:  mergedPhones.length  ? mergedPhones  : envPhones,
+    notifyOwnerOnNewBooking:    settingsMap.notify_owner_on_new_booking    !== 'false',
+    notifyOwnerOnStripePayment: settingsMap.notify_owner_on_stripe_payment !== 'false',
+    notifyClientSmsOnBooking:   settingsMap.notify_client_sms_on_booking   !== 'false',
+    notifyClientEmailOnBooking: settingsMap.notify_client_email_on_booking !== 'false',
+    reminderStatuses: (settingsMap.reminder_statuses || 'Confirmed,Pending Payment').split(',').map(x => x.trim()).filter(Boolean),
+    reminder24hEnabled: settingsMap.reminder_24h_enabled !== 'false',
+    reminder2hEnabled:  settingsMap.reminder_2h_enabled  !== 'false',
+  };
 }
 
 module.exports = {

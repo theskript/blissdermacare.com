@@ -25,7 +25,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       </svg>
       <div>
         <strong>Note:</strong> The <code class="bg-amber-100 px-1 rounded text-xs">owner</code> bootstrap account (via <code class="bg-amber-100 px-1 rounded text-xs">ADMIN_PASSWORD</code> env var) always exists as a fallback. 
-        Create a named owner account here to replace it with a proper audited account.
+        Create a named owner account here to replace it with a proper audited account.<br/>
+        <span class="text-amber-700 mt-1 block">Owner accounts with an <strong>email</strong> and <strong>phone</strong> filled in will automatically receive booking and payment notifications.</span>
       </div>
     </div>
 
@@ -56,6 +57,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <div>
             <label class="block text-xs font-medium text-neutral-600 mb-1.5">Username *</label>
             <input id="new-username" type="text" placeholder="jane"
+              class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Email</label>
+            <input id="new-email" type="email" placeholder="jane@example.com"
+              class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Phone</label>
+            <input id="new-phone" type="tel" placeholder="(813) 555-0100"
               class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
           </div>
         </div>
@@ -99,12 +112,50 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
   </div>
 
+  <!-- Edit Contact Details Modal -->
+  <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" id="edit-modal-overlay"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10">
+      <h3 class="font-semibold text-neutral-900 mb-1">Edit Staff Details</h3>
+      <p id="edit-modal-username" class="text-xs text-neutral-400 font-mono mb-5"></p>
+      <div id="edit-error" class="hidden mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-neutral-600 mb-1.5">Full Name</label>
+          <input id="edit-name" type="text" class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Email</label>
+            <input id="edit-email" type="email" placeholder="owner@example.com" class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-600 mb-1.5">Phone</label>
+            <input id="edit-phone" type="tel" placeholder="(813) 555-0100" class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-600 mb-1.5">Role</label>
+          <select id="edit-role" class="w-full px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm">
+            <option value="staff">Staff</option>
+            <option value="owner">Owner</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button id="cancel-edit" class="flex-1 py-2.5 border border-neutral-300 text-neutral-700 text-sm font-semibold rounded-xl hover:bg-neutral-50 transition-colors">Cancel</button>
+        <button id="confirm-edit" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     import { requireLogin, getRole, apiFetch } from '../../scripts/adminAuth.js';
     requireLogin();
     if (getRole() !== 'owner') window.location.href = '/admin/';
 
     let resetTargetId = '';
+    let editTargetId  = '';
 
     const ROLE_BADGE: Record<string, string> = {
       owner: 'bg-primary-100 text-primary-700',
@@ -128,6 +179,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               <tr class="border-b border-neutral-100">
                 <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Name</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Username</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Email / Phone</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Role</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Status</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-widest text-neutral-400">Last Login</th>
@@ -142,10 +194,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                   ? new Date(f['Last Login']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
                   : 'Never';
                 const roleCls = ROLE_BADGE[f['Role']] || 'bg-neutral-100 text-neutral-600';
+                const isOwner = f['Role'] === 'owner';
+                const missingContact = isOwner && (!f['Email'] || !f['Phone']);
                 return `
                   <tr class="${active ? '' : 'opacity-50'}">
                     <td class="px-6 py-4 font-medium text-neutral-900">${f['Name'] || '—'}</td>
                     <td class="px-6 py-4 text-neutral-500 font-mono text-xs">${f['Username'] || '—'}</td>
+                    <td class="px-6 py-4 text-xs">
+                      ${f['Email'] ? `<div class="text-neutral-700">${f['Email']}</div>` : ''}
+                      ${f['Phone'] ? `<div class="text-neutral-400">${f['Phone']}</div>` : ''}
+                      ${missingContact ? `<span class="inline-flex items-center gap-1 text-amber-600"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Missing — won't receive notifications</span>` : ''}
+                    </td>
                     <td class="px-6 py-4">
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${roleCls}">${f['Role'] || '—'}</span>
                     </td>
@@ -155,6 +214,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                     <td class="px-6 py-4 text-xs text-neutral-400">${lastLogin}</td>
                     <td class="px-6 py-4 text-right">
                       <div class="flex items-center justify-end gap-2">
+                        <button class="edit-staff-btn text-xs text-neutral-600 hover:text-neutral-900 font-medium" data-id="${rec.id}" data-name="${f['Name'] || f['Username']}" data-username="${f['Username'] || ''}" data-email="${f['Email'] || ''}" data-phone="${f['Phone'] || ''}" data-role="${f['Role'] || 'staff'}">
+                          Edit
+                        </button>
                         <button class="reset-pw-btn text-xs text-primary-600 hover:text-primary-800 font-medium" data-id="${rec.id}" data-name="${f['Name'] || f['Username']}">
                           Reset PW
                         </button>
@@ -211,6 +273,20 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           });
         });
 
+        // Edit staff details
+        list.querySelectorAll('.edit-staff-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            editTargetId = (btn as HTMLElement).dataset.id!;
+            document.getElementById('edit-modal-username')!.textContent = `@${(btn as HTMLElement).dataset.username || ''}`;
+            (document.getElementById('edit-name')  as HTMLInputElement).value  = (btn as HTMLElement).dataset.name  || '';
+            (document.getElementById('edit-email') as HTMLInputElement).value  = (btn as HTMLElement).dataset.email || '';
+            (document.getElementById('edit-phone') as HTMLInputElement).value  = (btn as HTMLElement).dataset.phone || '';
+            (document.getElementById('edit-role')  as HTMLSelectElement).value = (btn as HTMLElement).dataset.role  || 'staff';
+            document.getElementById('edit-error')!.classList.add('hidden');
+            document.getElementById('edit-modal')!.classList.remove('hidden');
+          });
+        });
+
       } catch (err: any) {
         document.getElementById('staff-list')!.innerHTML =
           `<div class="px-6 py-10 text-center text-red-400 text-sm">Error: ${err.message}</div>`;
@@ -233,12 +309,31 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const username = (document.getElementById('new-username') as HTMLInputElement).value.trim();
       const role     = (document.getElementById('new-role')     as HTMLSelectElement).value;
       const password = (document.getElementById('new-password') as HTMLInputElement).value;
+      const email    = (document.getElementById('new-email')    as HTMLInputElement).value.trim();
+      const phone    = (document.getElementById('new-phone')    as HTMLInputElement).value.trim();
       const errEl    = document.getElementById('modal-error')!;
 
-      if (!name || !username || !password) { errEl.textContent = 'All fields are required.'; errEl.classList.remove('hidden'); return; }
+      if (!name || !username || !password) { errEl.textContent = 'Name, username, and password are required.'; errEl.classList.remove('hidden'); return; }
       try {
-        await apiFetch('admin-staff', { method: 'POST', body: { name, username, password, role } });
+        await apiFetch('admin-staff', { method: 'POST', body: { name, username, password, role, email, phone } });
         document.getElementById('add-modal')!.classList.add('hidden');
+        loadStaff();
+      } catch (err: any) { errEl.textContent = err.message; errEl.classList.remove('hidden'); }
+    });
+
+    // Edit modal
+    document.getElementById('edit-modal-overlay')?.addEventListener('click', () => document.getElementById('edit-modal')!.classList.add('hidden'));
+    document.getElementById('cancel-edit')?.addEventListener('click', () => document.getElementById('edit-modal')!.classList.add('hidden'));
+    document.getElementById('confirm-edit')?.addEventListener('click', async () => {
+      const name  = (document.getElementById('edit-name')  as HTMLInputElement).value.trim();
+      const email = (document.getElementById('edit-email') as HTMLInputElement).value.trim();
+      const phone = (document.getElementById('edit-phone') as HTMLInputElement).value.trim();
+      const role  = (document.getElementById('edit-role')  as HTMLSelectElement).value;
+      const errEl = document.getElementById('edit-error')!;
+      if (!name) { errEl.textContent = 'Name is required.'; errEl.classList.remove('hidden'); return; }
+      try {
+        await apiFetch('admin-staff', { method: 'PATCH', body: { id: editTargetId, fields: { Name: name, Email: email, Phone: phone, Role: role } } });
+        document.getElementById('edit-modal')!.classList.add('hidden');
         loadStaff();
       } catch (err: any) { errEl.textContent = err.message; errEl.classList.remove('hidden'); }
     });

@@ -43,7 +43,7 @@ exports.handler = async (event) => {
       try { body = JSON.parse(event.body || '{}'); } catch {
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
       }
-      const { username, name, password, role = 'staff' } = body;
+      const { username, name, password, role = 'staff', email = '', phone = '' } = body;
       if (!username || !password || !name) {
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'username, name, and password are required' }) };
       }
@@ -62,7 +62,7 @@ exports.handler = async (event) => {
 
       const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
       const { data, error } = await sb.from('staff')
-        .insert({ username, name, password_hash: hash, role, active: true })
+        .insert({ username, name, password_hash: hash, role, active: true, email: email.trim() || null, phone: phone.trim() || null })
         .select().single();
       if (error) throw new Error(error.message);
 
@@ -90,11 +90,13 @@ exports.handler = async (event) => {
         return { statusCode: 200, headers: CORS, body: JSON.stringify(stripHash(staffFromDB(data))) };
       }
 
-      // Field update (name, role, active)
+      // Field update (name, role, active, email, phone)
       const allowed = {};
       if (fields?.Name   !== undefined) allowed['Name']   = fields.Name;
       if (fields?.Role   !== undefined) allowed['Role']   = fields.Role;
       if (fields?.Active !== undefined) allowed['Active'] = fields.Active;
+      if (fields?.Email  !== undefined) allowed['Email']  = fields.Email;
+      if (fields?.Phone  !== undefined) allowed['Phone']  = fields.Phone;
 
       const { data, error } = await sb.from('staff').update(staffToDB(allowed)).eq('id', id).select().single();
       if (error) throw new Error(error.message);
