@@ -272,6 +272,6 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: JSON.stringify({ url: session.url }) };
   } catch (err) {
     console.error('Stripe error:', err);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Failed to create payment session. Please try again or call (813) 534-6839.' }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Failed to create payment session. Please try again or call (813) 766-6416.' }) };
   }
 };

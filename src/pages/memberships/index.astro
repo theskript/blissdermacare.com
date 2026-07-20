@@ -658,7 +658,7 @@ import Layout from '../../layouts/Layout.astro';
           <div class="faq-a hidden px-6 pb-5 text-sm text-neutral-600 border-t border-neutral-100 pt-4 space-y-3">
             <p>It's simple — just book your appointment as normal (online or by calling/texting) and mention your membership plan in the Notes field or when you speak with us. For example: <em>"I'm on the Radiance Plan — I'd like to use my facial credit for the Diamond Glow Facial."</em></p>
             <p>We'll verify your active membership, apply your credit to the service, and confirm your booking with priority status. If you're booking online via Stripe, you'll be charged $0 for the covered service — or if we process it manually, we'll simply not charge you for that service.</p>
-            <p>You can also reach out at <a href="tel:+18135346839" class="text-primary-600 hover:underline">(813) 534-6839</a> and we'll handle everything for you.</p>
+            <p>You can also reach out at <a href="tel:+18137666416" class="text-primary-600 hover:underline">(813) 766-6416</a> and we'll handle everything for you.</p>
           </div>
         </div>
 
@@ -791,7 +791,7 @@ import Layout from '../../layouts/Layout.astro';
           </div>
           <div>
             <label for="mem-phone" class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number *</label>
-            <input type="tel" id="mem-phone" name="phone" required placeholder="(813) 534-6839"
+            <input type="tel" id="mem-phone" name="phone" required placeholder="(813) 766-6416"
               class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
           </div>
         </div>
@@ -901,7 +901,7 @@ import Layout from '../../layouts/Layout.astro';
         });
         const data = await resp.json();
         if (!resp.ok || data.error) {
-          showMemError(data.error || 'Something went wrong. Please try again or call us at (813) 534-6839.');
+          showMemError(data.error || 'Something went wrong. Please try again or call us at (813) 766-6416.');
           btn.disabled = false;
           spinner.classList.add('hidden');
           label.textContent = 'Continue to Secure Checkout';
