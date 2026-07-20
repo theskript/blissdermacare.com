@@ -193,8 +193,8 @@ async function sendEmail({ to, subject, html, text }) {
       reply_to: { email: 'info@blissdermacare.com', name: 'Bliss Dermacare' },
       subject,
       content: [
-        ...(html ? [{ type: 'text/html', value: html }] : []),
         ...(text ? [{ type: 'text/plain', value: text }] : []),
+        ...(html ? [{ type: 'text/html',  value: html }] : []),
       ],
     }),
   });
