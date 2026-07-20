@@ -172,8 +172,13 @@ async function sendSMS(to, body) {
       body: new URLSearchParams({ To: phone, From: TWILIO_FROM_NUMBER, Body: body }).toString(),
     }
   );
-  if (!res.ok) { console.error(`[SMS] Twilio error → ${phone}:`, await res.text()); return null; }
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) {
+    console.error(`[SMS] Twilio error → ${phone}:`, JSON.stringify(data));
+    // Return error details so callers can surface them
+    return { ok: false, error: data.message || 'Unknown Twilio error', code: data.code, status: data.status };
+  }
+  return { ok: true, sid: data.sid, status: data.status };
 }
 
 // ── SendGrid Email ────────────────────────────────────────────────────────────

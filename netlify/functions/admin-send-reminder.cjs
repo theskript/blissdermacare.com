@@ -67,8 +67,11 @@ exports.handler = async (event) => {
     if (channel === 'sms' || channel === 'both') {
       if (phoneTarget) {
         const r = await sendSMS(phoneTarget, message.substring(0, 1600));
-        results.smsSent = !!r;
-        if (!r) results.errors.push('SMS not delivered — check Twilio configuration');
+        results.smsSent = r?.ok === true;
+        if (!results.smsSent) {
+          const detail = r?.error ? `${r.error}${r.code ? ` (Twilio code ${r.code})` : ''}` : 'Twilio not configured';
+          results.errors.push(`SMS failed: ${detail}`);
+        }
       } else {
         results.errors.push('No phone number on file for this client');
       }

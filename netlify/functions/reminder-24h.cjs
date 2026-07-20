@@ -50,7 +50,7 @@ exports.handler = async () => {
         `<p style="color:#999;font-size:12px;margin-top:24px;border-top:1px solid #eee;padding-top:12px">Bliss Dermacare &middot; Wesley Chapel, FL</p></div>`;
       try {
         let notified = false;
-        if (row.client_phone) { await sendSMS(row.client_phone, smsBody); notified = true; }
+        if (row.client_phone) { const sr = await sendSMS(row.client_phone, smsBody); if (sr?.ok) notified = true; }
         if (row.client_email) {
           await sendEmail({ to: row.client_email, subject: `Appointment Reminder: ${dateLabel} — Bliss Dermacare`, html: emailHtml, text: smsBody });
           notified = true;
