@@ -260,12 +260,12 @@ exports.handler = async (event) => {
           </table>
         </div>
         <p style="color:#44403c;font-size:13px;line-height:1.6">We accept <strong>cash</strong>, <strong>Zelle</strong>, <strong>Venmo</strong>, and all major <strong>credit/debit cards</strong> in person. Cancel or reschedule with at least <strong>24 hours' notice</strong>.</p>
-        <p style="color:#44403c;font-size:13px;line-height:1.6">Questions? Reply to this email or call <a href="tel:+18137666416" style="color:#c2410c">(813) 766-6416</a>.</p>
+        <p style="color:#44403c;font-size:13px;line-height:1.6">Questions? Reply to this email or call <a href="tel:+18135346839" style="color:#c2410c">(813) 534-6839</a>.</p>
         <p style="color:#78716c;font-size:13px;margin-top:24px">— The Bliss Dermacare Team</p>
       </div>
     </div>`;
 
-  const clientSmsText = `Hi ${customerName.split(' ')[0]}! 💗 Your appointment request for ${serviceNames.join(', ')} on ${dateLabel} at ${appointmentTime} has been received. We'll confirm within 24 hours. Questions? (813) 766-6416 — Bliss Dermacare`;
+  const clientSmsText = `Hi ${customerName.split(' ')[0]}! 💗 Your appointment request for ${serviceNames.join(', ')} on ${dateLabel} at ${appointmentTime} has been received. We'll confirm within 24 hours. Questions? (813) 534-6839 — Bliss Dermacare`;
 
   const sends = [];
   if (ns.notifyOwnerOnNewBooking) {
