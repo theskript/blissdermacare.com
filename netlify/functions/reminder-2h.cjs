@@ -1,6 +1,6 @@
 'use strict';
 
-const { getSupabase, sendSMS, sendEmail, timeToMinutes, etOffsetHours } = require('./_utils.cjs');
+const { getSupabase, sendSMS, sendEmail, timeToMinutes, etOffsetHours, getNotificationSettings } = require('./_utils.cjs');
 
 exports.handler = async () => {
   const now = new Date();
@@ -12,11 +12,17 @@ exports.handler = async () => {
   console.log(`[reminder-2h] Running for ${todayStr}, ET ${Math.floor(etMins/60)}:${String(etMins%60).padStart(2,'0')}`);
 
   try {
+    const ns = await getNotificationSettings();
+    if (!ns.reminder2hEnabled) {
+      console.log('[reminder-2h] Disabled via notification settings — skipping');
+      return { statusCode: 200, body: '[reminder-2h] Disabled' };
+    }
+
     const { data: rows, error } = await getSupabase()
       .from('appointments')
       .select('id,client_name,client_phone,client_email,time,services')
       .eq('date', todayStr)
-      .eq('status', 'Confirmed')
+      .in('status', ns.reminderStatuses)
       .eq('reminder_2h_sent', false);
     if (error) throw new Error(error.message);
 

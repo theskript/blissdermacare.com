@@ -1,6 +1,6 @@
 'use strict';
 
-const { getSupabase, sendSMS, sendEmail } = require('./_utils.cjs');
+const { getSupabase, sendSMS, sendEmail, getNotificationSettings } = require('./_utils.cjs');
 
 function formatDateLabel(dateStr) {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -14,11 +14,17 @@ exports.handler = async () => {
   console.log(`[reminder-24h] Running for ${tomorrowStr}`);
 
   try {
+    const ns = await getNotificationSettings();
+    if (!ns.reminder24hEnabled) {
+      console.log('[reminder-24h] Disabled via notification settings — skipping');
+      return { statusCode: 200, body: '[reminder-24h] Disabled' };
+    }
+
     const { data: rows, error } = await getSupabase()
       .from('appointments')
       .select('id,client_name,client_phone,client_email,time,services')
       .eq('date', tomorrowStr)
-      .eq('status', 'Confirmed')
+      .in('status', ns.reminderStatuses)
       .eq('reminder_24h_sent', false);
     if (error) throw new Error(error.message);
 

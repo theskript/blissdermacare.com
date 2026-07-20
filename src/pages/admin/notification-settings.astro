@@ -1,0 +1,185 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Notification Settings" activeNav="notifications">
+
+  <div class="p-6 lg:p-8 max-w-2xl">
+    <div class="mb-8">
+      <h1 class="text-2xl font-serif font-semibold text-neutral-900">Notification Settings</h1>
+      <p class="text-sm text-neutral-500 mt-1">Control who gets notified and when for bookings, payments, and reminders. All changes save instantly.</p>
+    </div>
+
+    <div id="settings-error" class="hidden mb-6 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+      <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span id="settings-error-text"></span>
+    </div>
+
+    <!-- Owner Recipients -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-4">
+      <div class="px-6 py-4 border-b border-neutral-100 bg-neutral-50">
+        <h2 class="font-semibold text-neutral-900 text-sm">Owner Recipients</h2>
+        <p class="text-xs text-neutral-500 mt-0.5">Who receives owner-side notifications. If left blank, falls back to OWNER_EMAIL / OWNER_PHONE env vars.</p>
+      </div>
+      <div class="divide-y divide-neutral-100" id="section-recipients"></div>
+    </div>
+
+    <!-- Owner Notification Triggers -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-4">
+      <div class="px-6 py-4 border-b border-neutral-100 bg-neutral-50">
+        <h2 class="font-semibold text-neutral-900 text-sm">Owner Notification Triggers</h2>
+      </div>
+      <div class="divide-y divide-neutral-100" id="section-owner-triggers"></div>
+    </div>
+
+    <!-- Client Notifications -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-4">
+      <div class="px-6 py-4 border-b border-neutral-100 bg-neutral-50">
+        <h2 class="font-semibold text-neutral-900 text-sm">Client Notifications</h2>
+        <p class="text-xs text-neutral-500 mt-0.5">Sent automatically when clients book.</p>
+      </div>
+      <div class="divide-y divide-neutral-100" id="section-client"></div>
+    </div>
+
+    <!-- Reminder Settings -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-4">
+      <div class="px-6 py-4 border-b border-neutral-100 bg-neutral-50">
+        <h2 class="font-semibold text-neutral-900 text-sm">Automated Reminders</h2>
+        <p class="text-xs text-neutral-500 mt-0.5">Reminders are sent via SMS and email to clients before their appointment.</p>
+      </div>
+      <div class="divide-y divide-neutral-100" id="section-reminders"></div>
+    </div>
+
+    <div id="save-toast" class="hidden fixed bottom-6 right-6 z-50 bg-emerald-600 text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Saved
+    </div>
+  </div>
+
+  <script>
+    import { requireLogin, getRole, apiFetch } from '../../scripts/adminAuth.js';
+    requireLogin();
+    if (getRole() !== 'owner') window.location.href = '/admin/';
+
+    const SECTION_MAP: Record<string, string> = {
+      owner_emails:                   'recipients',
+      owner_phones:                   'recipients',
+      notify_owner_on_new_booking:    'owner-triggers',
+      notify_owner_on_stripe_payment: 'owner-triggers',
+      notify_client_email_on_booking: 'client',
+      notify_client_sms_on_booking:   'client',
+      reminder_24h_enabled:           'reminders',
+      reminder_2h_enabled:            'reminders',
+      reminder_statuses:              'reminders',
+    };
+
+    let saveTimer: ReturnType<typeof setTimeout>;
+
+    function showToast() {
+      const t = document.getElementById('save-toast')!;
+      t.classList.remove('hidden');
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+
+    async function saveSetting(key: string, value: string) {
+      try {
+        await apiFetch('admin-notification-settings', { method: 'PATCH', body: { key, value } });
+        showToast();
+      } catch (err: any) {
+        const errEl = document.getElementById('settings-error')!;
+        document.getElementById('settings-error-text')!.textContent = `Failed to save "${key}": ${err.message}`;
+        errEl.classList.remove('hidden');
+        setTimeout(() => errEl.classList.add('hidden'), 5000);
+      }
+    }
+
+    function renderTextSetting(s: any): string {
+      return `
+        <div class="px-6 py-4">
+          <label class="block text-sm font-medium text-neutral-800 mb-1">${s.label}</label>
+          <p class="text-xs text-neutral-400 mb-2">${s.description}</p>
+          <div class="flex gap-2">
+            <input type="text" class="text-setting flex-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none"
+              data-key="${s.key}" value="${(s.value || '').replace(/"/g, '&quot;')}" placeholder="—" />
+            <button class="save-text-btn px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition-colors hidden" data-key="${s.key}">Save</button>
+          </div>
+        </div>`;
+    }
+
+    function renderBoolSetting(s: any): string {
+      const on = s.value !== 'false';
+      const ON_CLR = '#df6377'; const OFF_CLR = '#e7e5e4';
+      return `
+        <div class="px-6 py-4 flex items-center gap-4">
+          <button type="button" role="switch" aria-checked="${on}"
+            class="bool-toggle relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
+            style="background-color:${on ? ON_CLR : OFF_CLR}" data-key="${s.key}" data-on="${on ? '1' : '0'}">
+            <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+              style="transform:translateX(${on ? '1.25rem' : '0px'})"></span>
+          </button>
+          <div>
+            <div class="text-sm font-medium text-neutral-800">${s.label}</div>
+            <div class="text-xs text-neutral-400 mt-0.5">${s.description}</div>
+          </div>
+        </div>`;
+    }
+
+    async function load() {
+      try {
+        const data = await apiFetch('admin-notification-settings');
+        const settings: any[] = data.settings || [];
+
+        const sections: Record<string, any[]> = { recipients: [], 'owner-triggers': [], client: [], reminders: [] };
+        for (const s of settings) {
+          const sec = SECTION_MAP[s.key];
+          if (sec) sections[sec].push(s);
+        }
+
+        for (const [sec, items] of Object.entries(sections)) {
+          const el = document.getElementById(`section-${sec}`)!;
+          el.innerHTML = items.map(s => s.type === 'bool' ? renderBoolSetting(s) : renderTextSetting(s)).join('');
+        }
+
+        // Bool toggle handlers
+        document.querySelectorAll<HTMLButtonElement>('.bool-toggle').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const key   = btn.dataset.key!;
+            const wasOn = btn.dataset.on === '1';
+            const nowOn = !wasOn;
+            btn.dataset.on = nowOn ? '1' : '0';
+            btn.setAttribute('aria-checked', String(nowOn));
+            btn.style.backgroundColor = nowOn ? '#df6377' : '#e7e5e4';
+            (btn.querySelector('span') as HTMLElement).style.transform = `translateX(${nowOn ? '1.25rem' : '0px'})`;
+            await saveSetting(key, String(nowOn));
+          });
+        });
+
+        // Text setting change detection
+        document.querySelectorAll<HTMLInputElement>('.text-setting').forEach(input => {
+          input.addEventListener('input', () => {
+            const btn = input.parentElement?.querySelector<HTMLButtonElement>('.save-text-btn');
+            btn?.classList.remove('hidden');
+          });
+        });
+
+        // Text setting save buttons
+        document.querySelectorAll<HTMLButtonElement>('.save-text-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const key   = btn.dataset.key!;
+            const input = btn.parentElement?.querySelector<HTMLInputElement>('.text-setting');
+            if (!input) return;
+            btn.classList.add('hidden');
+            await saveSetting(key, input.value.trim());
+          });
+        });
+
+      } catch (err: any) {
+        document.getElementById('settings-error-text')!.textContent = err.message;
+        document.getElementById('settings-error')!.classList.remove('hidden');
+      }
+    }
+
+    load();
+  </script>
+
+</AdminLayout>

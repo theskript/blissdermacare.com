@@ -251,6 +251,46 @@ function etOffsetHours(date = new Date()) {
   return month >= 3 && month <= 11 ? -4 : -5;
 }
 
+// ── Notification settings ──────────────────────────────────────────────────
+
+async function getNotificationSettings() {
+  const envEmails = (process.env.OWNER_EMAIL || '').split(',').map(e => e.trim()).filter(Boolean);
+  const envPhones = (process.env.OWNER_PHONE || '').split(',').map(p => p.trim()).filter(Boolean);
+  const defaults = {
+    ownerEmails:  envEmails,
+    ownerPhones:  envPhones,
+    notifyOwnerOnNewBooking:    true,
+    notifyOwnerOnStripePayment: true,
+    notifyClientSmsOnBooking:   true,
+    notifyClientEmailOnBooking: true,
+    reminderStatuses:  ['Confirmed', 'Pending Payment'],
+    reminder24hEnabled: true,
+    reminder2hEnabled:  true,
+  };
+  try {
+    const { data } = await getSupabase().from('notification_settings').select('key,value');
+    if (!data?.length) return defaults;
+    const s = {};
+    for (const { key, value } of data) s[key] = value;
+    const dbEmails = (s.owner_emails || '').split(',').map(e => e.trim()).filter(Boolean);
+    const dbPhones = (s.owner_phones || '').split(',').map(p => p.trim()).filter(Boolean);
+    return {
+      ownerEmails:  dbEmails.length ? dbEmails : envEmails,
+      ownerPhones:  dbPhones.length ? dbPhones : envPhones,
+      notifyOwnerOnNewBooking:    s.notify_owner_on_new_booking    !== 'false',
+      notifyOwnerOnStripePayment: s.notify_owner_on_stripe_payment !== 'false',
+      notifyClientSmsOnBooking:   s.notify_client_sms_on_booking   !== 'false',
+      notifyClientEmailOnBooking: s.notify_client_email_on_booking !== 'false',
+      reminderStatuses: (s.reminder_statuses || 'Confirmed,Pending Payment').split(',').map(x => x.trim()).filter(Boolean),
+      reminder24hEnabled: s.reminder_24h_enabled !== 'false',
+      reminder2hEnabled:  s.reminder_2h_enabled  !== 'false',
+    };
+  } catch (err) {
+    console.warn('[getNotificationSettings] Fallback to env vars:', err.message);
+    return defaults;
+  }
+}
+
 module.exports = {
   getSupabase,
   apptFromDB, apptToDB,
@@ -260,4 +300,5 @@ module.exports = {
   sendSMS, sendEmail,
   logAudit, getClientIP,
   toDateStr, formatTime, timeToMinutes, etOffsetHours,
+  getNotificationSettings,
 };

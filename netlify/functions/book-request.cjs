@@ -4,7 +4,7 @@
 // Writes directly to Supabase (status: Pending Confirmation) and notifies the owner.
 // No Stripe involved.
 
-const { getSupabase, sendEmail, sendSMS, formatTime } = require('./_utils.cjs');
+const { getSupabase, sendEmail, sendSMS, formatTime, getNotificationSettings } = require('./_utils.cjs');
 
 const APPOINTMENTS_TABLE = 'appointments';
 
@@ -215,11 +215,10 @@ exports.handler = async (event) => {
     console.error('Supabase init error (non-fatal):', dbErr.message);
   }
 
-  // ── Notify owner ──────────────────────────────────────────────────────────
-  const ownerEmails = (process.env.OWNER_EMAIL || 'info@blissdermacare.com').split(',').map(e => e.trim()).filter(Boolean);
-  const ownerPhones = (process.env.OWNER_PHONE || '').split(',').map(p => p.trim()).filter(Boolean);
+  // ── Notify owner + client ─────────────────────────────────────────────────
+  const ns = await getNotificationSettings();
 
-  const smsText = `📅 New booking request — PAY IN PERSON\n${customerName} · ${customerPhone || 'no phone'}\n${serviceNames.join(', ')}\n${dateLabel} at ${appointmentTime}\nEstimated total: $${finalPrice.toFixed(2)}${discountPct > 0 ? ` (${discountLabel})` : ''}\nNotes: ${notes || 'none'}`;
+  const ownerSmsText = `📅 New booking (Pay In Person)\n${customerName} · ${customerPhone || 'no phone'}\n${serviceNames.join(', ')}\n${dateLabel} at ${appointmentTime}\nTotal: $${finalPrice.toFixed(2)}${discountPct > 0 ? ` (${discountLabel})` : ''}\nNotes: ${notes || 'none'}`;
 
   const ownerEmailHtml = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
@@ -243,7 +242,6 @@ exports.handler = async (event) => {
       </div>
     </div>`;
 
-  // ── Confirmation email to client ──────────────────────────────────────────
   const clientEmailHtml = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <div style="background:#1a1714;padding:20px 24px;border-radius:8px 8px 0 0">
@@ -253,9 +251,7 @@ exports.handler = async (event) => {
       <div style="background:#fafaf9;border:1px solid #e8e2dc;border-top:none;padding:24px;border-radius:0 0 8px 8px">
         <p style="color:#44403c;font-size:15px">Hi ${customerName.split(' ')[0] || customerName},</p>
         <p style="color:#44403c;font-size:14px;line-height:1.6">Thank you for submitting your appointment request. We'll reach out within <strong>24 hours</strong> to confirm your booking.</p>
-
         <div style="background:#fff;border:1px solid #e7e5e4;border-radius:8px;padding:16px;margin:20px 0">
-          <p style="margin:0 0 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a8a29e">Your Request</p>
           <table style="width:100%;border-collapse:collapse;font-size:14px">
             <tr><td style="padding:6px 0;color:#78716c;width:120px">Service</td><td style="padding:6px 0;font-weight:600;color:#1c1917">${serviceNames.join(', ')}</td></tr>
             <tr><td style="padding:6px 0;color:#78716c">Date</td><td style="padding:6px 0;color:#1c1917">${dateLabel}</td></tr>
@@ -263,18 +259,23 @@ exports.handler = async (event) => {
             <tr><td style="padding:6px 0;color:#78716c">Payment</td><td style="padding:6px 0;color:#b45309;font-weight:600">Due in person at appointment</td></tr>
           </table>
         </div>
-
-        <p style="color:#44403c;font-size:13px;line-height:1.6">We accept <strong>cash</strong>, <strong>Zelle</strong>, <strong>Venmo</strong>, and all major <strong>credit/debit cards</strong> in person. If you need to cancel or reschedule, please give us at least <strong>24 hours' notice</strong>.</p>
-        <p style="color:#44403c;font-size:13px;line-height:1.6">Questions? Reply to this email or call us at <a href="tel:+18137666416" style="color:#c2410c">(813) 766-6416</a>.</p>
+        <p style="color:#44403c;font-size:13px;line-height:1.6">We accept <strong>cash</strong>, <strong>Zelle</strong>, <strong>Venmo</strong>, and all major <strong>credit/debit cards</strong> in person. Cancel or reschedule with at least <strong>24 hours' notice</strong>.</p>
+        <p style="color:#44403c;font-size:13px;line-height:1.6">Questions? Reply to this email or call <a href="tel:+18137666416" style="color:#c2410c">(813) 766-6416</a>.</p>
         <p style="color:#78716c;font-size:13px;margin-top:24px">— The Bliss Dermacare Team</p>
       </div>
     </div>`;
 
-  await Promise.allSettled([
-    sendEmail({ to: ownerEmails, subject: `New Booking Request (Pay In Person) — ${customerName} · ${dateLabel}`, html: ownerEmailHtml }),
-    sendEmail({ to: customerEmail, subject: 'Your Appointment Request — Bliss Dermacare', html: clientEmailHtml }),
-    ...ownerPhones.map(phone => sendSMS(phone, smsText.substring(0, 1600))),
-  ]);
+  const clientSmsText = `Hi ${customerName.split(' ')[0]}! 💗 Your appointment request for ${serviceNames.join(', ')} on ${dateLabel} at ${appointmentTime} has been received. We'll confirm within 24 hours. Questions? (813) 766-6416 — Bliss Dermacare`;
+
+  const sends = [];
+  if (ns.notifyOwnerOnNewBooking) {
+    if (ns.ownerEmails.length) sends.push(sendEmail({ to: ns.ownerEmails, subject: `New Booking Request (Pay In Person) — ${customerName} · ${dateLabel}`, html: ownerEmailHtml }));
+    for (const phone of ns.ownerPhones) sends.push(sendSMS(phone, ownerSmsText.substring(0, 1600)));
+  }
+  if (ns.notifyClientEmailOnBooking) sends.push(sendEmail({ to: customerEmail, subject: 'Your Appointment Request — Bliss Dermacare', html: clientEmailHtml }));
+  if (ns.notifyClientSmsOnBooking && customerPhone) sends.push(sendSMS(customerPhone, clientSmsText.substring(0, 1600)));
+
+  await Promise.allSettled(sends);
 
   return {
     statusCode: 200,
