@@ -142,10 +142,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       el.querySelectorAll<HTMLInputElement>('.day-toggle').forEach(cb => {
         cb.addEventListener('change', async () => {
           const dow = Number(cb.dataset.dow);
-          const row = cb.closest('[data-dow]') as HTMLElement;
-          const hoursRow = row.querySelector('.hours-row') as HTMLElement;
-          hoursRow.classList.toggle('opacity-40', !cb.checked);
-          hoursRow.classList.toggle('pointer-events-none', !cb.checked);
+          const hoursRow = el.querySelector(`[data-dow="${dow}"] .hours-row`) as HTMLElement | null;
+          hoursRow?.classList.toggle('opacity-40', !cb.checked);
+          hoursRow?.classList.toggle('pointer-events-none', !cb.checked);
           try {
             await apiFetch('admin-availability', { method: 'PATCH', body: { day_of_week: dow, is_open: cb.checked } });
             showSaveOk(dow);
