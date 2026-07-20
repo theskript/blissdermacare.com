@@ -6,13 +6,22 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <div class="p-6 lg:p-8">
 
     <!-- Page header -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-serif font-semibold text-neutral-900">Dashboard</h1>
-      <p id="today-label" class="text-sm text-neutral-500 mt-1">Loading…</p>
+    <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Dashboard</h1>
+        <p id="today-label" class="text-sm text-neutral-500 mt-1">Loading…</p>
+      </div>
+      <a href="/admin/new-appointment"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        New Appointment
+      </a>
     </div>
 
-    <!-- Stats row (owner only) -->
-    <div id="stats-row" class="hidden grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <!-- Stats row (all roles see count; owner also sees revenue) -->
+    <div id="stats-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="bg-white rounded-2xl border border-neutral-200 p-5">
         <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Today</div>
         <div id="stat-today" class="text-3xl font-bold text-neutral-900">—</div>
@@ -23,15 +32,36 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div id="stat-week" class="text-3xl font-bold text-neutral-900">—</div>
         <div class="text-xs text-neutral-500 mt-1">appointments</div>
       </div>
-      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
+      <div id="stat-revenue-today-card" class="hidden bg-white rounded-2xl border border-neutral-200 p-5">
         <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Revenue Today</div>
         <div id="stat-revenue-today" class="text-3xl font-bold text-primary-600">—</div>
         <div class="text-xs text-neutral-500 mt-1">confirmed only</div>
       </div>
-      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
+      <div id="stat-revenue-week-card" class="hidden bg-white rounded-2xl border border-neutral-200 p-5">
         <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Revenue This Week</div>
         <div id="stat-revenue-week" class="text-3xl font-bold text-primary-600">—</div>
         <div class="text-xs text-neutral-500 mt-1">confirmed only</div>
+      </div>
+    </div>
+
+    <!-- Memberships card (owner only) -->
+    <div id="memberships-card" class="hidden bg-gradient-to-r from-primary-50 to-rose-50 border border-primary-100 rounded-2xl px-6 py-4 mb-6 flex items-center gap-6 flex-wrap">
+      <div class="flex items-center gap-2">
+        <span class="text-primary-600 text-lg">★</span>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-primary-400">Active Members</div>
+          <div id="mem-active" class="text-2xl font-bold text-primary-700">—</div>
+        </div>
+      </div>
+      <div id="mem-pastdue-wrap" class="hidden items-center gap-2">
+        <div class="w-px h-10 bg-primary-200"></div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-amber-500">Past Due</div>
+          <div id="mem-pastdue" class="text-2xl font-bold text-amber-600">—</div>
+        </div>
+      </div>
+      <div class="ml-auto">
+        <a href="/admin/clients" class="text-xs font-semibold text-primary-600 hover:text-primary-800 transition-colors">View Members →</a>
       </div>
     </div>
 
@@ -39,18 +69,21 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
       <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
         <h2 class="font-semibold text-neutral-900">Today's Schedule</h2>
-        <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">View Calendar →</a>
+        <div class="flex items-center gap-3">
+          <span id="today-count-badge" class="hidden text-xs bg-primary-100 text-primary-700 font-bold px-2.5 py-0.5 rounded-full"></span>
+          <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">Calendar →</a>
+        </div>
       </div>
       <div id="today-list" class="divide-y divide-neutral-100">
-        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading appointments…</div>
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
       </div>
     </div>
 
     <!-- Upcoming (next 7 days) -->
     <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
       <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-        <h2 class="font-semibold text-neutral-900">Upcoming (Next 7 Days)</h2>
-        <a href="/admin/new-appointment" class="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-full font-medium hover:bg-primary-700 transition-colors">+ New Booking</a>
+        <h2 class="font-semibold text-neutral-900">Upcoming — Next 7 Days</h2>
+        <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
       </div>
       <div id="upcoming-list" class="divide-y divide-neutral-100">
         <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
@@ -60,7 +93,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   </div>
 
   <!-- Appointment detail slide-over -->
-  <div id="detail-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+  <div id="detail-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[440px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
     <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
       <h3 class="font-semibold text-neutral-900">Appointment Details</h3>
       <button id="close-detail" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors">
@@ -110,23 +143,42 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     // ── Render appointment row ─────────────────────────────────────────────
     function apptRow(rec: any, showDate = false) {
       const f = rec.fields;
+      // Parse time for prominent display
+      let timeMain = f['Time'] || '—';
+      let timePeriod = '';
+      const tm = (f['Time'] || '').match(/^(\d+:\d+)\s*(AM|PM)?$/i);
+      if (tm) { timeMain = tm[1]; timePeriod = (tm[2] || '').toUpperCase(); }
+
+      const priceHtml = role === 'owner' && f['Price'] != null
+        ? `<div class="text-sm font-bold text-primary-700 shrink-0">$${Number(f['Price']).toFixed(0)}</div>`
+        : '';
+
       return `
-        <div class="px-6 py-4 hover:bg-neutral-50 transition-colors cursor-pointer appt-row" data-id="${rec.id}" data-rec='${JSON.stringify(rec).replace(/'/g, "&#39;")}'>
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || 'Unknown'}</span>
-                ${statusBadge(f['Status'])}
-              </div>
-              <div class="text-xs text-neutral-500 mt-0.5">
-                ${showDate ? `${formatDate(f['Date'])} · ` : ''}${f['Time'] || '—'} · ${(f['Services'] || '—').substring(0, 60)}${(f['Services'] || '').length > 60 ? '…' : ''}
-              </div>
-              ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
+        <div class="px-6 py-4 hover:bg-neutral-50 transition-colors cursor-pointer appt-row flex items-center gap-4" data-id="${rec.id}" data-rec='${JSON.stringify(rec).replace(/'/g, "&#39;")}'>
+          ${showDate
+            ? `<div class="text-center w-14 shrink-0">
+                <div class="text-xs font-semibold text-neutral-400">${new Date((f['Date'] || '') + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                <div class="text-sm font-bold text-neutral-700 leading-tight">${timeMain}</div>
+                <div class="text-xs text-neutral-400">${timePeriod}</div>
+              </div>`
+            : `<div class="text-center w-14 shrink-0">
+                <div class="text-xl font-bold text-neutral-900 leading-tight">${timeMain}</div>
+                <div class="text-xs text-neutral-400">${timePeriod}</div>
+              </div>`
+          }
+          <div class="w-px bg-neutral-100 self-stretch shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap mb-0.5">
+              <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || 'Unknown'}</span>
+              ${statusBadge(f['Status'])}
             </div>
-            <svg class="w-4 h-4 text-neutral-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+            <div class="text-xs text-neutral-500 truncate">${(f['Services'] || '—').substring(0, 70)}${(f['Services'] || '').length > 70 ? '…' : ''}</div>
+            ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
           </div>
+          ${priceHtml}
+          <svg class="w-4 h-4 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
         </div>`;
     }
 
@@ -218,7 +270,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 </select>
                 <button id="fill-template-btn" class="px-3 py-2 text-xs border border-neutral-300 rounded-lg text-neutral-600 hover:bg-neutral-50 transition-colors whitespace-nowrap">Use Template</button>
               </div>
-              <input id="reminder-subject" type="text" placeholder="Email subject (optional)" value="Your Appointment Reminder — Bliss Dermacare"
+              <details class="text-xs">
+                <summary class="cursor-pointer text-neutral-400 hover:text-neutral-600 select-none py-1">Override recipient (optional)</summary>
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                  <input id="reminder-override-phone" type="tel" placeholder="Alt phone (e.g. 8135550000)"
+                    class="px-2.5 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
+                  <input id="reminder-override-email" type="email" placeholder="Alt email address"
+                    class="px-2.5 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
+                </div>
+                <p class="text-neutral-400 mt-1.5 leading-snug">Leave blank to use the client's stored contact info. Filled values take priority.</p>
+              </details>
+              <input id="reminder-subject" type="text" placeholder="Email subject" value="Your Appointment Reminder — Bliss Dermacare"
                 class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
               <textarea id="reminder-message" rows="4" placeholder="Message to client…"
                 class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none resize-none"></textarea>
@@ -249,15 +311,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       // Send reminder
       document.getElementById('send-reminder-btn')?.addEventListener('click', async () => {
-        const channel = (document.getElementById('reminder-channel') as HTMLSelectElement).value;
-        const message = (document.getElementById('reminder-message') as HTMLTextAreaElement).value.trim();
-        const subject = (document.getElementById('reminder-subject') as HTMLInputElement).value.trim();
-        const msgEl   = document.getElementById('reminder-msg')!;
+        const channel       = (document.getElementById('reminder-channel') as HTMLSelectElement).value;
+        const message       = (document.getElementById('reminder-message') as HTMLTextAreaElement).value.trim();
+        const subject       = (document.getElementById('reminder-subject') as HTMLInputElement).value.trim();
+        const overridePhone = (document.getElementById('reminder-override-phone') as HTMLInputElement)?.value.trim() || '';
+        const overrideEmail = (document.getElementById('reminder-override-email') as HTMLInputElement)?.value.trim() || '';
+        const msgEl         = document.getElementById('reminder-msg')!;
         if (!message) { msgEl.textContent = 'Please enter a message.'; msgEl.classList.remove('hidden', 'text-green-600', 'text-red-500'); msgEl.classList.add('text-red-500'); return; }
         const btn = document.getElementById('send-reminder-btn') as HTMLButtonElement;
         btn.disabled = true; btn.textContent = 'Sending…';
         try {
-          const result = await apiFetch('admin-send-reminder', { method: 'POST', body: { appointmentId: rec.id, channel, message, subject } });
+          const result = await apiFetch('admin-send-reminder', { method: 'POST', body: { appointmentId: rec.id, channel, message, subject, overridePhone, overrideEmail } });
           const parts: string[] = [];
           if (result.smsSent)   parts.push('SMS sent');
           if (result.emailSent) parts.push('Email sent');
@@ -322,32 +386,60 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       document.getElementById('today-label')!.textContent = fullDateLabel(today);
 
-      const [todayData, weekData] = await Promise.all([
+      const requests: Promise<any>[] = [
         apiFetch('admin-appointments', { params: { date: today } }),
         apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
-      ]);
+      ];
+      if (role === 'owner') requests.push(apiFetch('admin-memberships').catch(() => null));
+
+      const [todayData, weekData, memData] = await Promise.all(requests);
 
       const todayRecs = todayData?.records || [];
       const weekRecs  = weekData?.records  || [];
 
-      // Stats (owner only)
+      // Stats (all roles see counts; owner also sees revenue)
+      document.getElementById('stat-today')!.textContent = String(todayRecs.length);
+      document.getElementById('stat-week')!.textContent  = String(todayRecs.length + weekRecs.length);
+
+      const todayBadge = document.getElementById('today-count-badge')!;
+      const weekBadge  = document.getElementById('week-count-badge')!;
+      if (todayRecs.length > 0) { todayBadge.textContent = String(todayRecs.length); todayBadge.classList.remove('hidden'); }
+      if (weekRecs.length > 0)  { weekBadge.textContent  = `${weekRecs.length} upcoming`; weekBadge.classList.remove('hidden'); }
+
       if (role === 'owner') {
-        const statsRow = document.getElementById('stats-row');
-        statsRow?.classList.remove('hidden');
-        statsRow?.classList.add('grid');
-        document.getElementById('stat-today')!.textContent = String(todayRecs.length);
-        document.getElementById('stat-week')!.textContent  = String(todayRecs.length + weekRecs.length);
+        document.getElementById('stat-revenue-today-card')!.classList.remove('hidden');
+        document.getElementById('stat-revenue-week-card')!.classList.remove('hidden');
         const rev = (recs: any[]) => recs
           .filter(r => r.fields['Status'] === 'Confirmed' || r.fields['Status'] === 'Completed')
           .reduce((s, r) => s + (r.fields['Price'] || 0), 0);
         document.getElementById('stat-revenue-today')!.textContent = `$${rev(todayRecs).toFixed(0)}`;
         document.getElementById('stat-revenue-week')!.textContent  = `$${rev([...todayRecs, ...weekRecs]).toFixed(0)}`;
+
+        // Memberships card
+        if (memData?.stats) {
+          const { active, past_due } = memData.stats;
+          const card = document.getElementById('memberships-card')!;
+          card.classList.remove('hidden');
+          card.classList.add('flex');
+          document.getElementById('mem-active')!.textContent = String(active);
+          if (past_due > 0) {
+            document.getElementById('mem-pastdue')!.textContent = String(past_due);
+            document.getElementById('mem-pastdue-wrap')!.classList.remove('hidden');
+            document.getElementById('mem-pastdue-wrap')!.classList.add('flex');
+          }
+        }
       }
 
       // Today list
       const todayEl = document.getElementById('today-list')!;
       if (todayRecs.length === 0) {
-        todayEl.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No appointments today 🌸</div>';
+        todayEl.innerHTML = `
+          <div class="px-6 py-10 text-center">
+            <div class="text-neutral-400 text-sm mb-3">No appointments scheduled for today 🌸</div>
+            <a href="/admin/new-appointment" class="inline-flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-700 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">
+              + Book an appointment for today
+            </a>
+          </div>`;
       } else {
         todayEl.innerHTML = todayRecs.map((r: any) => apptRow(r)).join('');
       }
@@ -355,7 +447,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       // Upcoming list
       const upcomingEl = document.getElementById('upcoming-list')!;
       if (weekRecs.length === 0) {
-        upcomingEl.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Nothing scheduled in the next 7 days.</div>';
+        upcomingEl.innerHTML = `
+          <div class="px-6 py-10 text-center">
+            <div class="text-neutral-400 text-sm mb-3">Nothing scheduled in the next 7 days.</div>
+            <a href="/admin/new-appointment" class="inline-flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-700 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">
+              + Add a booking
+            </a>
+          </div>`;
       } else {
         upcomingEl.innerHTML = weekRecs.map((r: any) => apptRow(r, true)).join('');
       }

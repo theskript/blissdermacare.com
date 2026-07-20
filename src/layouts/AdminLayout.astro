@@ -87,7 +87,7 @@ const { title, activeNav } = Astro.props;
           Clients
         </a>
         <a href="/admin/new-appointment"
-           class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeNav === 'new-appointment' ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}`}>
+           class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors mt-1 ${activeNav === 'new-appointment' ? 'bg-primary-600 text-white' : 'bg-primary-50 text-primary-700 hover:bg-primary-100'}`}>
           <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
           </svg>
@@ -133,6 +133,7 @@ const { title, activeNav } = Astro.props;
             <div id="sidebar-role" class="text-xs text-neutral-400 capitalize">—</div>
           </div>
         </div>
+        <div id="sidebar-date" class="text-xs text-neutral-400 px-2 mb-3"></div>
         <a href="/" target="_blank" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700 transition-colors mb-1">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -165,12 +166,17 @@ const { title, activeNav } = Astro.props;
             </svg>
           </button>
         </div>
-        <nav class="flex-1 px-3 py-4 space-y-0.5">
+        <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
           <a href="/admin/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Dashboard</a>
           <a href="/admin/calendar" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Calendar</a>
           <a href="/admin/clients" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Clients</a>
-          <a href="/admin/new-appointment" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">New Appointment</a>
+          <a href="/admin/new-appointment" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-primary-50 text-primary-700 hover:bg-primary-100">+ New Appointment</a>
           <a href="/admin/availability" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Availability</a>
+          <div class="mobile-owner-only hidden">
+            <div class="my-2 border-t border-neutral-100"></div>
+            <a href="/admin/staff" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Staff Management</a>
+            <a href="/admin/audit" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Audit Log</a>
+          </div>
         </nav>
         <div class="px-4 py-4 border-t border-neutral-100">
           <button id="mobile-logout-btn" class="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Log Out</button>
@@ -201,6 +207,13 @@ const { title, activeNav } = Astro.props;
     // Show owner-only nav items
     if (role === 'owner') {
       document.querySelectorAll('.owner-only-nav').forEach(el => el.classList.remove('hidden'));
+      document.querySelectorAll('.mobile-owner-only').forEach(el => el.classList.remove('hidden'));
+    }
+
+    // Current date in sidebar
+    const dateEl = document.getElementById('sidebar-date');
+    if (dateEl) {
+      dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
     // Logout

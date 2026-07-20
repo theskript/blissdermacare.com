@@ -31,6 +31,8 @@ exports.handler = async (event) => {
     channel = 'sms',
     message = '',
     subject = 'Your Appointment Reminder — Bliss Dermacare',
+    overridePhone = '',
+    overrideEmail = '',
   } = body;
 
   if (!appointmentId) {
@@ -56,10 +58,15 @@ exports.handler = async (event) => {
     if (!appt) return { statusCode: 404, headers: CORS, body: JSON.stringify({ error: 'Appointment not found' }) };
 
     const results = { smsSent: false, emailSent: false, errors: [] };
+    const phoneTarget = (overridePhone || '').replace(/\D/g,'').length >= 10
+      ? overridePhone.trim() : appt.client_phone;
+    const emailTarget = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(overrideEmail)
+      ? overrideEmail.trim() : appt.client_email;
+    const usedOverride = !!(overridePhone || overrideEmail);
 
     if (channel === 'sms' || channel === 'both') {
-      if (appt.client_phone) {
-        const r = await sendSMS(appt.client_phone, message.substring(0, 1600));
+      if (phoneTarget) {
+        const r = await sendSMS(phoneTarget, message.substring(0, 1600));
         results.smsSent = !!r;
         if (!r) results.errors.push('SMS not delivered — check Twilio configuration');
       } else {
@@ -68,9 +75,9 @@ exports.handler = async (event) => {
     }
 
     if (channel === 'email' || channel === 'both') {
-      if (appt.client_email) {
+      if (emailTarget) {
         const r = await sendEmail({
-          to: appt.client_email,
+          to: emailTarget,
           subject: subject.substring(0, 200),
           html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;line-height:1.6">${message.replace(/\n/g, '<br/>')}<br/><br/><p style="font-size:12px;color:#999;border-top:1px solid #eee;padding-top:12px;margin-top:20px">Bliss Dermacare &middot; 29007 Bridgegrove Dr, Wesley Chapel, FL 33543 &middot; (813) 766-6416</p></div>`,
           text: message,
@@ -86,7 +93,7 @@ exports.handler = async (event) => {
       action: 'Send Reminder',
       username: user.username,
       role: user.role,
-      details: `Manual ${channel} reminder for ${appt.client_name || appt.id} (${appt.date} @ ${appt.time})`,
+      details: `Manual ${channel} reminder${usedOverride ? ' (override recipient)' : ''} for ${appt.client_name || appt.id} (${appt.date} @ ${appt.time})`,
       targetId: appointmentId,
       ip,
     });
