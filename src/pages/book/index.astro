@@ -984,14 +984,14 @@ import Layout from '../../layouts/Layout.astro';
 
           <div class="bg-[#faf9f7] rounded-2xl p-6 border border-neutral-100">
             <h3 class="font-semibold text-neutral-900 mb-4">Appointment Hours</h3>
-            <div class="space-y-3 text-sm">
+            <div id="book-hours-list" class="space-y-3 text-sm">
               <div class="flex justify-between"><span class="text-neutral-600">Wednesday – Friday</span><span class="font-medium text-neutral-900">12:30 PM – 7:00 PM</span></div>
               <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">12:30 PM – 6:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Sun – Tue</span><span class="font-medium text-neutral-900">Closed</span></div>
+              <div class="flex justify-between"><span class="text-neutral-600">Sun – Tue</span><span class="font-medium text-neutral-400">Closed</span></div>
             </div>
-            <div class="mt-4 pt-4 border-t border-neutral-200 text-xs text-neutral-500">
+            <p id="book-hours-note" class="mt-4 pt-4 border-t border-neutral-200 text-xs text-neutral-500">
               Last appointment starts at 7:00 PM on weekdays, 6:00 PM on Saturdays.
-            </div>
+            </p>
           </div>
 
           <div class="bg-white rounded-2xl p-6 border border-neutral-200">
@@ -1560,6 +1560,32 @@ import Layout from '../../layouts/Layout.astro';
           if (resp.ok) { const d = await resp.json(); if (d.schedule?.length) avail = d; }
         } catch {}
         if (dateInput?.value) refreshTimeSlots();
+        // Sync sidebar hours display with live schedule
+        const hoursEl = document.getElementById('book-hours-list');
+        if (hoursEl) {
+          const { renderHoursInto } = await import('../../scripts/hoursDisplay.js');
+          renderHoursInto(hoursEl, avail.schedule);
+          // Update last-slot note
+          const noteEl = document.getElementById('book-hours-note');
+          if (noteEl) {
+            const openDays = avail.schedule.filter((s: any) => s.is_open);
+            if (openDays.length) {
+              const lastSlotTimes = openDays.map((s: any) => {
+                const [h, m] = (s.close_time || '19:00').split(':').map(Number);
+                const interval = s.slot_interval || 30;
+                const closeMins = h * 60 + m;
+                const lastMins  = closeMins - interval;
+                const lh = Math.floor(lastMins / 60);
+                const lm = lastMins % 60;
+                const p  = lh >= 12 ? 'PM' : 'AM';
+                const h12 = lh > 12 ? lh - 12 : lh === 0 ? 12 : lh;
+                return `${h12}:${String(lm).padStart(2,'0')} ${p}`;
+              });
+              const unique = [...new Set(lastSlotTimes)];
+              noteEl.textContent = `Last available appointment starts at ${unique.join(' / ')}.`;
+            }
+          }
+        }
       })();
 
       function getAvailForDate(dateStr: string) {

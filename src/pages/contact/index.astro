@@ -61,7 +61,7 @@ import Layout from '../../layouts/Layout.astro';
           </div>
           <div>
             <h3 class="font-semibold text-neutral-900 mb-4">Hours</h3>
-            <div class="space-y-2 text-sm">
+            <div id="contact-hours-list" class="space-y-2 text-sm">
               <div class="flex justify-between"><span class="text-neutral-600">Monday – Friday</span><span class="font-medium text-neutral-900">10:00 AM – 7:00 PM</span></div>
               <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">10:00 AM – 6:00 PM</span></div>
               <div class="flex justify-between"><span class="text-neutral-600">Sunday</span><span class="font-medium text-neutral-900">By request only</span></div>
@@ -86,4 +86,10 @@ import Layout from '../../layouts/Layout.astro';
       </div>
     </div>
   </section>
+
+  <script>
+    import { loadAndRenderHours } from '../../scripts/hoursDisplay.js';
+    loadAndRenderHours('contact-hours-list');
+  </script>
+
 </Layout>
