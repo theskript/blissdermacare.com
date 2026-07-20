@@ -87,6 +87,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       el.innerHTML = clients.map(c => {
         const avCls = avatarColor(c.name || c.email);
         const isSelected = (c.email || c.name) === selectedEmail;
+        const memBadge = c.membership
+          ? `<span class="mt-0.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold ${c.membership.status === 'active' ? 'bg-primary-100 text-primary-700' : 'bg-amber-100 text-amber-700'}">★ ${c.membership.status === 'active' ? 'Member' : c.membership.status}</span>`
+          : '';
         return `
           <div class="client-card flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white hover:shadow-sm border transition-all ${isSelected ? 'bg-white shadow-sm border-primary-200' : 'bg-transparent border-transparent'}"
             data-email="${c.email}" data-client='${JSON.stringify(c).replace(/'/g, "&#39;")}'>
@@ -94,7 +97,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               ${initials(c.name)}
             </div>
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold text-neutral-900 truncate">${c.name || '—'}</div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <div class="text-sm font-semibold text-neutral-900 truncate">${c.name || '—'}</div>
+                ${memBadge}
+              </div>
               <div class="text-xs text-neutral-400 truncate">${c.email || c.phone || '—'}</div>
             </div>
             <div class="text-right shrink-0">
@@ -137,6 +143,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <h3 class="text-lg font-semibold text-neutral-900">${client.name || '—'}</h3>
             ${client.email ? `<div class="text-sm text-neutral-500">${client.email}</div>` : ''}
             ${client.phone ? `<div class="text-sm text-neutral-500">${client.phone}</div>` : ''}
+            ${client.membership ? (() => {
+              const m = client.membership;
+              const isActive = m.status === 'active';
+              const statusCls = isActive ? 'bg-primary-100 text-primary-700' : m.status === 'past_due' ? 'bg-amber-100 text-amber-700' : 'bg-neutral-100 text-neutral-500';
+              const renewsLabel = m.renewsAt ? `Renews ${new Date(m.renewsAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '';
+              return `<div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${statusCls}">★ ${m.planLabel || m.plan}</span>
+                <span class="text-xs text-neutral-400 capitalize">${m.status}${renewsLabel ? ' · ' + renewsLabel : ''}</span>
+              </div>`;
+            })() : ''}
           </div>
         </div>
 

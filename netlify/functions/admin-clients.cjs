@@ -81,6 +81,44 @@ exports.handler = async (event) => {
     const clients = Array.from(clientMap.values())
       .sort((a, b) => (b.lastVisit || '').localeCompare(a.lastVisit || ''));
 
+    // Attach membership data (non-fatal if memberships table doesn't exist yet)
+    try {
+      const emails = clients.map(c => c.email.toLowerCase()).filter(Boolean);
+      if (emails.length > 0) {
+        const { data: memberships } = await getSupabase()
+          .from('memberships')
+          .select('email,plan,plan_label,status,current_period_end,stripe_subscription_id')
+          .in('email', emails);
+
+        if (memberships?.length) {
+          // Build a map: email → most relevant membership (active first, then latest)
+          const memMap = new Map();
+          for (const m of memberships) {
+            const key = (m.email || '').toLowerCase();
+            const existing = memMap.get(key);
+            // Prefer active > past_due > others; if same priority keep existing
+            const priority = (s) => s === 'active' ? 0 : s === 'past_due' ? 1 : 2;
+            if (!existing || priority(m.status) < priority(existing.status)) {
+              memMap.set(key, m);
+            }
+          }
+          for (const c of clients) {
+            const m = memMap.get(c.email.toLowerCase());
+            if (m) {
+              c.membership = {
+                plan:       m.plan,
+                planLabel:  m.plan_label,
+                status:     m.status,
+                renewsAt:   m.current_period_end,
+              };
+            }
+          }
+        }
+      }
+    } catch (memErr) {
+      console.warn('Memberships query failed (non-fatal):', memErr.message);
+    }
+
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ clients, total: clients.length }) };
   } catch (err) {
     console.error('admin-clients error:', err);
