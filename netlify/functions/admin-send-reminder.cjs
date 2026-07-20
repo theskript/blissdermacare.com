@@ -79,7 +79,7 @@ exports.handler = async (event) => {
         const r = await sendEmail({
           to: emailTarget,
           subject: subject.substring(0, 200),
-          html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;line-height:1.6">${message.replace(/\n/g, '<br/>')}<br/><br/><p style="font-size:12px;color:#999;border-top:1px solid #eee;padding-top:12px;margin-top:20px">Bliss Dermacare &middot; 29007 Bridgegrove Dr, Wesley Chapel, FL 33543 &middot; (813) 766-6416</p></div>`,
+          html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;line-height:1.6">${message.replace(/\n/g, '<br/>')}<br/><br/><p style="font-size:12px;color:#999;border-top:1px solid #eee;padding-top:12px;margin-top:20px">Bliss Dermacare &middot; 8905 Regents Park Dr, Tampa, FL 33647 &middot; (813) 766-6416</p></div>`,
           text: message,
         });
         results.emailSent = !!r;

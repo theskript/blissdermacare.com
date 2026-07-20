@@ -36,7 +36,7 @@ exports.handler = async () => {
         `Hi ${firstName}! 💗 A friendly reminder from Bliss Dermacare — ` +
         `you have an appointment tomorrow, ${dateLabel} at ${row.time || 'your scheduled time'} ` +
         `for ${row.services || 'your appointment'}. ` +
-        `We're at 29007 Bridgegrove Dr, Wesley Chapel, FL 33543. ` +
+        `We're at 8905 Regents Park Dr, Tampa, FL 33647. ` +
         `Questions? Call or text (813) 766-6416. See you soon!`;
       const emailHtml =
         `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;line-height:1.6">` +
@@ -45,7 +45,7 @@ exports.handler = async () => {
         `<p>This is a friendly reminder that you have an appointment <strong>tomorrow, ${dateLabel}</strong>` +
         ` at <strong>${row.time || 'your scheduled time'}</strong>` +
         ` for <strong>${row.services || 'your appointment'}</strong>.</p>` +
-        `<p>📍 <strong>29007 Bridgegrove Dr, Wesley Chapel, FL 33543</strong></p>` +
+        `<p>📍 <strong>8905 Regents Park Dr, Tampa, FL 33647</strong></p>` +
         `<p>Questions? Call or text us at <strong>(813) 766-6416</strong>. We look forward to seeing you!</p>` +
         `<p style="color:#999;font-size:12px;margin-top:24px;border-top:1px solid #eee;padding-top:12px">Bliss Dermacare &middot; Wesley Chapel, FL</p></div>`;
       try {

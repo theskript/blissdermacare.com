@@ -246,7 +246,7 @@ exports.handler = async (event) => {
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <div style="background:#1a1714;padding:20px 24px;border-radius:8px 8px 0 0">
         <h1 style="color:#f0ebe6;font-size:22px;margin:0">Booking Request Received</h1>
-        <p style="color:#9e9590;font-size:13px;margin:6px 0 0">Bliss Dermacare · Pebble Creek, FL</p>
+        <p style="color:#9e9590;font-size:13px;margin:6px 0 0">Bliss Dermacare · Tampa, FL</p>
       </div>
       <div style="background:#fafaf9;border:1px solid #e8e2dc;border-top:none;padding:24px;border-radius:0 0 8px 8px">
         <p style="color:#44403c;font-size:15px">Hi ${customerName.split(' ')[0] || customerName},</p>

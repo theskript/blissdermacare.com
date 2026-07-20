@@ -41,14 +41,14 @@ exports.handler = async () => {
       const smsBody =
         `Hi ${firstName}! Quick reminder — your Bliss Dermacare appointment is in about 2 hours ` +
         `(${row.time} today) for ${row.services || 'your appointment'}. ` +
-        `We're at 29007 Bridgegrove Dr, Wesley Chapel, FL 33543. See you soon! 💗`;
+        `We're at 8905 Regents Park Dr, Tampa, FL 33647. See you soon! 💗`;
       const emailHtml =
         `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;line-height:1.6">` +
         `<h2 style="font-size:18px;color:#c26b7a;margin-bottom:8px">Your appointment is in ~2 hours!</h2>` +
         `<p>Hi ${firstName},</p>` +
         `<p>Just a reminder that your appointment is coming up <strong>today at ${row.time}</strong>` +
         ` for <strong>${row.services || 'your appointment'}</strong>.</p>` +
-        `<p>📍 <strong>29007 Bridgegrove Dr, Wesley Chapel, FL 33543</strong></p>` +
+        `<p>📍 <strong>8905 Regents Park Dr, Tampa, FL 33647</strong></p>` +
         `<p>See you soon! Call or text (813) 766-6416 if you need anything.</p>` +
         `<p style="color:#999;font-size:12px;margin-top:24px;border-top:1px solid #eee;padding-top:12px">Bliss Dermacare &middot; Wesley Chapel, FL</p></div>`;
       try {
