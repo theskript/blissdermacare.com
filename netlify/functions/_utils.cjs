@@ -153,32 +153,31 @@ function requireAuth(event, requiredRole = null) {
   return decoded;
 }
 
-// ── Twilio SMS ────────────────────────────────────────────────────────────────
+// ── Sendblue SMS ─────────────────────────────────────────────────────────────
 
 async function sendSMS(to, body) {
-  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER } = process.env;
-  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_FROM_NUMBER) {
-    console.warn('[SMS] Twilio not configured — skipping SMS to', to);
+  const { SENDBLUE_API_KEY, SENDBLUE_API_SECRET, SENDBLUE_FROM_NUMBER } = process.env;
+  if (!SENDBLUE_API_KEY || !SENDBLUE_API_SECRET || !SENDBLUE_FROM_NUMBER) {
+    console.warn('[SMS] Sendblue not configured — skipping SMS to', to);
     return null;
   }
   const digits = String(to).replace(/\D/g, '');
   const phone = digits.startsWith('1') ? `+${digits}` : `+1${digits}`;
-  const auth = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64');
-  const res = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ To: phone, From: TWILIO_FROM_NUMBER, Body: body }).toString(),
-    }
-  );
+  const res = await fetch('https://api.sendblue.co/api/send-message', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'sb-api-key-id': SENDBLUE_API_KEY,
+      'sb-api-secret-key': SENDBLUE_API_SECRET,
+    },
+    body: JSON.stringify({ number: phone, from_number: SENDBLUE_FROM_NUMBER, content: body }),
+  });
   const data = await res.json();
   if (!res.ok) {
-    console.error(`[SMS] Twilio error → ${phone}:`, JSON.stringify(data));
-    // Return error details so callers can surface them
-    return { ok: false, error: data.message || 'Unknown Twilio error', code: data.code, status: data.status };
+    console.error(`[SMS] Sendblue error → ${phone}:`, JSON.stringify(data));
+    return { ok: false, error: data.message || 'Unknown Sendblue error', code: data.error_code, status: data.status };
   }
-  return { ok: true, sid: data.sid, status: data.status };
+  return { ok: true, sid: data.message_id, status: data.status };
 }
 
 // ── SendGrid Email ────────────────────────────────────────────────────────────
