@@ -9,13 +9,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <h1 class="text-2xl font-serif font-semibold text-neutral-900">Pre-Service Forms</h1>
         <p id="psf-count-label" class="text-sm text-neutral-500 mt-1">Loading…</p>
       </div>
-      <a href="/pre-service-form/" target="_blank"
-        class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-700 text-sm font-medium rounded-xl transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-        </svg>
-        Public Form
-      </a>
+      <div class="flex items-center gap-3 flex-wrap">
+        <button id="psf-mark-all-btn"
+          class="hidden px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
+          ✓ Mark All as Read
+        </button>
+        <a href="/pre-service-form/" target="_blank"
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-700 text-sm font-medium rounded-xl transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          Public Form
+        </a>
+      </div>
     </div>
 
     <!-- Filters -->
@@ -96,23 +102,21 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       try {
         const data = await apiFetch('admin-pre-service-forms', { params });
         fullRecords = data?.records || [];
-        allRecords = fullRecords.filter((r: any) => {
+        allRecords  = fullRecords.filter((r: any) => {
           if (!search) return true;
           return (r.name || '').toLowerCase().includes(search) || (r.email || '').toLowerCase().includes(search);
         });
 
         document.getElementById('psf-count-label')!.textContent = `${allRecords.length} submission${allRecords.length !== 1 ? 's' : ''}`;
 
-        // Unread badge (null read_at = unread)
+        // Unread badge
         const unreadCount = fullRecords.filter((r: any) => !r.read_at).length;
         const badgeEl = document.getElementById('psf-new-badge')!;
-        if (unreadCount > 0) {
-          document.getElementById('psf-new-count')!.textContent = String(unreadCount);
-          badgeEl.classList.remove('hidden');
-          badgeEl.classList.add('inline-flex');
-        } else {
-          badgeEl.classList.add('hidden');
-        }
+        document.getElementById('psf-new-count')!.textContent = String(unreadCount);
+        if (unreadCount > 0) { badgeEl.classList.remove('hidden'); badgeEl.classList.add('inline-flex'); } else { badgeEl.classList.add('hidden'); }
+        // Show/hide mark-all button
+        const markAllBtn = document.getElementById('psf-mark-all-btn') as HTMLButtonElement | null;
+        if (markAllBtn) { if (unreadCount > 0) markAllBtn.classList.remove('hidden'); else markAllBtn.classList.add('hidden'); }
 
         render();
       } catch (err: any) {
@@ -259,6 +263,13 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <div class="flex gap-2 flex-wrap mt-3">
             <a href="/admin/clients?email=${encodeURIComponent(r.email || '')}" class="text-xs text-primary-600 hover:underline font-medium">View client profile →</a>
           </div>
+        </div>
+        <div class="pt-3 border-t border-neutral-100">
+          <button id="psf-delete-btn"
+            class="w-full py-2.5 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">
+            Delete Submission
+          </button>
+          <div id="psf-delete-msg" class="text-xs text-center text-red-500 hidden mt-2"></div>
         </div>`;
 
       // Mark as read / unread toggle
@@ -267,25 +278,38 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         btn.disabled = true; btn.textContent = 'Saving…';
         try {
           await apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { id: r.id, read: isUnread } });
-          // Update local record and re-open
           r.read_at = isUnread ? new Date().toISOString() : null;
-          // Update fullRecords too
           const idx = fullRecords.findIndex(rec => rec.id === r.id);
           if (idx >= 0) fullRecords[idx] = { ...fullRecords[idx], read_at: r.read_at };
           const aidx = allRecords.findIndex(rec => rec.id === r.id);
           if (aidx >= 0) allRecords[aidx] = { ...allRecords[aidx], read_at: r.read_at };
-          // Refresh unread badge
-          const unreadCount = fullRecords.filter(rec => !rec.read_at).length;
-          const badgeEl = document.getElementById('psf-new-badge')!;
-          document.getElementById('psf-new-count')!.textContent = String(unreadCount);
-          if (unreadCount > 0) { badgeEl.classList.remove('hidden'); badgeEl.classList.add('inline-flex'); }
-          else { badgeEl.classList.add('hidden'); }
+          refreshUnreadBadge();
           render();
-          openDetail(r); // re-render the detail panel with updated state
+          openDetail(r);
         } catch (err: any) {
           btn.disabled = false;
           btn.textContent = isUnread ? '✓ Mark as Read' : '↩ Mark as Unread';
           alert(`Failed: ${err.message}`);
+        }
+      });
+
+      // Delete submission
+      document.getElementById('psf-delete-btn')?.addEventListener('click', async () => {
+        if (!confirm(`Delete the form submitted by ${r.name || r.email || 'this client'}? This cannot be undone.`)) return;
+        const btn = document.getElementById('psf-delete-btn') as HTMLButtonElement;
+        btn.disabled = true; btn.textContent = 'Deleting…';
+        try {
+          await apiFetch('admin-pre-service-forms', { method: 'DELETE', body: { id: r.id } });
+          fullRecords = fullRecords.filter(rec => rec.id !== r.id);
+          allRecords  = allRecords.filter(rec  => rec.id !== r.id);
+          document.getElementById('psf-count-label')!.textContent = `${allRecords.length} submission${allRecords.length !== 1 ? 's' : ''}`;
+          refreshUnreadBadge();
+          render();
+          closeDetail();
+        } catch (err: any) {
+          btn.disabled = false; btn.textContent = 'Delete Submission';
+          const msg = document.getElementById('psf-delete-msg')!;
+          msg.textContent = `Error: ${err.message}`; msg.classList.remove('hidden');
         }
       });
 
@@ -301,6 +325,36 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     }
     document.getElementById('psf-close-detail')?.addEventListener('click', closeDetail);
     document.getElementById('psf-detail-overlay')?.addEventListener('click', closeDetail);
+
+    // ── Shared: refresh unread badge ────────────────────────────────────────
+    function refreshUnreadBadge() {
+      const unreadCount = fullRecords.filter(rec => !rec.read_at).length;
+      const badgeEl = document.getElementById('psf-new-badge')!;
+      document.getElementById('psf-new-count')!.textContent = String(unreadCount);
+      if (unreadCount > 0) { badgeEl.classList.remove('hidden'); badgeEl.classList.add('inline-flex'); }
+      else { badgeEl.classList.add('hidden'); }
+      // Show/hide Mark All button
+      const markAllBtn = document.getElementById('psf-mark-all-btn') as HTMLButtonElement | null;
+      if (markAllBtn) {
+        if (unreadCount > 0) markAllBtn.classList.remove('hidden');
+        else markAllBtn.classList.add('hidden');
+      }
+    }
+
+    // ── Mark All as Read ─────────────────────────────────────────────────
+    document.getElementById('psf-mark-all-btn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('psf-mark-all-btn') as HTMLButtonElement;
+      btn.disabled = true; btn.textContent = 'Marking…';
+      try {
+        await apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { readAll: true } });
+        const now = new Date().toISOString();
+        fullRecords = fullRecords.map(r => r.read_at ? r : { ...r, read_at: now });
+        allRecords  = allRecords.map(r  => r.read_at ? r : { ...r, read_at: now });
+        refreshUnreadBadge();
+        render();
+      } catch (err: any) { alert(`Failed: ${err.message}`); }
+      finally { btn.disabled = false; btn.textContent = '✓ Mark All as Read'; }
+    });
 
     // ── Filters ───────────────────────────────────────────────────────────────
     document.getElementById('psf-load-btn')?.addEventListener('click', load);

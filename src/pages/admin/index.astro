@@ -21,56 +21,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
 
     <!-- ⚡ Needs-action inbox -->
-    <div id="inbox-section" class="hidden mb-6 space-y-3">
-    </div>
-
-    <!-- Stats row (all roles see count; owner also sees revenue) -->
-    <div id="stats-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
-        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Today</div>
-        <div id="stat-today" class="text-3xl font-bold text-neutral-900">—</div>
-        <div class="text-xs text-neutral-500 mt-1">appointments</div>
-      </div>
-      <div class="bg-white rounded-2xl border border-neutral-200 p-5">
-        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">This Week</div>
-        <div id="stat-week" class="text-3xl font-bold text-neutral-900">—</div>
-        <div class="text-xs text-neutral-500 mt-1">appointments</div>
-      </div>
-      <div id="stat-revenue-today-card" class="hidden bg-white rounded-2xl border border-neutral-200 p-5">
-        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Revenue Today</div>
-        <div id="stat-revenue-today" class="text-3xl font-bold text-primary-600">—</div>
-        <div class="text-xs text-neutral-500 mt-1">confirmed only</div>
-      </div>
-      <div id="stat-revenue-week-card" class="hidden bg-white rounded-2xl border border-neutral-200 p-5">
-        <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Revenue This Week</div>
-        <div id="stat-revenue-week" class="text-3xl font-bold text-primary-600">—</div>
-        <div class="text-xs text-neutral-500 mt-1">confirmed only</div>
-      </div>
-    </div>
-
-    <!-- Memberships card (owner only) -->
-    <div id="memberships-card" class="hidden bg-gradient-to-r from-primary-50 to-rose-50 border border-primary-100 rounded-2xl px-6 py-4 mb-6 flex items-center gap-6 flex-wrap">
-      <div class="flex items-center gap-2">
-        <span class="text-primary-600 text-lg">★</span>
-        <div>
-          <div class="text-xs font-semibold uppercase tracking-widest text-primary-400">Active Members</div>
-          <div id="mem-active" class="text-2xl font-bold text-primary-700">—</div>
-        </div>
-      </div>
-      <div id="mem-pastdue-wrap" class="hidden items-center gap-2">
-        <div class="w-px h-10 bg-primary-200"></div>
-        <div>
-          <div class="text-xs font-semibold uppercase tracking-widest text-amber-500">Past Due</div>
-          <div id="mem-pastdue" class="text-2xl font-bold text-amber-600">—</div>
-        </div>
-      </div>
-      <div class="ml-auto">
-        <a href="/admin/clients" class="text-xs font-semibold text-primary-600 hover:text-primary-800 transition-colors">View Members →</a>
-      </div>
+    <div id="inbox-section" class="hidden mb-5 space-y-2">
     </div>
 
     <!-- Today's appointments -->
-    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-4">
       <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
         <h2 class="font-semibold text-neutral-900">Today's Schedule</h2>
         <div class="flex items-center gap-3">
@@ -79,14 +34,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </div>
       </div>
       <div id="today-list" class="divide-y divide-neutral-100">
-        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+        <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
       </div>
     </div>
 
     <!-- Upcoming (next 7 days) -->
     <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
       <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-        <h2 class="font-semibold text-neutral-900">Upcoming — Next 7 Days</h2>
+        <h2 class="font-semibold text-neutral-900">Next 7 Days</h2>
         <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
       </div>
       <div id="upcoming-list" class="divide-y divide-neutral-100">
@@ -400,16 +355,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         apiFetch('admin-appointments', { params: { date: today } }),
         apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
         apiFetch('admin-appointments', { params: { status: 'Pending Confirmation' } }),
-        apiFetch('admin-pre-service-forms', { params: { since: since48h, limit: '20' } }).catch(() => null),
+        apiFetch('admin-pre-service-forms', { params: { unread: 'true', limit: '100' } }).catch(() => null),
       ];
-      if (role === 'owner') requests.push(apiFetch('admin-memberships').catch(() => null));
 
-      const [todayData, weekData, pendingData, recentPSFData, memData] = await Promise.all(requests);
+      const [todayData, weekData, pendingData, unreadPSFData] = await Promise.all(requests);
 
       const todayRecs   = todayData?.records   || [];
       const weekRecs    = weekData?.records    || [];
       const pendingRecs = pendingData?.records || [];
-      const recentPSFs  = recentPSFData?.records || [];
+      const unreadPSFs  = unreadPSFData?.records || [];
 
       // ── Inbox: needs-attention alerts ──────────────────────────────────────
       const inboxEl = document.getElementById('inbox-section')!;
@@ -417,7 +371,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       if (pendingRecs.length > 0) {
         inboxItems.push(`
-          <a href="/admin/calendar" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3.5 hover:bg-amber-100 transition-colors">
+          <a href="/admin/appointments" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3.5 hover:bg-amber-100 transition-colors">
             <div class="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center shrink-0">
               <span class="text-amber-800 text-base font-bold">${pendingRecs.length}</span>
             </div>
@@ -429,15 +383,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </a>`);
       }
 
-      if (recentPSFs.length > 0) {
+      if (unreadPSFs.length > 0) {
         inboxItems.push(`
-          <a href="/admin/clients" class="flex items-center gap-4 bg-blue-50 border border-blue-200 rounded-2xl px-5 py-3.5 hover:bg-blue-100 transition-colors">
+          <a href="/admin/pre-service-forms" class="flex items-center gap-4 bg-blue-50 border border-blue-200 rounded-2xl px-5 py-3.5 hover:bg-blue-100 transition-colors">
             <div class="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center shrink-0">
-              <span class="text-blue-800 text-base font-bold">${recentPSFs.length}</span>
+              <span class="text-blue-800 text-base font-bold">${unreadPSFs.length}</span>
             </div>
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold text-blue-900">New pre-service form${recentPSFs.length !== 1 ? 's' : ''} (last 48 h)</div>
-              <div class="text-xs text-blue-700 truncate">${recentPSFs.map((r: any) => r.name || '?').slice(0, 4).join(', ')}${recentPSFs.length > 4 ? ` +${recentPSFs.length - 4} more` : ''}</div>
+              <div class="text-sm font-semibold text-blue-900">${unreadPSFs.length} unread pre-service form${unreadPSFs.length !== 1 ? 's' : ''}</div>
+              <div class="text-xs text-blue-700 truncate">${unreadPSFs.map((r: any) => r.name || '?').slice(0, 4).join(', ')}${unreadPSFs.length > 4 ? ` +${unreadPSFs.length - 4} more` : ''}</div>
             </div>
             <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </a>`);
@@ -450,38 +404,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         inboxEl.classList.add('hidden');
       }
 
-      // Stats (all roles see counts; owner also sees revenue)
-      document.getElementById('stat-today')!.textContent = String(todayRecs.length);
-      document.getElementById('stat-week')!.textContent  = String(todayRecs.length + weekRecs.length);
-
+      // Count badges
       const todayBadge = document.getElementById('today-count-badge')!;
       const weekBadge  = document.getElementById('week-count-badge')!;
       if (todayRecs.length > 0) { todayBadge.textContent = String(todayRecs.length); todayBadge.classList.remove('hidden'); }
       if (weekRecs.length > 0)  { weekBadge.textContent  = `${weekRecs.length} upcoming`; weekBadge.classList.remove('hidden'); }
-
-      if (role === 'owner') {
-        document.getElementById('stat-revenue-today-card')!.classList.remove('hidden');
-        document.getElementById('stat-revenue-week-card')!.classList.remove('hidden');
-        const rev = (recs: any[]) => recs
-          .filter(r => r.fields['Status'] === 'Confirmed' || r.fields['Status'] === 'Completed')
-          .reduce((s, r) => s + (r.fields['Price'] || 0), 0);
-        document.getElementById('stat-revenue-today')!.textContent = `$${rev(todayRecs).toFixed(0)}`;
-        document.getElementById('stat-revenue-week')!.textContent  = `$${rev([...todayRecs, ...weekRecs]).toFixed(0)}`;
-
-        // Memberships card
-        if (memData?.stats) {
-          const { active, past_due } = memData.stats;
-          const card = document.getElementById('memberships-card')!;
-          card.classList.remove('hidden');
-          card.classList.add('flex');
-          document.getElementById('mem-active')!.textContent = String(active);
-          if (past_due > 0) {
-            document.getElementById('mem-pastdue')!.textContent = String(past_due);
-            document.getElementById('mem-pastdue-wrap')!.classList.remove('hidden');
-            document.getElementById('mem-pastdue-wrap')!.classList.add('flex');
-          }
-        }
-      }
 
       // Today list
       const todayEl = document.getElementById('today-list')!;
