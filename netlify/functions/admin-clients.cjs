@@ -78,8 +78,63 @@ exports.handler = async (event) => {
       });
     }
 
+    // ── Merge pre-service form submissions ───────────────────────────────────
+    // Pull every form entry so we can (a) add clients not yet in appointments
+    // and (b) attach questionnaire data to existing clients.
+    try {
+      let formQuery = getSupabase()
+        .from('pre_service_forms')
+        .select('name,email,phone,appointment_date,skin_conditions,allergies,medical_history,medications,recent_treatments,created_at')
+        .order('created_at', { ascending: false });
+
+      if (search) {
+        formQuery = formQuery.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+      }
+
+      const { data: forms } = await formQuery;
+
+      for (const form of (forms || [])) {
+        const email = (form.email || '').toLowerCase().trim();
+        const key   = email || (form.name || '').toLowerCase().trim();
+        if (!key) continue;
+
+        if (!clientMap.has(key)) {
+          // Client exists only in questionnaires — no booked appointment yet
+          clientMap.set(key, {
+            email:        form.email || '',
+            name:         (form.name || '').trim(),
+            phone:        form.phone || '',
+            source:       'form',
+            totalVisits:  0,
+            firstVisit:   null,
+            lastVisit:    null,
+            appointments: [],
+          });
+        }
+
+        const c = clientMap.get(key);
+        // Fill in missing contact info from the form
+        if (!c.phone && form.phone) c.phone = form.phone;
+        if (!c.name  && form.name)  c.name  = form.name.trim();
+
+        // Attach the most recent questionnaire (forms are ordered desc by created_at)
+        if (!c.questionnaire) {
+          c.questionnaire = {
+            skinConditions:   form.skin_conditions   || [],
+            allergies:        form.allergies         || null,
+            medicalHistory:   form.medical_history   || [],
+            medications:      form.medications       || null,
+            recentTreatments: form.recent_treatments || null,
+            submittedAt:      form.created_at        || null,
+          };
+        }
+      }
+    } catch (formErr) {
+      console.warn('pre_service_forms query failed (non-fatal):', formErr.message);
+    }
+
     const clients = Array.from(clientMap.values())
-      .sort((a, b) => (b.lastVisit || '').localeCompare(a.lastVisit || ''));
+      .sort((a, b) => (b.lastVisit || b.questionnaire?.submittedAt || '').localeCompare(a.lastVisit || a.questionnaire?.submittedAt || ''));
 
     // Attach membership data (non-fatal if memberships table doesn't exist yet)
     try {

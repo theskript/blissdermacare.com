@@ -23,6 +23,7 @@
   "description": "Modern aesthetician services website built with Astro and StudioCMS",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "csv-parse": "^7.0.1",
     "dotenv": "^17.4.2"
   }
 }

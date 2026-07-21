@@ -16,14 +16,19 @@ import Layout from '../../layouts/Layout.astro';
   <!-- Form Section -->
   <section class="py-14 bg-white">
     <div class="max-w-4xl mx-auto px-6">
-      <form
-        name="pre-service-questionnaire"
-        method="POST"
-        data-netlify="true"
-        action="/pre-service-form/?submitted=true"
-        class="space-y-10"
-      >
-        <input type="hidden" name="form-name" value="pre-service-questionnaire" />
+      <!-- Success banner (hidden until submission) -->
+      <div id="psf-success" class="hidden mb-8 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+        <svg class="w-10 h-10 mx-auto mb-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h2 class="text-lg font-semibold text-emerald-800 mb-1">Form submitted successfully!</h2>
+        <p class="text-sm text-emerald-700">Thank you. We've received your questionnaire and look forward to seeing you.</p>
+      </div>
+
+      <!-- Error banner (hidden until submission error) -->
+      <div id="psf-error" class="hidden mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl">
+        <p id="psf-error-msg" class="text-sm text-red-700 text-center">Something went wrong. Please try again.</p>
+      </div>
+
+      <form id="psf-form" class="space-y-10">
 
         <!-- Client Information -->
         <div class="space-y-5">
@@ -461,8 +466,8 @@ import Layout from '../../layouts/Layout.astro';
 
         <!-- Submit Button -->
         <div class="pt-6 border-t border-neutral-200">
-          <button type="submit" 
-            class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 rounded-xl transition-colors duration-200">
+          <button id="psf-submit" type="submit"
+            class="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-semibold py-4 rounded-xl transition-colors duration-200">
             Submit Pre-Service Questionnaire
           </button>
           <p class="text-xs text-neutral-500 text-center mt-3">Required fields marked with *</p>
@@ -508,27 +513,23 @@ import Layout from '../../layouts/Layout.astro';
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const ageRadios = document.querySelectorAll('input[name="age_category"]');
-    const teenSection = document.getElementById('teen-section') as HTMLElement | null;
+    // ── Age section toggle ─────────────────────────────────────────────────
+    const ageRadios    = document.querySelectorAll('input[name="age_category"]');
+    const teenSection  = document.getElementById('teen-section')  as HTMLElement | null;
     const adultSection = document.getElementById('adult-section') as HTMLElement | null;
     const guardianInputs = document.querySelectorAll<HTMLInputElement>('#teen-section input, #teen-section select');
 
     function updateAgeDisplay() {
       const selectedAge = document.querySelector('input[name="age_category"]:checked') as HTMLInputElement | null;
-      
       if (selectedAge?.value === 'under-18') {
         teenSection?.classList.remove('hidden');
         adultSection?.classList.add('hidden');
-        // Make guardian fields required
         guardianInputs.forEach(input => {
-          if (input.name.startsWith('guardian_') && input.type !== 'checkbox') {
-            input.required = true;
-          }
+          if (input.name.startsWith('guardian_') && input.type !== 'checkbox') input.required = true;
         });
       } else if (selectedAge?.value === '18-plus') {
         teenSection?.classList.add('hidden');
         adultSection?.classList.remove('hidden');
-        // Remove required from guardian fields
         guardianInputs.forEach(input => {
           if (input.name.startsWith('guardian_') && input.type !== 'checkbox') {
             input.required = false;
@@ -537,12 +538,60 @@ import Layout from '../../layouts/Layout.astro';
         });
       }
     }
-
-    ageRadios.forEach(radio => {
-      radio.addEventListener('change', updateAgeDisplay);
-    });
-
-    // Initial check
+    ageRadios.forEach(r => r.addEventListener('change', updateAgeDisplay));
     updateAgeDisplay();
+
+    // ── Form submission → Supabase via Netlify function ────────────────────
+    const form       = document.getElementById('psf-form')      as HTMLFormElement | null;
+    const submitBtn  = document.getElementById('psf-submit')    as HTMLButtonElement | null;
+    const successEl  = document.getElementById('psf-success')   as HTMLElement | null;
+    const errorEl    = document.getElementById('psf-error')     as HTMLElement | null;
+    const errorMsg   = document.getElementById('psf-error-msg') as HTMLElement | null;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form) return;
+
+      // Hide previous banners
+      successEl?.classList.add('hidden');
+      errorEl?.classList.add('hidden');
+
+      // Collect form fields into a plain object
+      const fd = new FormData(form);
+      const body: Record<string, string | string[]> = {};
+
+      // Multi-value fields (checkboxes with same name)
+      const multiFields = ['skin_conditions', 'medical_history', 'skin_prep', 'recent_treatments'];
+
+      for (const key of new Set(fd.keys())) {
+        if (multiFields.includes(key)) {
+          body[key] = fd.getAll(key) as string[];
+        } else {
+          body[key] = fd.get(key) as string;
+        }
+      }
+
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+      try {
+        const res = await fetch('/.netlify/functions/pre-service-form', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(body),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Submission failed');
+
+        // Success
+        form.classList.add('hidden');
+        successEl?.classList.remove('hidden');
+        successEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err: any) {
+        if (errorMsg) errorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+        errorEl?.classList.remove('hidden');
+        errorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Pre-Service Questionnaire'; }
+      }
+    });
   });
 </script>

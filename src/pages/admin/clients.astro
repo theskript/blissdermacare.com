@@ -202,7 +202,49 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 </div>`;
             }).join('')
           }
-        </div>`;
+        </div>
+
+        ${client.questionnaire ? (() => {
+          const q = client.questionnaire;
+          const submittedDate = q.submittedAt ? new Date(q.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+
+          function pill(label: string, cls: string) {
+            return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${cls}">${label}</span>`;
+          }
+
+          const skinPills = (q.skinConditions || []).map((s: string) => {
+            const map: Record<string, string> = { acne: 'bg-amber-100 text-amber-700', eczema: 'bg-orange-100 text-orange-700', psoriasis: 'bg-purple-100 text-purple-700', rosacea: 'bg-rose-100 text-rose-700', sunburn: 'bg-yellow-100 text-yellow-700', open_wounds: 'bg-red-100 text-red-700' };
+            return pill(s.replace('_', ' '), map[s] || 'bg-neutral-100 text-neutral-600');
+          }).join(' ');
+
+          const medPills = (q.medicalHistory || []).map((m: string) => {
+            const map: Record<string, string> = { pregnant: 'bg-pink-100 text-pink-700', chemotherapy: 'bg-red-100 text-red-700', blood_disorder: 'bg-red-100 text-red-700', recent_surgery: 'bg-orange-100 text-orange-700', epilepsy: 'bg-purple-100 text-purple-700', none: 'bg-neutral-100 text-neutral-400' };
+            return pill(m.replace('_', ' '), map[m] || 'bg-neutral-100 text-neutral-600');
+          }).join(' ');
+
+          function row(label: string, content: string) {
+            return `<div class="flex gap-2 py-2 border-b border-neutral-50 last:border-0">
+              <span class="text-xs text-neutral-400 w-32 shrink-0 pt-0.5">${label}</span>
+              <span class="text-xs text-neutral-700 flex-1 flex flex-wrap gap-1">${content || '<span class="text-neutral-300">—</span>'}</span>
+            </div>`;
+          }
+
+          return `
+            <div class="px-6 pt-4 pb-5 border-t border-neutral-100 bg-neutral-50/60">
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-semibold text-neutral-900">Pre-Service Questionnaire</h4>
+                ${submittedDate ? `<span class="text-xs text-neutral-400">Submitted ${submittedDate}</span>` : ''}
+              </div>
+              <div class="space-y-0">
+                ${row('Skin conditions', skinPills)}
+                ${row('Allergies', q.allergies ? `<span class="text-xs text-neutral-700">${q.allergies}</span>` : '')}
+                ${row('Medical history', medPills)}
+                ${row('Medications', q.medications ? `<span class="text-xs text-neutral-700">${q.medications}</span>` : '')}
+                ${row('Recent treatments', q.recentTreatments && q.recentTreatments !== 'none' ? q.recentTreatments : '')}
+              </div>
+            </div>`;
+        })() : ''}
+        `;
     }
 
     // ── Search ────────────────────────────────────────────────────────────────
