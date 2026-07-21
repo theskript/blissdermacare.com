@@ -154,19 +154,65 @@ function requireAuth(event, requiredRole = null) {
 }
 
 // ── Salesmsg SMS ─────────────────────────────────────────────────────────────
-// Flow: find/create contact → get/create conversation → send message
+// Flow: auto-refresh token → find/create contact → get/create conversation → send message
+
+const SALESMSG_BASE = 'https://api.salesmessage.com/pub/v2.2';
+
+// Returns a valid Salesmsg token, refreshing via Supabase if expiring within 12h
+async function getSalesmsgToken() {
+  const seedToken = process.env.SALESMSG_API_KEY;
+  if (!seedToken) return null;
+
+  // Try to load stored token from Supabase
+  let token = seedToken;
+  try {
+    const { data } = await getSupabase()
+      .from('settings')
+      .select('value')
+      .eq('key', 'salesmsg_token')
+      .single();
+    if (data?.value) token = data.value;
+  } catch (_) { /* table may not exist yet — fall back to env var */ }
+
+  // Check expiry; refresh if within 12 hours
+  try {
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const secsLeft = payload.exp - Math.floor(Date.now() / 1000);
+    if (secsLeft < 43200) {
+      const r = await fetch(`${SALESMSG_BASE}/oauth/personal-token/refresh`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      });
+      if (r.ok) {
+        const d = await r.json();
+        if (d.access_token) {
+          token = d.access_token;
+          // Persist refreshed token so all future invocations use it
+          await getSupabase()
+            .from('settings')
+            .upsert({ key: 'salesmsg_token', value: token, updated_at: new Date().toISOString() });
+          console.log('[SMS] Salesmsg token refreshed and saved');
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[SMS] Token refresh check failed (non-fatal):', e.message);
+  }
+
+  return token;
+}
 
 async function sendSMS(to, body) {
-  const { SALESMSG_API_KEY, SALESMSG_TEAM_ID } = process.env;
-  if (!SALESMSG_API_KEY || !SALESMSG_TEAM_ID) {
+  const { SALESMSG_TEAM_ID } = process.env;
+  const apiToken = await getSalesmsgToken();
+  if (!apiToken || !SALESMSG_TEAM_ID) {
     console.warn('[SMS] Salesmsg not configured — skipping SMS to', to);
     return null;
   }
   const digits = String(to).replace(/\D/g, '');
   const phone = digits.startsWith('1') ? `+${digits}` : `+1${digits}`;
-  const BASE = 'https://api.salesmessage.com/pub/v2.2';
   const headers = {
-    'Authorization': `Bearer ${SALESMSG_API_KEY}`,
+    'Authorization': `Bearer ${apiToken}`,
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
@@ -174,12 +220,12 @@ async function sendSMS(to, body) {
   try {
     // Step 1: Find or create contact
     let contactId;
-    const searchRes = await fetch(`${BASE}/contacts?search=${encodeURIComponent(phone)}&length=1`, { headers });
+    const searchRes = await fetch(`${SALESMSG_BASE}/contacts?search=${encodeURIComponent(phone)}&length=1`, { headers });
     const searchData = await searchRes.json();
     if (searchData.data && searchData.data.length > 0) {
       contactId = searchData.data[0].id;
     } else {
-      const createRes = await fetch(`${BASE}/contacts`, {
+      const createRes = await fetch(`${SALESMSG_BASE}/contacts`, {
         method: 'POST', headers,
         body: JSON.stringify({ number: phone }),
       });
@@ -192,7 +238,7 @@ async function sendSMS(to, body) {
     }
 
     // Step 2: Get or create conversation
-    const convRes = await fetch(`${BASE}/conversations`, {
+    const convRes = await fetch(`${SALESMSG_BASE}/conversations`, {
       method: 'POST', headers,
       body: JSON.stringify({ contact_id: contactId, team_id: Number(SALESMSG_TEAM_ID) }),
     });
@@ -203,7 +249,7 @@ async function sendSMS(to, body) {
     }
 
     // Step 3: Send message
-    const msgRes = await fetch(`${BASE}/messages/${convData.id}`, {
+    const msgRes = await fetch(`${SALESMSG_BASE}/messages/${convData.id}`, {
       method: 'POST', headers,
       body: JSON.stringify({ message: body }),
     });
