@@ -1,13 +1,8 @@
 'use strict';
 
 /**
- * GET  /.netlify/functions/admin-pre-service-forms
- * Returns PSF submissions. Owner/staff auth required.
- *
- * Query params:
- *   since=<ISO timestamp>   — filter to submissions created after this date
- *   email=<email>           — filter to a specific client
- *   limit=<n>               — max rows (default 100)
+ * GET   /.netlify/functions/admin-pre-service-forms  — list submissions
+ * PATCH /.netlify/functions/admin-pre-service-forms  — mark read/unread
  */
 
 const { requireAuth, getSupabase } = require('./_utils.cjs');
@@ -16,7 +11,7 @@ const CORS = {
   'Content-Type':                'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':'Content-Type, Authorization',
-  'Access-Control-Allow-Methods':'GET, OPTIONS',
+  'Access-Control-Allow-Methods':'GET, PATCH, OPTIONS',
 };
 
 exports.handler = async (event) => {
@@ -28,6 +23,25 @@ exports.handler = async (event) => {
   }
   void user;
 
+  // ── PATCH — mark a submission as read or unread ─────────────────────
+  if (event.httpMethod === 'PATCH') {
+    let body;
+    try { body = JSON.parse(event.body || '{}'); } catch {
+      return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
+    }
+    const { id, read } = body;
+    if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id is required' }) };
+
+    const { error } = await getSupabase()
+      .from('pre_service_forms')
+      .update({ read_at: read ? new Date().toISOString() : null })
+      .eq('id', id);
+    if (error) throw new Error(error.message);
+
+    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
+  }
+
+  // ── GET — list submissions ──────────────────────────────────
   if (event.httpMethod !== 'GET') {
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
@@ -38,7 +52,7 @@ exports.handler = async (event) => {
 
     let query = getSupabase()
       .from('pre_service_forms')
-      .select('id, name, email, phone, appointment_date, skin_conditions, medical_history, medications, allergies, created_at')
+      .select('id, name, email, phone, appointment_date, skin_conditions, medical_history, medications, allergies, created_at, read_at')
       .order('created_at', { ascending: false })
       .limit(limit);
 

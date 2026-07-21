@@ -42,6 +42,65 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
   </div>
 
+  <!-- Appointment edit modal -->
+  <div id="appt-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" id="appt-modal-overlay"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg z-10 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
+        <h3 class="font-semibold text-neutral-900">Edit Appointment</h3>
+        <button id="appt-modal-close" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="overflow-y-auto p-6 space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1">Date</label>
+            <input id="am-date" type="date" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1">Time</label>
+            <input id="am-time" type="text" placeholder="2:00 PM" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-500 mb-1">Services</label>
+          <input id="am-services" type="text" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1">Status</label>
+            <select id="am-status" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none bg-white">
+              <option>Pending Confirmation</option>
+              <option>Pending Payment</option>
+              <option>Confirmed</option>
+              <option>Completed</option>
+              <option>Cancelled</option>
+              <option>No-Show</option>
+            </select>
+          </div>
+          <div id="am-price-wrap">
+            <label class="block text-xs font-medium text-neutral-500 mb-1">Price ($)</label>
+            <input id="am-price" type="number" step="0.01" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-500 mb-1">Client Notes</label>
+          <textarea id="am-notes" rows="2" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-neutral-500 mb-1">Internal Notes</label>
+          <textarea id="am-internal" rows="2" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none"></textarea>
+        </div>
+      </div>
+      <div class="px-6 pb-5 pt-3 flex gap-3 shrink-0 border-t border-neutral-100">
+        <button id="am-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save Changes</button>
+        <button id="am-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>
+      </div>
+      <div id="am-msg" class="px-6 pb-4 text-xs text-center hidden"></div>
+    </div>
+  </div>
+
   <script>
     import { requireLogin, apiFetch, getRole, formatDate } from '../../scripts/adminAuth.js';
     requireLogin();
@@ -58,6 +117,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     let allClients: any[] = [];
     let selectedEmail = '';
+    let modalClient: any = null;
+    let modalAppt: any = null;
 
     // ── Avatar initials ───────────────────────────────────────────────────────
     function initials(name: string) {
@@ -272,6 +333,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                     <div class="flex items-center gap-1.5 shrink-0">
                       ${role === 'owner' && a.price ? `<span class="text-xs font-semibold text-primary-700">$${Number(a.price).toFixed(0)}</span>` : ''}
                       ${role === 'owner' ? `
+                      <button class="appt-edit-btn opacity-0 group-hover:opacity-100 p-1.5 rounded text-neutral-300 hover:text-primary-600 transition-all"
+                        data-appt='${JSON.stringify(a).replace(/'/g,"&#39;")}' title="Edit appointment">
+                        <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                      </button>
                       <button class="appt-del-btn opacity-0 group-hover:opacity-100 p-1.5 rounded text-neutral-300 hover:text-red-500 transition-all" data-id="${esc(a.id)}" title="Delete appointment">
                         <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                       </button>` : ''}
@@ -343,7 +408,93 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           } catch (err: any) { alert(`Delete failed: ${err.message}`); }
         });
       });
+
+      // Per-appointment edit
+      el.querySelectorAll('.appt-edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const appt = JSON.parse((btn as HTMLElement).dataset.appt!);
+          openApptModal(appt, client);
+        });
+      });
     }
+
+    // ── Appointment edit modal ────────────────────────────────────────────────
+    function openApptModal(appt: any, client: any) {
+      modalAppt   = appt;
+      modalClient = client;
+      (document.getElementById('am-date')     as HTMLInputElement).value    = appt.date     || '';
+      (document.getElementById('am-time')     as HTMLInputElement).value    = appt.time     || '';
+      (document.getElementById('am-services') as HTMLInputElement).value    = appt.services || '';
+      (document.getElementById('am-status')   as HTMLSelectElement).value   = appt.status   || 'Confirmed';
+      (document.getElementById('am-price')    as HTMLInputElement).value    = appt.price != null ? String(appt.price) : '';
+      (document.getElementById('am-notes')    as HTMLTextAreaElement).value = appt.notes    || '';
+      (document.getElementById('am-internal') as HTMLTextAreaElement).value = appt.internalNotes || '';
+      // Show price field only for owners
+      (document.getElementById('am-price-wrap') as HTMLElement).style.display = role === 'owner' ? '' : 'none';
+      const msg = document.getElementById('am-msg')!;
+      msg.className = 'px-6 pb-4 text-xs text-center hidden';
+      document.getElementById('appt-edit-modal')?.classList.remove('hidden');
+    }
+
+    function closeApptModal() {
+      document.getElementById('appt-edit-modal')?.classList.add('hidden');
+      modalAppt = null; modalClient = null;
+    }
+
+    document.getElementById('appt-modal-close')?.addEventListener('click', closeApptModal);
+    document.getElementById('appt-modal-overlay')?.addEventListener('click', closeApptModal);
+
+    document.getElementById('am-save-btn')?.addEventListener('click', async () => {
+      if (!modalAppt) return;
+      const btn = document.getElementById('am-save-btn') as HTMLButtonElement;
+      const msg = document.getElementById('am-msg')!;
+      btn.disabled = true; btn.textContent = 'Saving…';
+      msg.className = 'px-6 pb-4 text-xs text-center hidden';
+
+      const fields: Record<string, any> = {
+        'Date':           (document.getElementById('am-date')     as HTMLInputElement).value,
+        'Time':           (document.getElementById('am-time')     as HTMLInputElement).value,
+        'Services':       (document.getElementById('am-services') as HTMLInputElement).value,
+        'Status':         (document.getElementById('am-status')   as HTMLSelectElement).value,
+        'Notes':          (document.getElementById('am-notes')    as HTMLTextAreaElement).value,
+        'Internal Notes': (document.getElementById('am-internal') as HTMLTextAreaElement).value,
+      };
+      if (role === 'owner') {
+        const pv = parseFloat((document.getElementById('am-price') as HTMLInputElement).value);
+        if (!isNaN(pv)) fields['Price'] = pv;
+      }
+
+      try {
+        await apiFetch('admin-appointments', { method: 'PATCH', body: { id: modalAppt.id, fields } });
+        // Patch local appointment object
+        Object.assign(modalAppt, {
+          date: fields['Date'], time: fields['Time'], services: fields['Services'],
+          status: fields['Status'], notes: fields['Notes'], internalNotes: fields['Internal Notes'],
+          ...(fields['Price'] !== undefined ? { price: fields['Price'] } : {}),
+        });
+        closeApptModal();
+        if (modalClient) renderDetail(modalClient);
+        await loadClients();
+      } catch (err: any) {
+        msg.textContent = `Error: ${err.message}`;
+        msg.className = 'px-6 pb-4 text-xs text-center text-red-500';
+        btn.disabled = false; btn.textContent = 'Save Changes';
+      }
+    });
+
+    document.getElementById('am-del-btn')?.addEventListener('click', async () => {
+      if (!modalAppt || !modalClient) return;
+      if (!confirm('Delete this appointment? This cannot be undone.')) return;
+      try {
+        await apiFetch('admin-appointments', { method: 'DELETE', body: { id: modalAppt.id } });
+        modalClient.appointments = (modalClient.appointments || []).filter((a: any) => a.id !== modalAppt.id);
+        modalClient.totalVisits  = Math.max(0, modalClient.totalVisits - 1);
+        closeApptModal();
+        renderDetail(modalClient);
+        await loadClients();
+      } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+    });
 
     // ── Search ────────────────────────────────────────────────────────────────
     let searchTimeout: ReturnType<typeof setTimeout>;

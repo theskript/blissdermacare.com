@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS pre_service_forms (
   user_agent                    text,
   referrer                      text,
   created_at                    timestamptz,
+  read_at                       timestamptz,
 
   UNIQUE (email, created_at)
 );
@@ -39,3 +40,7 @@ CREATE TABLE IF NOT EXISTS pre_service_forms (
 CREATE INDEX IF NOT EXISTS idx_psf_email ON pre_service_forms (email);
 CREATE INDEX IF NOT EXISTS idx_psf_phone ON pre_service_forms (phone);
 CREATE INDEX IF NOT EXISTS idx_psf_appointment_date ON pre_service_forms (appointment_date);
+CREATE INDEX IF NOT EXISTS idx_psf_read_at          ON pre_service_forms (read_at);
+
+-- If the table already exists, run this migration to add the read_at column:
+-- ALTER TABLE pre_service_forms ADD COLUMN IF NOT EXISTS read_at timestamptz;

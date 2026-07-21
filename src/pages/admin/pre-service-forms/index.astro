@@ -38,10 +38,10 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       </button>
     </div>
 
-    <!-- New badge -->
+    <!-- New / Unread badge -->
     <div id="psf-new-badge" class="hidden mb-4 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full">
       <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-      <span id="psf-new-count"></span> new in the last 48 h
+      <span id="psf-new-count"></span> unread
     </div>
 
     <!-- Table -->
@@ -71,6 +71,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     void role;
 
     let allRecords: any[] = [];
+    let fullRecords: any[] = []; // unfiltered source for client-side search
+    let currentRecord: any = null;
 
     function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -93,19 +95,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
       try {
         const data = await apiFetch('admin-pre-service-forms', { params });
-        allRecords = (data?.records || []).filter((r: any) => {
+        fullRecords = data?.records || [];
+        allRecords = fullRecords.filter((r: any) => {
           if (!search) return true;
           return (r.name || '').toLowerCase().includes(search) || (r.email || '').toLowerCase().includes(search);
         });
 
         document.getElementById('psf-count-label')!.textContent = `${allRecords.length} submission${allRecords.length !== 1 ? 's' : ''}`;
 
-        // New-in-48h badge
-        const cutoff = Date.now() - 48 * 3600 * 1000;
-        const newCount = allRecords.filter((r: any) => r.created_at && new Date(r.created_at).getTime() > cutoff).length;
+        // Unread badge (null read_at = unread)
+        const unreadCount = fullRecords.filter((r: any) => !r.read_at).length;
         const badgeEl = document.getElementById('psf-new-badge')!;
-        if (newCount > 0) {
-          document.getElementById('psf-new-count')!.textContent = String(newCount);
+        if (unreadCount > 0) {
+          document.getElementById('psf-new-count')!.textContent = String(unreadCount);
           badgeEl.classList.remove('hidden');
           badgeEl.classList.add('inline-flex');
         } else {
@@ -134,22 +136,22 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               <th class="px-6 py-3 text-left hidden md:table-cell">Appt. Date</th>
               <th class="px-6 py-3 text-left hidden lg:table-cell">Skin / Medical</th>
               <th class="px-6 py-3 text-left">Submitted</th>
+              <th class="px-6 py-3 text-center">Status</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-50">
             ${allRecords.map((r: any) => {
+              const isUnread = !r.read_at;
               const isNew = r.created_at && new Date(r.created_at).getTime() > cutoff;
               const skinList = (r.skin_conditions || []).slice(0, 2).map((s: string) => pill(s, SKIN_COLORS[s] || 'bg-neutral-100 text-neutral-600')).join(' ');
               const medList  = (r.medical_history  || []).filter((m: string) => m !== 'none').slice(0, 2).map((m: string) => pill(m, MED_COLORS[m] || 'bg-neutral-100 text-neutral-600')).join(' ');
               const submittedLabel = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
               return `
-              <tr class="hover:bg-neutral-50 cursor-pointer psf-row transition-colors${isNew ? ' bg-blue-50/40' : ''}" data-rec='${JSON.stringify(r).replace(/'/g,"&#39;")}'>
+              <tr class="hover:bg-neutral-50 cursor-pointer psf-row transition-colors${isUnread ? ' font-medium' : ''}" data-rec='${JSON.stringify(r).replace(/'/g,"&#39;")}'>
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-2">
-                    ${isNew ? '<span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>' : ''}
-                    <div>
-                      <div class="text-sm font-semibold text-neutral-900">${esc(r.name || '—')}</div>
-                    </div>
+                    ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-500 shrink-0" title="Unread"></span>' : '<span class="w-2 h-2 shrink-0"></span>'}
+                    <div class="text-sm text-neutral-900">${esc(r.name || '—')}</div>
                   </div>
                 </td>
                 <td class="px-6 py-4 hidden sm:table-cell">
@@ -160,7 +162,15 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                 <td class="px-6 py-4 hidden lg:table-cell">
                   <div class="flex flex-wrap gap-1">${skinList || '<span class="text-neutral-300 text-xs">none</span>'}${medList}</div>
                 </td>
-                <td class="px-6 py-4 text-xs text-neutral-500">${submittedLabel}</td>
+                <td class="px-6 py-4 text-xs text-neutral-500">
+                  ${submittedLabel}
+                  ${isNew ? '<span class="ml-1 text-[10px] font-bold bg-blue-100 text-blue-600 px-1 rounded">NEW</span>' : ''}
+                </td>
+                <td class="px-6 py-4 text-center">
+                  ${isUnread
+                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 text-blue-700">Unread</span>'
+                    : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 text-neutral-400">Read</span>'}
+                </td>
               </tr>`;
             }).join('')}
           </tbody>
@@ -176,9 +186,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
     // ── Detail slide-over ─────────────────────────────────────────────────────
     function openDetail(r: any) {
+      currentRecord = r;
       const content = document.getElementById('psf-detail-content')!;
       const submittedLabel = r.created_at ? new Date(r.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
       const apptLabel = r.appointment_date ? new Date(r.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : '—';
+      const isUnread = !r.read_at;
+      const readLabel = r.read_at ? new Date(r.read_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } as any) : null;
 
       function row(label: string, value: string) {
         return `<div class="flex gap-3 py-2.5 border-b border-neutral-50 last:border-0">
@@ -190,6 +203,21 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       const medPills  = (r.medical_history  || []).map((m: string) => pill(m, MED_COLORS[m]  || 'bg-neutral-100 text-neutral-600')).join(' ');
 
       content.innerHTML = `
+        <!-- Read/Unread action -->
+        <div class="flex items-center justify-between pb-4 border-b border-neutral-100">
+          <div class="flex items-center gap-2">
+            ${isUnread
+              ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Unread</span>'
+              : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-500">✓ Read${readLabel ? ' · ' + readLabel : ''}</span>`}
+          </div>
+          <button id="psf-toggle-read-btn"
+            class="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors ${isUnread
+              ? 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'
+              : 'border-neutral-200 text-neutral-500 hover:bg-neutral-50'}">
+            ${isUnread ? '✓ Mark as Read' : '↩ Mark as Unread'}
+          </button>
+        </div>
+
         <div class="bg-neutral-50 rounded-xl p-4 space-y-0">
           ${row('Name',           esc(r.name  || ''))}
           ${row('Email',          esc(r.email || ''))}
@@ -233,6 +261,34 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           </div>
         </div>`;
 
+      // Mark as read / unread toggle
+      document.getElementById('psf-toggle-read-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('psf-toggle-read-btn') as HTMLButtonElement;
+        btn.disabled = true; btn.textContent = 'Saving…';
+        try {
+          await apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { id: r.id, read: isUnread } });
+          // Update local record and re-open
+          r.read_at = isUnread ? new Date().toISOString() : null;
+          // Update fullRecords too
+          const idx = fullRecords.findIndex(rec => rec.id === r.id);
+          if (idx >= 0) fullRecords[idx] = { ...fullRecords[idx], read_at: r.read_at };
+          const aidx = allRecords.findIndex(rec => rec.id === r.id);
+          if (aidx >= 0) allRecords[aidx] = { ...allRecords[aidx], read_at: r.read_at };
+          // Refresh unread badge
+          const unreadCount = fullRecords.filter(rec => !rec.read_at).length;
+          const badgeEl = document.getElementById('psf-new-badge')!;
+          document.getElementById('psf-new-count')!.textContent = String(unreadCount);
+          if (unreadCount > 0) { badgeEl.classList.remove('hidden'); badgeEl.classList.add('inline-flex'); }
+          else { badgeEl.classList.add('hidden'); }
+          render();
+          openDetail(r); // re-render the detail panel with updated state
+        } catch (err: any) {
+          btn.disabled = false;
+          btn.textContent = isUnread ? '✓ Mark as Read' : '↩ Mark as Unread';
+          alert(`Failed: ${err.message}`);
+        }
+      });
+
       document.getElementById('psf-detail-panel')?.classList.remove('hidden');
       document.getElementById('psf-detail-panel')?.classList.add('flex');
       document.getElementById('psf-detail-overlay')?.classList.remove('hidden');
@@ -253,16 +309,10 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       clearTimeout(searchTimer);
       searchTimer = setTimeout(() => {
         const search = (document.getElementById('psf-search') as HTMLInputElement).value.trim().toLowerCase();
-        if (allRecords.length) {
-          // client-side filter only if already loaded
-          const filtered = allRecords.filter((r: any) =>
-            !search || (r.name || '').toLowerCase().includes(search) || (r.email || '').toLowerCase().includes(search));
-          allRecords = filtered;
-          document.getElementById('psf-count-label')!.textContent = `${filtered.length} submission${filtered.length !== 1 ? 's' : ''}`;
-          render();
-        } else {
-          load();
-        }
+        allRecords = fullRecords.filter((r: any) =>
+          !search || (r.name || '').toLowerCase().includes(search) || (r.email || '').toLowerCase().includes(search));
+        document.getElementById('psf-count-label')!.textContent = `${allRecords.length} submission${allRecords.length !== 1 ? 's' : ''}`;
+        render();
       }, 350);
     });
 
