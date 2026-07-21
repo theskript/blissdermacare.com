@@ -57,6 +57,27 @@ exports.handler = async (event) => {
       if (error) throw new Error(error.message);
 
       let records = (data || []).map(apptFromDB);
+
+      // Enrich with PSF status — flag which appointments have a matching form submission
+      try {
+        const emails = [...new Set((data || []).map(r => r.client_email).filter(Boolean))];
+        if (emails.length) {
+          const { data: psfs } = await sb
+            .from('pre_service_forms')
+            .select('email, appointment_date')
+            .in('email', emails);
+          const psfSet = new Set((psfs || []).map(p => `${(p.email || '').toLowerCase()}::${p.appointment_date}`));
+          records = records.map(r => ({
+            ...r,
+            fields: {
+              ...r.fields,
+              hasPSF: psfSet.has(`${(r.fields['Client Email'] || '').toLowerCase()}::${r.fields['Date']}`),
+            },
+          }));
+        }
+      } catch (psfErr) {
+        console.warn('PSF enrichment failed (non-fatal):', psfErr.message);
+      }
       if (user.role === 'staff') {
         records = records.map(r => {
           const f = { ...r.fields };

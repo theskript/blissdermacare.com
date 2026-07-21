@@ -1,7 +1,7 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners';
+  activeNav?: 'dashboard' | 'calendar' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system';
 }
 const { title, activeNav } = Astro.props;
 ---
@@ -131,6 +131,13 @@ const { title, activeNav } = Astro.props;
             </svg>
             Audit Log
           </a>
+          <a href="/admin/system"
+             class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeNav === 'system' ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}`}>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+            System
+          </a>
         </div>
       </nav>
 
@@ -192,6 +199,7 @@ const { title, activeNav } = Astro.props;
             <a href="/admin/notification-settings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Notifications</a>
             <a href="/admin/partners" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Partners</a>
             <a href="/admin/audit" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">Audit Log</a>
+            <a href="/admin/system" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-50">System</a>
           </div>
         </nav>
         <div class="px-4 py-4 border-t border-neutral-100">

@@ -20,6 +20,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       </a>
     </div>
 
+    <!-- ⚡ Needs-action inbox -->
+    <div id="inbox-section" class="hidden mb-6 space-y-3">
+    </div>
+
     <!-- Stats row (all roles see count; owner also sees revenue) -->
     <div id="stats-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="bg-white rounded-2xl border border-neutral-200 p-5">
@@ -143,7 +147,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     // ── Render appointment row ─────────────────────────────────────────────
     function apptRow(rec: any, showDate = false) {
       const f = rec.fields;
-      // Parse time for prominent display
       let timeMain = f['Time'] || '—';
       let timePeriod = '';
       const tm = (f['Time'] || '').match(/^(\d+:\d+)\s*(AM|PM)?$/i);
@@ -151,6 +154,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       const priceHtml = role === 'owner' && f['Price'] != null
         ? `<div class="text-sm font-bold text-primary-700 shrink-0">$${Number(f['Price']).toFixed(0)}</div>`
+        : '';
+
+      const noPsfBadge = f['hasPSF'] === false
+        ? `<span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200" title="No pre-service form on file">No PSF</span>`
         : '';
 
       return `
@@ -171,6 +178,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <div class="flex items-center gap-2 flex-wrap mb-0.5">
               <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || 'Unknown'}</span>
               ${statusBadge(f['Status'])}
+              ${noPsfBadge}
             </div>
             <div class="text-xs text-neutral-500 truncate">${(f['Services'] || '—').substring(0, 70)}${(f['Services'] || '').length > 70 ? '…' : ''}</div>
             ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
@@ -386,16 +394,61 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       document.getElementById('today-label')!.textContent = fullDateLabel(today);
 
+      const since48h = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
+
       const requests: Promise<any>[] = [
         apiFetch('admin-appointments', { params: { date: today } }),
         apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
+        apiFetch('admin-appointments', { params: { status: 'Pending Confirmation' } }),
+        apiFetch('admin-pre-service-forms', { params: { since: since48h, limit: '20' } }).catch(() => null),
       ];
       if (role === 'owner') requests.push(apiFetch('admin-memberships').catch(() => null));
 
-      const [todayData, weekData, memData] = await Promise.all(requests);
+      const [todayData, weekData, pendingData, recentPSFData, memData] = await Promise.all(requests);
 
-      const todayRecs = todayData?.records || [];
-      const weekRecs  = weekData?.records  || [];
+      const todayRecs   = todayData?.records   || [];
+      const weekRecs    = weekData?.records    || [];
+      const pendingRecs = pendingData?.records || [];
+      const recentPSFs  = recentPSFData?.records || [];
+
+      // ── Inbox: needs-attention alerts ──────────────────────────────────────
+      const inboxEl = document.getElementById('inbox-section')!;
+      const inboxItems: string[] = [];
+
+      if (pendingRecs.length > 0) {
+        inboxItems.push(`
+          <a href="/admin/calendar" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3.5 hover:bg-amber-100 transition-colors">
+            <div class="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center shrink-0">
+              <span class="text-amber-800 text-base font-bold">${pendingRecs.length}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-amber-900">Booking request${pendingRecs.length !== 1 ? 's' : ''} awaiting confirmation</div>
+              <div class="text-xs text-amber-700 truncate">${pendingRecs.map((r: any) => r.fields['Client Name'] || '?').slice(0, 4).join(', ')}${pendingRecs.length > 4 ? ` +${pendingRecs.length - 4} more` : ''}</div>
+            </div>
+            <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>`);
+      }
+
+      if (recentPSFs.length > 0) {
+        inboxItems.push(`
+          <a href="/admin/clients" class="flex items-center gap-4 bg-blue-50 border border-blue-200 rounded-2xl px-5 py-3.5 hover:bg-blue-100 transition-colors">
+            <div class="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center shrink-0">
+              <span class="text-blue-800 text-base font-bold">${recentPSFs.length}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-blue-900">New pre-service form${recentPSFs.length !== 1 ? 's' : ''} (last 48 h)</div>
+              <div class="text-xs text-blue-700 truncate">${recentPSFs.map((r: any) => r.name || '?').slice(0, 4).join(', ')}${recentPSFs.length > 4 ? ` +${recentPSFs.length - 4} more` : ''}</div>
+            </div>
+            <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>`);
+      }
+
+      if (inboxItems.length > 0) {
+        inboxEl.innerHTML = inboxItems.join('');
+        inboxEl.classList.remove('hidden');
+      } else {
+        inboxEl.classList.add('hidden');
+      }
 
       // Stats (all roles see counts; owner also sees revenue)
       document.getElementById('stat-today')!.textContent = String(todayRecs.length);

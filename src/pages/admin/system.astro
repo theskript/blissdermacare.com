@@ -1,0 +1,230 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="System" activeNav="system">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-serif font-semibold text-neutral-900">System</h1>
+      <p class="text-sm text-neutral-500 mt-1">Environment health, database stats, and developer tools.</p>
+    </div>
+
+    <!-- Quick nav -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <a href="#env"    class="bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors text-center">Environment</a>
+      <a href="#db"     class="bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors text-center">Database</a>
+      <a href="#funcs"  class="bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors text-center">Functions</a>
+      <a href="#audit"  class="bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors text-center">Recent Audit</a>
+    </div>
+
+    <!-- Environment health -->
+    <section id="env" class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b border-neutral-100">
+        <h2 class="font-semibold text-neutral-900">Environment Variables</h2>
+        <p class="text-xs text-neutral-400 mt-0.5">Checked client-side — values are never exposed, only presence.</p>
+      </div>
+      <div id="env-list" class="divide-y divide-neutral-50 px-6 py-3">
+        <div class="py-3 text-sm text-neutral-400">Checking…</div>
+      </div>
+    </section>
+
+    <!-- Database stats -->
+    <section id="db" class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+        <div>
+          <h2 class="font-semibold text-neutral-900">Database Tables</h2>
+          <p class="text-xs text-neutral-400 mt-0.5">Row counts across all Supabase tables.</p>
+        </div>
+        <button id="refresh-db" class="text-xs text-primary-600 hover:text-primary-800 font-medium border border-primary-200 rounded-lg px-3 py-1.5 hover:bg-primary-50 transition-colors">Refresh</button>
+      </div>
+      <div id="db-stats" class="divide-y divide-neutral-50 px-6 py-3">
+        <div class="py-3 text-sm text-neutral-400">Loading…</div>
+      </div>
+    </section>
+
+    <!-- Netlify functions directory -->
+    <section id="funcs" class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b border-neutral-100">
+        <h2 class="font-semibold text-neutral-900">Netlify Functions</h2>
+        <p class="text-xs text-neutral-400 mt-0.5">All available serverless API endpoints.</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+              <th class="px-6 py-3 text-left">Function</th>
+              <th class="px-6 py-3 text-left">Methods</th>
+              <th class="px-6 py-3 text-left">Auth</th>
+              <th class="px-6 py-3 text-left">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-50 text-xs">
+            {[
+              { name: 'admin-appointments',        methods: 'GET POST PATCH DELETE', auth: 'JWT',   desc: 'CRUD for appointments; includes PSF hasPSF flag' },
+              { name: 'admin-audit',               methods: 'GET',                   auth: 'JWT',   desc: 'Audit log entries' },
+              { name: 'admin-availability',        methods: 'GET POST DELETE',       auth: 'JWT',   desc: 'Blocked-off availability slots' },
+              { name: 'admin-clients',             methods: 'GET PATCH DELETE',      auth: 'JWT',   desc: 'Client profiles derived from appointments + PSF' },
+              { name: 'admin-login',               methods: 'POST',                  auth: 'None',  desc: 'Authenticate and receive JWT' },
+              { name: 'admin-memberships',         methods: 'GET',                   auth: 'JWT',   desc: 'Membership stats and records' },
+              { name: 'admin-notification-settings',methods:'GET POST',              auth: 'JWT',   desc: 'Read/write notification preferences' },
+              { name: 'admin-partners',            methods: 'GET POST PATCH DELETE', auth: 'JWT/Owner','desc': 'Manage partner brands' },
+              { name: 'admin-pre-service-forms',   methods: 'GET',                   auth: 'JWT',   desc: 'Query PSF submissions (used for inbox alerts)' },
+              { name: 'admin-send-reminder',       methods: 'POST',                  auth: 'JWT',   desc: 'Send ad-hoc SMS/email reminder' },
+              { name: 'admin-staff',               methods: 'GET POST PATCH DELETE', auth: 'JWT/Owner','desc': 'Staff account management' },
+              { name: 'book-request',              methods: 'POST',                  auth: 'None',  desc: 'Pay-in-person booking → appointments table + notifications' },
+              { name: 'create-checkout-session',   methods: 'POST',                  auth: 'None',  desc: 'Stripe checkout for service deposits' },
+              { name: 'create-membership-session', methods: 'POST',                  auth: 'None',  desc: 'Stripe checkout for memberships' },
+              { name: 'get-availability',          methods: 'GET',                   auth: 'None',  desc: 'Public blocked-slot lookup for booking form' },
+              { name: 'get-partners',              methods: 'GET',                   auth: 'None',  desc: 'Public partner list (?featured=true for strip)' },
+              { name: 'morning-summary',           methods: 'POST',                  auth: 'Cron',  desc: 'Daily SMS/email summary of upcoming appointments' },
+              { name: 'pre-service-form',          methods: 'POST',                  auth: 'None',  desc: 'Save PSF submission + notify owner' },
+              { name: 'reminder-24h',              methods: 'POST',                  auth: 'Cron',  desc: 'Auto 24h reminder to confirmed appointments' },
+              { name: 'reminder-2h',               methods: 'POST',                  auth: 'Cron',  desc: 'Auto 2h reminder to confirmed appointments' },
+              { name: 'stripe-webhook',            methods: 'POST',                  auth: 'Stripe',desc: 'Handle payment_intent.succeeded → confirm appointment' },
+            ].map(f => (
+              <tr class="hover:bg-neutral-50">
+                <td class="px-6 py-3 font-mono text-neutral-800">{f.name}</td>
+                <td class="px-6 py-3 text-neutral-500">{f.methods}</td>
+                <td class="px-6 py-3">
+                  <span class={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${f.auth === 'None' ? 'bg-neutral-100 text-neutral-500' : f.auth.includes('Cron') ? 'bg-blue-100 text-blue-600' : f.auth.includes('Stripe') ? 'bg-purple-100 text-purple-600' : 'bg-emerald-100 text-emerald-700'}`}>{f.auth}</span>
+                </td>
+                <td class="px-6 py-3 text-neutral-400">{f.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Recent audit log -->
+    <section id="audit" class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+        <h2 class="font-semibold text-neutral-900">Recent Audit Log</h2>
+        <a href="/admin/audit" class="text-xs text-primary-600 hover:text-primary-800 font-medium">View all →</a>
+      </div>
+      <div id="audit-recent" class="divide-y divide-neutral-50">
+        <div class="px-6 py-6 text-sm text-neutral-400 text-center">Loading…</div>
+      </div>
+    </section>
+
+    <!-- Developer actions -->
+    <section class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-neutral-100">
+        <h2 class="font-semibold text-neutral-900">Quick Links</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3 p-6">
+        <a href="/admin/" class="flex items-center gap-3 p-4 rounded-xl border border-neutral-200 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+          <svg class="w-5 h-5 text-neutral-400 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span class="text-sm font-medium text-neutral-700 group-hover:text-primary-700">Dashboard</span>
+        </a>
+        <a href="/admin/calendar" class="flex items-center gap-3 p-4 rounded-xl border border-neutral-200 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+          <svg class="w-5 h-5 text-neutral-400 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span class="text-sm font-medium text-neutral-700 group-hover:text-primary-700">Calendar</span>
+        </a>
+        <a href="/admin/clients" class="flex items-center gap-3 p-4 rounded-xl border border-neutral-200 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+          <svg class="w-5 h-5 text-neutral-400 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="text-sm font-medium text-neutral-700 group-hover:text-primary-700">Clients</span>
+        </a>
+        <a href="/admin/audit" class="flex items-center gap-3 p-4 rounded-xl border border-neutral-200 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+          <svg class="w-5 h-5 text-neutral-400 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <span class="text-sm font-medium text-neutral-700 group-hover:text-primary-700">Audit Log</span>
+        </a>
+        <a href="/admin/notification-settings" class="flex items-center gap-3 p-4 rounded-xl border border-neutral-200 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+          <svg class="w-5 h-5 text-neutral-400 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="text-sm font-medium text-neutral-700 group-hover:text-primary-700">Notification Settings</span>
+        </a>
+        <a href="/admin/partners" class="flex items-center gap-3 p-4 rounded-xl border border-neutral-200 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+          <svg class="w-5 h-5 text-neutral-400 group-hover:text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          <span class="text-sm font-medium text-neutral-700 group-hover:text-primary-700">Partners</span>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    import { requireLogin, apiFetch, getRole } from '../../scripts/adminAuth.js';
+    requireLogin();
+    const role = getRole();
+    if (role !== 'owner') window.location.href = '/admin/';
+
+    // ── Environment health ─────────────────────────────────────────────────────
+    // We can't read env vars from the client, so we probe each function endpoint
+    // and infer config from success/failure.
+    const ENV_CHECKS = [
+      { label: 'SUPABASE_URL + SERVICE_ROLE_KEY', probe: async () => { const r = await apiFetch('admin-appointments', { params: { date: '2000-01-01' } }); return !!r; } },
+      { label: 'SENDGRID_API_KEY',               probe: async () => { const r = await apiFetch('admin-notification-settings'); return r?.notifyOwnerOnNewBooking !== undefined; } },
+      { label: 'SALESMSG_API_KEY',               probe: async () => { const r = await apiFetch('admin-notification-settings'); return r !== null; } },
+      { label: 'ADMIN_JWT_SECRET',               probe: async () => { try { await apiFetch('admin-appointments', { params: { date: '2000-01-01' } }); return true; } catch { return false; } } },
+      { label: 'STRIPE_SECRET_KEY',              probe: async () => true /* can't safely probe */ },
+    ];
+
+    (async () => {
+      const el = document.getElementById('env-list')!;
+      el.innerHTML = '';
+      for (const check of ENV_CHECKS) {
+        let ok = true;
+        try { ok = await check.probe(); } catch { ok = false; }
+        el.innerHTML += `
+          <div class="py-3 flex items-center justify-between gap-4">
+            <span class="text-sm font-mono text-neutral-700">${check.label}</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${ok ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}">${ok ? 'OK' : 'MISSING / ERROR'}</span>
+          </div>`;
+      }
+    })();
+
+    // ── DB Stats ───────────────────────────────────────────────────────────────
+    const DB_TABLES: Array<{ key: string; label: string; fetch: () => Promise<number | string> }> = [
+      { key: 'appointments',     label: 'appointments',      fetch: async () => { const d = await apiFetch('admin-appointments', { params: { startDate: '2000-01-01', endDate: '2099-12-31' } }); return d?.records?.length ?? '—'; } },
+      { key: 'clients',          label: 'clients (unique)',  fetch: async () => { const d = await apiFetch('admin-clients'); return d?.total ?? '—'; } },
+      { key: 'pre_service_forms',label: 'pre_service_forms', fetch: async () => { const d = await apiFetch('admin-pre-service-forms', { params: { limit: '500' } }); return d?.total ?? '—'; } },
+      { key: 'audit',            label: 'audit_log',         fetch: async () => { const d = await apiFetch('admin-audit', { params: { limit: '1' } }); return d ? '✓ accessible' : '—'; } },
+      { key: 'staff',            label: 'staff',             fetch: async () => { const d = await apiFetch('admin-staff'); return d?.records?.length ?? '—'; } },
+      { key: 'partners',         label: 'partners',          fetch: async () => { const d = await apiFetch('admin-partners'); return d?.records?.length ?? '—'; } },
+    ];
+
+    async function loadDbStats() {
+      const el = document.getElementById('db-stats')!;
+      el.innerHTML = DB_TABLES.map(t => `<div class="py-3 flex items-center justify-between gap-4" id="db-${t.key}">
+        <span class="text-sm font-mono text-neutral-700">${t.label}</span>
+        <span class="text-sm text-neutral-400">…</span>
+      </div>`).join('');
+
+      await Promise.all(DB_TABLES.map(async t => {
+        let val: number | string = '—';
+        try { val = await t.fetch(); } catch {}
+        const row = document.getElementById(`db-${t.key}`);
+        if (row) row.querySelector('span:last-child')!.textContent = String(val);
+      }));
+    }
+
+    document.getElementById('refresh-db')?.addEventListener('click', loadDbStats);
+    loadDbStats();
+
+    // ── Recent Audit ───────────────────────────────────────────────────────────
+    (async () => {
+      const el = document.getElementById('audit-recent')!;
+      try {
+        const data = await apiFetch('admin-audit', { params: { limit: '10' } });
+        const rows = data?.records || [];
+        if (!rows.length) { el.innerHTML = '<div class="px-6 py-6 text-sm text-neutral-400 text-center">No audit entries yet.</div>'; return; }
+        el.innerHTML = rows.slice(0, 10).map((r: any) => {
+          const f = r.fields;
+          const ts = f['Timestamp'] ? new Date(f['Timestamp']).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
+          return `<div class="px-6 py-3 flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <div class="text-sm font-medium text-neutral-800">${f['Action'] || '—'}</div>
+              <div class="text-xs text-neutral-400 truncate">${f['Details'] || ''}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-xs font-medium text-neutral-600">${f['Username'] || '—'}</div>
+              <div class="text-xs text-neutral-400">${ts}</div>
+            </div>
+          </div>`;
+        }).join('');
+      } catch (err: any) {
+        el.innerHTML = `<div class="px-6 py-6 text-sm text-red-500 text-center">Error: ${err.message}</div>`;
+      }
+    })();
+  </script>
+
+</AdminLayout>

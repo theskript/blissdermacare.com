@@ -5,7 +5,7 @@
  * Saves a pre-service questionnaire submission to Supabase.
  */
 
-const { getSupabase } = require('./_utils.cjs');
+const { getSupabase, sendSMS, sendEmail, getNotificationSettings } = require('./_utils.cjs');
 
 const CORS = {
   'Content-Type':                'application/json',
@@ -82,6 +82,58 @@ exports.handler = async (event) => {
   try {
     const { error } = await getSupabase().from('pre_service_forms').insert(record);
     if (error) throw new Error(error.message);
+
+    // ── Owner notifications (non-fatal) ───────────────────────────────────────
+    try {
+      const ns = await getNotificationSettings();
+      const apptLabel = record.appointment_date
+        ? new Date(record.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+        : 'upcoming appointment';
+
+      const skinList   = (record.skin_conditions || []).join(', ') || 'none';
+      const medHistory = (record.medical_history || []).filter(m => m !== 'none').join(', ') || 'none';
+      const meds       = record.medications || 'none';
+      const allergies  = record.allergies   || 'none';
+
+      const ownerSms = `📋 Pre-Service Form\n${record.name} · ${apptLabel}\n📱 ${record.phone || 'no phone'}\nSkin: ${skinList}\nMedical: ${medHistory}\nMeds: ${meds.substring(0, 80)}${meds.length > 80 ? '…' : ''}`;
+
+      const ownerHtml = `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+  <div style="background:#1a1714;padding:20px 24px;border-radius:8px 8px 0 0">
+    <h1 style="color:#f0ebe6;font-size:20px;margin:0">Pre-Service Form Submitted</h1>
+    <p style="color:#9e9590;font-size:13px;margin:6px 0 0">Bliss Dermacare</p>
+  </div>
+  <div style="background:#fafaf9;border:1px solid #e8e2dc;border-top:none;padding:24px;border-radius:0 0 8px 8px">
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <tr><td style="padding:7px 0;color:#78716c;width:160px">Client</td><td style="padding:7px 0;font-weight:600;color:#1c1917">${record.name}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Appointment</td><td style="padding:7px 0;font-weight:600;color:#1c1917">${apptLabel}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Phone</td><td style="padding:7px 0;color:#1c1917">${record.phone || '—'}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Email</td><td style="padding:7px 0;color:#1c1917">${record.email || '—'}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Skin conditions</td><td style="padding:7px 0;color:#1c1917">${skinList}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Medical history</td><td style="padding:7px 0;color:#1c1917">${medHistory}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Medications</td><td style="padding:7px 0;color:#1c1917">${meds}</td></tr>
+      <tr><td style="padding:7px 0;color:#78716c">Allergies</td><td style="padding:7px 0;color:#1c1917">${allergies}</td></tr>
+    </table>
+    <p style="font-size:12px;color:#999;border-top:1px solid #eee;padding-top:12px;margin-top:20px">
+      Bliss Dermacare &middot; 8905 Regents Park Dr, Tampa, FL 33647 &middot; (609) 366-0857
+    </p>
+  </div>
+</div>`;
+
+      const sends = [];
+      for (const ph of ns.ownerPhones) sends.push(sendSMS(ph, ownerSms.substring(0, 1600)));
+      if (ns.ownerEmails.length) {
+        sends.push(sendEmail({
+          to: ns.ownerEmails,
+          subject: `New Pre-Service Form — ${record.name} · ${apptLabel}`,
+          html: ownerHtml,
+        }));
+      }
+      await Promise.allSettled(sends);
+    } catch (notifyErr) {
+      console.warn('PSF notification failed (non-fatal):', notifyErr.message);
+    }
+
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
   } catch (err) {
     console.error('pre-service-form error:', err);

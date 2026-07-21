@@ -139,7 +139,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <div class="w-14 h-14 rounded-2xl ${avCls} flex items-center justify-center font-bold text-xl shrink-0 uppercase">
             ${initials(client.name)}
           </div>
-          <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div>
             <h3 class="text-lg font-semibold text-neutral-900">${client.name || '—'}</h3>
             ${client.email ? `<div class="text-sm text-neutral-500">${client.email}</div>` : ''}
             ${client.phone ? `<div class="text-sm text-neutral-500">${client.phone}</div>` : ''}
@@ -154,6 +155,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               </div>`;
             })() : ''}
           </div>
+          ${role === 'owner' ? `
+          <div class="flex items-center gap-2 shrink-0">
+            <button class="edit-client-btn px-3 py-1.5 text-xs font-medium border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
+              data-name="${client.name || ''}" data-email="${client.email || ''}" data-phone="${client.phone || ''}">
+              Edit
+            </button>
+            <button class="delete-client-btn px-3 py-1.5 text-xs font-medium border border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              data-name="${client.name || ''}" data-email="${client.email || ''}">
+              Delete
+            </button>
+          </div>` : ''}
         </div>
 
         <div class="px-6 py-4 grid grid-cols-3 gap-4 border-b border-neutral-100 bg-neutral-50">
@@ -270,15 +282,52 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     }
 
     // ── Init ──────────────────────────────────────────────────────────────────
-    // Check for pre-selected client from URL (e.g., from "View Client" on another page)
     const urlEmail = new URLSearchParams(window.location.search).get('email');
     loadClients().then(() => {
       if (urlEmail) {
         const match = allClients.find(c => c.email === urlEmail);
-        if (match) {
-          selectedEmail = urlEmail;
-          renderDetail(match);
-        }
+        if (match) { selectedEmail = urlEmail; renderDetail(match); }
+      }
+    });
+
+    // ── Edit / Delete client (event delegation on detail panel) ───────────────
+    document.getElementById('client-detail')?.addEventListener('click', async (e) => {
+      const target = e.target as HTMLElement;
+
+      // Edit
+      const editBtn = target.closest('.edit-client-btn') as HTMLElement | null;
+      if (editBtn) {
+        const name  = editBtn.dataset.name  || '';
+        const email = editBtn.dataset.email || '';
+        const phone = editBtn.dataset.phone || '';
+        const newName  = prompt('Name:',  name)?.trim();
+        if (newName === undefined) return; // cancelled
+        const newEmail = prompt('Email:', email)?.trim().toLowerCase();
+        if (newEmail === undefined) return;
+        const newPhone = prompt('Phone:', phone)?.trim();
+        if (newPhone === undefined) return;
+        try {
+          await apiFetch('admin-clients', {
+            method: 'PATCH',
+            body: { oldEmail: email, name: newName, email: newEmail, phone: newPhone },
+          });
+          await loadClients();
+        } catch (err: any) { alert(`Update failed: ${err.message}`); }
+        return;
+      }
+
+      // Delete
+      const delBtn = target.closest('.delete-client-btn') as HTMLElement | null;
+      if (delBtn) {
+        const name  = delBtn.dataset.name  || 'this client';
+        const email = delBtn.dataset.email || '';
+        if (!confirm(`Permanently delete ${name} and all their appointments? This cannot be undone.`)) return;
+        try {
+          await apiFetch('admin-clients', { method: 'DELETE', body: { email } });
+          selectedEmail = '';
+          document.getElementById('client-detail')!.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Client deleted.</div>';
+          await loadClients();
+        } catch (err: any) { alert(`Delete failed: ${err.message}`); }
       }
     });
   </script>

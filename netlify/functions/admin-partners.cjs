@@ -61,17 +61,29 @@ exports.handler = async (event) => {
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
       }
 
-      const { name, category, tagline, description, url, logo_url, badge_text, featured, active, sort_order } = body;
-      if (!name?.trim()) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Name is required' }) };
-      if (!url?.trim()) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'URL is required' }) };
-      if (!validateUrl(url.trim())) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'URL must start with http:// or https://' }) };
+      // Frontend sends Airtable-style Title-case keys (Name, URL, …); normalise to snake_case.
+      // Also accept raw snake_case for API callers.
+      const name      = (body.name      ?? body['Name'])?.toString().trim();
+      const url       = (body.url       ?? body['URL'])?.toString().trim();
+      const category  = (body.category  ?? body['Category']  ?? 'Other')?.toString().trim();
+      const tagline   = (body.tagline   ?? body['Tagline']   ?? null);
+      const description = (body.description ?? body['Description'] ?? null);
+      const logo_url  = (body.logo_url  ?? body['Logo URL']  ?? null);
+      const badge_text = (body.badge_text ?? body['Badge Text'] ?? null);
+      const featured  = Boolean(body.featured ?? body['Featured'] ?? false);
+      const active    = (body.active ?? body['Active']) !== false;
+      const sort_order = Number(body.sort_order ?? body['Sort Order'] ?? 0);
+
+      if (!name) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Name is required' }) };
+      if (!url)  return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'URL is required' }) };
+      if (!validateUrl(url)) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'URL must start with http:// or https://' }) };
 
       const row = {
-        name: name.trim(),
-        category: category?.trim() || 'Other',
-        tagline: tagline?.trim() || null,
-        description: description?.trim() || null,
-        url: url.trim(),
+        name:        name,
+        category:    category || 'Other',
+        tagline:     tagline?.toString().trim()     || null,
+        description: description?.toString().trim() || null,
+        url:         url,
         logo_url: logo_url?.trim() || null,
         badge_text: badge_text?.trim() || null,
         featured: Boolean(featured),
