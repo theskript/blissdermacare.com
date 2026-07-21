@@ -128,46 +128,106 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       });
     }
 
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function esc(s: unknown): string {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     // ── Render client detail panel ────────────────────────────────────────────
     function renderDetail(client: any) {
       const el = document.getElementById('client-detail')!;
       const avCls = avatarColor(client.name || client.email);
       const appts = (client.appointments || []).sort((a: any, b: any) => b.date.localeCompare(a.date));
 
+      let memHtml = '';
+      if (client.membership) {
+        const m = client.membership;
+        const cls = m.status === 'active' ? 'bg-primary-100 text-primary-700'
+          : m.status === 'past_due' ? 'bg-amber-100 text-amber-700'
+          : 'bg-neutral-100 text-neutral-500';
+        const renewsLabel = m.renewsAt ? ` · Renews ${new Date(m.renewsAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '';
+        memHtml = `<div class="flex items-center gap-2 mt-1 flex-wrap">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">★ ${esc(m.planLabel || m.plan)}</span>
+          <span class="text-xs text-neutral-400 capitalize">${esc(m.status)}${renewsLabel}</span>
+        </div>`;
+      }
+
+      // Questionnaire section
+      let qHtml = '';
+      if (client.questionnaire) {
+        const q = client.questionnaire;
+        const submittedDate = q.submittedAt ? new Date(q.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+        const pillMap: Record<string, string> = {
+          acne: 'bg-amber-100 text-amber-700', eczema: 'bg-orange-100 text-orange-700',
+          psoriasis: 'bg-purple-100 text-purple-700', rosacea: 'bg-rose-100 text-rose-700',
+          sunburn: 'bg-yellow-100 text-yellow-700', open_wounds: 'bg-red-100 text-red-700',
+          pregnant: 'bg-pink-100 text-pink-700', chemotherapy: 'bg-red-100 text-red-700',
+          blood_disorder: 'bg-red-100 text-red-700', recent_surgery: 'bg-orange-100 text-orange-700',
+          epilepsy: 'bg-purple-100 text-purple-700', none: 'bg-neutral-100 text-neutral-400',
+        };
+        const pill = (s: string) => `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${pillMap[s] || 'bg-neutral-100 text-neutral-600'}">${esc(s.replace(/_/g,' '))}</span>`;
+        const qRow = (label: string, content: string) =>
+          `<div class="flex gap-2 py-2 border-b border-neutral-50 last:border-0">
+            <span class="text-xs text-neutral-400 w-28 shrink-0 pt-0.5">${label}</span>
+            <span class="text-xs text-neutral-700 flex-1 flex flex-wrap gap-1">${content || '<span class="text-neutral-300">—</span>'}</span>
+          </div>`;
+        qHtml = `
+          <div class="px-6 pt-4 pb-5 border-t border-neutral-100 bg-neutral-50/60">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm font-semibold text-neutral-900">Pre-Service Questionnaire</h4>
+              ${submittedDate ? `<span class="text-xs text-neutral-400">Submitted ${submittedDate}</span>` : ''}
+            </div>
+            ${qRow('Skin conditions', (q.skinConditions || []).map(pill).join(' '))}
+            ${qRow('Allergies', q.allergies ? esc(q.allergies) : '')}
+            ${qRow('Medical history', (q.medicalHistory || []).map(pill).join(' '))}
+            ${qRow('Medications', q.medications ? esc(q.medications) : '')}
+            ${qRow('Recent treatments', q.recentTreatments && q.recentTreatments !== 'none' ? esc(q.recentTreatments) : '')}
+          </div>`;
+      }
+
       el.innerHTML = `
-        <div class="px-6 py-5 border-b border-neutral-100 flex items-start gap-4">
-          <div class="w-14 h-14 rounded-2xl ${avCls} flex items-center justify-center font-bold text-xl shrink-0 uppercase">
-            ${initials(client.name)}
+        <!-- Header: avatar + view / inline-edit modes -->
+        <div class="px-6 py-5 border-b border-neutral-100">
+          <div class="flex items-start gap-3">
+            <div class="w-12 h-12 rounded-2xl ${avCls} flex items-center justify-center font-bold text-lg shrink-0 uppercase">
+              ${initials(client.name)}
+            </div>
+            <div class="flex-1 min-w-0">
+              <!-- View mode -->
+              <div id="cd-view">
+                <div class="flex items-start justify-between gap-2 flex-wrap">
+                  <div class="min-w-0">
+                    <div class="text-base font-semibold text-neutral-900">${esc(client.name || '—')}</div>
+                    ${client.email ? `<div class="text-sm text-neutral-500">${esc(client.email)}</div>` : ''}
+                    ${client.phone ? `<div class="text-sm text-neutral-500">${esc(client.phone)}</div>` : ''}
+                    ${memHtml}
+                  </div>
+                  ${role === 'owner' ? `
+                  <div class="flex items-center gap-1.5 shrink-0 mt-0.5">
+                    <button id="cd-edit-btn" class="px-2.5 py-1.5 text-xs font-medium border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors">Edit</button>
+                    <button id="cd-del-btn" class="px-2.5 py-1.5 text-xs font-medium border border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition-colors">Delete</button>
+                  </div>` : ''}
+                </div>
+              </div>
+              <!-- Edit mode (hidden) -->
+              <div id="cd-edit" class="hidden space-y-2">
+                <input id="cd-name"  type="text"  value="${esc(client.name  || '')}" placeholder="Full name"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+                <input id="cd-email" type="email" value="${esc(client.email || '')}" placeholder="Email"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+                <input id="cd-phone" type="tel"   value="${esc(client.phone || '')}" placeholder="Phone"
+                  class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+                <div class="flex gap-2 pt-1">
+                  <button id="cd-save-btn" class="flex-1 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors">Save</button>
+                  <button id="cd-cancel-btn" class="flex-1 py-2 border border-neutral-200 text-neutral-600 text-xs font-medium rounded-lg hover:bg-neutral-50 transition-colors">Cancel</button>
+                </div>
+                <div id="cd-edit-msg" class="text-xs text-center hidden"></div>
+              </div>
+            </div>
           </div>
-        <div class="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h3 class="text-lg font-semibold text-neutral-900">${client.name || '—'}</h3>
-            ${client.email ? `<div class="text-sm text-neutral-500">${client.email}</div>` : ''}
-            ${client.phone ? `<div class="text-sm text-neutral-500">${client.phone}</div>` : ''}
-            ${client.membership ? (() => {
-              const m = client.membership;
-              const isActive = m.status === 'active';
-              const statusCls = isActive ? 'bg-primary-100 text-primary-700' : m.status === 'past_due' ? 'bg-amber-100 text-amber-700' : 'bg-neutral-100 text-neutral-500';
-              const renewsLabel = m.renewsAt ? `Renews ${new Date(m.renewsAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '';
-              return `<div class="flex items-center gap-2 mt-1.5 flex-wrap">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${statusCls}">★ ${m.planLabel || m.plan}</span>
-                <span class="text-xs text-neutral-400 capitalize">${m.status}${renewsLabel ? ' · ' + renewsLabel : ''}</span>
-              </div>`;
-            })() : ''}
-          </div>
-          ${role === 'owner' ? `
-          <div class="flex items-center gap-2 shrink-0">
-            <button class="edit-client-btn px-3 py-1.5 text-xs font-medium border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
-              data-name="${client.name || ''}" data-email="${client.email || ''}" data-phone="${client.phone || ''}">
-              Edit
-            </button>
-            <button class="delete-client-btn px-3 py-1.5 text-xs font-medium border border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-              data-name="${client.name || ''}" data-email="${client.email || ''}">
-              Delete
-            </button>
-          </div>` : ''}
         </div>
 
+        <!-- Stats -->
         <div class="px-6 py-4 grid grid-cols-3 gap-4 border-b border-neutral-100 bg-neutral-50">
           <div class="text-center">
             <div class="text-xl font-bold text-neutral-900">${client.totalVisits}</div>
@@ -183,80 +243,106 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </div>
         </div>
 
-        <div class="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-          <h4 class="text-sm font-semibold text-neutral-900">Appointment History</h4>
+        <!-- Appointments header -->
+        <div class="px-6 py-3.5 border-b border-neutral-100 flex items-center justify-between">
+          <h4 class="text-sm font-semibold text-neutral-900">Appointments</h4>
           <a href="/admin/new-appointment?email=${encodeURIComponent(client.email || '')}&name=${encodeURIComponent(client.name || '')}&phone=${encodeURIComponent(client.phone || '')}"
-            class="text-xs bg-primary-50 text-primary-700 px-3 py-1.5 rounded-full font-medium hover:bg-primary-100 transition-colors">
-            + Book Again
-          </a>
+            class="text-xs bg-primary-50 text-primary-700 px-3 py-1.5 rounded-full font-medium hover:bg-primary-100 transition-colors">+ Book</a>
         </div>
 
-        <div class="divide-y divide-neutral-100 max-h-[420px] overflow-y-auto">
+        <!-- Appointments list -->
+        <div class="divide-y divide-neutral-100 max-h-[340px] overflow-y-auto">
           ${appts.length === 0
             ? '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No appointments found.</div>'
             : appts.map((a: any) => {
-              const statusCls = STATUS_COLORS[a.status] || 'bg-neutral-100 text-neutral-600';
+              const sCls = STATUS_COLORS[a.status] || 'bg-neutral-100 text-neutral-600';
               return `
-                <div class="px-6 py-4">
-                  <div class="flex items-start justify-between gap-3">
-                    <div>
+                <div class="px-6 py-3.5 group hover:bg-neutral-50 transition-colors">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-2 flex-wrap">
                         <span class="text-sm font-medium text-neutral-800">${formatDate(a.date)}</span>
-                        <span class="text-xs text-neutral-400">${a.time || ''}</span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusCls}">${a.status || '—'}</span>
+                        ${a.time ? `<span class="text-xs text-neutral-400">${esc(a.time)}</span>` : ''}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${sCls}">${esc(a.status || '—')}</span>
                       </div>
-                      <div class="text-xs text-neutral-500 mt-0.5">${a.services || '—'}</div>
-                      ${a.notes ? `<div class="text-xs text-neutral-400 mt-1 italic">"${a.notes.substring(0, 100)}"</div>` : ''}
-                      ${a.internalNotes ? `<div class="text-xs text-primary-600 mt-1">📝 ${a.internalNotes.substring(0, 100)}</div>` : ''}
+                      <div class="text-xs text-neutral-500 mt-0.5 truncate">${esc(a.services || '—')}</div>
+                      ${a.notes ? `<div class="text-xs text-neutral-400 mt-0.5 italic">&ldquo;${esc(a.notes.substring(0, 90))}&rdquo;</div>` : ''}
+                      ${a.internalNotes ? `<div class="text-xs text-primary-600 mt-0.5">📝 ${esc(a.internalNotes.substring(0, 90))}</div>` : ''}
                     </div>
-                    ${role === 'owner' && a.price ? `<div class="text-sm font-semibold text-primary-700 shrink-0">$${Number(a.price).toFixed(2)}</div>` : ''}
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      ${role === 'owner' && a.price ? `<span class="text-xs font-semibold text-primary-700">$${Number(a.price).toFixed(0)}</span>` : ''}
+                      ${role === 'owner' ? `
+                      <button class="appt-del-btn opacity-0 group-hover:opacity-100 p-1.5 rounded text-neutral-300 hover:text-red-500 transition-all" data-id="${esc(a.id)}" title="Delete appointment">
+                        <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      </button>` : ''}
+                    </div>
                   </div>
                 </div>`;
-            }).join('')
-          }
+            }).join('')}
         </div>
 
-        ${client.questionnaire ? (() => {
-          const q = client.questionnaire;
-          const submittedDate = q.submittedAt ? new Date(q.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+        ${qHtml}
+      `;
 
-          function pill(label: string, cls: string) {
-            return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${cls}">${label}</span>`;
-          }
+      // Edit client button
+      document.getElementById('cd-edit-btn')?.addEventListener('click', () => {
+        document.getElementById('cd-view')?.classList.add('hidden');
+        document.getElementById('cd-edit')?.classList.remove('hidden');
+        (document.getElementById('cd-name') as HTMLInputElement)?.focus();
+      });
+      document.getElementById('cd-cancel-btn')?.addEventListener('click', () => {
+        document.getElementById('cd-edit')?.classList.add('hidden');
+        document.getElementById('cd-view')?.classList.remove('hidden');
+      });
 
-          const skinPills = (q.skinConditions || []).map((s: string) => {
-            const map: Record<string, string> = { acne: 'bg-amber-100 text-amber-700', eczema: 'bg-orange-100 text-orange-700', psoriasis: 'bg-purple-100 text-purple-700', rosacea: 'bg-rose-100 text-rose-700', sunburn: 'bg-yellow-100 text-yellow-700', open_wounds: 'bg-red-100 text-red-700' };
-            return pill(s.replace('_', ' '), map[s] || 'bg-neutral-100 text-neutral-600');
-          }).join(' ');
+      // Save client
+      document.getElementById('cd-save-btn')?.addEventListener('click', async () => {
+        const oldEmail = client.email || '';
+        const newName  = (document.getElementById('cd-name')  as HTMLInputElement).value.trim();
+        const newEmail = (document.getElementById('cd-email') as HTMLInputElement).value.trim().toLowerCase();
+        const newPhone = (document.getElementById('cd-phone') as HTMLInputElement).value.trim();
+        const msgEl    = document.getElementById('cd-edit-msg')!;
+        const saveBtn  = document.getElementById('cd-save-btn') as HTMLButtonElement;
+        saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+        msgEl.className = 'text-xs text-center hidden';
+        try {
+          await apiFetch('admin-clients', { method: 'PATCH', body: { oldEmail, name: newName, email: newEmail, phone: newPhone } });
+          await loadClients();
+          const updated = allClients.find(c => c.email === newEmail) || allClients.find(c => c.email === oldEmail);
+          if (updated) { selectedEmail = updated.email; renderDetail(updated); }
+        } catch (err: any) {
+          msgEl.textContent = `Error: ${err.message}`;
+          msgEl.className = 'text-xs text-center text-red-500';
+          saveBtn.disabled = false; saveBtn.textContent = 'Save';
+        }
+      });
 
-          const medPills = (q.medicalHistory || []).map((m: string) => {
-            const map: Record<string, string> = { pregnant: 'bg-pink-100 text-pink-700', chemotherapy: 'bg-red-100 text-red-700', blood_disorder: 'bg-red-100 text-red-700', recent_surgery: 'bg-orange-100 text-orange-700', epilepsy: 'bg-purple-100 text-purple-700', none: 'bg-neutral-100 text-neutral-400' };
-            return pill(m.replace('_', ' '), map[m] || 'bg-neutral-100 text-neutral-600');
-          }).join(' ');
+      // Delete client
+      document.getElementById('cd-del-btn')?.addEventListener('click', async () => {
+        if (!confirm(`Permanently delete ${client.name || 'this client'} and all their appointments? This cannot be undone.`)) return;
+        try {
+          await apiFetch('admin-clients', { method: 'DELETE', body: { email: client.email } });
+          selectedEmail = '';
+          el.innerHTML = `<div class="px-6 py-10 text-center text-neutral-400 text-sm">Client deleted.</div>`;
+          await loadClients();
+        } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+      });
 
-          function row(label: string, content: string) {
-            return `<div class="flex gap-2 py-2 border-b border-neutral-50 last:border-0">
-              <span class="text-xs text-neutral-400 w-32 shrink-0 pt-0.5">${label}</span>
-              <span class="text-xs text-neutral-700 flex-1 flex flex-wrap gap-1">${content || '<span class="text-neutral-300">—</span>'}</span>
-            </div>`;
-          }
-
-          return `
-            <div class="px-6 pt-4 pb-5 border-t border-neutral-100 bg-neutral-50/60">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-semibold text-neutral-900">Pre-Service Questionnaire</h4>
-                ${submittedDate ? `<span class="text-xs text-neutral-400">Submitted ${submittedDate}</span>` : ''}
-              </div>
-              <div class="space-y-0">
-                ${row('Skin conditions', skinPills)}
-                ${row('Allergies', q.allergies ? `<span class="text-xs text-neutral-700">${q.allergies}</span>` : '')}
-                ${row('Medical history', medPills)}
-                ${row('Medications', q.medications ? `<span class="text-xs text-neutral-700">${q.medications}</span>` : '')}
-                ${row('Recent treatments', q.recentTreatments && q.recentTreatments !== 'none' ? q.recentTreatments : '')}
-              </div>
-            </div>`;
-        })() : ''}
-        `;
+      // Per-appointment delete
+      el.querySelectorAll('.appt-del-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = (btn as HTMLElement).dataset.id!;
+          if (!confirm(`Delete this appointment for ${esc(client.name || 'this client')}?`)) return;
+          try {
+            await apiFetch('admin-appointments', { method: 'DELETE', body: { id } });
+            client.appointments = (client.appointments || []).filter((a: any) => a.id !== id);
+            client.totalVisits  = Math.max(0, client.totalVisits - 1);
+            renderDetail(client);
+            await loadClients();
+          } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+        });
+      });
     }
 
     // ── Search ────────────────────────────────────────────────────────────────
@@ -287,47 +373,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       if (urlEmail) {
         const match = allClients.find(c => c.email === urlEmail);
         if (match) { selectedEmail = urlEmail; renderDetail(match); }
-      }
-    });
-
-    // ── Edit / Delete client (event delegation on detail panel) ───────────────
-    document.getElementById('client-detail')?.addEventListener('click', async (e) => {
-      const target = e.target as HTMLElement;
-
-      // Edit
-      const editBtn = target.closest('.edit-client-btn') as HTMLElement | null;
-      if (editBtn) {
-        const name  = editBtn.dataset.name  || '';
-        const email = editBtn.dataset.email || '';
-        const phone = editBtn.dataset.phone || '';
-        const newName  = prompt('Name:',  name)?.trim();
-        if (newName === undefined) return; // cancelled
-        const newEmail = prompt('Email:', email)?.trim().toLowerCase();
-        if (newEmail === undefined) return;
-        const newPhone = prompt('Phone:', phone)?.trim();
-        if (newPhone === undefined) return;
-        try {
-          await apiFetch('admin-clients', {
-            method: 'PATCH',
-            body: { oldEmail: email, name: newName, email: newEmail, phone: newPhone },
-          });
-          await loadClients();
-        } catch (err: any) { alert(`Update failed: ${err.message}`); }
-        return;
-      }
-
-      // Delete
-      const delBtn = target.closest('.delete-client-btn') as HTMLElement | null;
-      if (delBtn) {
-        const name  = delBtn.dataset.name  || 'this client';
-        const email = delBtn.dataset.email || '';
-        if (!confirm(`Permanently delete ${name} and all their appointments? This cannot be undone.`)) return;
-        try {
-          await apiFetch('admin-clients', { method: 'DELETE', body: { email } });
-          selectedEmail = '';
-          document.getElementById('client-detail')!.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Client deleted.</div>';
-          await loadClients();
-        } catch (err: any) { alert(`Delete failed: ${err.message}`); }
       }
     });
   </script>

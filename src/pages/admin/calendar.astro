@@ -45,8 +45,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       <!-- Day panel -->
       <div class="lg:col-span-2 bg-white rounded-2xl border border-neutral-200 overflow-hidden flex flex-col">
-        <div class="px-5 py-4 border-b border-neutral-100">
+        <div class="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
           <h3 id="day-panel-title" class="font-semibold text-neutral-900 text-sm">Select a day</h3>
+          <span id="day-panel-count" class="hidden text-xs text-neutral-400"></span>
         </div>
         <div id="day-panel-list" class="flex-1 overflow-y-auto divide-y divide-neutral-100">
           <div class="px-5 py-10 text-center text-neutral-400 text-sm">Click a day on the calendar</div>
@@ -56,15 +57,29 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
   </div>
 
+  <!-- Edit appointment slide-over -->
+  <div id="cal-detail-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[420px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
+      <h3 class="font-semibold text-neutral-900 text-sm">Edit Appointment</h3>
+      <button id="cal-close-detail" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="cal-detail-content" class="flex-1 overflow-y-auto p-6 space-y-5"></div>
+  </div>
+  <div id="cal-detail-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
+
   <script>
-    import { requireLogin, apiFetch, formatDate } from '../../scripts/adminAuth.js';
+    import { requireLogin, apiFetch, getRole, formatDate } from '../../scripts/adminAuth.js';
     requireLogin();
+    const role = getRole();
 
     // ── State ─────────────────────────────────────────────────────────────────
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth(); // 0-indexed
     let allAppts: Record<string, any[]> = {};  // keyed by YYYY-MM-DD
     let selectedDate: string | null = null;
+    let currentRec: any = null;
 
     const STATUS_COLORS: Record<string, string> = {
       'Confirmed':       'bg-emerald-100 text-emerald-700',
@@ -72,6 +87,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       'Pending Payment': 'bg-amber-100 text-amber-700',
       'Cancelled':       'bg-red-100 text-red-700',
       'No-Show':         'bg-purple-100 text-purple-700',
+      'Pending Confirmation': 'bg-orange-100 text-orange-700',
     };
 
     // ── Helpers ──────────────────────────────────────────────────────────────
@@ -163,11 +179,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     async function showDayPanel(dateStr: string) {
       selectedDate = dateStr;
       const title = document.getElementById('day-panel-title')!;
+      const count = document.getElementById('day-panel-count')!;
       const list  = document.getElementById('day-panel-list')!;
       const d = new Date(dateStr + 'T12:00:00');
       title.textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-      // Fetch if not cached
       if (!allAppts[dateStr]) {
         list.innerHTML = '<div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>';
         const data = await apiFetch('admin-appointments', { params: { date: dateStr } });
@@ -176,55 +192,175 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       const recs = allAppts[dateStr] || [];
       if (recs.length === 0) {
-        list.innerHTML = '<div class="px-5 py-10 text-center text-neutral-400 text-sm">No appointments this day.</div>';
+        count.classList.add('hidden');
+        list.innerHTML = `<div class="px-5 py-10 text-center">
+          <div class="text-neutral-400 text-sm mb-3">No appointments this day.</div>
+          <a href="/admin/new-appointment?date=${dateStr}" class="text-xs text-primary-600 hover:text-primary-700 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">+ Add appointment</a>
+        </div>`;
         return;
       }
+
+      count.textContent = `${recs.length} appointment${recs.length !== 1 ? 's' : ''}`;
+      count.classList.remove('hidden');
 
       list.innerHTML = recs.map((rec: any) => {
         const f = rec.fields;
         const statusCls = STATUS_COLORS[f['Status']] || 'bg-neutral-100 text-neutral-600';
+        const noPsf = f['hasPSF'] === false
+          ? `<span class="ml-1 text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full">No PSF</span>`
+          : '';
         return `
           <div class="px-5 py-4 appt-day-row cursor-pointer hover:bg-neutral-50 transition-colors" data-id="${rec.id}" data-rec='${JSON.stringify(rec).replace(/'/g, "&#39;")}'>
             <div class="flex items-start justify-between gap-2">
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5 flex-wrap">
                   <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || '—'}</span>
                   <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusCls}">${f['Status'] || '—'}</span>
+                  ${noPsf}
                 </div>
-                <div class="text-xs text-neutral-500 mt-0.5">${f['Time'] || '—'} · ${(f['Services'] || '—').substring(0, 50)}</div>
+                <div class="text-xs text-neutral-500 mt-0.5">${f['Time'] || '—'} · ${(f['Services'] || '—').substring(0, 45)}</div>
                 ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
               </div>
-              <select class="status-quick text-xs border border-neutral-200 rounded-lg px-1.5 py-1 text-neutral-600 focus:outline-none focus:border-primary-400 shrink-0" data-id="${rec.id}">
-                <option value="Pending Payment" ${f['Status'] === 'Pending Payment' ? 'selected' : ''}>Pending</option>
-                <option value="Confirmed"       ${f['Status'] === 'Confirmed'       ? 'selected' : ''}>Confirmed</option>
-                <option value="Completed"       ${f['Status'] === 'Completed'       ? 'selected' : ''}>Completed</option>
-                <option value="Cancelled"       ${f['Status'] === 'Cancelled'       ? 'selected' : ''}>Cancelled</option>
-                <option value="No-Show"         ${f['Status'] === 'No-Show'         ? 'selected' : ''}>No-Show</option>
-              </select>
+              <svg class="w-4 h-4 text-neutral-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </div>
           </div>`;
       }).join('');
 
-      // Status quick-change
-      list.querySelectorAll('.status-quick').forEach(sel => {
-        sel.addEventListener('change', async (e) => {
-          const id = (sel as HTMLElement).dataset.id!;
-          const newStatus = (sel as HTMLSelectElement).value;
-          try {
-            await apiFetch('admin-appointments', { method: 'PATCH', body: { id, fields: { Status: newStatus } } });
-            // Update cached record
-            const recs = allAppts[dateStr];
-            const idx = recs?.findIndex((r: any) => r.id === id);
-            if (idx >= 0) recs[idx].fields['Status'] = newStatus;
-            renderCalendar();
-          } catch (err: any) {
-            alert(`Update failed: ${err.message}`);
-          }
+      list.querySelectorAll('.appt-day-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const rec = JSON.parse((row as HTMLElement).dataset.rec || '{}');
+          openDetail(rec);
         });
-        // Stop row click when interacting with dropdown
-        sel.addEventListener('click', e => e.stopPropagation());
       });
     }
+
+    // ── Edit slide-over ───────────────────────────────────────────────────────
+    function openDetail(rec: any) {
+      currentRec = rec;
+      const f = rec.fields;
+      const content = document.getElementById('cal-detail-content')!;
+      const statusOptions = ['Pending Confirmation','Pending Payment','Confirmed','Completed','Cancelled','No-Show'];
+
+      content.innerHTML = `
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Client</div>
+          <div class="text-base font-semibold text-neutral-900">${f['Client Name'] || '—'}</div>
+          <div class="text-sm text-neutral-500">${f['Client Email'] || ''}</div>
+          <div class="text-sm text-neutral-500">${f['Client Phone'] || ''}</div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Date</div>
+            ${role === 'owner'
+              ? `<input id="cal-f-date" type="date" value="${f['Date'] || ''}" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>`
+              : `<div class="text-sm text-neutral-800">${formatDate(f['Date'])}</div>`}
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Time</div>
+            ${role === 'owner'
+              ? `<input id="cal-f-time" type="text" value="${f['Time'] || ''}" placeholder="e.g. 2:00 PM" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>`
+              : `<div class="text-sm text-neutral-800">${f['Time'] || '—'}</div>`}
+          </div>
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Services</div>
+          ${role === 'owner'
+            ? `<input id="cal-f-services" type="text" value="${(f['Services'] || '').replace(/"/g,'&quot;')}" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>`
+            : `<div class="text-sm text-neutral-800">${f['Services'] || '—'}</div>`}
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Status</div>
+          <select id="cal-f-status" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none">
+            ${statusOptions.map(s => `<option value="${s}" ${f['Status'] === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        ${role === 'owner' ? `
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price ($)</div>
+            <input id="cal-f-price" type="number" step="0.01" value="${f['Price'] ?? ''}" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Source</div>
+            <input id="cal-f-source" type="text" value="${f['Source'] || ''}" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+        </div>` : ''}
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Client Notes</div>
+          <textarea id="cal-f-notes" rows="2" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none">${f['Notes'] || ''}</textarea>
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Internal Notes</div>
+          <textarea id="cal-f-internal" rows="2" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none">${f['Internal Notes'] || ''}</textarea>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button id="cal-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save</button>
+          ${role === 'owner' ? `<button id="cal-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
+        </div>
+        <div id="cal-save-msg" class="text-xs text-center hidden text-neutral-400"></div>
+      `;
+
+      document.getElementById('cal-detail-panel')?.classList.remove('hidden');
+      document.getElementById('cal-detail-panel')?.classList.add('flex');
+      document.getElementById('cal-detail-overlay')?.classList.remove('hidden');
+
+      document.getElementById('cal-save-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('cal-save-btn') as HTMLButtonElement;
+        const msg = document.getElementById('cal-save-msg')!;
+        btn.disabled = true; btn.textContent = 'Saving…';
+        const fields: Record<string, any> = {
+          Status:          (document.getElementById('cal-f-status') as HTMLSelectElement).value,
+          'Internal Notes':(document.getElementById('cal-f-internal') as HTMLTextAreaElement).value,
+          Notes:           (document.getElementById('cal-f-notes') as HTMLTextAreaElement).value,
+        };
+        if (role === 'owner') {
+          fields['Date']    = (document.getElementById('cal-f-date')     as HTMLInputElement)?.value || f['Date'];
+          fields['Time']    = (document.getElementById('cal-f-time')     as HTMLInputElement)?.value || f['Time'];
+          fields['Services']= (document.getElementById('cal-f-services') as HTMLInputElement)?.value || f['Services'];
+          fields['Price']   = parseFloat((document.getElementById('cal-f-price') as HTMLInputElement)?.value) || f['Price'];
+          fields['Source']  = (document.getElementById('cal-f-source')   as HTMLInputElement)?.value || f['Source'];
+        }
+        try {
+          await apiFetch('admin-appointments', { method: 'PATCH', body: { id: rec.id, fields } });
+          // Update local cache
+          Object.assign(currentRec.fields, fields);
+          if (selectedDate && allAppts[selectedDate]) {
+            const idx = allAppts[selectedDate].findIndex((r: any) => r.id === rec.id);
+            if (idx >= 0) allAppts[selectedDate][idx] = currentRec;
+          }
+          msg.textContent = '✓ Saved'; msg.className = 'text-xs text-center text-emerald-600';
+          renderCalendar();
+          if (selectedDate) showDayPanel(selectedDate);
+        } catch (err: any) {
+          msg.textContent = `Error: ${err.message}`; msg.className = 'text-xs text-center text-red-500';
+        } finally {
+          btn.disabled = false; btn.textContent = 'Save';
+        }
+      });
+
+      document.getElementById('cal-del-btn')?.addEventListener('click', async () => {
+        if (!confirm(`Delete appointment for ${f['Client Name']}? This cannot be undone.`)) return;
+        try {
+          await apiFetch('admin-appointments', { method: 'DELETE', body: { id: rec.id } });
+          closeDetail();
+          if (selectedDate) {
+            allAppts[selectedDate] = (allAppts[selectedDate] || []).filter((r: any) => r.id !== rec.id);
+            renderCalendar();
+            showDayPanel(selectedDate);
+          }
+        } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+      });
+    }
+
+    function closeDetail() {
+      document.getElementById('cal-detail-panel')?.classList.add('hidden');
+      document.getElementById('cal-detail-panel')?.classList.remove('flex');
+      document.getElementById('cal-detail-overlay')?.classList.add('hidden');
+      currentRec = null;
+    }
+
+    document.getElementById('cal-close-detail')?.addEventListener('click', closeDetail);
+    document.getElementById('cal-detail-overlay')?.addEventListener('click', closeDetail);
 
     // ── Month navigation ──────────────────────────────────────────────────────
     async function changeMonth(delta: number) {
