@@ -69,7 +69,7 @@ exports.handler = async (event) => {
         const r = await sendSMS(phoneTarget, message.substring(0, 1600));
         results.smsSent = r?.ok === true;
         if (!results.smsSent) {
-          const detail = r?.error ? `${r.error}${r.code ? ` (Sendblue code ${r.code})` : ''}` : 'Sendblue not configured';
+          const detail = r?.error ? r.error : 'Salesmsg not configured';
           results.errors.push(`SMS failed: ${detail}`);
         }
       } else {

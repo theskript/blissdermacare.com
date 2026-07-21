@@ -153,31 +153,70 @@ function requireAuth(event, requiredRole = null) {
   return decoded;
 }
 
-// ── Sendblue SMS ─────────────────────────────────────────────────────────────
+// ── Salesmsg SMS ─────────────────────────────────────────────────────────────
+// Flow: find/create contact → get/create conversation → send message
 
 async function sendSMS(to, body) {
-  const { SENDBLUE_API_KEY, SENDBLUE_API_SECRET, SENDBLUE_FROM_NUMBER } = process.env;
-  if (!SENDBLUE_API_KEY || !SENDBLUE_API_SECRET || !SENDBLUE_FROM_NUMBER) {
-    console.warn('[SMS] Sendblue not configured — skipping SMS to', to);
+  const { SALESMSG_API_KEY, SALESMSG_TEAM_ID } = process.env;
+  if (!SALESMSG_API_KEY || !SALESMSG_TEAM_ID) {
+    console.warn('[SMS] Salesmsg not configured — skipping SMS to', to);
     return null;
   }
   const digits = String(to).replace(/\D/g, '');
   const phone = digits.startsWith('1') ? `+${digits}` : `+1${digits}`;
-  const res = await fetch('https://api.sendblue.co/api/send-message', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'sb-api-key-id': SENDBLUE_API_KEY,
-      'sb-api-secret-key': SENDBLUE_API_SECRET,
-    },
-    body: JSON.stringify({ number: phone, from_number: SENDBLUE_FROM_NUMBER, content: body }),
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    console.error(`[SMS] Sendblue error → ${phone}:`, JSON.stringify(data));
-    return { ok: false, error: data.message || 'Unknown Sendblue error', code: data.error_code, status: data.status };
+  const BASE = 'https://api.salesmessage.com/pub/v2.2';
+  const headers = {
+    'Authorization': `Bearer ${SALESMSG_API_KEY}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
+  try {
+    // Step 1: Find or create contact
+    let contactId;
+    const searchRes = await fetch(`${BASE}/contacts?search=${encodeURIComponent(phone)}&length=1`, { headers });
+    const searchData = await searchRes.json();
+    if (searchData.data && searchData.data.length > 0) {
+      contactId = searchData.data[0].id;
+    } else {
+      const createRes = await fetch(`${BASE}/contacts`, {
+        method: 'POST', headers,
+        body: JSON.stringify({ number: phone }),
+      });
+      const createData = await createRes.json();
+      if (!createRes.ok) {
+        console.error('[SMS] Salesmsg create contact error:', JSON.stringify(createData));
+        return { ok: false, error: createData.message || 'Failed to create contact' };
+      }
+      contactId = createData.id;
+    }
+
+    // Step 2: Get or create conversation
+    const convRes = await fetch(`${BASE}/conversations`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ contact_id: contactId, team_id: Number(SALESMSG_TEAM_ID) }),
+    });
+    const convData = await convRes.json();
+    if (!convRes.ok) {
+      console.error('[SMS] Salesmsg create conversation error:', JSON.stringify(convData));
+      return { ok: false, error: convData.message || 'Failed to create conversation' };
+    }
+
+    // Step 3: Send message
+    const msgRes = await fetch(`${BASE}/messages/${convData.id}`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ message: body }),
+    });
+    const msgData = await msgRes.json();
+    if (!msgRes.ok) {
+      console.error(`[SMS] Salesmsg send error → ${phone}:`, JSON.stringify(msgData));
+      return { ok: false, error: msgData.message || 'Unknown Salesmsg error', status: msgData.status };
+    }
+    return { ok: true, sid: String(msgData.id), status: msgData.status };
+  } catch (err) {
+    console.error('[SMS] Salesmsg unexpected error:', err.message);
+    return { ok: false, error: err.message };
   }
-  return { ok: true, sid: data.message_id, status: data.status };
 }
 
 // ── SendGrid Email ────────────────────────────────────────────────────────────
