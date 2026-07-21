@@ -96,6 +96,39 @@ function staffToDB(fields) {
   return row;
 }
 
+// ── Field mapping: Partners ──────────────────────────────────────────────────
+
+const PARTNER_TO_DB = {
+  'Name':        'name',
+  'Category':    'category',
+  'Tagline':     'tagline',
+  'Description': 'description',
+  'URL':         'url',
+  'Logo URL':    'logo_url',
+  'Badge Text':  'badge_text',
+  'Featured':    'featured',
+  'Active':      'active',
+  'Sort Order':  'sort_order',
+};
+const DB_TO_PARTNER = Object.fromEntries(Object.entries(PARTNER_TO_DB).map(([k, v]) => [v, k]));
+
+function partnerFromDB(row) {
+  if (!row) return null;
+  const fields = {};
+  for (const [col, name] of Object.entries(DB_TO_PARTNER)) {
+    if (row[col] !== undefined) fields[name] = row[col];
+  }
+  return { id: row.id, fields, created_at: row.created_at };
+}
+
+function partnerToDB(fields) {
+  const row = {};
+  for (const [name, col] of Object.entries(PARTNER_TO_DB)) {
+    if (fields[name] !== undefined) row[col] = fields[name];
+  }
+  return row;
+}
+
 // ── Field mapping: Audit Log ──────────────────────────────────────────────────
 
 function auditFromDB(row) {
@@ -387,6 +420,7 @@ module.exports = {
   getSupabase,
   apptFromDB, apptToDB,
   staffFromDB, staffToDB,
+  partnerFromDB, partnerToDB,
   auditFromDB,
   jwtSign, jwtVerify, requireAuth,
   sendSMS, sendEmail,
