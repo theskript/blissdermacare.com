@@ -191,13 +191,20 @@ const roles = [
         <!-- Right: form -->
         <div class="lg:col-span-3">
           <form
-            name="careers-application"
-            method="POST"
-            data-netlify="true"
-            action="/careers/?submitted=careers"
+            id="careers-form"
             class="space-y-5"
           >
-            <input type="hidden" name="form-name" value="careers-application" />
+
+            <!-- Success banner -->
+            <div id="careers-success" class="hidden p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+              <svg class="w-10 h-10 mx-auto mb-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <h2 class="text-lg font-semibold text-emerald-800 mb-1">Application received!</h2>
+              <p class="text-sm text-emerald-700">Thank you for applying! We review every application and will follow up within 3–5 business days if there's a fit.</p>
+            </div>
+            <!-- Error banner -->
+            <div id="careers-error" class="hidden p-4 bg-red-50 border border-red-200 rounded-2xl">
+              <p id="careers-error-msg" class="text-sm text-red-700 text-center">Something went wrong. Please try again.</p>
+            </div>
 
             <div class="grid sm:grid-cols-2 gap-5">
               <div>
@@ -270,7 +277,7 @@ const roles = [
             </div>
 
             <button type="submit"
-              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 transition-all font-semibold text-base shadow-sm hover:shadow-md">
+              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 disabled:opacity-60 transition-all font-semibold text-base shadow-sm hover:shadow-md">
               Submit Application
             </button>
 
@@ -282,3 +289,42 @@ const roles = [
   </section>
 
 </Layout>
+
+<script>
+  const form      = document.getElementById('careers-form')      as HTMLFormElement | null;
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+  const successEl = document.getElementById('careers-success')   as HTMLElement | null;
+  const errorEl   = document.getElementById('careers-error')     as HTMLElement | null;
+  const errorMsg  = document.getElementById('careers-error-msg') as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form) return;
+    successEl?.classList.add('hidden');
+    errorEl?.classList.add('hidden');
+
+    const fd = new FormData(form);
+    const body: Record<string, string> = {};
+    for (const [k, v] of fd.entries()) body[k] = v as string;
+
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+    try {
+      const res = await fetch('/.netlify/functions/careers-submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Submission failed');
+      form.classList.add('hidden');
+      successEl?.classList.remove('hidden');
+      successEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err: any) {
+      if (errorMsg) errorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+      errorEl?.classList.remove('hidden');
+      errorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Application'; }
+    }
+  });
+</script>

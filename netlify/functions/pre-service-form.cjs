@@ -49,6 +49,8 @@ exports.handler = async (event) => {
   const record = {
     name:                          nullIfEmpty(name),
     appointment_date:              nullIfEmpty(appointment_date),
+    appointment_time:              nullIfEmpty(body.appointment_time),
+    service_requested:             nullIfEmpty(body.service_requested),
     phone:                         nullIfEmpty(phone),
     email:                         nullIfEmpty(email)?.toLowerCase(),
     age_category:                  nullIfEmpty(body.age_category),

@@ -20,14 +20,21 @@ import Layout from '../../layouts/Layout.astro';
 
         <!-- Form -->
         <div class="lg:col-span-3">
+          <!-- Success banner -->
+          <div id="consult-success" class="hidden mb-6 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+            <svg class="w-10 h-10 mx-auto mb-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <h2 class="text-lg font-semibold text-emerald-800 mb-1">Request received!</h2>
+            <p class="text-sm text-emerald-700">Thank you! We'll review your submission and reach out within 24 hours.</p>
+          </div>
+          <!-- Error banner -->
+          <div id="consult-error" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-2xl">
+            <p id="consult-error-msg" class="text-sm text-red-700 text-center">Something went wrong. Please try again.</p>
+          </div>
+
           <form
-            name="skincare-consultation"
-            method="POST"
-            data-netlify="true"
-            action="/consultation/?submitted=consultation"
+            id="consult-form"
             class="space-y-5"
           >
-            <input type="hidden" name="form-name" value="skincare-consultation" />
 
             <div class="grid sm:grid-cols-2 gap-4">
               <div>
@@ -110,8 +117,8 @@ import Layout from '../../layouts/Layout.astro';
               </select>
             </div>
 
-            <button type="submit"
-              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 transition-all font-semibold text-base shadow-sm hover:shadow-md">
+            <button id="consult-submit" type="submit"
+              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 disabled:opacity-60 transition-all font-semibold text-base shadow-sm hover:shadow-md">
               Request Free Consultation
             </button>
 
@@ -165,3 +172,45 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 </Layout>
+
+<script>
+  const form      = document.getElementById('consult-form')      as HTMLFormElement | null;
+  const submitBtn = document.getElementById('consult-submit')    as HTMLButtonElement | null;
+  const successEl = document.getElementById('consult-success')   as HTMLElement | null;
+  const errorEl   = document.getElementById('consult-error')     as HTMLElement | null;
+  const errorMsg  = document.getElementById('consult-error-msg') as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form) return;
+    successEl?.classList.add('hidden');
+    errorEl?.classList.add('hidden');
+
+    const fd = new FormData(form);
+    const body: Record<string, string | string[]> = {};
+    for (const key of new Set(fd.keys())) {
+      const values = fd.getAll(key) as string[];
+      body[key] = values.length > 1 ? values : values[0];
+    }
+
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+    try {
+      const res = await fetch('/.netlify/functions/consultation-submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Submission failed');
+      form.classList.add('hidden');
+      successEl?.classList.remove('hidden');
+      successEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err: any) {
+      if (errorMsg) errorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+      errorEl?.classList.remove('hidden');
+      errorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Request Free Consultation'; }
+    }
+  });
+</script>

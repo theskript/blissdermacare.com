@@ -76,14 +76,18 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-[#faf9f7] rounded-2xl p-8 border border-neutral-200">
             <h2 class="text-2xl font-serif text-neutral-900 mb-6">Apply to Be a Demo Model</h2>
 
-            <form
-              name="demo-model-application"
-              method="POST"
-              data-netlify="true"
-              action="/demo-model/?submitted=demo-model"
-              class="space-y-5"
-            >
-              <input type="hidden" name="form-name" value="demo-model-application" />
+            <!-- Success banner -->
+            <div id="demo-success" class="hidden mb-6 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+              <svg class="w-10 h-10 mx-auto mb-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <h2 class="text-lg font-semibold text-emerald-800 mb-1">Application submitted!</h2>
+              <p class="text-sm text-emerald-700">Thank you! We'll review your application and reach out within 24–48 hours.</p>
+            </div>
+            <!-- Error banner -->
+            <div id="demo-error" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-2xl">
+              <p id="demo-error-msg" class="text-sm text-red-700 text-center">Something went wrong. Please try again.</p>
+            </div>
+
+            <form id="demo-form" class="space-y-5">
 
               <div class="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -145,8 +149,8 @@ import Layout from '../../layouts/Layout.astro';
                 <label for="demoConsent" class="text-xs text-neutral-600 cursor-pointer">I consent to before/after photos being taken for educational and promotional purposes. Photos will not be shared without my written permission.</label>
               </div>
 
-              <button type="submit"
-                class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 transition-all font-semibold text-base shadow-sm hover:shadow-md">
+              <button id="demo-submit" type="submit"
+                class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 disabled:opacity-60 transition-all font-semibold text-base shadow-sm hover:shadow-md">
                 Submit Application
               </button>
 
@@ -158,3 +162,42 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 </Layout>
+
+<script>
+  const form      = document.getElementById('demo-form')     as HTMLFormElement | null;
+  const submitBtn = document.getElementById('demo-submit')   as HTMLButtonElement | null;
+  const successEl = document.getElementById('demo-success')  as HTMLElement | null;
+  const errorEl   = document.getElementById('demo-error')    as HTMLElement | null;
+  const errorMsg  = document.getElementById('demo-error-msg')as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form) return;
+    successEl?.classList.add('hidden');
+    errorEl?.classList.add('hidden');
+
+    const fd = new FormData(form);
+    const body: Record<string, string> = {};
+    for (const [k, v] of fd.entries()) body[k] = v as string;
+
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+    try {
+      const res = await fetch('/.netlify/functions/demo-model-submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Submission failed');
+      form.classList.add('hidden');
+      successEl?.classList.remove('hidden');
+      successEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err: any) {
+      if (errorMsg) errorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+      errorEl?.classList.remove('hidden');
+      errorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Application'; }
+    }
+  });
+</script>

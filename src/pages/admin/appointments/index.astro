@@ -86,6 +86,33 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
     function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    // ── Google Calendar helper ────────────────────────────────────────────────
+    function buildGCalUrl(f: Record<string,any>): string {
+      const date = (f['Date'] || '').replace(/-/g, '');
+      if (!date) return '#';
+      const timeStr = f['Time'] || '';
+      let sh = 9, sm = 0;
+      const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (match) {
+        sh = parseInt(match[1], 10);
+        sm = parseInt(match[2], 10);
+        const mer = (match[3] || '').toUpperCase();
+        if (mer === 'PM' && sh !== 12) sh += 12;
+        if (mer === 'AM' && sh === 12) sh = 0;
+      }
+      const eh = (sh + 1) % 24;
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const startDT = `${date}T${pad(sh)}${pad(sm)}00`;
+      const endDT   = `${date}T${pad(eh)}${pad(sm)}00`;
+      const title   = encodeURIComponent(`${f['Client Name'] || 'Client'} — ${f['Services'] || 'Appointment'}`);
+      const details = encodeURIComponent([
+        f['Services'] ? `Services: ${f['Services']}` : '',
+        f['Client Phone'] ? `Phone: ${f['Client Phone']}` : '',
+        f['Notes'] ? `Notes: ${f['Notes']}` : '',
+      ].filter(Boolean).join('\n'));
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDT}/${endDT}&details=${details}&location=${encodeURIComponent('Bliss Dermacare, Tampa FL')}`;
+    }
+
     // ── Load ──────────────────────────────────────────────────────────────────
     async function load() {
       const search    = (document.getElementById('appt-search')       as HTMLInputElement).value.trim();
@@ -257,6 +284,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <button id="ap-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl">Save</button>
           ${isOwner ? `<button id="ap-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl">Delete</button>` : ''}
         </div>
+        <div class="flex gap-2 pt-1 flex-wrap">
+          <a id="ap-gcal-btn" href="${buildGCalUrl(f)}" target="_blank" rel="noopener"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-neutral-200 hover:border-primary-300 text-xs font-medium text-neutral-600 hover:text-primary-700 transition-colors bg-white">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 3H18V1.5a.75.75 0 00-1.5 0V3h-9V1.5a.75.75 0 00-1.5 0V3H4.5A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm0 16.5h-15V9h15v10.5zm0-12h-15V4.5H6V6a.75.75 0 001.5 0V4.5h9V6a.75.75 0 001.5 0V4.5h1.5v3z"/></svg>
+            Add to Google Calendar
+          </a>
+          ${f['hasPSF'] === true ? `
+          <button id="ap-fill-psf-btn"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-emerald-200 hover:border-emerald-400 text-xs font-medium text-emerald-700 hover:text-emerald-800 transition-colors bg-emerald-50">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Fill from Pre-Service Form
+          </button>` : ''}
+        </div>
         <div id="ap-msg" class="text-xs text-center hidden"></div>
       `;
 
@@ -304,6 +344,77 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           closeDetail();
           await load();
         } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+      });
+
+      // ── Fill from PSF ───────────────────────────────────────────────────────
+      document.getElementById('ap-fill-psf-btn')?.addEventListener('click', async () => {
+        const fillBtn = document.getElementById('ap-fill-psf-btn') as HTMLButtonElement;
+        const msgEl   = document.getElementById('ap-msg')!;
+        fillBtn.textContent = 'Loading…';
+        fillBtn.setAttribute('disabled', '');
+        try {
+          const email = f['Client Email'] || (document.getElementById('ap-email') as HTMLInputElement)?.value;
+          const date  = f['Date'] || (document.getElementById('ap-date') as HTMLInputElement)?.value;
+          if (!email || !date) throw new Error('No email or date on this appointment');
+
+          const data = await apiFetch('admin-pre-service-forms', { params: { email, date } });
+          const psf = data?.record;
+          if (!psf) throw new Error('No pre-service form found for this client/date');
+
+          // Auto-fill missing fields
+          const nameEl     = document.getElementById('ap-name')     as HTMLInputElement | null;
+          const emailEl    = document.getElementById('ap-email')    as HTMLInputElement | null;
+          const phoneEl    = document.getElementById('ap-phone')    as HTMLInputElement | null;
+          const timeEl     = document.getElementById('ap-time')     as HTMLInputElement | null;
+          const servicesEl = document.getElementById('ap-services') as HTMLInputElement | null;
+          const notesEl    = document.getElementById('ap-notes')    as HTMLTextAreaElement | null;
+
+          if (nameEl && !nameEl.value && psf.name)   nameEl.value  = psf.name;
+          if (emailEl && !emailEl.value && psf.email) emailEl.value = psf.email;
+          if (phoneEl && !phoneEl.value && psf.phone) phoneEl.value = psf.phone;
+
+          // Appointment time from PSF
+          if (timeEl && !timeEl.value && psf.appointment_time) {
+            // Convert HH:MM (24h) from time input to display format
+            const [hh, mm] = psf.appointment_time.split(':').map(Number);
+            const ampm = hh >= 12 ? 'PM' : 'AM';
+            const h12  = hh % 12 || 12;
+            timeEl.value = `${h12}:${String(mm).padStart(2,'0')} ${ampm}`;
+          }
+
+          // Service requested from PSF
+          if (servicesEl && !servicesEl.value && psf.service_requested) {
+            servicesEl.value = psf.service_requested;
+          }
+
+          // Build a health summary note
+          const skinList = (psf.skin_conditions || []).filter((s: string) => s !== 'none').join(', ');
+          const medList  = (psf.medical_history || []).filter((m: string) => m !== 'none').join(', ');
+          const meds     = psf.medications || '';
+          const allergies= psf.allergies || '';
+          const healthNote = [
+            skinList   ? `Skin: ${skinList}` : '',
+            medList    ? `Medical: ${medList}` : '',
+            meds       ? `Meds: ${meds}` : '',
+            allergies  ? `Allergies: ${allergies}` : '',
+          ].filter(Boolean).join(' | ');
+
+          if (notesEl && healthNote) {
+            const existing = notesEl.value.trim();
+            notesEl.value = existing ? `${existing}\n[PSF] ${healthNote}` : `[PSF] ${healthNote}`;
+          }
+
+          msgEl.textContent = '✓ Pre-service form data applied';
+          msgEl.className = 'text-xs text-center text-emerald-600';
+          msgEl.classList.remove('hidden');
+        } catch (err: any) {
+          msgEl.textContent = `PSF fill failed: ${err.message}`;
+          msgEl.className = 'text-xs text-center text-red-500';
+          msgEl.classList.remove('hidden');
+        } finally {
+          fillBtn.textContent = 'Fill from Pre-Service Form';
+          fillBtn.removeAttribute('disabled');
+        }
       });
     }
 

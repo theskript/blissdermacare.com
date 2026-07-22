@@ -45,6 +45,34 @@ import Layout from '../../layouts/Layout.astro';
                 class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
             </div>
             <div>
+              <label for="appointmentTime" class="block text-sm font-medium text-neutral-700 mb-1.5">Appointment Time *</label>
+              <input type="time" id="appointmentTime" name="appointment_time" required
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />
+            </div>
+            <div>
+              <label for="serviceRequested" class="block text-sm font-medium text-neutral-700 mb-1.5">Service Requested *</label>
+              <select id="serviceRequested" name="service_requested" required
+                class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
+                <option value="">Select a service…</option>
+                <option value="Classic Facial">Classic Facial</option>
+                <option value="Deep Cleansing Facial">Deep Cleansing Facial</option>
+                <option value="Hydrating Facial">Hydrating Facial</option>
+                <option value="Anti-Aging Facial">Anti-Aging Facial</option>
+                <option value="Chemical Peel">Chemical Peel</option>
+                <option value="Microneedling">Microneedling</option>
+                <option value="LED Light Therapy">LED Light Therapy</option>
+                <option value="Dermaplaning">Dermaplaning</option>
+                <option value="Eyebrow Wax / Shaping">Eyebrow Wax / Shaping</option>
+                <option value="Full Face Wax">Full Face Wax</option>
+                <option value="Body Waxing">Body Waxing</option>
+                <option value="Lash Lift & Tint">Lash Lift &amp; Tint</option>
+                <option value="Brow Lamination">Brow Lamination</option>
+                <option value="Semi-Permanent Makeup">Semi-Permanent Makeup</option>
+                <option value="Package / Bundle">Package / Bundle</option>
+                <option value="Other">Other / Not Listed</option>
+              </select>
+            </div>
+            <div>
               <label for="clientPhone" class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number *</label>
               <input type="tel" id="clientPhone" name="phone" required placeholder="(609) 366-0857"
                 class="w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm" />

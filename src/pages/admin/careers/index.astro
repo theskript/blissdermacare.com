@@ -1,0 +1,268 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Career Applications" activeNav="careers">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Career Applications</h1>
+        <p id="ca-count-label" class="text-sm text-neutral-500 mt-1">Loading…</p>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <button id="ca-mark-all-btn"
+          class="hidden px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
+          ✓ Mark All as Read
+        </button>
+        <a href="/careers/" target="_blank"
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-700 text-sm font-medium rounded-xl transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          Public Page
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-5">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input id="ca-search" type="text" placeholder="Search name or email…"
+          class="pl-9 pr-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm w-56"/>
+      </div>
+      <select id="ca-role-filter"
+        class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 outline-none transition-all text-sm bg-white">
+        <option value="">All roles</option>
+        <option value="licensed-esthetician">Licensed Esthetician</option>
+        <option value="client-experience-coordinator">Client Experience Coordinator</option>
+        <option value="seasonal-esthetician">Seasonal Esthetician</option>
+        <option value="open">Open to Any Role</option>
+      </select>
+      <button id="ca-load-btn"
+        class="px-4 py-2.5 bg-white border border-neutral-300 hover:border-neutral-400 rounded-xl text-sm font-medium text-neutral-700 transition-colors">
+        Load
+      </button>
+    </div>
+
+    <div id="ca-new-badge" class="hidden mb-4 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full">
+      <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+      <span id="ca-new-count"></span> unread
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div id="ca-table-wrap" class="overflow-x-auto">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail slide-over -->
+  <div id="ca-detail-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[520px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
+      <h3 class="font-semibold text-neutral-900">Application Details</h3>
+      <button id="ca-close-detail" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="ca-detail-content" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm"></div>
+  </div>
+  <div id="ca-detail-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
+
+  <script>
+    import { requireLogin, apiFetch, getRole } from '../../../scripts/adminAuth.js';
+    requireLogin();
+    const role = getRole();
+    void role;
+
+    let allRecords: any[] = [];
+    let fullRecords: any[] = [];
+
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    const ROLE_LABELS: Record<string,string> = {
+      'licensed-esthetician':          'Licensed Esthetician',
+      'client-experience-coordinator': 'Client Experience Coordinator',
+      'seasonal-esthetician':          'Seasonal Esthetician',
+      'open':                          'Open / Any Role',
+    };
+    const AVAIL_LABELS: Record<string,string> = {
+      'full-time':             'Full-time',
+      'part-time-consistent':  'Part-time (consistent)',
+      'part-time-flexible':    'Part-time (flexible)',
+      'weekends-only':         'Weekends only',
+      'open':                  'Open / Flexible',
+    };
+
+    async function load() {
+      const search    = (document.getElementById('ca-search')      as HTMLInputElement).value.trim().toLowerCase();
+      const roleFilter= (document.getElementById('ca-role-filter') as HTMLSelectElement).value;
+      const params: Record<string,string> = { limit: '500' };
+      if (roleFilter) params.role = roleFilter;
+
+      const wrap = document.getElementById('ca-table-wrap')!;
+      wrap.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>';
+
+      try {
+        const data = await apiFetch('admin-careers', { params });
+        fullRecords = data?.records || [];
+        allRecords = search
+          ? fullRecords.filter((r: any) =>
+              (r.name || '').toLowerCase().includes(search) ||
+              (r.email || '').toLowerCase().includes(search))
+          : fullRecords;
+
+        const label = document.getElementById('ca-count-label')!;
+        label.textContent = `${allRecords.length} application${allRecords.length !== 1 ? 's' : ''}`;
+
+        const unread = fullRecords.filter((r: any) => !r.read_at).length;
+        const badge  = document.getElementById('ca-new-badge')!;
+        const markAllBtn = document.getElementById('ca-mark-all-btn')!;
+        if (unread > 0) {
+          document.getElementById('ca-new-count')!.textContent = String(unread);
+          badge.classList.remove('hidden');
+          markAllBtn.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+          markAllBtn.classList.add('hidden');
+        }
+        render();
+      } catch (err: any) {
+        wrap.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${err.message}</div>`;
+      }
+    }
+
+    function render() {
+      const wrap = document.getElementById('ca-table-wrap')!;
+      if (!allRecords.length) {
+        wrap.innerHTML = '<div class="px-6 py-12 text-center text-neutral-400 text-sm">No applications found.</div>';
+        return;
+      }
+      wrap.innerHTML = `
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+              <th class="px-6 py-3 text-left">Applicant</th>
+              <th class="px-6 py-3 text-left hidden md:table-cell">Position</th>
+              <th class="px-6 py-3 text-left hidden lg:table-cell">Availability</th>
+              <th class="px-6 py-3 text-left hidden lg:table-cell">License #</th>
+              <th class="px-6 py-3 text-left">Submitted</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-50">
+            ${allRecords.map((r: any) => `
+              <tr class="hover:bg-neutral-50 cursor-pointer ca-row transition-colors" data-rec='${JSON.stringify(r).replace(/'/g,"&#39;")}'>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-medium text-neutral-900 ${!r.read_at ? 'font-bold' : ''}">${esc(r.name)}</div>
+                  <div class="text-xs text-neutral-400">${esc(r.email)}</div>
+                  <div class="text-xs text-neutral-400">${esc(r.phone || '')}</div>
+                </td>
+                <td class="px-6 py-4 hidden md:table-cell">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">${esc(ROLE_LABELS[r.role] || r.role || '—')}</span>
+                </td>
+                <td class="px-6 py-4 text-xs text-neutral-600 hidden lg:table-cell">${esc(AVAIL_LABELS[r.availability] || r.availability || '—')}</td>
+                <td class="px-6 py-4 text-xs text-neutral-500 hidden lg:table-cell">${esc(r.license_number || '—')}</td>
+                <td class="px-6 py-4 text-xs text-neutral-400 whitespace-nowrap">${new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll('.ca-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const rec = JSON.parse((row as HTMLElement).dataset.rec || '{}');
+          openDetail(rec);
+        });
+      });
+    }
+
+    function openDetail(rec: any) {
+      const content = document.getElementById('ca-detail-content')!;
+      const portfolioLink = rec.portfolio_url
+        ? `<a href="${esc(rec.portfolio_url)}" target="_blank" rel="noopener" class="text-primary-600 hover:underline break-all">${esc(rec.portfolio_url)}</a>`
+        : '<span class="text-neutral-400">—</span>';
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Name</span><p class="mt-1 text-neutral-900 font-semibold text-base">${esc(rec.name)}</p></div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Email</span><p class="mt-1 text-neutral-800 text-sm break-all">${esc(rec.email)}</p></div>
+            <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Phone</span><p class="mt-1 text-neutral-800 text-sm">${esc(rec.phone || '—')}</p></div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Position</span><p class="mt-1 text-neutral-800 text-sm">${esc(ROLE_LABELS[rec.role] || rec.role || '—')}</p></div>
+            <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Availability</span><p class="mt-1 text-neutral-800 text-sm">${esc(AVAIL_LABELS[rec.availability] || rec.availability || '—')}</p></div>
+          </div>
+          ${rec.license_number ? `<div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">License #</span><p class="mt-1 text-neutral-800 text-sm font-mono">${esc(rec.license_number)}</p></div>` : ''}
+          ${rec.experience ? `<div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Background & Experience</span><p class="mt-1 text-neutral-700 text-sm leading-relaxed whitespace-pre-wrap">${esc(rec.experience)}</p></div>` : ''}
+          ${rec.why_bliss ? `<div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Why Bliss Dermacare</span><p class="mt-1 text-neutral-700 text-sm leading-relaxed whitespace-pre-wrap">${esc(rec.why_bliss)}</p></div>` : ''}
+          <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Portfolio / LinkedIn</span><p class="mt-1 text-sm">${portfolioLink}</p></div>
+          <div><span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Submitted</span><p class="mt-1 text-neutral-500 text-xs">${new Date(rec.created_at).toLocaleString('en-US')}</p></div>
+        </div>
+        <div class="flex gap-3 pt-4 border-t border-neutral-100">
+          <button id="ca-toggle-read" class="flex-1 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-semibold rounded-xl transition-colors">
+            ${rec.read_at ? 'Mark as Unread' : 'Mark as Read'}
+          </button>
+          <button id="ca-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>
+        </div>
+      `;
+
+      document.getElementById('ca-detail-panel')?.classList.remove('hidden');
+      document.getElementById('ca-detail-panel')?.classList.add('flex');
+      document.getElementById('ca-detail-overlay')?.classList.remove('hidden');
+
+      document.getElementById('ca-toggle-read')?.addEventListener('click', async () => {
+        try {
+          await apiFetch('admin-careers', { method: 'PATCH', body: { id: rec.id, read: !rec.read_at } });
+          closeDetail();
+          await load();
+        } catch (err: any) { alert(err.message); }
+      });
+
+      document.getElementById('ca-del-btn')?.addEventListener('click', async () => {
+        if (!confirm(`Delete application from ${rec.name}?`)) return;
+        try {
+          await apiFetch('admin-careers', { method: 'DELETE', body: { id: rec.id } });
+          closeDetail();
+          await load();
+        } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+      });
+    }
+
+    function closeDetail() {
+      document.getElementById('ca-detail-panel')?.classList.add('hidden');
+      document.getElementById('ca-detail-panel')?.classList.remove('flex');
+      document.getElementById('ca-detail-overlay')?.classList.add('hidden');
+    }
+    document.getElementById('ca-close-detail')?.addEventListener('click', closeDetail);
+    document.getElementById('ca-detail-overlay')?.addEventListener('click', closeDetail);
+
+    document.getElementById('ca-mark-all-btn')?.addEventListener('click', async () => {
+      if (!confirm('Mark all applications as read?')) return;
+      try {
+        await apiFetch('admin-careers', { method: 'PATCH', body: { readAll: true } });
+        await load();
+      } catch (err: any) { alert(err.message); }
+    });
+
+    document.getElementById('ca-load-btn')?.addEventListener('click', load);
+    let searchTimer: ReturnType<typeof setTimeout>;
+    document.getElementById('ca-search')?.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        const search = (document.getElementById('ca-search') as HTMLInputElement).value.trim().toLowerCase();
+        allRecords = search
+          ? fullRecords.filter((r: any) =>
+              (r.name || '').toLowerCase().includes(search) ||
+              (r.email || '').toLowerCase().includes(search))
+          : fullRecords;
+        render();
+      }, 300);
+    });
+
+    load();
+  </script>
+
+</AdminLayout>

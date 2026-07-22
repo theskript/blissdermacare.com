@@ -9,10 +9,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <h1 class="text-2xl font-serif font-semibold text-neutral-900">Calendar</h1>
         <p class="text-sm text-neutral-500 mt-1">Click any day to see appointments</p>
       </div>
-      <a href="/admin/new-appointment"
-        class="text-xs bg-primary-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-primary-700 transition-colors">
-        + New Booking
-      </a>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button id="export-ics-btn"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs border border-neutral-300 bg-white text-neutral-600 hover:border-neutral-400 hover:text-neutral-800 font-medium transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Export .ics
+        </button>
+        <a href="/admin/new-appointment"
+          class="text-xs bg-primary-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-primary-700 transition-colors">
+          + New Booking
+        </a>
+      </div>
     </div>
 
     <div class="grid lg:grid-cols-5 gap-6">
@@ -89,6 +96,101 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       'No-Show':         'bg-purple-100 text-purple-700',
       'Pending Confirmation': 'bg-orange-100 text-orange-700',
     };
+
+    // ── Google Calendar helper ────────────────────────────────────────────────
+    function buildGCalUrl(f: Record<string,any>): string {
+      const date = (f['Date'] || '').replace(/-/g, '');
+      if (!date) return '#';
+      const timeStr = f['Time'] || '';
+      let sh = 9, sm = 0;
+      const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (match) {
+        sh = parseInt(match[1], 10);
+        sm = parseInt(match[2], 10);
+        const mer = (match[3] || '').toUpperCase();
+        if (mer === 'PM' && sh !== 12) sh += 12;
+        if (mer === 'AM' && sh === 12) sh = 0;
+      }
+      const eh = (sh + 1) % 24;
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const startDT = `${date}T${pad(sh)}${pad(sm)}00`;
+      const endDT   = `${date}T${pad(eh)}${pad(sm)}00`;
+      const title   = encodeURIComponent(`${f['Client Name'] || 'Client'} — ${f['Services'] || 'Appointment'}`);
+      const details = encodeURIComponent([
+        f['Services'] ? `Services: ${f['Services']}` : '',
+        f['Client Phone'] ? `Phone: ${f['Client Phone']}` : '',
+        f['Notes'] ? `Notes: ${f['Notes']}` : '',
+      ].filter(Boolean).join('\n'));
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDT}/${endDT}&details=${details}&location=${encodeURIComponent('Bliss Dermacare, Tampa FL')}`;
+    }
+
+    // ── ICS export ────────────────────────────────────────────────────────────
+    function icsEscape(str: string) {
+      return (str || '').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+    }
+    function foldLine(line: string) {
+      const parts: string[] = [];
+      while (line.length > 75) { parts.push(line.substring(0, 75)); line = ' ' + line.substring(75); }
+      parts.push(line);
+      return parts.join('\r\n');
+    }
+    function generateICS(appointments: any[]): string {
+      const now = new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)+'Z';
+      const lines = [
+        'BEGIN:VCALENDAR','VERSION:2.0',
+        'PRODID:-//Bliss Dermacare//Admin//EN',
+        'CALSCALE:GREGORIAN','METHOD:PUBLISH',
+        'X-WR-CALNAME:Bliss Dermacare',
+      ];
+      for (const rec of appointments) {
+        const f = rec.fields || rec;
+        const date = (f['Date'] || f.date || '').replace(/-/g,'');
+        if (!date) continue;
+        const timeStr = f['Time'] || f.time || '';
+        let sh = 9, sm = 0;
+        const tm = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+        if (tm) {
+          sh = parseInt(tm[1],10); sm = parseInt(tm[2],10);
+          const mer = (tm[3] || '').toUpperCase();
+          if (mer==='PM' && sh!==12) sh+=12;
+          if (mer==='AM' && sh===12) sh=0;
+        }
+        const pad = (n: number) => String(n).padStart(2,'0');
+        const startDT = `${date}T${pad(sh)}${pad(sm)}00`;
+        const endDT   = `${date}T${pad((sh+1)%24)}${pad(sm)}00`;
+        const clientName = f['Client Name'] || f.client_name || 'Client';
+        const services   = f['Services']    || f.services    || 'Appointment';
+        const phone      = f['Client Phone']|| f.client_phone|| '';
+        const notes      = f['Notes']       || f.notes       || '';
+        const summary    = icsEscape(`${clientName} — ${services}`);
+        const descParts  = [services?`Services: ${services}`:'', phone?`Phone: ${phone}`:'', notes?`Notes: ${notes}`:''].filter(Boolean);
+        lines.push('BEGIN:VEVENT');
+        lines.push(`UID:bliss-appt-${rec.id || date+clientName}@blissdermacare.com`);
+        lines.push(`DTSTAMP:${now}`);
+        lines.push(`DTSTART;TZID=America/New_York:${startDT}`);
+        lines.push(`DTEND;TZID=America/New_York:${endDT}`);
+        lines.push(foldLine(`SUMMARY:${summary}`));
+        if (descParts.length) lines.push(foldLine(`DESCRIPTION:${icsEscape(descParts.join('\\n'))}`));
+        lines.push('LOCATION:Bliss Dermacare\\, Tampa FL');
+        lines.push('STATUS:CONFIRMED');
+        lines.push('END:VEVENT');
+      }
+      lines.push('END:VCALENDAR');
+      return lines.join('\r\n');
+    }
+
+    document.getElementById('export-ics-btn')?.addEventListener('click', () => {
+      const allRecs = Object.values(allAppts).flat();
+      if (!allRecs.length) { alert('No appointments loaded for the current month.'); return; }
+      const ics  = generateICS(allRecs);
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'bliss-appointments.ics';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    });
 
     // ── Helpers ──────────────────────────────────────────────────────────────
     function padZ(n: number) { return String(n).padStart(2, '0'); }
@@ -297,6 +399,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <button id="cal-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save</button>
           ${role === 'owner' ? `<button id="cal-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
         </div>
+        <div class="flex gap-2 flex-wrap">
+          <a href="${buildGCalUrl(f)}" target="_blank" rel="noopener"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-neutral-200 hover:border-primary-300 text-xs font-medium text-neutral-600 hover:text-primary-700 transition-colors bg-white">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 3H18V1.5a.75.75 0 00-1.5 0V3h-9V1.5a.75.75 0 00-1.5 0V3H4.5A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm0 16.5h-15V9h15v10.5zm0-12h-15V4.5H6V6a.75.75 0 001.5 0V4.5h9V6a.75.75 0 001.5 0V4.5h1.5v3z"/></svg>
+            Add to Google Calendar
+          </a>
+          ${f['hasPSF'] === true ? `
+          <button id="cal-fill-psf-btn"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-emerald-200 hover:border-emerald-400 text-xs font-medium text-emerald-700 hover:text-emerald-800 transition-colors bg-emerald-50">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Fill from PSF
+          </button>` : ''}
+        </div>
         <div id="cal-save-msg" class="text-xs text-center hidden text-neutral-400"></div>
       `;
 
@@ -349,6 +464,62 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             showDayPanel(selectedDate);
           }
         } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+      });
+
+      // ── Fill from PSF ───────────────────────────────────────────────────────
+      document.getElementById('cal-fill-psf-btn')?.addEventListener('click', async () => {
+        const fillBtn = document.getElementById('cal-fill-psf-btn') as HTMLButtonElement;
+        const msg     = document.getElementById('cal-save-msg')!;
+        fillBtn.textContent = 'Loading…';
+        fillBtn.setAttribute('disabled', '');
+        try {
+          const email = f['Client Email'];
+          const date  = f['Date'];
+          if (!email || !date) throw new Error('No email or date on this appointment');
+
+          const data = await apiFetch('admin-pre-service-forms', { params: { email, date } });
+          const psf  = data?.record;
+          if (!psf) throw new Error('No pre-service form found');
+
+          const timeEl     = document.getElementById('cal-f-time')     as HTMLInputElement | null;
+          const servicesEl = document.getElementById('cal-f-services') as HTMLInputElement | null;
+          const notesEl    = document.getElementById('cal-f-notes')    as HTMLTextAreaElement | null;
+
+          if (timeEl && !timeEl.value && psf.appointment_time) {
+            const [hh, mm] = psf.appointment_time.split(':').map(Number);
+            const ampm = hh >= 12 ? 'PM' : 'AM';
+            const h12  = hh % 12 || 12;
+            timeEl.value = `${h12}:${String(mm).padStart(2,'0')} ${ampm}`;
+          }
+          if (servicesEl && !servicesEl.value && psf.service_requested) {
+            servicesEl.value = psf.service_requested;
+          }
+
+          const skinList  = (psf.skin_conditions || []).filter((s: string) => s !== 'none').join(', ');
+          const medList   = (psf.medical_history  || []).filter((m: string) => m !== 'none').join(', ');
+          const healthNote = [
+            skinList ? `Skin: ${skinList}` : '',
+            medList  ? `Medical: ${medList}` : '',
+            psf.medications ? `Meds: ${psf.medications}` : '',
+            psf.allergies   ? `Allergies: ${psf.allergies}` : '',
+          ].filter(Boolean).join(' | ');
+
+          if (notesEl && healthNote) {
+            const existing = notesEl.value.trim();
+            notesEl.value = existing ? `${existing}\n[PSF] ${healthNote}` : `[PSF] ${healthNote}`;
+          }
+
+          msg.textContent = '✓ PSF data applied';
+          msg.className = 'text-xs text-center text-emerald-600';
+          msg.classList.remove('hidden');
+        } catch (err: any) {
+          msg.textContent = `PSF fill failed: ${err.message}`;
+          msg.className = 'text-xs text-center text-red-500';
+          msg.classList.remove('hidden');
+        } finally {
+          fillBtn.textContent = 'Fill from PSF';
+          fillBtn.removeAttribute('disabled');
+        }
       });
     }
 

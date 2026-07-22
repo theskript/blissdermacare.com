@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * GET    /.netlify/functions/admin-pre-service-forms  — list submissions
- * PATCH  /.netlify/functions/admin-pre-service-forms  — mark read/unread (single or all)
- * DELETE /.netlify/functions/admin-pre-service-forms  — delete a submission
+ * GET    /.netlify/functions/admin-consultations   — list submissions
+ * PATCH  /.netlify/functions/admin-consultations   — mark read/unread
+ * DELETE /.netlify/functions/admin-consultations   — delete
  */
 
 const { requireAuth, getSupabase } = require('./_utils.cjs');
@@ -24,52 +24,35 @@ exports.handler = async (event) => {
   }
   void user;
 
-  // ── PATCH — mark a submission (or all) as read / unread ──────────────────
   if (event.httpMethod === 'PATCH') {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch {
       return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
     }
     const { id, read, readAll } = body;
-
     if (readAll) {
-      // Mark every unread record as read
-      const { error } = await getSupabase()
-        .from('pre_service_forms')
-        .update({ read_at: new Date().toISOString() })
-        .is('read_at', null);
+      const { error } = await getSupabase().from('consultation_submissions').update({ read_at: new Date().toISOString() }).is('read_at', null);
       if (error) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: error.message }) };
       return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
     }
-
-    if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id or readAll is required' }) };
-
-    const { error } = await getSupabase()
-      .from('pre_service_forms')
-      .update({ read_at: read ? new Date().toISOString() : null })
-      .eq('id', id);
+    if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id or readAll required' }) };
+    const { error } = await getSupabase().from('consultation_submissions').update({ read_at: read ? new Date().toISOString() : null }).eq('id', id);
     if (error) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: error.message }) };
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
   }
 
-  // ── DELETE — remove a submission ─────────────────────────────────────────
   if (event.httpMethod === 'DELETE') {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch {
       return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
     }
     const { id } = body;
-    if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id is required' }) };
-
-    const { error } = await getSupabase()
-      .from('pre_service_forms')
-      .delete()
-      .eq('id', id);
+    if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id required' }) };
+    const { error } = await getSupabase().from('consultation_submissions').delete().eq('id', id);
     if (error) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: error.message }) };
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
   }
 
-  // ── GET — list submissions ────────────────────────────────────────────────
   if (event.httpMethod !== 'GET') {
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
@@ -77,37 +60,18 @@ exports.handler = async (event) => {
   try {
     const q = event.queryStringParameters || {};
     const limit = Math.min(parseInt(q.limit || '100', 10), 500);
-
-    // Full single-record lookup — used by "Fill from PSF" in appointment detail
-    if (q.email && q.date) {
-      const { data, error } = await getSupabase()
-        .from('pre_service_forms')
-        .select('*')
-        .eq('email', q.email.toLowerCase())
-        .eq('appointment_date', q.date)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw new Error(error.message);
-      return { statusCode: 200, headers: CORS, body: JSON.stringify({ record: data || null }) };
-    }
-
     let query = getSupabase()
-      .from('pre_service_forms')
-      .select('id, name, email, phone, appointment_date, appointment_time, service_requested, skin_conditions, medical_history, medications, allergies, created_at, read_at')
+      .from('consultation_submissions')
+      .select('id, name, email, phone, skin_type, concerns, current_routine, goals, contact_preference, read_at, created_at')
       .order('created_at', { ascending: false })
       .limit(limit);
-
     if (q.since)          query = query.gte('created_at', q.since);
-    if (q.email)          query = query.eq('email', q.email.toLowerCase());
     if (q.unread === 'true') query = query.is('read_at', null);
-
     const { data, error } = await query;
     if (error) throw new Error(error.message);
-
-    return { statusCode: 200, headers: CORS, body: JSON.stringify({ records: data || [], total: (data || []).length }) };
+    return { statusCode: 200, headers: CORS, body: JSON.stringify({ records: data || [] }) };
   } catch (err) {
-    console.error('admin-pre-service-forms error:', err);
+    console.error('admin-consultations error:', err);
     return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message }) };
   }
 };
