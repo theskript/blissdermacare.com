@@ -186,114 +186,40 @@ function requireAuth(event, requiredRole = null) {
   return decoded;
 }
 
-// ── Salesmsg SMS ─────────────────────────────────────────────────────────────
-// Flow: auto-refresh token → find/create contact → get/create conversation → send message
-
-const SALESMSG_BASE = 'https://api.salesmessage.com/pub/v2.2';
-
-// Returns a valid Salesmsg token, refreshing via Supabase if expiring within 12h
-async function getSalesmsgToken() {
-  const seedToken = process.env.SALESMSG_API_KEY;
-  if (!seedToken) return null;
-
-  // Try to load stored token from Supabase
-  let token = seedToken;
-  try {
-    const { data } = await getSupabase()
-      .from('settings')
-      .select('value')
-      .eq('key', 'salesmsg_token')
-      .single();
-    if (data?.value) token = data.value;
-  } catch (_) { /* table may not exist yet — fall back to env var */ }
-
-  // Check expiry; refresh if within 12 hours
-  try {
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-    const secsLeft = payload.exp - Math.floor(Date.now() / 1000);
-    if (secsLeft < 43200) {
-      const r = await fetch(`${SALESMSG_BASE}/oauth/personal-token/refresh`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      });
-      if (r.ok) {
-        const d = await r.json();
-        if (d.access_token) {
-          token = d.access_token;
-          // Persist refreshed token so all future invocations use it
-          await getSupabase()
-            .from('settings')
-            .upsert({ key: 'salesmsg_token', value: token, updated_at: new Date().toISOString() });
-          console.log('[SMS] Salesmsg token refreshed and saved');
-        }
-      }
-    }
-  } catch (e) {
-    console.warn('[SMS] Token refresh check failed (non-fatal):', e.message);
-  }
-
-  return token;
-}
+// ── Twilio SMS ────────────────────────────────────────────────────────────────
 
 async function sendSMS(to, body) {
-  const { SALESMSG_TEAM_ID } = process.env;
-  const apiToken = await getSalesmsgToken();
-  if (!apiToken || !SALESMSG_TEAM_ID) {
-    console.warn('[SMS] Salesmsg not configured — skipping SMS to', to);
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken  = process.env.TWILIO_AUTH_TOKEN;
+  const from       = process.env.TWILIO_FROM || '+18334323185';
+  if (!accountSid || !authToken) {
+    console.warn('[SMS] Twilio not configured — skipping SMS to', to);
     return null;
   }
   const digits = String(to).replace(/\D/g, '');
-  const phone = digits.startsWith('1') ? `+${digits}` : `+1${digits}`;
-  const headers = {
-    'Authorization': `Bearer ${apiToken}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
+  const phone  = digits.startsWith('1') ? `+${digits}` : `+1${digits}`;
 
+  const params = new URLSearchParams({ To: phone, From: from, Body: body });
   try {
-    // Step 1: Find or create contact
-    let contactId;
-    const searchRes = await fetch(`${SALESMSG_BASE}/contacts?search=${encodeURIComponent(phone)}&length=1`, { headers });
-    const searchData = await searchRes.json();
-    if (searchData.data && searchData.data.length > 0) {
-      contactId = searchData.data[0].id;
-    } else {
-      const createRes = await fetch(`${SALESMSG_BASE}/contacts`, {
-        method: 'POST', headers,
-        body: JSON.stringify({ number: phone }),
-      });
-      const createData = await createRes.json();
-      if (!createRes.ok) {
-        console.error('[SMS] Salesmsg create contact error:', JSON.stringify(createData));
-        return { ok: false, error: createData.message || 'Failed to create contact' };
+    const res = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
+          'Content-Type':  'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
       }
-      contactId = createData.id;
+    );
+    const data = await res.json();
+    if (!res.ok) {
+      console.error(`[SMS] Twilio error → ${phone}:`, JSON.stringify(data));
+      return { ok: false, error: data.message || 'Unknown Twilio error', status: data.status };
     }
-
-    // Step 2: Get or create conversation
-    const convRes = await fetch(`${SALESMSG_BASE}/conversations`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ contact_id: contactId, team_id: Number(SALESMSG_TEAM_ID) }),
-    });
-    const convData = await convRes.json();
-    if (!convRes.ok) {
-      console.error('[SMS] Salesmsg create conversation error:', JSON.stringify(convData));
-      return { ok: false, error: convData.message || 'Failed to create conversation' };
-    }
-
-    // Step 3: Send message
-    const msgRes = await fetch(`${SALESMSG_BASE}/messages/${convData.id}`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ message: body }),
-    });
-    const msgData = await msgRes.json();
-    if (!msgRes.ok) {
-      console.error(`[SMS] Salesmsg send error → ${phone}:`, JSON.stringify(msgData));
-      return { ok: false, error: msgData.message || 'Unknown Salesmsg error', status: msgData.status };
-    }
-    return { ok: true, sid: String(msgData.id), status: msgData.status };
+    return { ok: true, sid: data.sid, status: data.status };
   } catch (err) {
-    console.error('[SMS] Salesmsg unexpected error:', err.message);
+    console.error('[SMS] Twilio unexpected error:', err.message);
     return { ok: false, error: err.message };
   }
 }
