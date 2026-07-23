@@ -23,48 +23,60 @@ exports.handler = async (event) => {
   // ── PATCH — update client contact info across all records ──────────────────
   if (event.httpMethod === 'PATCH') {
     if (user.role !== 'owner') return { statusCode: 403, headers: CORS, body: JSON.stringify({ error: 'Owner access required' }) };
-    let body;
-    try { body = JSON.parse(event.body || '{}'); } catch {
-      return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
+    try {
+      let body;
+      try { body = JSON.parse(event.body || '{}'); } catch {
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
+      }
+      const { oldEmail, name, email: newEmail, phone } = body;
+      if (!oldEmail) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'oldEmail is required' }) };
+
+      const apptUpdates = {};
+      if (name)     apptUpdates.client_name  = name.trim();
+      if (newEmail) apptUpdates.client_email = newEmail.trim().toLowerCase();
+      if (phone)    apptUpdates.client_phone = phone.trim();
+
+      if (Object.keys(apptUpdates).length) {
+        const { error: ae } = await sb.from('appointments').update(apptUpdates).eq('client_email', oldEmail.toLowerCase());
+        if (ae) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: ae.message }) };
+      }
+
+      const psfUpdates = {};
+      if (name)     psfUpdates.name  = name.trim();
+      if (newEmail) psfUpdates.email = newEmail.trim().toLowerCase();
+      if (phone)    psfUpdates.phone = phone.trim();
+      if (Object.keys(psfUpdates).length) {
+        await sb.from('pre_service_forms').update(psfUpdates).eq('email', oldEmail.toLowerCase()).catch(() => {});
+      }
+
+      logAudit({ action: 'Update Client', username: user.username, role: user.role, details: `Updated client: ${oldEmail} → ${JSON.stringify(apptUpdates)}`, ip });
+      return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
+    } catch (err) {
+      console.error('[admin-clients PATCH]', err);
+      return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message || 'Internal server error' }) };
     }
-    const { oldEmail, name, email: newEmail, phone } = body;
-    if (!oldEmail) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'oldEmail is required' }) };
-
-    const apptUpdates = {};
-    if (name)     apptUpdates.client_name  = name.trim();
-    if (newEmail) apptUpdates.client_email = newEmail.trim().toLowerCase();
-    if (phone)    apptUpdates.client_phone = phone.trim();
-
-    if (Object.keys(apptUpdates).length) {
-      const { error: ae } = await sb.from('appointments').update(apptUpdates).eq('client_email', oldEmail.toLowerCase());
-      if (ae) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: ae.message }) };
-    }
-
-    const psfUpdates = {};
-    if (name)     psfUpdates.name  = name.trim();
-    if (newEmail) psfUpdates.email = newEmail.trim().toLowerCase();
-    if (phone)    psfUpdates.phone = phone.trim();
-    if (Object.keys(psfUpdates).length) {
-      await sb.from('pre_service_forms').update(psfUpdates).eq('email', oldEmail.toLowerCase()).catch(() => {});
-    }
-
-    logAudit({ action: 'Update Client', username: user.username, role: user.role, details: `Updated client: ${oldEmail} → ${JSON.stringify(apptUpdates)}`, ip });
-    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true }) };
   }
 
   // ── DELETE — remove all data for a client ──────────────────────────────────
   if (event.httpMethod === 'DELETE') {
     if (user.role !== 'owner') return { statusCode: 403, headers: CORS, body: JSON.stringify({ error: 'Owner access required' }) };
-    const email = event.queryStringParameters?.email || JSON.parse(event.body || '{}').email;
-    if (!email) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'email is required' }) };
+    try {
+      let email;
+      try { email = event.queryStringParameters?.email || JSON.parse(event.body || '{}').email; }
+      catch { return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid request body' }) }; }
+      if (!email) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'email is required' }) };
 
-    const lc = email.toLowerCase();
-    const { error: ae } = await sb.from('appointments').delete().eq('client_email', lc);
-    if (ae) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: ae.message }) };
-    await sb.from('pre_service_forms').delete().eq('email', lc).catch(() => {});
+      const lc = email.toLowerCase();
+      const { error: ae } = await sb.from('appointments').delete().eq('client_email', lc);
+      if (ae) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: ae.message }) };
+      await sb.from('pre_service_forms').delete().eq('email', lc).catch(() => {});
 
-    logAudit({ action: 'Delete Client', username: user.username, role: user.role, details: `Deleted all data for: ${lc}`, ip });
-    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, deleted: lc }) };
+      logAudit({ action: 'Delete Client', username: user.username, role: user.role, details: `Deleted all data for: ${lc}`, ip });
+      return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, deleted: lc }) };
+    } catch (err) {
+      console.error('[admin-clients DELETE]', err);
+      return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message || 'Internal server error' }) };
+    }
   }
 
   if (event.httpMethod !== 'GET') {
