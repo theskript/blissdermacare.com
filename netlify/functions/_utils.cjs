@@ -215,8 +215,10 @@ async function sendSMS(to, body) {
     const data = await res.json();
     if (!res.ok) {
       console.error(`[SMS] Twilio error → ${phone}:`, JSON.stringify(data));
+      logAudit({ action: 'SMS Failed', username: 'system', role: 'system', details: `To: ${phone} | Error: ${data.message || data.status}` });
       return { ok: false, error: data.message || 'Unknown Twilio error', status: data.status };
     }
+    logAudit({ action: 'SMS Sent', username: 'system', role: 'system', details: `To: ${phone} | ${String(body).substring(0, 200)}`, targetId: data.sid });
     return { ok: true, sid: data.sid, status: data.status };
   } catch (err) {
     console.error('[SMS] Twilio unexpected error:', err.message);
@@ -246,7 +248,13 @@ async function sendEmail({ to, subject, html, text }) {
       ],
     }),
   });
-  if (!res.ok) { console.error('[Email] SendGrid error:', await res.text()); return null; }
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error('[Email] SendGrid error:', errText);
+    logAudit({ action: 'Email Failed', username: 'system', role: 'system', details: `To: ${toArr.join(', ')} | Subject: ${subject} | Error: ${errText.substring(0, 200)}` });
+    return null;
+  }
+  logAudit({ action: 'Email Sent', username: 'system', role: 'system', details: `To: ${toArr.join(', ')} | Subject: ${subject}` });
   return true;
 }
 
