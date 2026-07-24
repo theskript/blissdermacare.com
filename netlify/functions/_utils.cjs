@@ -254,7 +254,8 @@ async function sendEmail({ to, subject, html, text }) {
     logAudit({ action: 'Email Failed', username: 'system', role: 'system', details: `To: ${toArr.join(', ')} | Subject: ${subject} | Error: ${errText.substring(0, 200)}` });
     return null;
   }
-  logAudit({ action: 'Email Sent', username: 'system', role: 'system', details: `To: ${toArr.join(', ')} | Subject: ${subject}` });
+  const preview = (text || (html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()).substring(0, 600);
+  logAudit({ action: 'Email Sent', username: 'system', role: 'system', details: `To: ${toArr.join(', ')} | Subject: ${subject} | ${preview}` });
   return true;
 }
 
