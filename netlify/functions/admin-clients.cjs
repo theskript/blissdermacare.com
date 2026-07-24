@@ -46,7 +46,7 @@ exports.handler = async (event) => {
       if (newEmail) psfUpdates.email = newEmail.trim().toLowerCase();
       if (phone)    psfUpdates.phone = phone.trim();
       if (Object.keys(psfUpdates).length) {
-        await sb.from('pre_service_forms').update(psfUpdates).eq('email', oldEmail.toLowerCase()).catch(() => {});
+        try { await sb.from('pre_service_forms').update(psfUpdates).eq('email', oldEmail.toLowerCase()); } catch (_) {}
       }
 
       logAudit({ action: 'Update Client', username: user.username, role: user.role, details: `Updated client: ${oldEmail} → ${JSON.stringify(apptUpdates)}`, ip });
@@ -69,7 +69,7 @@ exports.handler = async (event) => {
       const lc = email.toLowerCase();
       const { error: ae } = await sb.from('appointments').delete().eq('client_email', lc);
       if (ae) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: ae.message }) };
-      await sb.from('pre_service_forms').delete().eq('email', lc).catch(() => {});
+      try { await sb.from('pre_service_forms').delete().eq('email', lc); } catch (_) {}
 
       logAudit({ action: 'Delete Client', username: user.username, role: user.role, details: `Deleted all data for: ${lc}`, ip });
       return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, deleted: lc }) };
