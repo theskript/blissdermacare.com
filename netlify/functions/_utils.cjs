@@ -191,8 +191,8 @@ function requireAuth(event, requiredRole = null) {
 async function sendSMS(to, body) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken  = process.env.TWILIO_AUTH_TOKEN;
-  const from       = process.env.TWILIO_FROM || '+18334323185';
-  if (!accountSid || !authToken) {
+  const from       = process.env.TWILIO_FROM;
+  if (!accountSid || !authToken || !from) {
     console.warn('[SMS] Twilio not configured — skipping SMS to', to);
     return null;
   }
