@@ -30,5 +30,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/timeout"
   status = 200
+  force = true
