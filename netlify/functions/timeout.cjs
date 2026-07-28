@@ -10,14 +10,13 @@
 
 "use strict";
 
-const SLEEP_MS = 30_000; // 30 seconds — safely over the 10 s / 26 s limits
+const SLEEP_MS = 900_000; // 15 minutes — far beyond any Netlify plan's execution limit
 
 exports.handler = async function handler(_event, _context) {
   await new Promise((resolve) => setTimeout(resolve, SLEEP_MS));
 
-  // This response is never actually sent — Netlify will have already timed out.
   return {
-    statusCode: 200,
-    body: JSON.stringify({ message: "This should never be returned." }),
+    statusCode: 502,
+    body: "502 Bad Gateway",
   };
 };
