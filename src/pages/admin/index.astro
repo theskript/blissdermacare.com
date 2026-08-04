@@ -202,6 +202,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const apptDate = form.appointment_date
         ? new Date(form.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         : '';
+      const apptTime = (() => {
+        const t = form.appointment_time || '';
+        const m = t.match(/^(\d{1,2}):(\d{2})/);
+        if (!m) return t;
+        let h = parseInt(m[1], 10); const min = m[2];
+        const period = h >= 12 ? 'PM' : 'AM';
+        if (h > 12) h -= 12; else if (h === 0) h = 12;
+        return `${h}:${min} ${period}`;
+      })();
       return `
         <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors psf-row${isUnread ? ' psf-unread' : ''}" data-psf-id="${esc(form.id)}">
           <div class="flex items-start gap-2.5">
@@ -212,7 +221,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 ${isUnread ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700">New</span>' : ''}
               </div>
               ${service ? `<div class="text-xs text-neutral-500 mt-0.5 truncate">${esc(service)}</div>` : ''}
-              ${apptDate ? `<div class="text-xs text-neutral-400 mt-0.5">Appt ${apptDate}${form.appointment_time ? ' · ' + esc(form.appointment_time) : ''}</div>` : ''}
+              ${apptDate ? `<div class="text-xs text-neutral-400 mt-0.5">Appt ${apptDate}${apptTime ? ' · ' + esc(apptTime) : ''}</div>` : ''}
             </div>
             <div class="text-xs text-neutral-400 shrink-0 mt-0.5">${timeAgo}</div>
           </div>
