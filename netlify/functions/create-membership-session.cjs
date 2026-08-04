@@ -51,12 +51,21 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid or inactive membership plan.' }) };
   }
 
-  // Validate email
-  if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'A valid email address is required.' }) };
+  // Auto-backfill stripe_price_id from legacy env vars on first hit
+  let priceId = planInfo.stripe_price_id;
+  if (!priceId) {
+    const legacyEnvMap = {
+      'glow-ritual':   'STRIPE_PRICE_GLOW_RITUAL',
+      'radiance-plan': 'STRIPE_PRICE_RADIANCE_PLAN',
+      'vip-luxe':      'STRIPE_PRICE_VIP_LUXE',
+    };
+    const envKey = legacyEnvMap[plan];
+    const envVal = envKey && process.env[envKey];
+    if (envVal) {
+      priceId = envVal;
+      getSupabase().from('membership_plans').update({ stripe_price_id: envVal }).eq('slug', plan).then(() => {});
+    }
   }
-
-  const priceId = planInfo.stripe_price_id;
   const siteUrl = (process.env.URL || 'https://blissdermacare.com').replace(/\/$/, '');
   const stripe  = Stripe(process.env.STRIPE_SECRET_KEY);
 
