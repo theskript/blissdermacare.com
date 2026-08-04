@@ -89,19 +89,36 @@ exports.handler = async (event) => {
     try {
       const sb = getSupabase();
       if (record.email && record.appointment_date) {
-        const { data: existing } = await sb
+        // Primary: match by email + date
+        let existing = null;
+        const { data: byEmail } = await sb
           .from('appointments')
-          .select('id, time, services')
+          .select('id, time, services, client_email')
           .eq('client_email', record.email)
           .eq('date', record.appointment_date)
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle();
+        existing = byEmail;
+
+        // Fallback: match by full name + date when no email match
+        if (!existing && record.name) {
+          const { data: byName } = await sb
+            .from('appointments')
+            .select('id, time, services, client_email')
+            .ilike('client_name', record.name.trim())
+            .eq('date', record.appointment_date)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          existing = byName || null;
+        }
 
         if (existing) {
           const patch = {};
           if (!existing.time     && record.appointment_time)  patch.time     = record.appointment_time;
           if (!existing.services && record.service_requested) patch.services = record.service_requested;
+          if (!existing.client_email) patch.client_email = record.email;
           if (Object.keys(patch).length) {
             await sb.from('appointments').update(patch).eq('id', existing.id);
           }

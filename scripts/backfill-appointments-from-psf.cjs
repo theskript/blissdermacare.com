@@ -53,10 +53,11 @@ async function main() {
 
     if (date < today) { skipped++; continue; }
 
-    // Find the most-recently-created appointment for this email + date
-    const { data: existing, error: lookupErr } = await sb
+    // Primary: match by email + date
+    let existing = null;
+    const { data: byEmail, error: lookupErr } = await sb
       .from('appointments')
-      .select('id, time, services')
+      .select('id, time, services, client_email')
       .eq('client_email', email)
       .eq('date', date)
       .order('created_at', { ascending: false })
@@ -67,11 +68,30 @@ async function main() {
       console.warn(`  [WARN] lookup failed for ${email} / ${date}: ${lookupErr.message}`);
       continue;
     }
+    existing = byEmail;
+
+    // Fallback: match by full name (case-insensitive) + date when email didn't match
+    if (!existing && form.name) {
+      const { data: byName } = await sb
+        .from('appointments')
+        .select('id, time, services, client_email')
+        .ilike('client_name', form.name.trim())
+        .eq('date', date)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (byName) {
+        existing = byName;
+        console.log(`  [NAME MATCH] ${form.name} / ${date} — found via name fallback (email was '${byName.client_email || 'empty'}')`);
+      }
+    }
 
     if (existing) {
       const patch = {};
       if (!existing.time     && form.appointment_time)  patch.time     = form.appointment_time;
       if (!existing.services && form.service_requested) patch.services = form.service_requested;
+      // Also backfill email if the match was found via name fallback
+      if (!existing.client_email && email) patch.client_email = email;
 
       if (Object.keys(patch).length === 0) {
         skipped++;
