@@ -72,7 +72,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   <div id="appt-detail-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
 
   <script>
-    import { requireLogin, apiFetch, getRole, formatDate } from '../../../scripts/adminAuth.js';
+    import { requireLogin, apiFetch, getRole, formatDate, formatTime } from '../../../scripts/adminAuth.js';
     requireLogin();
     const role = getRole();
 
@@ -185,7 +185,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               <tr class="hover:bg-neutral-50 cursor-pointer appt-row transition-colors" data-rec='${JSON.stringify(rec).replace(/'/g,"&#39;")}'>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-neutral-900">${formatDate(f['Date'])}</div>
-                  <div class="text-xs text-neutral-400">${esc(f['Time'] || '—')}</div>
+                  <div class="text-xs text-neutral-400">${esc(formatTime(f['Time']))}</div>
                 </td>
                 <td class="px-6 py-4">
                   <div class="text-sm font-semibold text-neutral-900">${esc(f['Client Name'] || '—')}</div>

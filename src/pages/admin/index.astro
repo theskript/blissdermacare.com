@@ -106,7 +106,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <div id="detail-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
 
   <script>
-    import { requireLogin, apiFetch, getRole, formatDate } from '../../scripts/adminAuth.js';
+    import { requireLogin, apiFetch, getRole, formatDate, formatTime } from '../../scripts/adminAuth.js';
     requireLogin();
 
     const role = getRole();
@@ -142,10 +142,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     // ── Render appointment row ─────────────────────────────────────────────
     function apptRow(rec: any, showDate = false) {
       const f = rec.fields;
-      let timeMain = f['Time'] || '—';
-      let timePeriod = '';
-      const tm = (f['Time'] || '').match(/^(\d+:\d+)\s*(AM|PM)?$/i);
-      if (tm) { timeMain = tm[1]; timePeriod = (tm[2] || '').toUpperCase(); }
+      const [timeMain, timePeriod] = (() => {
+        const t = formatTime(f['Time'] || '');
+        const m = t.match(/^(\d+:\d+)\s*(AM|PM)$/i);
+        return m ? [m[1], m[2].toUpperCase()] : [t, ''];
+      })();
 
       const priceHtml = role === 'owner' && f['Price'] != null
         ? `<div class="text-sm font-bold text-primary-700 shrink-0">$${Number(f['Price']).toFixed(0)}</div>`
@@ -203,15 +204,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const apptDate = form.appointment_date
         ? new Date(form.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
         : '';
-      const apptTime = (() => {
-        const t = form.appointment_time || '';
-        const m = t.match(/^(\d{1,2}):(\d{2})/);
-        if (!m) return t;
-        let h = parseInt(m[1], 10); const min = m[2];
-        const period = h >= 12 ? 'PM' : 'AM';
-        if (h > 12) h -= 12; else if (h === 0) h = 12;
-        return `${h}:${min} ${period}`;
-      })();
+      const apptTime = formatTime(form.appointment_time || '');
       return `
         <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors psf-row${isUnread ? ' psf-unread' : ''}" data-psf-id="${esc(form.id)}">
           <div class="flex items-start gap-2.5">

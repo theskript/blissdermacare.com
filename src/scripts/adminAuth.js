@@ -100,6 +100,18 @@ export function formatDate(dateStr) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/** Converts HH:MM (24-hour) or H:MM AM/PM to H:MM AM/PM. */
+export function formatTime(timeStr) {
+  if (!timeStr) return '—';
+  const m = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+  if (!m) return timeStr;
+  let h = parseInt(m[1], 10); const min = m[2]; const mer = (m[3] || '').toUpperCase();
+  if (mer) return `${h}:${min} ${mer}`;
+  const period = h >= 12 ? 'PM' : 'AM';
+  if (h > 12) h -= 12; else if (h === 0) h = 12;
+  return `${h}:${min} ${period}`;
+}
+
 /** Status badge color classes. */
 export const STATUS_COLORS = {
   'Confirmed':            'bg-emerald-100 text-emerald-700',
