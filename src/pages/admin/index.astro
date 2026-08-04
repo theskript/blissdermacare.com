@@ -441,8 +441,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       document.getElementById('today-label')!.textContent = fullDateLabel(today);
 
-      const since48h = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
-
       const requests: Promise<any>[] = [
         apiFetch('admin-appointments', { params: { date: today } }),
         apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
@@ -461,7 +459,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const todayRecs   = todayData?.records   || [];
       const weekRecs    = weekData?.records    || [];
       const pendingRecs = pendingData?.records || [];
-      const unreadPSFs  = unreadPSFData?.records || [];
 
       // ── Inbox: needs-attention alerts ──────────────────────────────────────
       const inboxEl = document.getElementById('inbox-section')!;
