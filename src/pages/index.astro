@@ -554,4 +554,24 @@ import Layout from '../layouts/Layout.astro';
     })();
   </script>
 
+  <script>
+    fetch('/.netlify/functions/get-services')
+      .then(r => r.json())
+      .then(({ services }) => {
+        const map = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
+        document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
+          const slug = link.getAttribute('data-service-id') || '';
+          const svc  = map.get(slug);
+          const card = link.closest('.group') as HTMLElement | null;
+          if (!card) return;
+          if (!svc) { card.style.display = 'none'; return; }
+          // Update price text if present
+          const priceEl = card.querySelector<HTMLElement>('[class*="font-bold"][class*="text-primary"]');
+          if (priceEl && /^\$\d/.test(priceEl.textContent || '')) {
+            priceEl.textContent = '$' + Math.round(svc.price / 100);
+          }
+        });
+      }).catch(() => {});
+  </script>
+
 </Layout>

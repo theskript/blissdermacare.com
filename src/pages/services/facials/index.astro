@@ -152,9 +152,9 @@ import Layout from '../../../layouts/Layout.astro';
         const map = new Map<string, any>(services.map((s: any) => [s.slug, s]));
         document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
           const svc = map.get(link.getAttribute('data-service-id') || '');
-          if (!svc) return;
-          const card = link.closest('.group');
+          const card = link.closest('.group') as HTMLElement | null;
           if (!card) return;
+          if (!svc) { card.style.display = 'none'; return; }
           const priceEl = card.querySelector<HTMLElement>('[class*="font-bold"][class*="text-primary-6"]');
           if (priceEl && /^\$\d/.test(priceEl.textContent || '')) {
             priceEl.textContent = '$' + Math.round(svc.price / 100);
