@@ -24,29 +24,69 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <div id="inbox-section" class="hidden mb-5 space-y-2">
     </div>
 
-    <!-- Today's appointments -->
-    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-4">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-        <h2 class="font-semibold text-neutral-900">Today's Schedule</h2>
-        <div class="flex items-center gap-3">
-          <span id="today-count-badge" class="hidden text-xs bg-primary-100 text-primary-700 font-bold px-2.5 py-0.5 rounded-full"></span>
-          <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">Calendar →</a>
-        </div>
-      </div>
-      <div id="today-list" class="divide-y divide-neutral-100">
-        <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
-      </div>
-    </div>
+    <!-- 2-col grid: appointments (left) + pre-service forms (right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
-    <!-- Upcoming (next 7 days) -->
-    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-        <h2 class="font-semibold text-neutral-900">Next 7 Days</h2>
-        <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
+      <!-- Appointments column -->
+      <div class="lg:col-span-3 space-y-4">
+
+        <!-- Today's appointments -->
+        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+            <h2 class="font-semibold text-neutral-900">Today's Schedule</h2>
+            <div class="flex items-center gap-3">
+              <span id="today-count-badge" class="hidden text-xs bg-primary-100 text-primary-700 font-bold px-2.5 py-0.5 rounded-full"></span>
+              <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">Calendar →</a>
+            </div>
+          </div>
+          <div id="today-list" class="divide-y divide-neutral-100">
+            <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Upcoming (next 7 days) -->
+        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+            <h2 class="font-semibold text-neutral-900">Next 7 Days</h2>
+            <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
+          </div>
+          <div id="upcoming-list" class="divide-y divide-neutral-100">
+            <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+        </div>
+
       </div>
-      <div id="upcoming-list" class="divide-y divide-neutral-100">
-        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+
+      <!-- Pre-service forms column -->
+      <div class="lg:col-span-2 space-y-4">
+
+        <!-- Today's PSF submissions -->
+        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+            <h2 class="font-semibold text-neutral-900">Forms Today</h2>
+            <div class="flex items-center gap-3">
+              <span id="psf-today-badge" class="hidden text-xs bg-violet-100 text-violet-700 font-bold px-2.5 py-0.5 rounded-full"></span>
+              <a href="/admin/pre-service-forms" class="text-xs text-primary-600 hover:text-primary-700 font-medium">View all →</a>
+            </div>
+          </div>
+          <div id="psf-today-list" class="divide-y divide-neutral-100 max-h-72 overflow-y-auto">
+            <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Recent PSF submissions -->
+        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+            <h2 class="font-semibold text-neutral-900">Recent Submissions</h2>
+            <span id="psf-recent-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
+          </div>
+          <div id="psf-recent-list" class="divide-y divide-neutral-100 max-h-96 overflow-y-auto">
+            <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+        </div>
+
       </div>
+
     </div>
 
   </div>
@@ -143,6 +183,39 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <svg class="w-4 h-4 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
+        </div>`;
+    }
+
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ── PSF row ───────────────────────────────────────────────────────────────
+    function psfRow(form: any) {
+      const isUnread = !form.read_at;
+      const submitted = new Date(form.created_at);
+      const diffMs = Date.now() - submitted.getTime();
+      const diffH  = Math.floor(diffMs / 3600000);
+      const diffM  = Math.floor(diffMs / 60000);
+      const timeAgo = diffH >= 24
+        ? submitted.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : diffH > 0 ? `${diffH}h ago` : diffM > 0 ? `${diffM}m ago` : 'just now';
+      const service = (form.service_requested || '').substring(0, 55) + ((form.service_requested || '').length > 55 ? '…' : '');
+      const apptDate = form.appointment_date
+        ? new Date(form.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : '';
+      return `
+        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors psf-row${isUnread ? ' psf-unread' : ''}" data-psf-id="${esc(form.id)}">
+          <div class="flex items-start gap-2.5">
+            <span class="mt-1.5 w-2 h-2 rounded-full shrink-0 ${isUnread ? 'bg-violet-500' : 'bg-transparent'}"></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-sm font-semibold text-neutral-900">${esc(form.name || '—')}</span>
+                ${isUnread ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700">New</span>' : ''}
+              </div>
+              ${service ? `<div class="text-xs text-neutral-500 mt-0.5 truncate">${esc(service)}</div>` : ''}
+              ${apptDate ? `<div class="text-xs text-neutral-400 mt-0.5">Appt ${apptDate}${form.appointment_time ? ' · ' + esc(form.appointment_time) : ''}</div>` : ''}
+            </div>
+            <div class="text-xs text-neutral-400 shrink-0 mt-0.5">${timeAgo}</div>
+          </div>
         </div>`;
     }
 
@@ -365,9 +438,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
         apiFetch('admin-appointments', { params: { status: 'Pending Confirmation' } }),
         apiFetch('admin-pre-service-forms', { params: { unread: 'true', limit: '100' } }).catch(() => null),
+        apiFetch('admin-pre-service-forms', { params: { limit: '30' } }).catch(() => null),
       ];
 
-      const [todayData, weekData, pendingData, unreadPSFData] = await Promise.all(requests);
+      const [todayData, weekData, pendingData, unreadPSFData, psfData] = await Promise.all(requests);
+
+      const allPSFs    = (psfData?.records || []) as any[];
+      const todayLocal = new Date().toLocaleDateString();
+      const todayPSFs  = allPSFs.filter((f: any) => f.created_at && new Date(f.created_at).toLocaleDateString() === todayLocal);
+      const recentPSFs = allPSFs.slice(0, 15);
 
       const todayRecs   = todayData?.records   || [];
       const weekRecs    = weekData?.records    || [];
@@ -447,11 +526,45 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         upcomingEl.innerHTML = weekRecs.map((r: any) => apptRow(r, true)).join('');
       }
 
-      // Attach click handlers
+      // PSF today section
+      const psfTodayEl = document.getElementById('psf-today-list')!;
+      const psfTodayBadge = document.getElementById('psf-today-badge')!;
+      if (todayPSFs.length === 0) {
+        psfTodayEl.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No forms submitted today.</div>';
+      } else {
+        psfTodayBadge.textContent = String(todayPSFs.length);
+        psfTodayBadge.classList.remove('hidden');
+        psfTodayEl.innerHTML = todayPSFs.map(psfRow).join('');
+      }
+
+      // PSF recent section
+      const psfRecentEl = document.getElementById('psf-recent-list')!;
+      const psfRecentBadge = document.getElementById('psf-recent-badge')!;
+      if (recentPSFs.length === 0) {
+        psfRecentEl.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No submissions yet.</div>';
+      } else {
+        psfRecentBadge.textContent = `${recentPSFs.length} recent`;
+        psfRecentBadge.classList.remove('hidden');
+        psfRecentEl.innerHTML = recentPSFs.map(psfRow).join('');
+      }
+
+      // Attach appointment click handlers
       document.querySelectorAll('.appt-row').forEach(el => {
         el.addEventListener('click', () => {
           const rec = JSON.parse((el as HTMLElement).dataset.rec || '{}');
           openDetail(rec);
+        });
+      });
+
+      // PSF click → mark as read
+      document.querySelectorAll('.psf-row').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = (el as HTMLElement).dataset.psfId;
+          if (!id || !el.classList.contains('psf-unread')) return;
+          el.classList.remove('psf-unread');
+          el.querySelector('.bg-violet-500')?.classList.replace('bg-violet-500', 'bg-transparent');
+          el.querySelector('.bg-violet-100')?.remove();
+          apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { id, read: true } }).catch(() => null);
         });
       });
     }
