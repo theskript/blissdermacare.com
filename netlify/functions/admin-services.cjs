@@ -85,6 +85,8 @@ exports.handler = async (event) => {
       if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id is required' }) };
       const fields = sanitize(rest);
       if (typeof fields.price === 'string') fields.price = parseInt(fields.price, 10);
+      // is_bookable always mirrors active — no separate toggle needed
+      if (fields.active !== undefined) fields.is_bookable = fields.active;
       fields.updated_at = new Date().toISOString();
       const { data, error } = await sb.from('services').update(fields).eq('id', id).select().single();
       if (error) throw new Error(error.message);

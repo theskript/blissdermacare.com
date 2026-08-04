@@ -1100,6 +1100,13 @@ import Layout from '../../layouts/Layout.astro';
             SERVICE_LABELS[s.slug] = s.name;
             if (s.duration) DURATIONS[s.slug] = s.duration;
           }
+          // Hide any checkbox whose slug is not in the active services list
+          document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
+            if (!PRICES[cb.value]) {
+              const label = cb.closest('label');
+              if (label) (label as HTMLElement).style.display = 'none';
+            }
+          });
           // Update displayed prices on checkbox cards
           document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
             const p = PRICES[cb.value];

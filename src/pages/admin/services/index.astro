@@ -255,10 +255,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
         <div class="flex gap-4">
           <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" id="f-bookable" ${(svc?.is_bookable ?? true) ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/>
-            <span class="text-sm font-medium text-neutral-700">Show in booking form</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer select-none">
             <input type="checkbox" id="f-package" ${svc?.is_package ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/>
             <span class="text-sm font-medium text-neutral-700">Is a package</span>
           </label>
@@ -341,7 +337,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         const tagline  = (document.getElementById('f-tagline')  as HTMLInputElement).value.trim();
         const desc     = (document.getElementById('f-desc')     as HTMLTextAreaElement).value.trim();
         const imageUrl = (document.getElementById('f-image-url')as HTMLInputElement).value.trim();
-        const bookable = (document.getElementById('f-bookable') as HTMLInputElement).checked;
         const isPackage= (document.getElementById('f-package')  as HTMLInputElement).checked;
         const active   = (document.getElementById('f-active')   as HTMLInputElement).checked;
 
@@ -356,7 +351,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         try {
           const fields = { name, slug, category, price, duration: duration || null,
             sort_order: sortOrder, tagline: tagline || null, description: desc || null,
-            image_url: imageUrl || null, is_bookable: bookable, is_package: isPackage, active };
+            image_url: imageUrl || null, is_bookable: active, is_package: isPackage, active };
           if (editingId) {
             await apiFetch('admin-services', { method: 'PATCH', body: { id: editingId, ...fields } });
           } else {
