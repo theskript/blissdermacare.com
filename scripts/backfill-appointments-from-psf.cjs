@@ -42,6 +42,7 @@ async function main() {
   if (fetchErr) { console.error('Failed to fetch PSFs:', fetchErr.message); process.exit(1); }
   console.log(`Found ${forms.length} PSF records with email + appointment_date.\n`);
 
+  const today = new Date().toISOString().split('T')[0];
   let backfilled = 0;
   let created    = 0;
   let skipped    = 0;
@@ -49,6 +50,8 @@ async function main() {
   for (const form of forms) {
     const email = (form.email || '').toLowerCase().trim();
     const date  = form.appointment_date;
+
+    if (date < today) { skipped++; continue; }
 
     // Find the most-recently-created appointment for this email + date
     const { data: existing, error: lookupErr } = await sb
