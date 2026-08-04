@@ -59,22 +59,26 @@ exports.handler = async (event) => {
 
       let records = (data || []).map(apptFromDB);
 
-      // Enrich with PSF status — flag which appointments have a matching form submission
+      // Enrich with PSF status — match by email+date OR first-name+date
       try {
-        const emails = [...new Set((data || []).map(r => r.client_email).filter(Boolean))];
-        if (emails.length) {
+        const dates = [...new Set((data || []).map(r => r.date).filter(Boolean))];
+        if (dates.length) {
           const { data: psfs } = await sb
             .from('pre_service_forms')
-            .select('email, appointment_date')
-            .in('email', emails);
-          const psfSet = new Set((psfs || []).map(p => `${(p.email || '').toLowerCase()}::${p.appointment_date}`));
-          records = records.map(r => ({
-            ...r,
-            fields: {
-              ...r.fields,
-              hasPSF: psfSet.has(`${(r.fields['Client Email'] || '').toLowerCase()}::${r.fields['Date']}`),
-            },
-          }));
+            .select('email, appointment_date, name')
+            .in('appointment_date', dates);
+
+          const psfEmailDate     = new Set((psfs || []).map(p => `${(p.email || '').toLowerCase()}::${p.appointment_date}`));
+          const psfFirstNameDate = new Set((psfs || []).map(p => `${(p.name || '').toLowerCase().split(/\s+/)[0]}::${p.appointment_date}`));
+
+          records = records.map(r => {
+            const email     = (r.fields['Client Email'] || '').toLowerCase();
+            const date      = r.fields['Date'];
+            const firstName = (r.fields['Client Name'] || '').toLowerCase().split(/\s+/)[0];
+            const hasPSF    = (email && psfEmailDate.has(`${email}::${date}`)) ||
+                              (firstName && psfFirstNameDate.has(`${firstName}::${date}`));
+            return { ...r, fields: { ...r.fields, hasPSF: !!hasPSF } };
+          });
         }
       } catch (psfErr) {
         console.warn('PSF enrichment failed (non-fatal):', psfErr.message);
