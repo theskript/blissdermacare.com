@@ -702,6 +702,21 @@ import Layout from '../../layouts/Layout.astro';
               </div>
             </div>
 
+            <!-- Promo Code -->
+            <div>
+              <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Promo Code</h2>
+              <div class="flex gap-2">
+                <input id="promo-code-input" type="text" placeholder="Enter promo code (optional)"
+                  class="flex-1 px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm uppercase tracking-wide"
+                  style="text-transform:uppercase" maxlength="40" autocomplete="off"/>
+                <button type="button" id="apply-promo-btn"
+                  class="px-5 py-3 bg-neutral-900 hover:bg-neutral-700 text-white text-sm font-semibold rounded-xl transition-colors whitespace-nowrap">
+                  Apply
+                </button>
+              </div>
+              <div id="promo-feedback" class="hidden mt-2 text-sm rounded-lg px-4 py-2.5"></div>
+            </div>
+
             <!-- Date -->
             <div>
               <h2 class="text-lg font-semibold text-neutral-900 border-b border-neutral-100 pb-3 mb-5">Preferred Date *</h2>
@@ -1148,6 +1163,52 @@ import Layout from '../../layouts/Layout.astro';
         return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
 
+      // ── Promo code ────────────────────────────────────────────────────────
+      let appliedPromo: { code: string; discountCents: number; label: string } | null = null;
+
+      function getBaseSubtotalCents(): number {
+        return getChecked().reduce((s, v) => s + (PRICES[v] ?? 0), 0);
+      }
+
+      document.getElementById('apply-promo-btn')?.addEventListener('click', async () => {
+        const input    = document.getElementById('promo-code-input') as HTMLInputElement;
+        const feedback = document.getElementById('promo-feedback')!;
+        const code     = input.value.trim().toUpperCase();
+        if (!code) { feedback.textContent = 'Please enter a promo code.'; feedback.className = 'mt-2 text-sm rounded-lg px-4 py-2.5 bg-red-50 text-red-700'; feedback.classList.remove('hidden'); return; }
+        const subtotal = getBaseSubtotalCents();
+        try {
+          const resp = await fetch(`/.netlify/functions/validate-promo-code?code=${encodeURIComponent(code)}&subtotal=${subtotal}`);
+          const data = await resp.json();
+          if (data.valid) {
+            appliedPromo = {
+              code:         data.code,
+              discountCents: data.discountCents,
+              label:        data.type === 'percent' ? `${data.value}% off` : `$${(data.value/100).toFixed(0)} off`,
+            };
+            feedback.innerHTML = `✓ <strong>${data.code}</strong> applied — ${appliedPromo.label} (saves ${fmt(data.discountCents/100)})`;
+            feedback.className = 'mt-2 text-sm rounded-lg px-4 py-2.5 bg-emerald-50 text-emerald-700'; feedback.classList.remove('hidden');
+          } else {
+            appliedPromo = null;
+            feedback.textContent = data.error || 'Invalid promo code.';
+            feedback.className = 'mt-2 text-sm rounded-lg px-4 py-2.5 bg-red-50 text-red-700'; feedback.classList.remove('hidden');
+          }
+          update();
+        } catch {
+          feedback.textContent = 'Could not validate code. Please try again.';
+          feedback.className = 'mt-2 text-sm rounded-lg px-4 py-2.5 bg-red-50 text-red-700'; feedback.classList.remove('hidden');
+        }
+      });
+      // Clear promo when services change so discount is re-validated against new total
+      document.addEventListener('change', (e) => {
+        if ((e.target as HTMLElement).matches('input[name="service"]') && appliedPromo) {
+          appliedPromo = null;
+          const fb = document.getElementById('promo-feedback')!;
+          fb.textContent = 'Promo removed — service selection changed. Re-apply to confirm.';
+          fb.className = 'mt-2 text-sm rounded-lg px-4 py-2.5 bg-amber-50 text-amber-700'; fb.classList.remove('hidden');
+          update();
+        }
+      });
+
       // Services that must be booked alone (packages, hairline restoration, other)
       const SOLO_SERVICES = new Set([
         'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
@@ -1220,16 +1281,34 @@ import Layout from '../../layouts/Layout.astro';
         const totalEl = document.getElementById('summary-total')!;
 
         const pct = DISCOUNT_PCT[disc] ?? 0;
-        if (pct > 0 && baseTotal > 0) {
-          const savings = baseTotal * pct / 100;
-          discLabelEl.textContent = DISCOUNT_LABELS[disc];
-          discAmtEl.textContent = '−' + fmt(savings);
+        let runningTotal = baseTotal;
+        const discountParts: string[] = [];
+        let totalSavings = 0;
+
+        // Apply promo code discount first
+        if (appliedPromo && runningTotal > 0) {
+          const promoSaving = appliedPromo.discountCents / 100;
+          runningTotal -= promoSaving;
+          totalSavings += promoSaving;
+          discountParts.push(`${appliedPromo.code} (${appliedPromo.label})`);
+        }
+
+        // Then community discount on remaining amount
+        if (pct > 0 && runningTotal > 0) {
+          const commSaving = runningTotal * pct / 100;
+          runningTotal -= commSaving;
+          totalSavings += commSaving;
+          discountParts.push(DISCOUNT_LABELS[disc]);
+        }
+
+        if (totalSavings > 0) {
+          discLabelEl.textContent = discountParts.join(' + ');
+          discAmtEl.textContent = '−' + fmt(totalSavings);
           discRow.classList.remove('hidden');
-          totalEl.textContent = fmt(baseTotal - savings);
         } else {
           discRow.classList.add('hidden');
-          totalEl.textContent = fmt(baseTotal);
         }
+        totalEl.textContent = fmt(Math.max(0, baseTotal - totalSavings));
       }
 
       function enforceAvailability() {
@@ -1766,6 +1845,7 @@ import Layout from '../../layouts/Layout.astro';
           notes:           notesInput?.value ?? '',
           referral:        referralInput?.value ?? '',
           grouponCode:     grouponInput?.value ?? '',
+          promoCode:       appliedPromo?.code ?? '',
           confirmPhone:    confirmPhoneInput?.checked ? 'yes' : '',
           confirmText:     confirmTextInput?.checked  ? 'yes' : '',
           confirmEmail:    confirmEmailInput?.checked ? 'yes' : '',

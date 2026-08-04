@@ -72,6 +72,7 @@ exports.handler = async (event) => {
     services: servicesParam,
     service:  serviceParam    = '',
     discount      = 'none',
+    promoCode     = '',
     customerName  = '',
     customerEmail = '',
     customerPhone = '',
@@ -110,13 +111,39 @@ exports.handler = async (event) => {
 
   const discountKey    = ALLOWED_DISCOUNTS.has(discount) ? discount : 'none';
   const discountPct    = DISCOUNT_PCT[discountKey] ?? 0;
-  const discountLabel  = DISCOUNT_LABELS[discountKey] || 'None';
-  const basePrice      = serviceList.reduce((sum, svc) => sum + (PRICES[svc] || 0), 0);
-  const finalPrice     = Math.round(basePrice * (1 - discountPct / 100) * 100) / 100;
+  const discountLabel  = DISCOUNT_LABELS[discountKey] || null;
+  const basePriceCents = serviceList.reduce((sum, svc) => sum + (Math.round((PRICES[svc] || 0) * 100)), 0);
   const serviceNames   = serviceList.map(svc => SERVICE_LABELS[svc] || svc);
   const dateLabel      = formatDateLabel(appointmentDate);
   const sourceMap      = { groupon: 'Groupon', classpass: 'ClassPass' };
   const source         = sourceMap[referral] || 'Website';
+
+  // Validate promo code
+  let promoInfo = null;
+  let promoDiscountCents = 0;
+  if (promoCode) {
+    const { data: promo } = await getSupabase()
+      .from('promo_codes')
+      .select('id, code, type, value, max_uses, uses, expires_at, min_subtotal')
+      .eq('code', promoCode.trim().toUpperCase())
+      .eq('active', true)
+      .maybeSingle();
+    if (promo
+        && (!promo.expires_at || new Date(promo.expires_at) > new Date())
+        && (promo.max_uses == null || promo.uses < promo.max_uses)
+        && (promo.min_subtotal == null || basePriceCents >= promo.min_subtotal)) {
+      promoDiscountCents = promo.type === 'percent'
+        ? Math.round(basePriceCents * promo.value / 100)
+        : Math.min(promo.value, basePriceCents);
+      promoInfo = promo;
+    }
+  }
+
+  const afterPromoCents      = basePriceCents - promoDiscountCents;
+  const communityDiscountCents = Math.round(afterPromoCents * discountPct / 100);
+  const finalPriceCents      = afterPromoCents - communityDiscountCents;
+  const finalPrice           = finalPriceCents / 100;
+  const discountSummary      = [discountLabel, promoInfo ? `Promo: ${promoInfo.code}` : ''].filter(Boolean).join(', ') || 'None';
 
   // ── Write to Supabase ─────────────────────────────────────────────────────
   try {
@@ -131,7 +158,7 @@ exports.handler = async (event) => {
       price:          finalPrice,
       notes:          notes,
       source:         source,
-      discount:       discountPct > 0 ? discountLabel : 'None',
+      discount:       discountSummary,
       referral:       referral,
       groupon_code:   grouponCode,
       stripe_session_id: null,
@@ -146,6 +173,11 @@ exports.handler = async (event) => {
     }
   } catch (dbErr) {
     console.error('Supabase init error (non-fatal):', dbErr.message);
+  }
+
+  // Increment promo code uses (non-blocking)
+  if (promoInfo) {
+    getSupabase().from('promo_codes').update({ uses: promoInfo.uses + 1 }).eq('id', promoInfo.id).then(() => {});
   }
 
   // ── Notify owner + client ─────────────────────────────────────────────────

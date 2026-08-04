@@ -75,6 +75,7 @@ exports.handler = async (event) => {
     services: servicesParam,
     service:  serviceParam     = '',
     discount       = 'none',
+    promoCode      = '',
     customerName   = '',
     customerEmail  = '',
     customerPhone  = '',
@@ -114,6 +115,33 @@ exports.handler = async (event) => {
   const discountPct       = DISCOUNT_PCT[discountKey] ?? 0;
   const serviceNames      = serviceList.map(svc => SERVICE_LABELS[svc] || svc);
   const discountLabel     = DISCOUNT_LABELS[discountKey];
+
+  // Validate promo code server-side
+  let promoInfo = null;
+  let promoDiscountCents = 0;
+  if (promoCode) {
+    const { data: promo } = await getSupabase()
+      .from('promo_codes')
+      .select('id, code, type, value, max_uses, uses, expires_at, min_subtotal')
+      .eq('code', promoCode.trim().toUpperCase())
+      .eq('active', true)
+      .maybeSingle();
+    if (promo
+        && (!promo.expires_at || new Date(promo.expires_at) > new Date())
+        && (promo.max_uses == null || promo.uses < promo.max_uses)
+        && (promo.min_subtotal == null || basePriceCents >= promo.min_subtotal)) {
+      promoDiscountCents = promo.type === 'percent'
+        ? Math.round(basePriceCents * promo.value / 100)
+        : Math.min(promo.value, basePriceCents);
+      promoInfo = promo;
+    }
+  }
+
+  // Community discount applied after promo
+  const afterPromoCents      = basePriceCents - promoDiscountCents;
+  const communityDiscountCents = Math.round(afterPromoCents * discountPct / 100);
+  const totalDiscountCents   = promoDiscountCents + communityDiscountCents;
+  const finalPriceCents      = basePriceCents - totalDiscountCents;
   const siteUrl           = (process.env.URL || 'https://blissdermacare.com').replace(/\/$/, '');
   const stripe            = Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -152,6 +180,7 @@ exports.handler = async (event) => {
         customerPhone: customerPhone.substring(0, 50),
         discount:      discountKey,
         discountPct:   String(discountPct),
+        promoCode:     promoInfo?.code || '',
         notes:         notes.substring(0, 500),
         referral:      referral.substring(0, 100),
         grouponCode:   grouponCode.substring(0, 100),
@@ -161,22 +190,26 @@ exports.handler = async (event) => {
       },
     };
 
-    // Apply discount as a Stripe coupon so it shows on the hosted checkout page
-    if (discountPct > 0) {
+    // Single combined coupon for all discounts (Stripe only allows one)
+    if (totalDiscountCents > 0) {
+      const parts = [];
+      if (promoInfo) parts.push(`Promo: ${promoInfo.code}`);
+      if (discountPct > 0) parts.push(discountLabel);
       const coupon = await stripe.coupons.create({
-        percent_off: discountPct,
-        duration: 'once',
-        name: discountLabel,
-        metadata: { services: serviceList.join(', '), discount: discountKey },
+        amount_off: totalDiscountCents,
+        currency:   'usd',
+        duration:   'once',
+        name:       parts.join(' + ') || 'Discount',
+        metadata:   { services: serviceList.join(', '), discount: discountKey, promoCode: promoInfo?.code || '' },
       });
       sessionParams.discounts = [{ coupon: coupon.id }];
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
 
-    // ── Write to Supabase (non-blocking; status starts as Pending Payment) ──
-    const discountedCents = Math.round(basePriceCents * (1 - discountPct / 100));
+    const discountedCents = finalPriceCents;
     const sourceMap = { groupon: 'Groupon', classpass: 'ClassPass' };
+    const discountSummary = [discountLabel, promoInfo ? `Promo: ${promoInfo.code}` : ''].filter(Boolean).join(', ') || 'None';
 
     try {
       getSupabase().from(APPOINTMENTS_TABLE).insert({
@@ -190,7 +223,7 @@ exports.handler = async (event) => {
         price:             discountedCents / 100,
         notes:             notes,
         source:            sourceMap[referral] || 'Website',
-        discount:          discountLabel || 'None',
+        discount:          discountSummary,
         referral:          referral,
         groupon_code:      grouponCode,
         stripe_session_id: session.id,
@@ -202,7 +235,11 @@ exports.handler = async (event) => {
     } catch (dbErr) {
       console.error('Supabase init error (non-fatal):', dbErr.message);
     }
-    // ─────────────────────────────────────────────────────────────────────────
+
+    // Increment promo code uses (non-blocking)
+    if (promoInfo) {
+      getSupabase().from('promo_codes').update({ uses: promoInfo.uses + 1 }).eq('id', promoInfo.id).then(() => {});
+    }
 
     return { statusCode: 200, headers, body: JSON.stringify({ url: session.url }) };
   } catch (err) {
