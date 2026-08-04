@@ -201,7 +201,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         : diffH > 0 ? `${diffH}h ago` : diffM > 0 ? `${diffM}m ago` : 'just now';
       const service = (form.service_requested || '').substring(0, 55) + ((form.service_requested || '').length > 55 ? '…' : '');
       const apptDate = form.appointment_date
-        ? new Date(form.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        ? new Date(form.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
         : '';
       const apptTime = (() => {
         const t = form.appointment_time || '';
