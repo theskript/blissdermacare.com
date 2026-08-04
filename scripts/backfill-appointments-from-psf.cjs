@@ -57,7 +57,7 @@ async function main() {
     let existing = null;
     const { data: byEmail, error: lookupErr } = await sb
       .from('appointments')
-      .select('id, time, services, client_email')
+      .select('id, time, services, client_name, client_email, client_phone')
       .eq('client_email', email)
       .eq('date', date)
       .order('created_at', { ascending: false })
@@ -75,7 +75,7 @@ async function main() {
       const firstName = form.name.trim().split(/\s+/)[0];
       const { data: byName } = await sb
         .from('appointments')
-        .select('id, time, services, client_name, client_email')
+        .select('id, time, services, client_name, client_email, client_phone')
         .ilike('client_name', `${firstName}%`)
         .eq('date', date)
         .order('created_at', { ascending: false })
@@ -89,10 +89,12 @@ async function main() {
 
     if (existing) {
       const patch = {};
-      if (!existing.time     && form.appointment_time)  patch.time     = form.appointment_time;
-      if (!existing.services && form.service_requested) patch.services = form.service_requested;
-      // Also backfill email if the match was found via name fallback
-      if (!existing.client_email && email) patch.client_email = email;
+      if (!existing.time         && form.appointment_time)  patch.time         = form.appointment_time;
+      if (!existing.services     && form.service_requested) patch.services     = form.service_requested;
+      if (!existing.client_email && email)                  patch.client_email = email;
+      if (!existing.client_phone && form.phone)             patch.client_phone = form.phone;
+      // Always use PSF name as authoritative (client submitted it themselves)
+      if (form.name && existing.client_name !== form.name)  patch.client_name  = form.name;
 
       if (Object.keys(patch).length === 0) {
         skipped++;

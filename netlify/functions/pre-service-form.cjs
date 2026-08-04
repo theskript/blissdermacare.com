@@ -93,7 +93,7 @@ exports.handler = async (event) => {
         let existing = null;
         const { data: byEmail } = await sb
           .from('appointments')
-          .select('id, time, services, client_email')
+          .select('id, time, services, client_name, client_email, client_phone')
           .eq('client_email', record.email)
           .eq('date', record.appointment_date)
           .order('created_at', { ascending: false })
@@ -106,7 +106,7 @@ exports.handler = async (event) => {
           const firstName = record.name.trim().split(/\s+/)[0];
           const { data: byName } = await sb
             .from('appointments')
-            .select('id, time, services, client_email')
+            .select('id, time, services, client_name, client_email, client_phone')
             .ilike('client_name', `${firstName}%`)
             .eq('date', record.appointment_date)
             .order('created_at', { ascending: false })
@@ -117,9 +117,11 @@ exports.handler = async (event) => {
 
         if (existing) {
           const patch = {};
-          if (!existing.time     && record.appointment_time)  patch.time     = record.appointment_time;
-          if (!existing.services && record.service_requested) patch.services = record.service_requested;
-          if (!existing.client_email) patch.client_email = record.email;
+          if (!existing.time         && record.appointment_time)  patch.time         = record.appointment_time;
+          if (!existing.services     && record.service_requested) patch.services     = record.service_requested;
+          if (!existing.client_email)                             patch.client_email = record.email;
+          if (!existing.client_phone && record.phone)             patch.client_phone = record.phone;
+          if (record.name && existing.client_name !== record.name) patch.client_name = record.name;
           if (Object.keys(patch).length) {
             await sb.from('appointments').update(patch).eq('id', existing.id);
           }
