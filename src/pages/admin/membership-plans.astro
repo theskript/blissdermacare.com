@@ -40,7 +40,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <script>
     import { requireLogin, apiFetch, getRole } from '../../scripts/adminAuth.js';
     requireLogin();
-    const role = getRole();
+    const role = getRole(); void role;
 
     function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 

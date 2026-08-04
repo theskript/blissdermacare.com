@@ -154,7 +154,7 @@ import Layout from '../../../layouts/Layout.astro';
     fetch('/.netlify/functions/get-services?category=packages')
       .then(r => r.json())
       .then(({ services }) => {
-        const map = new Map(services.map((s: any) => [s.slug, s]));
+        const map = new Map<string, any>(services.map((s: any) => [s.slug, s]));
         document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
           const svc = map.get(link.getAttribute('data-service-id') || '');
           if (!svc) return;

@@ -65,7 +65,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   <script>
     import { requireLogin, apiFetch, getRole } from '../../../scripts/adminAuth.js';
     requireLogin();
-    const role = getRole();
+    const role = getRole(); void role;
 
     const CATEGORIES: Record<string,string> = {
       'facials':        'Facials',
