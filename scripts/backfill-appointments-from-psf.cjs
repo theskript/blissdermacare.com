@@ -53,62 +53,60 @@ async function main() {
 
     if (date < today) { skipped++; continue; }
 
-    // Primary: match by email + date
-    let existing = null;
+    // Run both lookups and merge by ID so all records for this person+date are caught
+    const seen = new Set();
+    let matches = [];
+
     const { data: byEmail, error: lookupErr } = await sb
       .from('appointments')
       .select('id, time, services, client_name, client_email, client_phone')
       .eq('client_email', email)
       .eq('date', date)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order('created_at', { ascending: false });
 
     if (lookupErr) {
       console.warn(`  [WARN] lookup failed for ${email} / ${date}: ${lookupErr.message}`);
       continue;
     }
-    existing = byEmail;
+    for (const r of (byEmail || [])) { if (!seen.has(r.id)) { seen.add(r.id); matches.push(r); } }
 
-    // Fallback: match by first name (case-insensitive) + date when email didn't match
-    if (!existing && form.name) {
+    if (form.name) {
       const firstName = form.name.trim().split(/\s+/)[0];
       const { data: byName } = await sb
         .from('appointments')
         .select('id, time, services, client_name, client_email, client_phone')
         .ilike('client_name', `${firstName}%`)
         .eq('date', date)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (byName) {
-        existing = byName;
-        console.log(`  [NAME MATCH] ${form.name} / ${date} — matched '${byName.client_name}' via first-name fallback`);
+        .order('created_at', { ascending: false });
+      for (const r of (byName || [])) { if (!seen.has(r.id)) { seen.add(r.id); matches.push(r); } }
+      if (byName?.length) {
+        console.log(`  [NAME MATCH] ${form.name} / ${date} — matched ${byName.length} row(s) via first-name fallback`);
       }
     }
 
-    if (existing) {
-      const patch = {};
-      if (!existing.time         && form.appointment_time)  patch.time         = form.appointment_time;
-      if (!existing.services     && form.service_requested) patch.services     = form.service_requested;
-      if (!existing.client_email && email)                  patch.client_email = email;
-      if (!existing.client_phone && form.phone)             patch.client_phone = form.phone;
-      // Always use PSF name as authoritative (client submitted it themselves)
-      if (form.name && existing.client_name !== form.name)  patch.client_name  = form.name;
+    if (matches.length) {
+      for (const existing of matches) {
+        const patch = {};
+        if (!existing.time         && form.appointment_time)  patch.time         = form.appointment_time;
+        if (!existing.services     && form.service_requested) patch.services     = form.service_requested;
+        if (!existing.client_email && email)                  patch.client_email = email;
+        if (!existing.client_phone && form.phone)             patch.client_phone = form.phone;
+        if (form.name && existing.client_name !== form.name)  patch.client_name  = form.name;
 
-      if (Object.keys(patch).length === 0) {
-        skipped++;
-        continue;
-      }
+        if (Object.keys(patch).length === 0) {
+          skipped++;
+          continue;
+        }
 
-      console.log(`  [BACKFILL] ${email} / ${date} — patching:`, patch);
-      if (!DRY_RUN) {
-        const { error: patchErr } = await sb.from('appointments').update(patch).eq('id', existing.id);
-        if (patchErr) console.warn(`    [WARN] patch failed: ${patchErr.message}`);
-        else backfilled++;
-      } else {
-        backfilled++;
-      }
+        console.log(`  [BACKFILL] ${existing.id} (${existing.client_name || email} / ${date}) — patching:`, patch);
+        if (!DRY_RUN) {
+          const { error: patchErr } = await sb.from('appointments').update(patch).eq('id', existing.id);
+          if (patchErr) console.warn(`    [WARN] patch failed: ${patchErr.message}`);
+          else backfilled++;
+        } else {
+          backfilled++;
+        }
+      } // end for each matched appointment
     } else {
       console.log(`  [CREATE]   ${email} / ${date} — no appointment found, creating stub`);
       if (!DRY_RUN) {
