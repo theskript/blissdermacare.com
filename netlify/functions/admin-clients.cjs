@@ -89,7 +89,7 @@ exports.handler = async (event) => {
 
     let query = getSupabase()
       .from('appointments')
-      .select('id,client_name,client_email,client_phone,date,status,source,services,notes,internal_notes,price')
+      .select('id,client_name,client_email,client_phone,date,status,pending_payment,source,services,notes,internal_notes,price')
       .order('date', { ascending: false });
 
     if (search) {
@@ -132,10 +132,11 @@ exports.handler = async (event) => {
         date:          row.date || '',
         time:          row.time || '',
         services:      row.services || '',
-        status:        row.status || '',
-        source:        row.source || '',
-        notes:         row.notes || '',
-        internalNotes: row.internal_notes || '',
+        status:         row.status || '',
+        pendingPayment: row.pending_payment || false,
+        source:         row.source || '',
+        notes:          row.notes || '',
+        internalNotes:  row.internal_notes || '',
         ...(user.role === 'owner' ? { price: row.price || 0 } : {}),
       });
     }

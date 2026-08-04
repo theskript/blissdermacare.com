@@ -29,6 +29,7 @@ const APPT_TO_DB = {
   'Time':              'time',
   'Services':          'services',
   'Status':            'status',
+  'Pending Payment':   'pending_payment',
   'Price':             'price',
   'Notes':             'notes',
   'Internal Notes':    'internal_notes',

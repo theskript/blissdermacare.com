@@ -11,7 +11,7 @@ const CORS = {
 
 const WRITABLE_FIELDS = new Set([
   'Client Name', 'Client Email', 'Client Phone', 'Date', 'Time', 'Services',
-  'Status', 'Price', 'Notes', 'Internal Notes', 'Source', 'Discount',
+  'Status', 'Pending Payment', 'Price', 'Notes', 'Internal Notes', 'Source', 'Discount',
   'Referral', 'Groupon Code', 'Stripe Session ID',
   'Reminder 24h Sent', 'Reminder 2h Sent',
   'Confirm Phone', 'Confirm Text', 'Confirm Email',
@@ -47,6 +47,7 @@ exports.handler = async (event) => {
         query = query.gte('date', q.startDate).lte('date', q.endDate);
       }
       if (q.status) query = query.eq('status', q.status);
+      if (q.pendingPayment === 'true') query = query.eq('pending_payment', true);
       if (q.search) {
         const s = q.search.replace(/'/g, '').substring(0, 100);
         query = query.or(`client_name.ilike.%${s}%,client_email.ilike.%${s}%,client_phone.ilike.%${s}%`);

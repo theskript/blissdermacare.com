@@ -31,11 +31,15 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
         <option value="">All statuses</option>
         <option value="Pending Confirmation">Pending Confirmation</option>
-        <option value="Pending Payment">Pending Payment</option>
         <option value="Confirmed">Confirmed</option>
         <option value="Completed">Completed</option>
         <option value="Cancelled">Cancelled</option>
         <option value="No-Show">No-Show</option>
+      </select>
+      <select id="appt-payment-filter"
+        class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm bg-white">
+        <option value="">All payments</option>
+        <option value="unpaid">Unpaid only</option>
       </select>
       <input id="appt-start-date" type="date"
         class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm"/>
@@ -75,7 +79,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     const STATUS_COLORS: Record<string,string> = {
       'Confirmed':            'bg-emerald-100 text-emerald-700',
       'Completed':            'bg-blue-100 text-blue-700',
-      'Pending Payment':      'bg-amber-100 text-amber-700',
       'Pending Confirmation': 'bg-orange-100 text-orange-700',
       'Cancelled':            'bg-red-100 text-red-700',
       'No-Show':              'bg-purple-100 text-purple-700',
@@ -115,16 +118,18 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
     // ── Load ──────────────────────────────────────────────────────────────────
     async function load() {
-      const search    = (document.getElementById('appt-search')       as HTMLInputElement).value.trim();
-      const status    = (document.getElementById('appt-status-filter')as HTMLSelectElement).value;
-      const startDate = (document.getElementById('appt-start-date')   as HTMLInputElement).value;
+      const search         = (document.getElementById('appt-search')        as HTMLInputElement).value.trim();
+      const status         = (document.getElementById('appt-status-filter') as HTMLSelectElement).value;
+      const paymentFilter  = (document.getElementById('appt-payment-filter')as HTMLSelectElement).value;
+      const startDate      = (document.getElementById('appt-start-date')    as HTMLInputElement).value;
       const endDate   = (document.getElementById('appt-end-date')     as HTMLInputElement).value;
 
       const params: Record<string,string> = {};
-      if (search)    params.search    = search;
-      if (status)    params.status    = status;
-      if (startDate) params.startDate = startDate;
-      if (endDate)   params.endDate   = endDate;
+      if (search)                       params.search         = search;
+      if (status)                       params.status         = status;
+      if (paymentFilter === 'unpaid')   params.pendingPayment = 'true';
+      if (startDate)                    params.startDate      = startDate;
+      if (endDate)                      params.endDate        = endDate;
       if (!startDate && !endDate) {
         // default: current month
         const now = new Date();
@@ -190,7 +195,10 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                   <div class="text-xs text-neutral-600 truncate">${esc((f['Services'] || '—').substring(0, 60))}</div>
                 </td>
                 <td class="px-6 py-4">
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${sCls}">${esc(f['Status'] || '—')}</span>
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${sCls}">${esc(f['Status'] || '—')}</span>
+                    ${f['Pending Payment'] ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Unpaid</span>' : ''}
+                  </div>
                 </td>
                 ${isOwner ? `<td class="px-6 py-4 text-right text-sm font-semibold text-primary-700 hidden lg:table-cell">${f['Price'] != null ? '$' + Number(f['Price']).toFixed(0) : '—'}</td>` : ''}
                 <td class="px-6 py-4 text-xs text-neutral-400 hidden lg:table-cell">${esc(f['Source'] || '—')}</td>
@@ -218,7 +226,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     function openDetail(rec: any) {
       currentRec = rec;
       const f = rec.fields;
-      const statusOptions = ['Pending Confirmation','Pending Payment','Confirmed','Completed','Cancelled','No-Show'];
+      const statusOptions = ['Pending Confirmation','Confirmed','Completed','Cancelled','No-Show'];
       const content = document.getElementById('appt-detail-content')!;
       const isOwner = role === 'owner';
 
@@ -260,6 +268,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <select id="ap-status" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none">
             ${statusOptions.map(s => `<option value="${s}" ${f['Status'] === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
+        </div>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="ap-pending-payment" ${f['Pending Payment'] ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
+            <span class="text-sm font-medium text-neutral-700">Pending Payment (Unpaid)</span>
+          </label>
         </div>
         ${isOwner ? `
         <div class="grid grid-cols-2 gap-4">
@@ -310,9 +324,10 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       document.getElementById('ap-save-btn')?.addEventListener('click', async () => {
         saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
         const fields: Record<string, any> = {
-          Status:           (document.getElementById('ap-status')   as HTMLSelectElement).value,
-          Notes:            (document.getElementById('ap-notes')    as HTMLTextAreaElement).value,
-          'Internal Notes': (document.getElementById('ap-internal') as HTMLTextAreaElement).value,
+          Status:            (document.getElementById('ap-status')          as HTMLSelectElement).value,
+          'Pending Payment': (document.getElementById('ap-pending-payment') as HTMLInputElement).checked,
+          Notes:             (document.getElementById('ap-notes')           as HTMLTextAreaElement).value,
+          'Internal Notes':  (document.getElementById('ap-internal')        as HTMLTextAreaElement).value,
         };
         if (isOwner) {
           fields['Client Name']  = (document.getElementById('ap-name')     as HTMLInputElement).value.trim();

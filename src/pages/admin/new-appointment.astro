@@ -109,7 +109,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <select id="f-status" required
               class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm">
               <option value="Confirmed">Confirmed</option>
-              <option value="Pending Payment">Pending Payment</option>
+              <option value="Pending Confirmation">Pending Confirmation</option>
               <option value="Completed">Completed</option>
               <option value="Cancelled">Cancelled</option>
             </select>
@@ -136,6 +136,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <input id="f-groupon" type="text" placeholder="Optional Groupon voucher code"
               class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm" />
           </div>
+        </div>
+        <div class="mt-4">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="f-pending-payment" class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
+            <span class="text-sm font-medium text-neutral-700">Pending Payment (Unpaid)</span>
+          </label>
         </div>
       </div>
 
@@ -229,19 +235,20 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const inNotes = (document.getElementById('f-internal-notes') as HTMLTextAreaElement).value.trim();
 
       const fields: Record<string, any> = {
-        'Client Name':    name,
-        'Client Email':   email,
-        'Client Phone':   phone,
-        'Date':           date,
-        'Time':           time,
-        'Services':       services,
-        'Status':         status,
-        'Source':         source,
-        'Discount':       discount || 'None',
-        'Referral':       referral,
-        'Groupon Code':   groupon,
-        'Notes':          notes,
-        'Internal Notes': inNotes,
+        'Client Name':     name,
+        'Client Email':    email,
+        'Client Phone':    phone,
+        'Date':            date,
+        'Time':            time,
+        'Services':        services,
+        'Status':          status,
+        'Pending Payment': (document.getElementById('f-pending-payment') as HTMLInputElement).checked,
+        'Source':          source,
+        'Discount':        discount || 'None',
+        'Referral':        referral,
+        'Groupon Code':    groupon,
+        'Notes':           notes,
+        'Internal Notes':  inNotes,
       };
       if (priceRaw) fields['Price'] = parseFloat(priceRaw);
 

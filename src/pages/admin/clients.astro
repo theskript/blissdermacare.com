@@ -72,7 +72,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <label class="block text-xs font-medium text-neutral-500 mb-1">Status</label>
             <select id="am-status" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none bg-white">
               <option>Pending Confirmation</option>
-              <option>Pending Payment</option>
               <option>Confirmed</option>
               <option>Completed</option>
               <option>Cancelled</option>
@@ -92,6 +91,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <label class="block text-xs font-medium text-neutral-500 mb-1">Internal Notes</label>
           <textarea id="am-internal" rows="2" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none"></textarea>
         </div>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="am-pending-payment" class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
+            <span class="text-sm font-medium text-neutral-700">Pending Payment (Unpaid)</span>
+          </label>
+        </div>
       </div>
       <div class="px-6 pb-5 pt-3 flex gap-3 shrink-0 border-t border-neutral-100">
         <button id="am-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save Changes</button>
@@ -108,11 +113,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const role = getRole();
 
     const STATUS_COLORS: Record<string, string> = {
-      'Confirmed':       'bg-emerald-100 text-emerald-700',
-      'Completed':       'bg-blue-100 text-blue-700',
-      'Pending Payment': 'bg-amber-100 text-amber-700',
-      'Cancelled':       'bg-red-100 text-red-700',
-      'No-Show':         'bg-purple-100 text-purple-700',
+      'Confirmed':            'bg-emerald-100 text-emerald-700',
+      'Completed':            'bg-blue-100 text-blue-700',
+      'Pending Confirmation': 'bg-orange-100 text-orange-700',
+      'Cancelled':            'bg-red-100 text-red-700',
+      'No-Show':              'bg-purple-100 text-purple-700',
     };
 
     let allClients: any[] = [];
@@ -325,6 +330,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                         <span class="text-sm font-medium text-neutral-800">${formatDate(a.date)}</span>
                         ${a.time ? `<span class="text-xs text-neutral-400">${esc(a.time)}</span>` : ''}
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${sCls}">${esc(a.status || '—')}</span>
+                        ${a.pendingPayment ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Unpaid</span>' : ''}
                       </div>
                       <div class="text-xs text-neutral-500 mt-0.5 truncate">${esc(a.services || '—')}</div>
                       ${a.notes ? `<div class="text-xs text-neutral-400 mt-0.5 italic">&ldquo;${esc(a.notes.substring(0, 90))}&rdquo;</div>` : ''}
@@ -423,13 +429,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     function openApptModal(appt: any, client: any) {
       modalAppt   = appt;
       modalClient = client;
-      (document.getElementById('am-date')     as HTMLInputElement).value    = appt.date     || '';
-      (document.getElementById('am-time')     as HTMLInputElement).value    = appt.time     || '';
-      (document.getElementById('am-services') as HTMLInputElement).value    = appt.services || '';
-      (document.getElementById('am-status')   as HTMLSelectElement).value   = appt.status   || 'Confirmed';
-      (document.getElementById('am-price')    as HTMLInputElement).value    = appt.price != null ? String(appt.price) : '';
-      (document.getElementById('am-notes')    as HTMLTextAreaElement).value = appt.notes    || '';
-      (document.getElementById('am-internal') as HTMLTextAreaElement).value = appt.internalNotes || '';
+      (document.getElementById('am-date')            as HTMLInputElement).value    = appt.date     || '';
+      (document.getElementById('am-time')            as HTMLInputElement).value    = appt.time     || '';
+      (document.getElementById('am-services')        as HTMLInputElement).value    = appt.services || '';
+      (document.getElementById('am-status')          as HTMLSelectElement).value   = appt.status   || 'Confirmed';
+      (document.getElementById('am-pending-payment') as HTMLInputElement).checked  = appt.pendingPayment || false;
+      (document.getElementById('am-price')           as HTMLInputElement).value    = appt.price != null ? String(appt.price) : '';
+      (document.getElementById('am-notes')           as HTMLTextAreaElement).value = appt.notes    || '';
+      (document.getElementById('am-internal')        as HTMLTextAreaElement).value = appt.internalNotes || '';
       // Show price field only for owners
       (document.getElementById('am-price-wrap') as HTMLElement).style.display = role === 'owner' ? '' : 'none';
       const msg = document.getElementById('am-msg')!;
@@ -453,12 +460,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       msg.className = 'px-6 pb-4 text-xs text-center hidden';
 
       const fields: Record<string, any> = {
-        'Date':           (document.getElementById('am-date')     as HTMLInputElement).value,
-        'Time':           (document.getElementById('am-time')     as HTMLInputElement).value,
-        'Services':       (document.getElementById('am-services') as HTMLInputElement).value,
-        'Status':         (document.getElementById('am-status')   as HTMLSelectElement).value,
-        'Notes':          (document.getElementById('am-notes')    as HTMLTextAreaElement).value,
-        'Internal Notes': (document.getElementById('am-internal') as HTMLTextAreaElement).value,
+        'Date':            (document.getElementById('am-date')            as HTMLInputElement).value,
+        'Time':            (document.getElementById('am-time')            as HTMLInputElement).value,
+        'Services':        (document.getElementById('am-services')        as HTMLInputElement).value,
+        'Status':          (document.getElementById('am-status')          as HTMLSelectElement).value,
+        'Pending Payment': (document.getElementById('am-pending-payment') as HTMLInputElement).checked,
+        'Notes':           (document.getElementById('am-notes')           as HTMLTextAreaElement).value,
+        'Internal Notes':  (document.getElementById('am-internal')        as HTMLTextAreaElement).value,
       };
       if (role === 'owner') {
         const pv = parseFloat((document.getElementById('am-price') as HTMLInputElement).value);
@@ -470,7 +478,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         // Patch local appointment object
         Object.assign(modalAppt, {
           date: fields['Date'], time: fields['Time'], services: fields['Services'],
-          status: fields['Status'], notes: fields['Notes'], internalNotes: fields['Internal Notes'],
+          status: fields['Status'], pendingPayment: fields['Pending Payment'],
+          notes: fields['Notes'], internalNotes: fields['Internal Notes'],
           ...(fields['Price'] !== undefined ? { price: fields['Price'] } : {}),
         });
         closeApptModal();
