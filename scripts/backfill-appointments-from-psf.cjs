@@ -70,19 +70,20 @@ async function main() {
     }
     existing = byEmail;
 
-    // Fallback: match by full name (case-insensitive) + date when email didn't match
+    // Fallback: match by first name (case-insensitive) + date when email didn't match
     if (!existing && form.name) {
+      const firstName = form.name.trim().split(/\s+/)[0];
       const { data: byName } = await sb
         .from('appointments')
-        .select('id, time, services, client_email')
-        .ilike('client_name', form.name.trim())
+        .select('id, time, services, client_name, client_email')
+        .ilike('client_name', `${firstName}%`)
         .eq('date', date)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
       if (byName) {
         existing = byName;
-        console.log(`  [NAME MATCH] ${form.name} / ${date} — found via name fallback (email was '${byName.client_email || 'empty'}')`);
+        console.log(`  [NAME MATCH] ${form.name} / ${date} — matched '${byName.client_name}' via first-name fallback`);
       }
     }
 

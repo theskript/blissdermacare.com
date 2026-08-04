@@ -101,12 +101,13 @@ exports.handler = async (event) => {
           .maybeSingle();
         existing = byEmail;
 
-        // Fallback: match by full name + date when no email match
+        // Fallback: match by first name + date when no email match
         if (!existing && record.name) {
+          const firstName = record.name.trim().split(/\s+/)[0];
           const { data: byName } = await sb
             .from('appointments')
             .select('id, time, services, client_email')
-            .ilike('client_name', record.name.trim())
+            .ilike('client_name', `${firstName}%`)
             .eq('date', record.appointment_date)
             .order('created_at', { ascending: false })
             .limit(1)
