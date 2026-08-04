@@ -1,0 +1,248 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Memberships" activeNav="membership-plans">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Membership Plans</h1>
+        <p class="text-sm text-neutral-500 mt-1">Manage membership plan names, descriptions, perks, and pricing. Price changes automatically create a new recurring Stripe Price.</p>
+      </div>
+      <button id="add-plan-btn"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Plan
+      </button>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl px-5 py-3.5 mb-6 text-sm text-amber-800">
+      <strong>Stripe note:</strong> Changing a plan's price creates a new Stripe recurring Price and archives the old one. Existing subscribers are <em>not</em> automatically migrated — their next billing cycle continues at the old price until you manually update their subscription in the Stripe dashboard.
+    </div>
+
+    <div id="plans-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="col-span-full py-10 text-center text-neutral-400 text-sm">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Edit slide-over -->
+  <div id="plan-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[480px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
+      <h3 id="plan-panel-title" class="font-semibold text-neutral-900">Edit Plan</h3>
+      <button id="plan-close" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="plan-panel-body" class="flex-1 overflow-y-auto p-6 space-y-5"></div>
+  </div>
+  <div id="plan-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
+
+  <script>
+    import { requireLogin, apiFetch, getRole } from '../../scripts/adminAuth.js';
+    requireLogin();
+    const role = getRole();
+
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    let allPlans: any[] = [];
+    let editingId: string | null = null;
+
+    async function load() {
+      const grid = document.getElementById('plans-grid')!;
+      try {
+        const data = await apiFetch('admin-membership-plans', {});
+        allPlans = data?.plans || [];
+        render();
+      } catch (err: any) {
+        grid.innerHTML = `<div class="col-span-full py-6 text-red-500 text-sm">${err.message}</div>`;
+      }
+    }
+
+    function render() {
+      const grid = document.getElementById('plans-grid')!;
+      if (!allPlans.length) {
+        grid.innerHTML = '<div class="col-span-full py-10 text-center text-neutral-400 text-sm">No membership plans found.</div>';
+        return;
+      }
+      grid.innerHTML = allPlans.map(plan => `
+        <div class="bg-white rounded-2xl border-2 ${plan.active ? 'border-primary-200' : 'border-neutral-200'} p-6 flex flex-col gap-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap mb-1">
+                <h3 class="font-semibold text-neutral-900">${esc(plan.name)}</h3>
+                ${plan.active
+                  ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700">Active</span>'
+                  : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-neutral-100 text-neutral-500">Inactive</span>'}
+              </div>
+              <div class="text-2xl font-bold text-primary-700">$${(plan.price/100).toFixed(0)}<span class="text-sm font-normal text-neutral-400">/mo</span></div>
+            </div>
+          </div>
+          ${plan.description ? `<p class="text-sm text-neutral-600">${esc(plan.description)}</p>` : ''}
+          ${plan.perks?.length ? `
+          <ul class="space-y-1.5">
+            ${(plan.perks as string[]).map(p => `
+              <li class="flex items-start gap-2 text-sm text-neutral-700">
+                <svg class="w-4 h-4 text-primary-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                ${esc(p)}
+              </li>`).join('')}
+          </ul>` : ''}
+          ${plan.stripe_price_id
+            ? `<div class="text-[11px] font-mono text-neutral-400 bg-neutral-50 rounded-lg px-3 py-2 break-all">Stripe Price: ${esc(plan.stripe_price_id)}</div>`
+            : `<div class="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">⚠ No Stripe Price ID — set one to enable subscriptions</div>`}
+          <button class="plan-edit-btn mt-auto py-2 px-4 border border-neutral-200 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-600 rounded-xl transition-colors" data-id="${esc(plan.id)}">
+            Edit Plan
+          </button>
+        </div>`).join('');
+
+      document.querySelectorAll('.plan-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const plan = allPlans.find(p => p.id === (btn as HTMLElement).dataset.id);
+          if (plan) openPanel(plan);
+        });
+      });
+    }
+
+    function openPanel(plan: any | null) {
+      editingId = plan?.id || null;
+      document.getElementById('plan-panel-title')!.textContent = plan ? 'Edit Plan' : 'Add Plan';
+      const body = document.getElementById('plan-panel-body')!;
+
+      const perksStr = (plan?.perks || []).join('\n');
+
+      body.innerHTML = `
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Plan Name *</label>
+          <input id="p-name" type="text" value="${esc(plan?.name || '')}"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Slug *</label>
+          <input id="p-slug" type="text" value="${esc(plan?.slug || '')}" placeholder="e.g. glow-ritual"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm font-mono focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Monthly Price ($) *</label>
+          <input id="p-price" type="number" min="0" step="0.01" value="${plan ? (plan.price/100).toFixed(2) : ''}"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          ${plan ? '<p class="text-xs text-amber-600 mt-1">Changing the price will create a new Stripe recurring Price and archive the old one.</p>' : ''}
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Description</label>
+          <input id="p-desc" type="text" value="${esc(plan?.description || '')}" placeholder="One-line summary"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Perks (one per line)</label>
+          <textarea id="p-perks" rows="5" placeholder="1 facial credit per month&#10;10% off all additional services&#10;Priority booking"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-y">${esc(perksStr)}</textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Stripe Price ID</label>
+          <input id="p-stripe-price" type="text" value="${esc(plan?.stripe_price_id || '')}" placeholder="price_… (auto-set on price change)"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm font-mono focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          <p class="text-xs text-neutral-400 mt-1">Auto-updated when price changes. You can also paste an existing Stripe Price ID here manually.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Sort Order</label>
+            <input id="p-sort" type="number" value="${plan?.sort_order ?? 0}"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+          <div class="flex items-end pb-2">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="p-active" ${(plan?.active ?? true) ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-emerald-500"/>
+              <span class="text-sm font-medium text-neutral-700">Active</span>
+            </label>
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button id="p-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save</button>
+          ${plan ? `<button id="p-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Deactivate</button>` : ''}
+        </div>
+        <div id="p-msg" class="text-xs text-center hidden"></div>
+      `;
+
+      // Auto-slug for new plans
+      if (!plan) {
+        const nameEl = document.getElementById('p-name') as HTMLInputElement;
+        const slugEl = document.getElementById('p-slug') as HTMLInputElement;
+        nameEl.addEventListener('input', () => {
+          if (!slugEl.dataset.manual) {
+            slugEl.value = nameEl.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+          }
+        });
+        slugEl.addEventListener('input', () => { slugEl.dataset.manual = '1'; });
+      }
+
+      document.getElementById('p-save-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('p-save-btn') as HTMLButtonElement;
+        const msg = document.getElementById('p-msg')!;
+        const name  = (document.getElementById('p-name')         as HTMLInputElement).value.trim();
+        const slug  = (document.getElementById('p-slug')         as HTMLInputElement).value.trim();
+        const price = parseFloat((document.getElementById('p-price') as HTMLInputElement).value);
+        const desc  = (document.getElementById('p-desc')         as HTMLInputElement).value.trim();
+        const perksRaw = (document.getElementById('p-perks')     as HTMLTextAreaElement).value;
+        const stripePrice = (document.getElementById('p-stripe-price') as HTMLInputElement).value.trim();
+        const sortOrder   = parseInt((document.getElementById('p-sort') as HTMLInputElement).value || '0', 10);
+        const active  = (document.getElementById('p-active')     as HTMLInputElement).checked;
+
+        if (!name || !slug || isNaN(price)) {
+          msg.textContent = 'Name, slug, and price are required.';
+          msg.className = 'text-xs text-center text-red-500';
+          return;
+        }
+        const perks = perksRaw.split('\n').map(l => l.trim()).filter(Boolean);
+
+        btn.disabled = true; btn.textContent = 'Saving…';
+        msg.textContent = price !== plan?.price/100 ? 'Saving and creating Stripe Price…' : '';
+        msg.className = 'text-xs text-center text-neutral-400';
+        if (msg.textContent) msg.classList.remove('hidden');
+
+        try {
+          const fields = { name, slug, price: Math.round(price * 100), description: desc, perks, sort_order: sortOrder, active,
+            ...(stripePrice ? { stripe_price_id: stripePrice } : {}) };
+          if (editingId) {
+            await apiFetch('admin-membership-plans', { method: 'PATCH', body: { id: editingId, ...fields } });
+          } else {
+            await apiFetch('admin-membership-plans', { method: 'POST', body: fields });
+          }
+          closePanel();
+          await load();
+        } catch (err: any) {
+          msg.textContent = `Error: ${err.message}`;
+          msg.className = 'text-xs text-center text-red-500';
+          msg.classList.remove('hidden');
+          btn.disabled = false; btn.textContent = 'Save';
+        }
+      });
+
+      document.getElementById('p-del-btn')?.addEventListener('click', async () => {
+        if (!editingId) return;
+        if (!confirm('Deactivate this plan? Existing subscribers are unaffected.')) return;
+        try {
+          await apiFetch('admin-membership-plans', { method: 'DELETE', body: { id: editingId } });
+          closePanel();
+          await load();
+        } catch (err: any) { alert(`Failed: ${err.message}`); }
+      });
+
+      document.getElementById('plan-panel')?.classList.remove('hidden');
+      document.getElementById('plan-panel')?.classList.add('flex');
+      document.getElementById('plan-overlay')?.classList.remove('hidden');
+    }
+
+    function closePanel() {
+      document.getElementById('plan-panel')?.classList.add('hidden');
+      document.getElementById('plan-panel')?.classList.remove('flex');
+      document.getElementById('plan-overlay')?.classList.add('hidden');
+      editingId = null;
+    }
+
+    document.getElementById('plan-close')?.addEventListener('click', closePanel);
+    document.getElementById('plan-overlay')?.addEventListener('click', closePanel);
+    document.getElementById('add-plan-btn')?.addEventListener('click', () => openPanel(null));
+
+    load();
+  </script>
+
+</AdminLayout>

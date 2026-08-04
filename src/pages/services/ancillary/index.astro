@@ -133,4 +133,26 @@ import Layout from '../../../layouts/Layout.astro';
     </div>
   </section>
 
+  <script>
+    fetch('/.netlify/functions/get-services?category=wellness')
+      .then(r => r.json())
+      .then(({ services }) => {
+        const map = new Map(services.map((s: any) => [s.slug, s]));
+        document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
+          const svc = map.get(link.getAttribute('data-service-id') || '');
+          if (!svc) return;
+          const card = link.closest('.group');
+          if (!card) return;
+          const priceEl = card.querySelector<HTMLElement>('[class*="font-bold"][class*="text-primary-6"]');
+          if (priceEl && /^\$\d/.test(priceEl.textContent || '')) {
+            priceEl.textContent = '$' + Math.round(svc.price / 100);
+          }
+          if (svc.image_url) {
+            const img = card.querySelector<HTMLImageElement>('img');
+            if (img) img.src = svc.image_url;
+          }
+        });
+      }).catch(() => {});
+  </script>
+
 </Layout>

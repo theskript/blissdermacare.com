@@ -8,90 +8,6 @@ const { getSupabase, sendEmail, sendSMS, formatTime, getNotificationSettings } =
 
 const APPOINTMENTS_TABLE = 'appointments';
 
-const SERVICE_LABELS = {
-  'other':                             'Other / Not Sure',
-  'signature-radiance-facial':         'Signature Radiance Facial',
-  'brightening-peel':                  'Brightening Peel',
-  'diamond-glow':                      'Diamond Glow',
-  'teen-skincare-facial':              'Teen Skincare Facial',
-  'high-frequency-skin-tightening':    'High Frequency Skin Tightening',
-  'pumpkin-enzyme-facial':             'Pumpkin Enzyme Facial',
-  'chlorophyll-skin-tightening-facial':'Chlorophyll Skin Tightening Facial',
-  'pineapple-enzyme-facial':           'Pineapple Enzyme Facial',
-  'skin-recovery-facial':              'Skin Recovery Facial',
-  'lash-extensions':                   'Lash Extensions',
-  'lash-extensions-fill':              'Lash Extensions Fill',
-  'lash-lift-brow-lamination':         'Lash Lift & Brow Lamination',
-  'body-and-face-waxing':              'Body & Face Waxing',
-  'brazilian-wax':                     'Brazilian Wax',
-  'spray-tan':                         'Custom Airbrush Spray Tan',
-  'bronze-bare-glow':                  'Bronze & Bare Glow Package',
-  'dermaplane-glow-facial':            'Dermaplane Glow Facial',
-  'smooth-canvas-facial':              'Smooth Canvas Facial',
-  'vampire-facial-prp':                'Vampire Facial (PRP)',
-  'lash-body-smooth':                  'Lash & Body Smooth Package',
-  'brow-lash-wax-ritual':              'Brow, Lash & Wax Ritual Package',
-  'glow-smooth-escape':                'Glow & Smooth Escape Package',
-  'mix-match-package':                 'Mix & Match Escape Package',
-  'prp-treatment':                     'PRP (Platelet-Rich Plasma)',
-  'lip-filler':                        'Lip Filler',
-  'ed-injectables':                    'Erectile Dysfunction Injectables',
-  'collagen-induction-therapy':        'Collagen Induction Therapy',
-  'weight-loss-program':               'Weight Loss Program (GLP-1/Semiglutide)',
-  'scalp-micropigmentation':           'Scalp Micropigmentation',
-  'lip-neutralization':                'Lip Neutralization',
-  'lip-blush':                         'Lip Blush',
-  'nano-brows':                        'Nano Brows',
-  'powder-brows':                      'Powder Brows',
-  'custom-semipermanent-makeup':       'Custom Semipermanent Makeup',
-  'iv-hydration-therapy':              'IV Hydration Therapy',
-  'lab-collection':                    'Personalized Lab Collection',
-  'hormone-lab-panel':                 'Hormone Lab Panel Support',
-  'regenerative-blood-services':       'Regenerative Blood-Based Services',
-};
-
-const PRICES = {
-  'other':                              1,
-  'signature-radiance-facial':         99,
-  'brightening-peel':                 128,
-  'diamond-glow':                     119,
-  'teen-skincare-facial':              64,
-  'high-frequency-skin-tightening':    95,
-  'pumpkin-enzyme-facial':             85,
-  'chlorophyll-skin-tightening-facial':105,
-  'pineapple-enzyme-facial':           88,
-  'skin-recovery-facial':              92,
-  'lash-extensions':                  159,
-  'lash-extensions-fill':              43,
-  'lash-lift-brow-lamination':         79,
-  'body-and-face-waxing':              65,
-  'brazilian-wax':                     87,
-  'spray-tan':                         65,
-  'bronze-bare-glow':                 110,
-  'dermaplane-glow-facial':           105,
-  'smooth-canvas-facial':              89,
-  'vampire-facial-prp':               380,
-  'lash-body-smooth':                 185,
-  'brow-lash-wax-ritual':             115,
-  'glow-smooth-escape':               135,
-  'mix-match-package':                129,
-  'prp-treatment':                    399,
-  'lip-filler':                       599,
-  'ed-injectables':                   499,
-  'collagen-induction-therapy':       299,
-  'weight-loss-program':              299,
-  'scalp-micropigmentation':          650,
-  'lip-neutralization':               399,
-  'lip-blush':                        499,
-  'nano-brows':                       499,
-  'powder-brows':                     549,
-  'custom-semipermanent-makeup':      450,
-  'iv-hydration-therapy':             149,
-  'lab-collection':                   199,
-  'hormone-lab-panel':                349,
-  'regenerative-blood-services':      450,
-};
-
 const DISCOUNT_PCT = {
   'none':                    0,
   'first-responder-veteran': 15,
@@ -107,8 +23,23 @@ const DISCOUNT_LABELS = {
   'student':                 'Student Discount (10%)',
 };
 
-const ALLOWED_SERVICES  = new Set(Object.keys(PRICES));
 const ALLOWED_DISCOUNTS = new Set(Object.keys(DISCOUNT_PCT));
+
+async function getServiceMaps() {
+  const { data, error } = await getSupabase()
+    .from('services')
+    .select('slug, name, price')
+    .eq('active', true)
+    .eq('is_bookable', true);
+  if (error || !data?.length) {
+    console.error('Failed to load services from DB:', error?.message);
+    return { SERVICE_LABELS: {}, PRICES: {}, ALLOWED_SERVICES: new Set() };
+  }
+  const SERVICE_LABELS = {};
+  const PRICES         = {};
+  for (const s of data) { SERVICE_LABELS[s.slug] = s.name; PRICES[s.slug] = Math.round(s.price / 100); }
+  return { SERVICE_LABELS, PRICES, ALLOWED_SERVICES: new Set(Object.keys(PRICES)) };
+}
 
 function formatDateLabel(dateStr) {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
@@ -127,6 +58,8 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
+
+  const { SERVICE_LABELS, PRICES, ALLOWED_SERVICES } = await getServiceMaps();
 
   let body;
   try {

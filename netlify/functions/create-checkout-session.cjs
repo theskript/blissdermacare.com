@@ -6,92 +6,7 @@
 const Stripe = require('stripe');
 const { getSupabase, formatTime } = require('./_utils.cjs');
 
-const APPOINTMENTS_TABLE = 'appointments'; // Supabase table name
-
-// Prices in cents — must mirror the booking page UI
-const PRICES = {
-  'other':                              100,
-  'signature-radiance-facial':         9900,
-  'brightening-peel':                 12800,
-  'diamond-glow':                     11900,
-  'teen-skincare-facial':              6400,
-  'high-frequency-skin-tightening':    9500,
-  'pumpkin-enzyme-facial':             8500,
-  'chlorophyll-skin-tightening-facial':10500,
-  'pineapple-enzyme-facial':           8800,
-  'skin-recovery-facial':              9200,
-  'lash-extensions':                  15900,
-  'lash-extensions-fill':              4300,
-  'lash-lift-brow-lamination':         7900,
-  'body-and-face-waxing':              6500,
-  'brazilian-wax':                     8700,
-  'spray-tan':                         6500,
-  'bronze-bare-glow':                 11000,
-  'dermaplane-glow-facial':           10500,
-  'smooth-canvas-facial':              8900,
-  'vampire-facial-prp':               38000,
-  'lash-body-smooth':                 18500,
-  'brow-lash-wax-ritual':             11500,
-  'glow-smooth-escape':               13500,
-  'mix-match-package':                12900,
-  'prp-treatment':                    39900,
-  'lip-filler':                       59900,
-  'ed-injectables':                   49900,
-  'collagen-induction-therapy':       29900,
-  'weight-loss-program':              29900,
-  'scalp-micropigmentation':          65000,
-  'lip-neutralization':               39900,
-  'lip-blush':                        49900,
-  'nano-brows':                       49900,
-  'powder-brows':                     54900,
-  'custom-semipermanent-makeup':      45000,
-  'iv-hydration-therapy':             14900,
-  'lab-collection':                   19900,
-  'hormone-lab-panel':                34900,
-  'regenerative-blood-services':      45000,
-};
-
-const SERVICE_LABELS = {
-  'other':                             'Other / Not Sure',
-  'signature-radiance-facial':         'Signature Radiance Facial',
-  'brightening-peel':                  'Brightening Peel',
-  'diamond-glow':                      'Diamond Glow',
-  'teen-skincare-facial':              'Teen Skincare Facial',
-  'high-frequency-skin-tightening':    'High Frequency Skin Tightening',
-  'pumpkin-enzyme-facial':             'Pumpkin Enzyme Facial',
-  'chlorophyll-skin-tightening-facial':'Chlorophyll Skin Tightening Facial',
-  'pineapple-enzyme-facial':           'Pineapple Enzyme Facial',
-  'skin-recovery-facial':             'Skin Recovery Facial',
-  'lash-extensions':                   'Lash Extensions',
-  'lash-extensions-fill':              'Lash Extensions Fill',
-  'lash-lift-brow-lamination':         'Lash Lift & Brow Lamination',
-  'body-and-face-waxing':              'Body & Face Waxing',
-  'brazilian-wax':                     'Brazilian Wax',
-  'spray-tan':                         'Custom Airbrush Spray Tan',
-  'bronze-bare-glow':                  'Bronze & Bare Glow Package',
-  'dermaplane-glow-facial':            'Dermaplane Glow Facial',
-  'smooth-canvas-facial':              'Smooth Canvas Facial',
-  'vampire-facial-prp':                'Vampire Facial (PRP)',
-  'lash-body-smooth':                  'Lash & Body Smooth Package',
-  'brow-lash-wax-ritual':              'Brow, Lash & Wax Ritual Package',
-  'glow-smooth-escape':                'Glow & Smooth Escape Package',
-  'mix-match-package':                 'Mix & Match Escape Package',
-  'prp-treatment':                     'PRP (Platelet-Rich Plasma)',
-  'lip-filler':                        'Lip Filler',
-  'ed-injectables':                    'Erectile Dysfunction Injectables',
-  'collagen-induction-therapy':        'Collagen Induction Therapy',
-  'weight-loss-program':               'Weight Loss Program (GLP-1/Semiglutide)',
-  'scalp-micropigmentation':           'Scalp Micropigmentation',
-  'lip-neutralization':                'Lip Neutralization',
-  'lip-blush':                         'Lip Blush',
-  'nano-brows':                        'Nano Brows',
-  'powder-brows':                      'Powder Brows',
-  'custom-semipermanent-makeup':       'Custom Semipermanent Makeup',
-  'iv-hydration-therapy':              'IV Hydration Therapy',
-  'lab-collection':                    'Personalized Lab Collection',
-  'hormone-lab-panel':                 'Hormone Lab Panel Support',
-  'regenerative-blood-services':       'Regenerative Blood-Based Services',
-};
+const APPOINTMENTS_TABLE = 'appointments';
 
 const DISCOUNT_PCT = {
   'none':                    0,
@@ -108,8 +23,25 @@ const DISCOUNT_LABELS = {
   'student':                 'Student Discount (10%)',
 };
 
-const ALLOWED_SERVICES  = new Set(Object.keys(PRICES));
 const ALLOWED_DISCOUNTS = new Set(Object.keys(DISCOUNT_PCT));
+
+// Fetch active, bookable services from DB and build lookup maps
+async function getServiceMaps() {
+  const { data, error } = await getSupabase()
+    .from('services')
+    .select('slug, name, price')
+    .eq('active', true)
+    .eq('is_bookable', true);
+  if (error || !data?.length) {
+    // Fallback to empty — checkout will reject unknown slugs
+    console.error('Failed to load services from DB:', error?.message);
+    return { PRICES: {}, SERVICE_LABELS: {}, ALLOWED_SERVICES: new Set() };
+  }
+  const PRICES         = {};
+  const SERVICE_LABELS = {};
+  for (const s of data) { PRICES[s.slug] = s.price; SERVICE_LABELS[s.slug] = s.name; }
+  return { PRICES, SERVICE_LABELS, ALLOWED_SERVICES: new Set(Object.keys(PRICES)) };
+}
 
 exports.handler = async (event) => {
   const headers = {
@@ -128,6 +60,9 @@ exports.handler = async (event) => {
     console.error('STRIPE_SECRET_KEY is not configured');
     return { statusCode: 500, headers, body: JSON.stringify({ error: 'Payment system is not configured. Please call us to book.' }) };
   }
+
+  // Load services from DB
+  const { PRICES, SERVICE_LABELS, ALLOWED_SERVICES } = await getServiceMaps();
 
   let body;
   try {

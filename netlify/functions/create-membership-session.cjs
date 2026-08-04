@@ -1,41 +1,10 @@
 'use strict';
 
 // Netlify serverless function — creates a Stripe Checkout Session for memberships/subscriptions
-//
-// Required env vars (set in Netlify dashboard):
-//   STRIPE_SECRET_KEY            — your Stripe secret key
-//   STRIPE_PRICE_GLOW_RITUAL     — Stripe Price ID for The Glow Ritual ($89/mo recurring)
-//   STRIPE_PRICE_RADIANCE_PLAN   — Stripe Price ID for The Radiance Plan ($159/mo recurring)
-//   STRIPE_PRICE_VIP_LUXE        — Stripe Price ID for The Bliss VIP ($249/mo recurring)
-//
-// How to create these Price IDs in Stripe:
-//   Dashboard → Products → Add product → Add price (recurring, monthly)
-//   Copy the price_XXXX ID and add it as the env var above.
+// Plan config is now loaded from the membership_plans Supabase table.
 
-const Stripe = require('stripe');
-
-const PLAN_CONFIG = {
-  'glow-ritual': {
-    label:   'The Glow Ritual Membership',
-    price:   8900, // $89.00/mo in cents
-    envKey:  'STRIPE_PRICE_GLOW_RITUAL',
-    desc:    '1 facial credit/month (up to $99 value) + 10% off additional services. Priority booking. Credits roll over 30 days.',
-  },
-  'radiance-plan': {
-    label:   'The Radiance Plan Membership',
-    price:  15900, // $159.00/mo in cents
-    envKey:  'STRIPE_PRICE_RADIANCE_PLAN',
-    desc:    '1 premium facial credit (up to $128) + 1 lash/brow/body credit (up to $87)/month + 15% off additional services. Priority booking.',
-  },
-  'vip-luxe': {
-    label:   'The Bliss VIP Membership',
-    price:  24900, // $249.00/mo in cents
-    envKey:  'STRIPE_PRICE_VIP_LUXE',
-    desc:    '1 premium facial + 1 lash + 1 body credit/month + 20% off all services + quarterly bonus package. VIP priority booking.',
-  },
-};
-
-const ALLOWED_PLANS = new Set(Object.keys(PLAN_CONFIG));
+const Stripe    = require('stripe');
+const { getSupabase } = require('./_utils.cjs');
 
 exports.handler = async (event) => {
   const headers = {
@@ -70,9 +39,16 @@ exports.handler = async (event) => {
     notes         = '',
   } = body;
 
-  // Validate plan
-  if (!ALLOWED_PLANS.has(plan)) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid membership plan.' }) };
+  // Load plan from DB
+  const { data: planInfo, error: planErr } = await getSupabase()
+    .from('membership_plans')
+    .select('slug, name, price, description, stripe_price_id')
+    .eq('slug', plan)
+    .eq('active', true)
+    .single();
+
+  if (planErr || !planInfo) {
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid or inactive membership plan.' }) };
   }
 
   // Validate email
@@ -80,58 +56,42 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'A valid email address is required.' }) };
   }
 
-  const planInfo = PLAN_CONFIG[plan];
-  const priceId  = process.env[planInfo.envKey];
-  const siteUrl  = (process.env.URL || 'https://blissdermacare.com').replace(/\/$/, '');
-  const stripe   = Stripe(process.env.STRIPE_SECRET_KEY);
+  const priceId = planInfo.stripe_price_id;
+  const siteUrl = (process.env.URL || 'https://blissdermacare.com').replace(/\/$/, '');
+  const stripe  = Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
     let sessionParams;
 
+    const meta = {
+      plan,
+      planLabel:     planInfo.name,
+      customerName:  customerName.substring(0, 200),
+      customerPhone: customerPhone.substring(0, 50),
+      notes:         notes.substring(0, 500),
+    };
+
     if (priceId) {
-      // Use pre-created recurring Stripe Price (preferred — shows correct recurring billing UI)
       sessionParams = {
         payment_method_types: ['card'],
         customer_email: customerEmail,
-        line_items: [{
-          price: priceId,
-          quantity: 1,
-        }],
+        line_items: [{ price: priceId, quantity: 1 }],
         mode: 'subscription',
-        subscription_data: {
-          metadata: {
-            plan,
-            planLabel:     planInfo.label,
-            customerName:  customerName.substring(0, 200),
-            customerPhone: customerPhone.substring(0, 50),
-            notes:         notes.substring(0, 500),
-          },
-        },
+        subscription_data: { metadata: meta },
         success_url: `${siteUrl}/memberships/success?plan=${encodeURIComponent(plan)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url:  `${siteUrl}/memberships/#plans`,
-        metadata: {
-          plan,
-          planLabel:     planInfo.label,
-          customerName:  customerName.substring(0, 200),
-          customerPhone: customerPhone.substring(0, 50),
-          notes:         notes.substring(0, 500),
-        },
+        metadata: meta,
       };
     } else {
-      // Fallback: one-time payment with clear description if no Price ID is configured yet
-      // Owner should set up proper recurring Price IDs in Stripe for production
-      console.warn(`No Stripe Price ID configured for plan: ${plan} (env: ${planInfo.envKey}). Falling back to one-time payment.`);
+      console.warn(`No Stripe Price ID configured for plan: ${plan}. Falling back to inline price.`);
       sessionParams = {
         payment_method_types: ['card'],
         customer_email: customerEmail,
         line_items: [{
           price_data: {
             currency: 'usd',
-            product_data: {
-              name: planInfo.label,
-              description: planInfo.desc,
-            },
-            unit_amount:    planInfo.price,
+            product_data: { name: planInfo.name, description: planInfo.description || planInfo.name },
+            unit_amount: planInfo.price,
             recurring: { interval: 'month' },
           },
           quantity: 1,
@@ -139,13 +99,7 @@ exports.handler = async (event) => {
         mode: 'subscription',
         success_url: `${siteUrl}/memberships/success?plan=${encodeURIComponent(plan)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url:  `${siteUrl}/memberships/#plans`,
-        metadata: {
-          plan,
-          planLabel:     planInfo.label,
-          customerName:  customerName.substring(0, 200),
-          customerPhone: customerPhone.substring(0, 50),
-          notes:         notes.substring(0, 500),
-        },
+        metadata: meta,
       };
     }
 

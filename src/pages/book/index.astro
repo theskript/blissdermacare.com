@@ -1070,90 +1070,57 @@ import Layout from '../../layouts/Layout.astro';
   </section>
 
   <script>
-    (function () {
-      const PRICES: Record<string, number> = {
-        'other': 1,
-        'signature-radiance-facial': 99,
-        'brightening-peel': 128,
-        'diamond-glow': 119,
-        'teen-skincare-facial': 64,
-        'high-frequency-skin-tightening': 95,
-        'pumpkin-enzyme-facial': 85,
-        'chlorophyll-skin-tightening-facial': 105,
-        'pineapple-enzyme-facial': 88,
-        'skin-recovery-facial': 92,
-        'lash-extensions': 159,
-        'lash-extensions-fill': 43,
-        'lash-lift-brow-lamination': 79,
-        'body-and-face-waxing': 65,
-        'brazilian-wax': 87,
-        'vampire-facial-prp': 380,
-        'lash-body-smooth': 185,
-        'brow-lash-wax-ritual': 115,
-        'glow-smooth-escape': 135,
-        'mix-match-package': 129,
-        'spray-tan': 65,
-        'bronze-bare-glow': 110,
-        'dermaplane-glow-facial': 105,
-        'smooth-canvas-facial': 89,
-        'prp-treatment': 399,
-        'lip-filler': 599,
-        'ed-injectables': 499,
-        'collagen-induction-therapy': 299,
-        'weight-loss-program': 299,
-        'scalp-micropigmentation': 650,
-        'lip-neutralization': 399,
-        'lip-blush': 499,
-        'nano-brows': 499,
-        'powder-brows': 549,
-        'custom-semipermanent-makeup': 450,
-        'iv-hydration-therapy': 149,
-        'lab-collection': 199,
-        'hormone-lab-panel': 349,
-        'regenerative-blood-services': 450,
+    (async function () {
+      // Service data populated from API — defaults prevent blank state during fetch
+      let PRICES: Record<string, number> = { 'other': 1 };
+      let SERVICE_LABELS: Record<string, string> = { 'other': 'Other / Not Sure' };
+      let DURATIONS: Record<string, number> = {
+        'signature-radiance-facial': 60, 'brightening-peel': 45, 'diamond-glow': 50,
+        'teen-skincare-facial': 45, 'high-frequency-skin-tightening': 45, 'pumpkin-enzyme-facial': 60,
+        'chlorophyll-skin-tightening-facial': 60, 'pineapple-enzyme-facial': 60, 'skin-recovery-facial': 60,
+        'lash-extensions': 120, 'lash-extensions-fill': 60, 'lash-lift-brow-lamination': 60,
+        'body-and-face-waxing': 60, 'brazilian-wax': 60, 'vampire-facial-prp': 75,
+        'lash-body-smooth': 135, 'brow-lash-wax-ritual': 135, 'glow-smooth-escape': 135,
+        'mix-match-package': 135, 'spray-tan': 45, 'bronze-bare-glow': 105,
+        'dermaplane-glow-facial': 60, 'smooth-canvas-facial': 45, 'prp-treatment': 60,
+        'lip-filler': 45, 'ed-injectables': 60, 'collagen-induction-therapy': 60,
+        'weight-loss-program': 30, 'scalp-micropigmentation': 180, 'lip-neutralization': 120,
+        'lip-blush': 120, 'nano-brows': 150, 'powder-brows': 150, 'custom-semipermanent-makeup': 120,
+        'iv-hydration-therapy': 60, 'lab-collection': 30, 'hormone-lab-panel': 45,
+        'regenerative-blood-services': 60, 'other': 60,
       };
 
-      const SERVICE_LABELS: Record<string, string> = {
-        'signature-radiance-facial': 'Signature Radiance Facial',
-        'brightening-peel': 'Brightening Peel',
-        'diamond-glow': 'Diamond Glow',
-        'teen-skincare-facial': 'Teen Skincare Facial',
-        'high-frequency-skin-tightening': 'High Frequency Skin Tightening',
-        'pumpkin-enzyme-facial': 'Pumpkin Enzyme Facial',
-        'chlorophyll-skin-tightening-facial': 'Chlorophyll Skin Tightening Facial',
-        'pineapple-enzyme-facial': 'Pineapple Enzyme Facial',
-        'skin-recovery-facial': 'Skin Recovery Facial',
-        'lash-extensions': 'Lash Extensions',
-        'lash-extensions-fill': 'Lash Extensions Fill',
-        'lash-lift-brow-lamination': 'Lash Lift & Brow Lamination',
-        'body-and-face-waxing': 'Body & Face Waxing',
-        'brazilian-wax': 'Brazilian Wax',
-        'vampire-facial-prp': 'Vampire Facial (PRP)',
-        'lash-body-smooth': 'Lash & Body Smooth Package',
-        'brow-lash-wax-ritual': 'Brow, Lash & Wax Ritual Package',
-        'glow-smooth-escape': 'Glow & Smooth Escape Package',
-        'mix-match-package': 'Mix & Match Escape Package',
-        'spray-tan': 'Custom Airbrush Spray Tan',
-        'bronze-bare-glow': 'Bronze & Bare Glow Package',
-        'dermaplane-glow-facial': 'Dermaplane Glow Facial',
-        'smooth-canvas-facial': 'Smooth Canvas Facial',
-        'prp-treatment': 'PRP (Platelet-Rich Plasma)',
-        'lip-filler': 'Lip Filler',
-        'ed-injectables': 'Erectile Dysfunction Injectables',
-        'collagen-induction-therapy': 'Collagen Induction Therapy',
-        'weight-loss-program': 'Weight Loss Program (GLP-1/Semiglutide)',
-        'scalp-micropigmentation': 'Scalp Micropigmentation',
-        'lip-neutralization': 'Lip Neutralization',
-        'lip-blush': 'Lip Blush',
-        'nano-brows': 'Nano Brows',
-        'powder-brows': 'Powder Brows',
-        'custom-semipermanent-makeup': 'Custom Semipermanent Makeup',
-        'iv-hydration-therapy': 'IV Hydration Therapy',
-        'lab-collection': 'Personalized Lab Collection',
-        'hormone-lab-panel': 'Hormone Lab Panel Support',
-        'regenerative-blood-services': 'Regenerative Blood-Based Services',
-        'other': 'Other / Not Sure',
-      };
+      // Load live prices/names from DB, update card display
+      try {
+        const resp = await fetch('/.netlify/functions/get-services');
+        if (resp.ok) {
+          const { services } = await resp.json();
+          for (const s of (services as any[])) {
+            PRICES[s.slug]         = Math.round(s.price / 100);
+            SERVICE_LABELS[s.slug] = s.name;
+            if (s.duration) DURATIONS[s.slug] = s.duration;
+          }
+          // Update displayed prices on checkbox cards
+          document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
+            const p = PRICES[cb.value];
+            if (!p) return;
+            const priceEl = cb.closest('label')?.querySelector<HTMLElement>('[class*="text-primary-600"][class*="font-bold"],[class*="text-amber-6"][class*="font-bold"]');
+            if (priceEl) priceEl.textContent = cb.value === 'mix-match-package' ? `From $${p}` : `$${p}`;
+          });
+          // Update mix-match picker prices by matching on label text
+          document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => {
+            const matched = (services as any[]).find((s: any) => s.name === cb.dataset.mmLabel);
+            if (matched) {
+              const newPrice = Math.round(matched.price / 100);
+              cb.dataset.mmPrice = String(newPrice);
+              const priceEl = cb.closest('label')?.querySelector<HTMLElement>('[class*="text-primary-600"]');
+              if (priceEl) priceEl.textContent = `$${newPrice}`;
+            }
+          });
+        }
+      } catch (fetchErr) {
+        console.warn('Could not load live service prices:', fetchErr);
+      }
 
       const DISCOUNT_PCT: Record<string, number> = {
         'none': 0,
@@ -1173,48 +1140,6 @@ import Layout from '../../layouts/Layout.astro';
       function fmt(n: number): string {
         return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
-
-      const DURATIONS: Record<string, number> = {
-        'signature-radiance-facial': 60,
-        'brightening-peel': 45,
-        'diamond-glow': 50,
-        'teen-skincare-facial': 45,
-        'high-frequency-skin-tightening': 45,
-        'pumpkin-enzyme-facial': 60,
-        'chlorophyll-skin-tightening-facial': 60,
-        'pineapple-enzyme-facial': 60,
-        'skin-recovery-facial': 60,
-        'lash-extensions': 120,
-        'lash-extensions-fill': 60,
-        'lash-lift-brow-lamination': 60,
-        'body-and-face-waxing': 60,
-        'brazilian-wax': 60,
-        'vampire-facial-prp': 75,
-        'lash-body-smooth': 135,
-        'brow-lash-wax-ritual': 135,
-        'glow-smooth-escape': 135,
-        'mix-match-package': 135,
-        'spray-tan': 45,
-        'bronze-bare-glow': 105,
-        'dermaplane-glow-facial': 60,
-        'smooth-canvas-facial': 45,
-        'prp-treatment': 60,
-        'lip-filler': 45,
-        'ed-injectables': 60,
-        'collagen-induction-therapy': 60,
-        'weight-loss-program': 30,
-        'scalp-micropigmentation': 180,
-        'lip-neutralization': 120,
-        'lip-blush': 120,
-        'nano-brows': 150,
-        'powder-brows': 150,
-        'custom-semipermanent-makeup': 120,
-        'iv-hydration-therapy': 60,
-        'lab-collection': 30,
-        'hormone-lab-panel': 45,
-        'regenerative-blood-services': 60,
-        'other': 60,
-      };
 
       // Services that must be booked alone (packages, hairline restoration, other)
       const SOLO_SERVICES = new Set([

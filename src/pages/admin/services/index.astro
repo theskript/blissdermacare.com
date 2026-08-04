@@ -1,0 +1,412 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Services & Pricing" activeNav="services">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Services &amp; Pricing</h1>
+        <p class="text-sm text-neutral-500 mt-1">Manage all services, packages, prices, images, and descriptions. Changes take effect immediately on the website and booking form.</p>
+      </div>
+      <button id="add-service-btn"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Service
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-5">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="svc-search" type="text" placeholder="Search services…"
+          class="pl-9 pr-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm w-56"/>
+      </div>
+      <select id="svc-category-filter"
+        class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm bg-white">
+        <option value="">All categories</option>
+        <option value="facials">Facials</option>
+        <option value="lash-brow-body">Lash, Brow &amp; Body</option>
+        <option value="advanced">Advanced Treatments</option>
+        <option value="packages">Packages</option>
+        <option value="semipermanent">Semipermanent Makeup</option>
+        <option value="wellness">Wellness</option>
+      </select>
+      <select id="svc-status-filter"
+        class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm bg-white">
+        <option value="">All statuses</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div id="svc-table-wrap" class="overflow-x-auto">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+      </div>
+      <div class="px-6 py-3 border-t border-neutral-100 text-xs text-neutral-400" id="svc-count">—</div>
+    </div>
+  </div>
+
+  <!-- Edit / Create slide-over -->
+  <div id="svc-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[480px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
+      <h3 id="svc-panel-title" class="font-semibold text-neutral-900">Edit Service</h3>
+      <button id="svc-close" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="svc-panel-body" class="flex-1 overflow-y-auto p-6 space-y-5"></div>
+  </div>
+  <div id="svc-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
+
+  <script>
+    import { requireLogin, apiFetch, getRole } from '../../../scripts/adminAuth.js';
+    requireLogin();
+    const role = getRole();
+
+    const CATEGORIES: Record<string,string> = {
+      'facials':        'Facials',
+      'lash-brow-body': 'Lash, Brow & Body',
+      'advanced':       'Advanced Treatments',
+      'packages':       'Packages',
+      'semipermanent':  'Semipermanent Makeup',
+      'wellness':       'Wellness',
+    };
+
+    const CAT_COLORS: Record<string,string> = {
+      'facials':        'bg-rose-100 text-rose-700',
+      'lash-brow-body': 'bg-violet-100 text-violet-700',
+      'advanced':       'bg-blue-100 text-blue-700',
+      'packages':       'bg-amber-100 text-amber-700',
+      'semipermanent':  'bg-pink-100 text-pink-700',
+      'wellness':       'bg-emerald-100 text-emerald-700',
+    };
+
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmt$(cents: number) { return cents ? '$' + (cents/100).toFixed(2).replace(/\.00$/,'') : '—'; }
+
+    let allServices: any[] = [];
+    let editingId: string | null = null;
+
+    // ── Load ─────────────────────────────────────────────────────────────────
+    async function load() {
+      const search   = (document.getElementById('svc-search') as HTMLInputElement).value.trim();
+      const category = (document.getElementById('svc-category-filter') as HTMLSelectElement).value;
+      const status   = (document.getElementById('svc-status-filter') as HTMLSelectElement).value;
+
+      const params: Record<string,string> = {};
+      if (search)   params.search   = search;
+      if (category) params.category = category;
+      if (status === 'active')   params.active = 'true';
+      if (status === 'inactive') params.active = 'false';
+
+      const wrap = document.getElementById('svc-table-wrap')!;
+      wrap.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>';
+
+      try {
+        const data = await apiFetch('admin-services', { params });
+        allServices = data?.services || [];
+        render();
+      } catch (err: any) {
+        wrap.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${err.message}</div>`;
+      }
+    }
+
+    function render() {
+      const wrap = document.getElementById('svc-table-wrap')!;
+      document.getElementById('svc-count')!.textContent = `${allServices.length} service${allServices.length !== 1 ? 's' : ''}`;
+
+      if (!allServices.length) {
+        wrap.innerHTML = '<div class="px-6 py-12 text-center text-neutral-400 text-sm">No services found.</div>';
+        return;
+      }
+
+      wrap.innerHTML = `
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+              <th class="px-6 py-3 text-left">Service</th>
+              <th class="px-6 py-3 text-left">Category</th>
+              <th class="px-6 py-3 text-right">Price</th>
+              <th class="px-6 py-3 text-center">Duration</th>
+              <th class="px-6 py-3 text-center">Bookable</th>
+              <th class="px-6 py-3 text-center">Status</th>
+              <th class="px-6 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-50">
+            ${allServices.map(svc => {
+              const catCls  = CAT_COLORS[svc.category] || 'bg-neutral-100 text-neutral-600';
+              const catLabel = CATEGORIES[svc.category] || svc.category;
+              return `
+              <tr class="hover:bg-neutral-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    ${svc.image_url
+                      ? `<img src="${esc(svc.image_url)}" class="w-10 h-10 rounded-lg object-cover shrink-0 bg-neutral-100" loading="lazy"/>`
+                      : `<div class="w-10 h-10 rounded-lg bg-neutral-100 shrink-0 flex items-center justify-center text-neutral-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>`}
+                    <div>
+                      <div class="font-semibold text-neutral-900">${esc(svc.name)}</div>
+                      <div class="text-xs text-neutral-400 font-mono">${esc(svc.slug)}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${catCls}">${catLabel}</span>
+                </td>
+                <td class="px-6 py-4 text-right font-semibold text-primary-700">${fmt$(svc.price)}</td>
+                <td class="px-6 py-4 text-center text-xs text-neutral-500">${svc.duration ? svc.duration + ' min' : '—'}</td>
+                <td class="px-6 py-4 text-center">
+                  ${svc.is_bookable
+                    ? '<svg class="w-4 h-4 text-emerald-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
+                    : '<svg class="w-4 h-4 text-neutral-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'}
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${svc.active ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-500'}">
+                    ${svc.active ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button class="svc-edit-btn px-3 py-1.5 text-xs font-medium border border-neutral-200 text-neutral-600 hover:border-primary-300 hover:text-primary-600 rounded-lg transition-colors" data-id="${esc(svc.id)}">Edit</button>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll('.svc-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const svc = allServices.find(s => s.id === (btn as HTMLElement).dataset.id);
+          if (svc) openPanel(svc);
+        });
+      });
+    }
+
+    // ── Panel ─────────────────────────────────────────────────────────────────
+    function openPanel(svc: any | null) {
+      editingId = svc?.id || null;
+      document.getElementById('svc-panel-title')!.textContent = svc ? 'Edit Service' : 'Add Service';
+      const body = document.getElementById('svc-panel-body')!;
+
+      body.innerHTML = `
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Name *</label>
+          <input id="f-name" type="text" value="${esc(svc?.name || '')}"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Slug *</label>
+          <input id="f-slug" type="text" value="${esc(svc?.slug || '')}" ${svc ? '' : 'placeholder="auto-generated from name"'}
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm font-mono focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          <p class="text-xs text-neutral-400 mt-1">URL-safe identifier used in the booking form. <strong>Don't change</strong> for existing services — it would break booked appointments referencing this slug.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Category *</label>
+            <select id="f-category" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none">
+              ${Object.entries(CATEGORIES).map(([v,l]) => `<option value="${v}" ${(svc?.category||'facials') === v ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price ($) *</label>
+            <input id="f-price" type="number" min="0" step="0.01" value="${svc ? (svc.price/100).toFixed(2) : ''}"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Duration (min)</label>
+            <input id="f-duration" type="number" min="0" value="${svc?.duration ?? ''}"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Sort Order</label>
+            <input id="f-sort" type="number" value="${svc?.sort_order ?? 0}"
+              class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Tagline</label>
+          <input id="f-tagline" type="text" value="${esc(svc?.tagline || '')}" placeholder="Short subtitle shown on service cards"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Description</label>
+          <textarea id="f-desc" rows="3" placeholder="Full service description shown on the services page"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none">${esc(svc?.description || '')}</textarea>
+        </div>
+
+        <!-- Image upload -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Image</label>
+          ${svc?.image_url ? `<img id="f-img-preview" src="${esc(svc.image_url)}" class="w-full h-36 object-cover rounded-xl mb-2 border border-neutral-200"/>` : `<div id="f-img-preview" class="hidden w-full h-36 object-cover rounded-xl mb-2 border border-neutral-200 bg-neutral-50"></div>`}
+          <input id="f-image-url" type="text" value="${esc(svc?.image_url || '')}" placeholder="Paste image URL or upload below"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none mb-2"/>
+          <label class="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-neutral-300 hover:border-primary-400 rounded-xl cursor-pointer text-sm text-neutral-500 hover:text-primary-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span id="upload-label">Upload image</span>
+            <input id="f-img-upload" type="file" accept="image/*" class="sr-only"/>
+          </label>
+          <div id="upload-progress" class="hidden mt-2 text-xs text-neutral-400"></div>
+        </div>
+
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="f-bookable" ${(svc?.is_bookable ?? true) ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/>
+            <span class="text-sm font-medium text-neutral-700">Show in booking form</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="f-package" ${svc?.is_package ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/>
+            <span class="text-sm font-medium text-neutral-700">Is a package</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="f-active" ${(svc?.active ?? true) ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-emerald-500"/>
+            <span class="text-sm font-medium text-neutral-700">Active</span>
+          </label>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button id="f-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save</button>
+          ${svc ? `<button id="f-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
+        </div>
+        <div id="f-msg" class="text-xs text-center hidden"></div>
+      `;
+
+      // Auto-generate slug from name for new services
+      if (!svc) {
+        const nameEl = document.getElementById('f-name') as HTMLInputElement;
+        const slugEl = document.getElementById('f-slug') as HTMLInputElement;
+        nameEl.addEventListener('input', () => {
+          if (!slugEl.dataset.manual) {
+            slugEl.value = nameEl.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+          }
+        });
+        slugEl.addEventListener('input', () => { slugEl.dataset.manual = '1'; });
+      }
+
+      // Image URL live preview
+      const imgUrlEl  = document.getElementById('f-image-url') as HTMLInputElement;
+      const previewEl = document.getElementById('f-img-preview') as HTMLElement;
+      imgUrlEl.addEventListener('input', () => {
+        const url = imgUrlEl.value.trim();
+        if (url) {
+          (previewEl as HTMLImageElement).src = url;
+          previewEl.classList.remove('hidden');
+        } else {
+          previewEl.classList.add('hidden');
+        }
+      });
+
+      // Image upload handler
+      const uploadInput = document.getElementById('f-img-upload') as HTMLInputElement;
+      uploadInput.addEventListener('change', async () => {
+        const file = uploadInput.files?.[0];
+        if (!file) return;
+        const progressEl = document.getElementById('upload-progress')!;
+        const labelEl    = document.getElementById('upload-label')!;
+        progressEl.textContent = 'Uploading…';
+        progressEl.classList.remove('hidden');
+        labelEl.textContent = 'Uploading…';
+        try {
+          const ext      = file.name.split('.').pop();
+          const filename = `services/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { signedUrl, publicUrl } = await apiFetch('admin-upload', {
+            method: 'POST', body: { bucket: 'service-images', path: filename },
+          });
+          const uploadRes = await fetch(signedUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+          if (!uploadRes.ok) throw new Error('Upload failed');
+          imgUrlEl.value = publicUrl;
+          (previewEl as HTMLImageElement).src = publicUrl;
+          previewEl.classList.remove('hidden');
+          progressEl.textContent = '✓ Uploaded';
+          labelEl.textContent = 'Change image';
+        } catch (err: any) {
+          progressEl.textContent = `Upload failed: ${err.message}`;
+        }
+      });
+
+      // Save
+      document.getElementById('f-save-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('f-save-btn') as HTMLButtonElement;
+        const msg = document.getElementById('f-msg')!;
+        const name     = (document.getElementById('f-name')     as HTMLInputElement).value.trim();
+        const slug     = (document.getElementById('f-slug')     as HTMLInputElement).value.trim();
+        const category = (document.getElementById('f-category') as HTMLSelectElement).value;
+        const priceRaw = (document.getElementById('f-price')    as HTMLInputElement).value;
+        const duration = parseInt((document.getElementById('f-duration') as HTMLInputElement).value || '0', 10);
+        const sortOrder= parseInt((document.getElementById('f-sort')     as HTMLInputElement).value || '0', 10);
+        const tagline  = (document.getElementById('f-tagline')  as HTMLInputElement).value.trim();
+        const desc     = (document.getElementById('f-desc')     as HTMLTextAreaElement).value.trim();
+        const imageUrl = (document.getElementById('f-image-url')as HTMLInputElement).value.trim();
+        const bookable = (document.getElementById('f-bookable') as HTMLInputElement).checked;
+        const isPackage= (document.getElementById('f-package')  as HTMLInputElement).checked;
+        const active   = (document.getElementById('f-active')   as HTMLInputElement).checked;
+
+        if (!name || !slug || !category || !priceRaw) {
+          msg.textContent = 'Name, slug, category, and price are required.';
+          msg.className = 'text-xs text-center text-red-500';
+          return;
+        }
+        const price = Math.round(parseFloat(priceRaw) * 100);
+
+        btn.disabled = true; btn.textContent = 'Saving…';
+        try {
+          const fields = { name, slug, category, price, duration: duration || null,
+            sort_order: sortOrder, tagline: tagline || null, description: desc || null,
+            image_url: imageUrl || null, is_bookable: bookable, is_package: isPackage, active };
+          if (editingId) {
+            await apiFetch('admin-services', { method: 'PATCH', body: { id: editingId, ...fields } });
+          } else {
+            await apiFetch('admin-services', { method: 'POST', body: fields });
+          }
+          closePanel();
+          await load();
+        } catch (err: any) {
+          msg.textContent = `Error: ${err.message}`;
+          msg.className = 'text-xs text-center text-red-500';
+          btn.disabled = false; btn.textContent = 'Save';
+        }
+      });
+
+      // Delete
+      document.getElementById('f-del-btn')?.addEventListener('click', async () => {
+        if (!editingId) return;
+        const svcName = allServices.find(s => s.id === editingId)?.name || 'this service';
+        if (!confirm(`Delete "${svcName}"? This cannot be undone.`)) return;
+        try {
+          await apiFetch('admin-services', { method: 'DELETE', body: { id: editingId } });
+          closePanel();
+          await load();
+        } catch (err: any) { alert(`Delete failed: ${err.message}`); }
+      });
+
+      document.getElementById('svc-panel')?.classList.remove('hidden');
+      document.getElementById('svc-panel')?.classList.add('flex');
+      document.getElementById('svc-overlay')?.classList.remove('hidden');
+    }
+
+    function closePanel() {
+      document.getElementById('svc-panel')?.classList.add('hidden');
+      document.getElementById('svc-panel')?.classList.remove('flex');
+      document.getElementById('svc-overlay')?.classList.add('hidden');
+      editingId = null;
+    }
+
+    document.getElementById('svc-close')?.addEventListener('click', closePanel);
+    document.getElementById('svc-overlay')?.addEventListener('click', closePanel);
+    document.getElementById('add-service-btn')?.addEventListener('click', () => openPanel(null));
+
+    // Filters
+    let filterTimeout: ReturnType<typeof setTimeout>;
+    const debouncedLoad = () => { clearTimeout(filterTimeout); filterTimeout = setTimeout(load, 300); };
+    document.getElementById('svc-search')?.addEventListener('input', debouncedLoad);
+    document.getElementById('svc-category-filter')?.addEventListener('change', load);
+    document.getElementById('svc-status-filter')?.addEventListener('change', load);
+
+    load();
+  </script>
+
+</AdminLayout>
