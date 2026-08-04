@@ -85,6 +85,43 @@ exports.handler = async (event) => {
     const { error } = await getSupabase().from('pre_service_forms').insert(record);
     if (error) throw new Error(error.message);
 
+    // ── Appointment sync (non-fatal) ──────────────────────────────────────────
+    try {
+      const sb = getSupabase();
+      if (record.email && record.appointment_date) {
+        const { data: existing } = await sb
+          .from('appointments')
+          .select('id, time, services')
+          .eq('client_email', record.email)
+          .eq('date', record.appointment_date)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (existing) {
+          const patch = {};
+          if (!existing.time     && record.appointment_time)  patch.time     = record.appointment_time;
+          if (!existing.services && record.service_requested) patch.services = record.service_requested;
+          if (Object.keys(patch).length) {
+            await sb.from('appointments').update(patch).eq('id', existing.id);
+          }
+        } else {
+          await sb.from('appointments').insert({
+            client_name:  record.name,
+            client_email: record.email,
+            client_phone: record.phone,
+            date:         record.appointment_date,
+            time:         record.appointment_time  || null,
+            services:     record.service_requested || null,
+            status:       'Pending Confirmation',
+            source:       'Pre-Service Form',
+          });
+        }
+      }
+    } catch (syncErr) {
+      console.warn('PSF appointment sync failed (non-fatal):', syncErr.message);
+    }
+
     // ── Owner notifications (non-fatal) ───────────────────────────────────────
     try {
       const ns = await getNotificationSettings();
