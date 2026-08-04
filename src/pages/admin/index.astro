@@ -77,8 +77,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <!-- Recent PSF submissions -->
         <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900">Recent Submissions</h2>
-            <span id="psf-recent-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
+            <h2 class="font-semibold text-neutral-900">Unread Forms</h2>
+            <span id="psf-recent-badge" class="hidden text-xs bg-violet-100 text-violet-700 font-bold px-2.5 py-0.5 rounded-full"></span>
           </div>
           <div id="psf-recent-list" class="divide-y divide-neutral-100 max-h-96 overflow-y-auto">
             <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
@@ -446,7 +446,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const allPSFs    = (psfData?.records || []) as any[];
       const todayLocal = new Date().toLocaleDateString();
       const todayPSFs  = allPSFs.filter((f: any) => f.created_at && new Date(f.created_at).toLocaleDateString() === todayLocal);
-      const recentPSFs = allPSFs.slice(0, 15);
+      const unreadPSFs = (unreadPSFData?.records || []) as any[];
 
       const todayRecs   = todayData?.records   || [];
       const weekRecs    = weekData?.records    || [];
@@ -537,15 +537,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         psfTodayEl.innerHTML = todayPSFs.map(psfRow).join('');
       }
 
-      // PSF recent section
+      // PSF unread section
       const psfRecentEl = document.getElementById('psf-recent-list')!;
       const psfRecentBadge = document.getElementById('psf-recent-badge')!;
-      if (recentPSFs.length === 0) {
-        psfRecentEl.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No submissions yet.</div>';
+      if (unreadPSFs.length === 0) {
+        psfRecentEl.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No unread forms.</div>';
       } else {
-        psfRecentBadge.textContent = `${recentPSFs.length} recent`;
+        psfRecentBadge.textContent = `${unreadPSFs.length} unread`;
         psfRecentBadge.classList.remove('hidden');
-        psfRecentEl.innerHTML = recentPSFs.map(psfRow).join('');
+        psfRecentEl.innerHTML = unreadPSFs.map(psfRow).join('');
       }
 
       // Attach appointment click handlers
