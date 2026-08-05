@@ -304,7 +304,7 @@ const cfg = (id: string) => activeNav === id
       const chevron = section?.querySelector<HTMLElement>('.nav-chevron');
       const btn     = section?.querySelector<HTMLElement>('.nav-section-header');
       if (!body) return;
-      const open = id === activeSection ? true : (state[id] !== false);
+      const open = id === activeSection ? true : (state[id] === true);
       body.style.display = open ? '' : 'none';
       if (chevron) chevron.style.transform = open ? '' : 'rotate(-90deg)';
       btn?.addEventListener('click', () => {
