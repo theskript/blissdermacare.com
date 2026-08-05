@@ -24,6 +24,10 @@
 
 # Admin panel — serve built static files; let Astro handle nested routes
 [[redirects]]
+  from = "/unsubscribe"
+  to = "/.netlify/functions/unsubscribe"
+  status = 200
+[[redirects]]
   from = "/admin/*"
   to = "/admin/:splat"
   status = 200

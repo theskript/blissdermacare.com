@@ -1,13 +1,15 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes';
+  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder';
 }
 const { title, activeNav } = Astro.props;
 
-const cmsItems      = new Set(['services', 'membership-plans', 'promo-codes']);
+const cmsItems      = new Set(['services', 'membership-plans', 'promo-codes', 'page-builder']);
+const marketingItems = new Set(['marketing']);
 const settingsItems = new Set(['staff', 'availability', 'notifications', 'partners', 'audit', 'system']);
 const activeSection = cmsItems.has(activeNav || '') ? 'cms'
+  : marketingItems.has(activeNav || '') ? 'marketing'
   : settingsItems.has(activeNav || '') ? 'settings'
   : 'crm';
 
@@ -194,6 +196,24 @@ const aCms = (id: string) => activeNav === id
             <a href="/admin/promo-codes" class={aCms('promo-codes')} data-tip="Promo Codes">
               <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
               <span class="sb-label">Promo Codes</span>
+            </a>
+            <a href="/admin/pages" class={aCms('page-builder')} data-tip="Page Builder">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+              <span class="sb-label">Page Builder</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Marketing (owner-only) ──────────────────────────────── -->
+        <div class="owner-only-nav hidden">
+          <div class="sb-section px-1.5 pb-1 pt-3">
+            <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-600/80">Marketing</span>
+          </div>
+          <div class="sb-divider h-px bg-white/[0.07] mx-1 my-1.5"></div>
+          <div class="space-y-0.5">
+            <a href="/admin/marketing" class={`nav-item flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${activeNav === 'marketing' ? 'bg-emerald-500/20 text-emerald-300' : 'text-neutral-400 hover:text-white hover:bg-white/[0.06]'}`} data-tip="Campaigns">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <span class="sb-label">Campaigns</span>
             </a>
           </div>
         </div>
