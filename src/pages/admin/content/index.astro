@@ -1,0 +1,161 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Site Content" activeNav="site-content">
+  <div class="p-6 lg:p-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-serif font-semibold text-neutral-900">Site Content</h1>
+      <p class="text-sm text-neutral-500 mt-0.5">Edit text and content on your existing website pages. Changes go live immediately.</p>
+    </div>
+
+    <!-- Page tabs -->
+    <div class="flex gap-1 mb-5 border-b border-neutral-200">
+      <button class="page-tab active-ptab px-4 py-2.5 text-sm font-semibold border-b-2 border-primary-600 text-primary-700 -mb-px" data-page="about">About</button>
+      <button class="page-tab px-4 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-page="faq">FAQ</button>
+      <button class="page-tab px-4 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-page="contact">Contact</button>
+    </div>
+
+    <!-- Content panels -->
+    <div id="content-area">
+      <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+    </div>
+  </div>
+
+  <script>
+    import { requireLogin, apiFetch } from '../../../scripts/adminAuth.js';
+    requireLogin();
+
+    let activePage = 'about';
+    let sections: any[] = [];
+    let saveTimers: Record<string, ReturnType<typeof setTimeout>> = {};
+
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    document.querySelectorAll('.page-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activePage = (btn as HTMLElement).dataset.page!;
+        document.querySelectorAll('.page-tab').forEach(b => {
+          const isActive = (b as HTMLElement).dataset.page === activePage;
+          b.classList.toggle('active-ptab', isActive);
+          b.classList.toggle('border-primary-600', isActive);
+          b.classList.toggle('text-primary-700', isActive);
+          b.classList.toggle('font-semibold', isActive);
+          b.classList.toggle('text-neutral-500', !isActive);
+          b.classList.toggle('border-transparent', !isActive);
+          b.classList.toggle('font-medium', !isActive);
+        });
+        loadPage(activePage);
+      });
+    });
+
+    // ── Load sections for a page ──────────────────────────────────────────────
+    async function loadPage(page: string) {
+      const area = document.getElementById('content-area')!;
+      area.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>';
+      try {
+        const data = await apiFetch('admin-content', { params: { page } });
+        sections = data?.sections || [];
+        renderSections(sections, page);
+      } catch (err: any) {
+        area.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${err.message}</div>`;
+      }
+    }
+
+    function renderSections(sects: any[], page: string) {
+      const area = document.getElementById('content-area')!;
+      if (!sects.length) {
+        area.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No editable sections found for this page. Run the SQL migration first.</div>';
+        return;
+      }
+      area.innerHTML = `
+        <div class="space-y-4">
+          ${sects.map(s => {
+            const isJson = s.type === 'json';
+            const isHtml = s.type === 'html';
+            const isImage = s.type === 'image';
+            const isLong = s.type === 'textarea' || s.type === 'html';
+            const displayVal = s.value || '';
+            return `
+              <div class="bg-white rounded-xl border border-neutral-200 p-4">
+                <div class="flex items-center justify-between mb-2 gap-4">
+                  <label class="text-sm font-semibold text-neutral-800">${s.label}</label>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span id="save-msg-${s.section_key}" class="text-xs text-neutral-400 hidden"></span>
+                    <span class="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-1.5 py-0.5 rounded">${s.section_key}</span>
+                  </div>
+                </div>
+                ${isJson
+                  ? `<div class="mb-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">Edit as JSON array: <code>[{"q":"Question","a":"Answer"}, …]</code></div>
+                     <textarea id="field-${s.section_key}" rows="8"
+                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs font-mono focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-y"
+                       data-key="${s.section_key}" data-page="${page}">${displayVal}</textarea>`
+                  : isImage
+                  ? `<input type="url" id="field-${s.section_key}" value="${displayVal}"
+                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
+                       data-key="${s.section_key}" data-page="${page}" placeholder="https://…"/>
+                     ${displayVal ? `<img src="${displayVal}" class="mt-2 h-20 rounded object-cover" alt=""/>` : ''}`
+                  : isLong
+                  ? `<textarea id="field-${s.section_key}" rows="${isHtml ? 6 : 3}"
+                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-y"
+                       data-key="${s.section_key}" data-page="${page}">${displayVal}</textarea>`
+                  : `<input type="text" id="field-${s.section_key}" value="${displayVal}"
+                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
+                       data-key="${s.section_key}" data-page="${page}"/>`
+                }
+              </div>`;
+          }).join('')}
+          <button id="save-all-btn"
+            class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors mt-2">
+            Save All Changes
+          </button>
+          <div id="save-all-msg" class="text-xs text-center hidden"></div>
+        </div>`;
+
+      // Save all button
+      document.getElementById('save-all-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('save-all-btn') as HTMLButtonElement;
+        const msg = document.getElementById('save-all-msg')!;
+        btn.disabled = true; btn.textContent = 'Saving…';
+        let saved = 0, errors = 0;
+        for (const s of sects) {
+          const el = document.getElementById(`field-${s.section_key}`) as HTMLInputElement | HTMLTextAreaElement | null;
+          if (!el) continue;
+          const newVal = el.value;
+          if (newVal === (s.value || '')) continue; // skip unchanged
+          // Validate JSON sections
+          if (s.type === 'json') {
+            try { JSON.parse(newVal); } catch {
+              msg.textContent = `Invalid JSON in "${s.label}". Fix before saving.`;
+              msg.className = 'text-xs text-center text-red-500'; msg.classList.remove('hidden');
+              btn.disabled = false; btn.textContent = 'Save All Changes';
+              return;
+            }
+          }
+          try {
+            await apiFetch('admin-content', { method: 'PATCH', body: { page_key: page, section_key: s.section_key, value: newVal } });
+            s.value = newVal;
+            saved++;
+          } catch { errors++; }
+        }
+        btn.disabled = false; btn.textContent = 'Save All Changes';
+        if (errors > 0) {
+          msg.textContent = `Saved ${saved}, failed ${errors}.`;
+          msg.className = 'text-xs text-center text-red-500';
+        } else if (saved > 0) {
+          msg.textContent = `✓ ${saved} section${saved !== 1 ? 's' : ''} saved.`;
+          msg.className = 'text-xs text-center text-emerald-600';
+        } else {
+          msg.textContent = 'No changes to save.';
+          msg.className = 'text-xs text-center text-neutral-400';
+        }
+        msg.classList.remove('hidden');
+        setTimeout(() => msg.classList.add('hidden'), 3000);
+      });
+    }
+
+    loadPage('about');
+  </script>
+
+  <style>
+    .active-ptab { border-bottom-color: #7c3aed !important; color: #6d28d9 !important; }
+  </style>
+</AdminLayout>

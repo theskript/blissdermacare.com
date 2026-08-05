@@ -51,8 +51,8 @@ const faqs = [
   <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Common Questions</span>
-      <h1 class="text-5xl font-serif text-neutral-900 mb-4">FAQ</h1>
-      <p class="text-lg text-neutral-600">Everything you need to know before your first (or next) appointment.</p>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4" data-sc="hero_h1">FAQ</h1>
+      <p class="text-lg text-neutral-600" data-sc="hero_sub">Everything you need to know before your first (or next) appointment.</p>
     </div>
   </section>
 
@@ -98,6 +98,50 @@ const faqs = [
     </div>
   </section>
 </Layout>
+
+<script is:inline>
+  fetch('/.netlify/functions/get-content?page=faq')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var c=d.content||{};
+      // Update hero text
+      ['hero_h1','hero_sub'].forEach(function(k){
+        var el=document.querySelector('[data-sc="'+k+'"]');
+        if(el&&c[k]&&c[k].value)el.textContent=c[k].value;
+      });
+      // Replace FAQ list if items exist in DB
+      if(c.items&&c.items.value){
+        try{
+          var items=JSON.parse(c.items.value);
+          var list=document.getElementById('faq-list');
+          if(list&&items.length){
+            list.innerHTML=items.map(function(f,i){
+              return '<div class="bg-[#faf9f7] rounded-2xl border border-neutral-200 overflow-hidden" data-faq-item>'+
+                '<button class="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-neutral-100/60 transition-colors" aria-expanded="false" data-faq-btn>'+
+                '<span class="font-semibold text-neutral-900 text-base">'+f.q+'</span>'+
+                '<svg class="w-5 h-5 text-primary-600 flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-faq-icon><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>'+
+                '<div class="hidden px-6 pb-5" data-faq-answer><p class="text-neutral-600 leading-relaxed">'+f.a+'</p></div></div>';
+            }).join('');
+            // Re-attach accordion listeners
+            list.querySelectorAll('[data-faq-btn]').forEach(function(btn){
+              btn.addEventListener('click',function(){
+                var item=btn.closest('[data-faq-item]');
+                var answer=item&&item.querySelector('[data-faq-answer]');
+                var icon=btn.querySelector('[data-faq-icon]');
+                var isOpen=btn.getAttribute('aria-expanded')==='true';
+                document.querySelectorAll('[data-faq-item]').forEach(function(el){
+                  el.querySelector('[data-faq-btn]').setAttribute('aria-expanded','false');
+                  el.querySelector('[data-faq-answer]').classList.add('hidden');
+                  el.querySelector('[data-faq-icon]').style.transform='';
+                });
+                if(!isOpen){btn.setAttribute('aria-expanded','true');if(answer)answer.classList.remove('hidden');if(icon)icon.style.transform='rotate(180deg)';}
+              });
+            });
+          }
+        }catch(e){}
+      }
+    }).catch(function(){});
+</script>
 
 <script>
   document.querySelectorAll('[data-faq-btn]').forEach(btn => {

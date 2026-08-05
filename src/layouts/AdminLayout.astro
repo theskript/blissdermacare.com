@@ -1,11 +1,11 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder';
+  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content';
 }
 const { title, activeNav } = Astro.props;
 
-const cmsItems      = new Set(['services', 'membership-plans', 'promo-codes', 'page-builder']);
+const cmsItems      = new Set(['services', 'membership-plans', 'promo-codes', 'page-builder', 'site-content']);
 const marketingItems = new Set(['marketing']);
 const settingsItems = new Set(['staff', 'availability', 'notifications', 'partners', 'audit', 'system']);
 const activeSection = cmsItems.has(activeNav || '') ? 'cms'
@@ -200,6 +200,10 @@ const aCms = (id: string) => activeNav === id
             <a href="/admin/pages" class={aCms('page-builder')} data-tip="Page Builder">
               <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
               <span class="sb-label">Page Builder</span>
+            </a>
+            <a href="/admin/content" class={aCms('site-content')} data-tip="Site Content">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span class="sb-label">Site Content</span>
             </a>
           </div>
         </div>
