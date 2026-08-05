@@ -1,7 +1,7 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content';
+  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content' | 'analytics';
 }
 const { title, activeNav } = Astro.props;
 
@@ -175,6 +175,10 @@ const aCms = (id: string) => activeNav === id
              class={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-semibold mt-1 transition-colors ${activeNav === 'new-appointment' ? 'bg-primary-500 text-white' : 'bg-primary-600/80 text-white hover:bg-primary-500'}`}>
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span class="sb-label">New Appointment</span>
+          </a>
+          <a href="/admin/analytics" class={a('analytics')} data-tip="Analytics">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <span class="sb-label">Analytics</span>
           </a>
         </div>
 

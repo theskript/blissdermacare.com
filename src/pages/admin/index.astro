@@ -438,20 +438,27 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const cols = role === 'owner' ? 'grid-cols-2 md:grid-cols-5' : 'grid-cols-2 md:grid-cols-4';
       const statsRow = document.getElementById('stats-row')!;
       statsRow.className = `grid ${cols} gap-3 mb-5`;
+      const todayParam = today;
+      const weekEndParam = weekEnd;
       statsRow.innerHTML =
-        statCard('Today', todayRecs.length, 'appointment' + (todayRecs.length !== 1 ? 's' : ''), '', '/admin/calendar') +
-        statCard('This Week', weekRecs.length, 'upcoming', '', '/admin/appointments') +
+        statCard('Today', todayRecs.length, 'appointment' + (todayRecs.length !== 1 ? 's' : ''), '', `/admin/appointments?date=${todayParam}`) +
+        statCard('This Week', weekRecs.length, 'upcoming', '', `/admin/appointments?startDate=${addDays(today,1)}&endDate=${weekEndParam}`) +
         statCard('Pending', pendingRecs.length, 'need confirmation',
-          pendingRecs.length > 0 ? 'border-l-4 border-amber-400' : '', '/admin/appointments') +
+          pendingRecs.length > 0 ? 'border-l-4 border-amber-400' : '', '/admin/appointments?status=Pending+Confirmation') +
         statCard('Unread Forms', totalUnread, 'new submissions',
           totalUnread > 0 ? 'border-l-4 border-violet-400' : '') +
-        (role === 'owner' ? statCard('Revenue MTD', `$${monthRevenue.toFixed(0)}`, 'confirmed this month', 'border-l-4 border-emerald-400') : '');
+        (role === 'owner' ? statCard('Revenue MTD', `$${monthRevenue.toFixed(0)}`, 'confirmed this month', 'border-l-4 border-emerald-400', '/admin/analytics') : '');
+
+      // Add analytics shortcut for non-owners
+      if (role !== 'owner') {
+        statsRow.innerHTML += statCard('Analytics', '→', 'performance & trends', '', '/admin/analytics');
+      }
 
       // ── Inbox ───────────────────────────────────────────────────────────────
       const inbox = document.getElementById('inbox-section')!;
       const items: string[] = [];
       if (pendingRecs.length > 0) items.push(`
-        <a href="/admin/appointments" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hover:bg-amber-100 transition-colors">
+        <a href="/admin/appointments?status=Pending+Confirmation" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hover:bg-amber-100 transition-colors">
           <span class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center text-amber-800 text-sm font-bold shrink-0">${pendingRecs.length}</span>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-semibold text-amber-900">${pendingRecs.length} booking${pendingRecs.length!==1?'s':''} awaiting confirmation</div>
@@ -459,6 +466,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </div>
           <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>`);
+
+      // Missing PSF alert — appointments today or this week without a PSF
+      const noPsfRecs = [...todayRecs, ...weekRecs].filter((r: any) => r.fields['hasPSF'] === false);
+      if (noPsfRecs.length > 0) items.push(`
+        <a href="/admin/pre-service-forms" class="flex items-center gap-4 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 hover:bg-orange-100 transition-colors">
+          <span class="w-8 h-8 rounded-full bg-orange-200 flex items-center justify-center text-orange-800 text-sm font-bold shrink-0">${noPsfRecs.length}</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold text-orange-900">${noPsfRecs.length} upcoming appointment${noPsfRecs.length!==1?'s':''} missing pre-service form</div>
+            <div class="text-xs text-orange-700 truncate">${noPsfRecs.map((r:any)=>r.fields['Client Name']||'?').slice(0,4).join(', ')}${noPsfRecs.length>4?` +${noPsfRecs.length-4} more`:''}</div>
+          </div>
+          <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>`);
+
       inbox.innerHTML = items.join('');
       inbox.classList.toggle('hidden', items.length === 0);
 
