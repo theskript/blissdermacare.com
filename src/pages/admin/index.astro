@@ -206,18 +206,23 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         : '';
       const apptTime = formatTime(form.appointment_time || '');
       return `
-        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors psf-row${isUnread ? ' psf-unread' : ''}" data-psf-id="${esc(form.id)}">
+        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors group psf-row${isUnread ? ' psf-unread' : ''}" data-psf-id="${esc(form.id)}" data-read="${isUnread ? 'false' : 'true'}">
           <div class="flex items-start gap-2.5">
-            <span class="mt-1.5 w-2 h-2 rounded-full shrink-0 ${isUnread ? 'bg-violet-500' : 'bg-transparent'}"></span>
+            <span class="mt-1.5 w-2 h-2 rounded-full shrink-0 ${isUnread ? 'bg-violet-500' : 'bg-neutral-300'}"></span>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-sm font-semibold text-neutral-900">${esc(form.name || '—')}</span>
-                ${isUnread ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700">New</span>' : ''}
+                ${isUnread ? '<span class="psf-new-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700">New</span>' : ''}
               </div>
               ${service ? `<div class="text-xs text-neutral-500 mt-0.5 truncate">${esc(service)}</div>` : ''}
               ${apptDate ? `<div class="text-xs text-neutral-400 mt-0.5">Appt ${apptDate}${apptTime ? ' · ' + esc(apptTime) : ''}</div>` : ''}
             </div>
-            <div class="text-xs text-neutral-400 shrink-0 mt-0.5">${timeAgo}</div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xs text-neutral-400">${timeAgo}</span>
+              <button class="psf-toggle-read opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 rounded-md text-[10px] font-semibold ${isUnread ? 'text-violet-600 hover:bg-violet-50' : 'text-neutral-400 hover:bg-neutral-100'}" data-psf-id="${esc(form.id)}" title="${isUnread ? 'Mark as read' : 'Mark as unread'}">
+                ${isUnread ? 'Mark read' : 'Mark unread'}
+              </button>
+            </div>
           </div>
         </div>`;
     }
@@ -556,15 +561,39 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         });
       });
 
-      // PSF click → mark as read
-      document.querySelectorAll('.psf-row').forEach(el => {
-        el.addEventListener('click', () => {
-          const id = (el as HTMLElement).dataset.psfId;
-          if (!id || !el.classList.contains('psf-unread')) return;
-          el.classList.remove('psf-unread');
-          el.querySelector('.bg-violet-500')?.classList.replace('bg-violet-500', 'bg-transparent');
-          el.querySelector('.bg-violet-100')?.remove();
-          apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { id, read: true } }).catch(() => null);
+      // PSF toggle read/unread
+      document.querySelectorAll('.psf-toggle-read').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id  = (btn as HTMLElement).dataset.psfId;
+          if (!id) return;
+          const row = btn.closest('.psf-row') as HTMLElement;
+          const isCurrentlyUnread = row.classList.contains('psf-unread');
+          const markRead = isCurrentlyUnread;
+
+          // Visual update
+          const dot   = row.querySelector<HTMLElement>('span.rounded-full.shrink-0');
+          const badge = row.querySelector('.psf-new-badge');
+          if (markRead) {
+            row.classList.remove('psf-unread');
+            row.dataset.read = 'true';
+            if (dot)   { dot.classList.remove('bg-violet-500'); dot.classList.add('bg-neutral-300'); }
+            if (badge) badge.remove();
+            (btn as HTMLElement).textContent = 'Mark unread';
+            btn.classList.remove('text-violet-600', 'hover:bg-violet-50');
+            btn.classList.add('text-neutral-400', 'hover:bg-neutral-100');
+            (btn as HTMLElement).title = 'Mark as unread';
+          } else {
+            row.classList.add('psf-unread');
+            row.dataset.read = 'false';
+            if (dot) { dot.classList.remove('bg-neutral-300'); dot.classList.add('bg-violet-500'); }
+            (btn as HTMLElement).textContent = 'Mark read';
+            btn.classList.remove('text-neutral-400', 'hover:bg-neutral-100');
+            btn.classList.add('text-violet-600', 'hover:bg-violet-50');
+            (btn as HTMLElement).title = 'Mark as read';
+          }
+
+          apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { id, read: markRead } }).catch(() => null);
         });
       });
     }
