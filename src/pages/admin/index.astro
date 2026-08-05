@@ -3,92 +3,117 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 <AdminLayout title="Dashboard" activeNav="dashboard">
 
-  <div class="p-6 lg:p-8">
+  <div class="p-6 lg:p-8 max-w-screen-2xl">
 
-    <!-- Page header -->
+    <!-- ── Header ──────────────────────────────────────────────────────────── -->
     <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
       <div>
         <h1 class="text-2xl font-serif font-semibold text-neutral-900">Dashboard</h1>
-        <p id="today-label" class="text-sm text-neutral-500 mt-1">Loading…</p>
+        <p id="today-label" class="text-sm text-neutral-500 mt-0.5">Loading…</p>
       </div>
       <a href="/admin/new-appointment"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
+        class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         New Appointment
       </a>
     </div>
 
-    <!-- ⚡ Needs-action inbox -->
-    <div id="inbox-section" class="hidden mb-5 space-y-2">
+    <!-- ── Stats row ────────────────────────────────────────────────────────── -->
+    <div id="stats-row" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
+        <div class="h-4 bg-neutral-100 rounded w-16 mb-2"></div>
+        <div class="h-7 bg-neutral-100 rounded w-10"></div>
+      </div>
+      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
+        <div class="h-4 bg-neutral-100 rounded w-20 mb-2"></div>
+        <div class="h-7 bg-neutral-100 rounded w-10"></div>
+      </div>
+      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
+        <div class="h-4 bg-neutral-100 rounded w-24 mb-2"></div>
+        <div class="h-7 bg-neutral-100 rounded w-10"></div>
+      </div>
+      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
+        <div class="h-4 bg-neutral-100 rounded w-20 mb-2"></div>
+        <div class="h-7 bg-neutral-100 rounded w-10"></div>
+      </div>
     </div>
 
-    <!-- 2-col grid: appointments (left) + pre-service forms (right) -->
+    <!-- ── Inbox alerts ─────────────────────────────────────────────────────── -->
+    <div id="inbox-section" class="hidden mb-5 space-y-2"></div>
+
+    <!-- ── Main grid ────────────────────────────────────────────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
-      <!-- Appointments column -->
+      <!-- Appointments (left 3/5) -->
       <div class="lg:col-span-3 space-y-4">
 
-        <!-- Today's appointments -->
         <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900">Today's Schedule</h2>
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
+            <h2 class="font-semibold text-neutral-900 text-sm">Today's Schedule</h2>
             <div class="flex items-center gap-3">
-              <span id="today-count-badge" class="hidden text-xs bg-primary-100 text-primary-700 font-bold px-2.5 py-0.5 rounded-full"></span>
+              <span id="today-count-badge" class="hidden text-xs bg-primary-100 text-primary-700 font-bold px-2 py-0.5 rounded-full"></span>
               <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">Calendar →</a>
             </div>
           </div>
-          <div id="today-list" class="divide-y divide-neutral-100">
-            <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          <div id="today-list" class="divide-y divide-neutral-50">
+            <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
         </div>
 
-        <!-- Upcoming (next 7 days) -->
         <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900">Next 7 Days</h2>
-            <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2.5 py-0.5 rounded-full"></span>
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
+            <h2 class="font-semibold text-neutral-900 text-sm">Next 7 Days</h2>
+            <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2 py-0.5 rounded-full"></span>
           </div>
-          <div id="upcoming-list" class="divide-y divide-neutral-100">
-            <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+          <div id="upcoming-list" class="divide-y divide-neutral-50">
+            <div class="px-5 py-10 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
         </div>
 
       </div>
 
-      <!-- Pre-service forms column -->
-      <div class="lg:col-span-2 space-y-4">
+      <!-- New Submissions (right 2/5) -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden h-full">
 
-        <!-- Today's PSF submissions -->
-        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900">Forms Today</h2>
-            <div class="flex items-center gap-3">
-              <span id="psf-today-badge" class="hidden text-xs bg-violet-100 text-violet-700 font-bold px-2.5 py-0.5 rounded-full"></span>
-              <a href="/admin/pre-service-forms" class="text-xs text-primary-600 hover:text-primary-700 font-medium">View all →</a>
-            </div>
+          <!-- Tab bar -->
+          <div class="flex border-b border-neutral-100 px-3 pt-2 gap-0.5 overflow-x-auto">
+            <button class="sub-tab-btn active-tab shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors" data-tab="psf">
+              Pre-Service
+              <span id="tab-badge-psf" class="hidden text-[10px] font-bold bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded-full"></span>
+            </button>
+            <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="demo">
+              Demo Models
+              <span id="tab-badge-demo" class="hidden text-[10px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-full"></span>
+            </button>
+            <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="careers">
+              Careers
+              <span id="tab-badge-careers" class="hidden text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full"></span>
+            </button>
+            <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="consult">
+              Consults
+              <span id="tab-badge-consult" class="hidden text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full"></span>
+            </button>
           </div>
-          <div id="psf-today-list" class="divide-y divide-neutral-100 max-h-72 overflow-y-auto">
-            <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+
+          <!-- Tab panels -->
+          <div id="tab-panel-psf" class="tab-panel divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+            <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
+          <div id="tab-panel-demo" class="tab-panel hidden divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+            <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+          <div id="tab-panel-careers" class="tab-panel hidden divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+            <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+          <div id="tab-panel-consult" class="tab-panel hidden divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+            <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+
         </div>
-
-        <!-- Recent PSF submissions -->
-        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900">Unread Forms</h2>
-            <span id="psf-recent-badge" class="hidden text-xs bg-violet-100 text-violet-700 font-bold px-2.5 py-0.5 rounded-full"></span>
-          </div>
-          <div id="psf-recent-list" class="divide-y divide-neutral-100 max-h-96 overflow-y-auto">
-            <div class="px-6 py-8 text-center text-neutral-400 text-sm">Loading…</div>
-          </div>
-        </div>
-
       </div>
 
     </div>
-
   </div>
 
   <!-- Appointment detail slide-over -->
@@ -96,9 +121,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
       <h3 class="font-semibold text-neutral-900">Appointment Details</h3>
       <button id="close-detail" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
     <div id="detail-content" class="flex-1 overflow-y-auto p-6"></div>
@@ -108,22 +131,22 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <script>
     import { requireLogin, apiFetch, getRole, formatDate, formatTime } from '../../scripts/adminAuth.js';
     requireLogin();
-
     const role = getRole();
 
-    // ── Date helpers ──────────────────────────────────────────────────────────
-    function todayStr() {
-      return new Date().toISOString().split('T')[0];
+    function todayStr() { return new Date().toISOString().split('T')[0]; }
+    function addDays(d: string, n: number) {
+      const dt = new Date(d + 'T12:00:00'); dt.setDate(dt.getDate() + n);
+      return dt.toISOString().split('T')[0];
     }
-    function addDays(dateStr: string, days: number) {
-      const d = new Date(dateStr + 'T12:00:00');
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split('T')[0];
+    function fullDateLabel(d: string) {
+      return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     }
-    function fullDateLabel(dateStr: string) {
-      return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
-        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-      });
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function timeAgo(isoStr: string) {
+      const ms = Date.now() - new Date(isoStr).getTime();
+      const h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000);
+      if (h >= 24) return new Date(isoStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return h > 0 ? `${h}h ago` : m > 0 ? `${m}m ago` : 'just now';
     }
 
     const STATUS_COLORS: Record<string, string> = {
@@ -133,472 +156,372 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       'Cancelled':            'bg-red-100 text-red-700',
       'No-Show':              'bg-purple-100 text-purple-700',
     };
-
-    function statusBadge(status: string) {
-      const cls = STATUS_COLORS[status] || 'bg-neutral-100 text-neutral-600';
-      return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">${status || '—'}</span>`;
+    function statusBadge(s: string) {
+      const cls = STATUS_COLORS[s] || 'bg-neutral-100 text-neutral-600';
+      return `<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${cls}">${s || '—'}</span>`;
     }
 
-    // ── Render appointment row ─────────────────────────────────────────────
+    // ── Stat card ─────────────────────────────────────────────────────────────
+    function statCard(label: string, value: string | number, sub: string, accent = '', href = '') {
+      const cls = accent ? `border-l-4 ${accent}` : '';
+      const inner = `
+        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">${label}</div>
+        <div class="text-2xl font-bold text-neutral-900 leading-none mb-0.5">${value}</div>
+        <div class="text-[11px] text-neutral-400">${sub}</div>`;
+      return href
+        ? `<a href="${href}" class="block bg-white rounded-xl border border-neutral-200 px-4 py-3.5 hover:border-neutral-300 hover:shadow-sm transition-all ${cls}">${inner}</a>`
+        : `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 ${cls}">${inner}</div>`;
+    }
+
+    // ── Appointment row ───────────────────────────────────────────────────────
     function apptRow(rec: any, showDate = false) {
       const f = rec.fields;
-      const [timeMain, timePeriod] = (() => {
+      const [tMain, tPeriod] = (() => {
         const t = formatTime(f['Time'] || '');
         const m = t.match(/^(\d+:\d+)\s*(AM|PM)$/i);
         return m ? [m[1], m[2].toUpperCase()] : [t, ''];
       })();
-
-      const priceHtml = role === 'owner' && f['Price'] != null
-        ? `<div class="text-sm font-bold text-primary-700 shrink-0">$${Number(f['Price']).toFixed(0)}</div>`
-        : '';
-
-      const noPsfBadge = f['hasPSF'] === false
-        ? `<span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200" title="No pre-service form on file">No PSF</span>`
-        : '';
-
+      const price = role === 'owner' && f['Price'] != null
+        ? `<div class="text-sm font-bold text-primary-700 shrink-0">$${Number(f['Price']).toFixed(0)}</div>` : '';
+      const noPsf = f['hasPSF'] === false
+        ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">No PSF</span>` : '';
       return `
-        <div class="px-6 py-4 hover:bg-neutral-50 transition-colors cursor-pointer appt-row flex items-center gap-4" data-id="${rec.id}" data-rec='${JSON.stringify(rec).replace(/'/g, "&#39;")}'>
+        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer appt-row flex items-center gap-3" data-rec='${JSON.stringify(rec).replace(/'/g,"&#39;")}'>
           ${showDate
-            ? `<div class="text-center w-16 shrink-0">
-                <div class="text-[10px] font-bold text-neutral-400 uppercase tracking-wide">${new Date((f['Date'] || '') + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                <div class="text-xs font-semibold text-neutral-500">${new Date((f['Date'] || '') + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                <div class="text-sm font-bold text-neutral-700 leading-tight">${timeMain}</div>
-                <div class="text-xs text-neutral-400">${timePeriod}</div>
+            ? `<div class="text-center w-14 shrink-0">
+                <div class="text-[9px] font-bold text-neutral-400 uppercase">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})}</div>
+                <div class="text-[10px] text-neutral-500">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+                <div class="text-sm font-bold text-neutral-800">${tMain}</div>
+                <div class="text-[10px] text-neutral-400">${tPeriod}</div>
               </div>`
-            : `<div class="text-center w-14 shrink-0">
-                <div class="text-xl font-bold text-neutral-900 leading-tight">${timeMain}</div>
-                <div class="text-xs text-neutral-400">${timePeriod}</div>
-              </div>`
-          }
+            : `<div class="text-center w-12 shrink-0">
+                <div class="text-lg font-bold text-neutral-900">${tMain}</div>
+                <div class="text-[10px] text-neutral-400">${tPeriod}</div>
+              </div>`}
           <div class="w-px bg-neutral-100 self-stretch shrink-0"></div>
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap mb-0.5">
-              <span class="text-sm font-semibold text-neutral-900">${f['Client Name'] || 'Unknown'}</span>
+            <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+              <span class="text-sm font-semibold text-neutral-900">${f['Client Name']||'Unknown'}</span>
               ${statusBadge(f['Status'])}
-              ${f['Pending Payment'] ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Unpaid</span>' : ''}
-              ${noPsfBadge}
+              ${f['Pending Payment'] ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Unpaid</span>' : ''}
+              ${noPsf}
             </div>
-            <div class="text-xs text-neutral-500 truncate">${(f['Services'] || '—').substring(0, 70)}${(f['Services'] || '').length > 70 ? '…' : ''}</div>
-            ${f['Client Phone'] ? `<div class="text-xs text-neutral-400 mt-0.5">${f['Client Phone']}</div>` : ''}
+            <div class="text-xs text-neutral-400 truncate">${(f['Services']||'—').substring(0,60)}</div>
           </div>
-          ${priceHtml}
-          <svg class="w-4 h-4 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
+          ${price}
+          <svg class="w-3.5 h-3.5 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </div>`;
     }
 
-    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-    // ── PSF row ───────────────────────────────────────────────────────────────
-    function psfRow(form: any) {
-      const isUnread = !form.read_at;
-      const submitted = new Date(form.created_at);
-      const diffMs = Date.now() - submitted.getTime();
-      const diffH  = Math.floor(diffMs / 3600000);
-      const diffM  = Math.floor(diffMs / 60000);
-      const timeAgo = diffH >= 24
-        ? submitted.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        : diffH > 0 ? `${diffH}h ago` : diffM > 0 ? `${diffM}m ago` : 'just now';
-      const service = (form.service_requested || '').substring(0, 55) + ((form.service_requested || '').length > 55 ? '…' : '');
-      const apptDate = form.appointment_date
-        ? new Date(form.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-        : '';
-      const apptTime = formatTime(form.appointment_time || '');
+    // ── Submission row (all form types) ───────────────────────────────────────
+    function submissionRow(record: any, type: string, endpoint: string, dotColor: string) {
+      const isUnread = !record.read_at;
+      const name = esc(record.name || '—');
+      const sub =
+        type === 'psf'    ? esc((record.service_requested || '').substring(0, 50)) :
+        type === 'demo'   ? esc((record.skin_concern || record.skin_type || '').substring(0, 50)) :
+        type === 'career' ? esc((record.role || '').substring(0, 50)) :
+                            esc((record.concerns || '').substring(0, 50));
+      const ta = timeAgo(record.created_at);
+      const dotCls = isUnread ? dotColor : 'bg-neutral-200';
+      const btnCls = isUnread ? 'text-neutral-500 hover:bg-neutral-100' : 'text-neutral-300 hover:bg-neutral-50';
+      const btnLabel = isUnread ? 'Mark read' : 'Unread';
       return `
-        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors group psf-row${isUnread ? ' psf-unread' : ''}" data-psf-id="${esc(form.id)}" data-read="${isUnread ? 'false' : 'true'}">
+        <div class="px-4 py-3 hover:bg-neutral-50 transition-colors group sub-row${isUnread ? ' sub-unread' : ''}"
+             data-sub-id="${esc(record.id)}" data-endpoint="${endpoint}" data-read="${!isUnread}">
           <div class="flex items-start gap-2.5">
-            <span class="mt-1.5 w-2 h-2 rounded-full shrink-0 ${isUnread ? 'bg-violet-500' : 'bg-neutral-300'}"></span>
+            <span class="mt-1.5 w-2 h-2 rounded-full shrink-0 ${dotCls}"></span>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-sm font-semibold text-neutral-900">${esc(form.name || '—')}</span>
-                ${isUnread ? '<span class="psf-new-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700">New</span>' : ''}
-              </div>
-              ${service ? `<div class="text-xs text-neutral-500 mt-0.5 truncate">${esc(service)}</div>` : ''}
-              ${apptDate ? `<div class="text-xs text-neutral-400 mt-0.5">Appt ${apptDate}${apptTime ? ' · ' + esc(apptTime) : ''}</div>` : ''}
+              <div class="text-sm font-semibold text-neutral-900">${name}${isUnread ? '<span class="sub-unread-badge ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-violet-100 text-violet-700">New</span>' : ''}</div>
+              ${sub ? `<div class="text-xs text-neutral-400 truncate mt-0.5">${sub}</div>` : ''}
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="text-xs text-neutral-400">${timeAgo}</span>
-              <button class="psf-toggle-read opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 rounded-md text-[10px] font-semibold ${isUnread ? 'text-violet-600 hover:bg-violet-50' : 'text-neutral-400 hover:bg-neutral-100'}" data-psf-id="${esc(form.id)}" title="${isUnread ? 'Mark as read' : 'Mark as unread'}">
-                ${isUnread ? 'Mark read' : 'Mark unread'}
-              </button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span class="text-[11px] text-neutral-400">${ta}</span>
+              <button class="sub-toggle-read opacity-0 group-hover:opacity-100 transition-opacity px-1.5 py-0.5 rounded text-[10px] font-medium ${btnCls}"
+                      data-sub-id="${esc(record.id)}" data-endpoint="${endpoint}">${btnLabel}</button>
             </div>
           </div>
         </div>`;
     }
 
-    // ── Detail panel ─────────────────────────────────────────────────────────
-    let currentRec: any = null;
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    function initTabs() {
+      document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = (btn as HTMLElement).dataset.tab!;
+          document.querySelectorAll('.sub-tab-btn').forEach(b => {
+            b.classList.toggle('active-tab', (b as HTMLElement).dataset.tab === tab);
+            b.classList.toggle('text-neutral-800', (b as HTMLElement).dataset.tab === tab);
+            b.classList.toggle('text-neutral-500', (b as HTMLElement).dataset.tab !== tab);
+          });
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+          document.getElementById(`tab-panel-${tab}`)?.classList.remove('hidden');
+        });
+      });
+    }
 
+    // ── Detail panel ──────────────────────────────────────────────────────────
+    let currentRec: any = null;
     function openDetail(rec: any) {
       currentRec = rec;
       const f = rec.fields;
       const panel = document.getElementById('detail-panel');
-      const overlay = document.getElementById('detail-overlay');
       const content = document.getElementById('detail-content');
-
       const canDelete = role === 'owner';
-      const statusOptions = ['Pending Confirmation', 'Confirmed', 'Completed', 'Cancelled', 'No-Show'];
-
+      const statusOptions = ['Pending Confirmation','Confirmed','Completed','Cancelled','No-Show'];
       content!.innerHTML = `
         <div class="space-y-5">
           <div>
             <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Client</div>
-            <div class="text-base font-semibold text-neutral-900">${f['Client Name'] || '—'}</div>
-            <div class="text-sm text-neutral-500">${f['Client Email'] || ''}</div>
-            <div class="text-sm text-neutral-500">${f['Client Phone'] || ''}</div>
+            <div class="text-base font-semibold text-neutral-900">${f['Client Name']||'—'}</div>
+            <div class="text-sm text-neutral-500">${f['Client Email']||''}</div>
+            <div class="text-sm text-neutral-500">${f['Client Phone']||''}</div>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Date</div>
-              <div class="text-sm text-neutral-800">${formatDate(f['Date'])}</div>
-            </div>
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Time</div>
-              <div class="text-sm text-neutral-800">${f['Time'] || '—'}</div>
-            </div>
+            <div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Date</div><div class="text-sm">${formatDate(f['Date'])}</div></div>
+            <div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Time</div><div class="text-sm">${f['Time']||'—'}</div></div>
           </div>
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Services</div>
-            <div class="text-sm text-neutral-800">${f['Services'] || '—'}</div>
-          </div>
-          ${role === 'owner' && f['Price'] != null ? `
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price</div>
-              <div class="text-sm font-semibold text-primary-700">$${Number(f['Price']).toFixed(2)}</div>
-            </div>
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Payment</div>
-              ${f['Payment Method'] === 'stripe'
-                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Stripe (Online)</span>'
-                : f['Payment Method'] === 'in_person'
-                  ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">In Person</span>'
-                  : '<span class="text-sm text-neutral-500">—</span>'}
-            </div>
-          </div>` : ''}
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Source</div>
-            <div class="text-sm text-neutral-800">${f['Source'] || 'Website'}</div>
-          </div>
-          ${f['Notes'] ? `
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Client Notes</div>
-            <div class="text-sm text-neutral-800 bg-neutral-50 rounded-lg p-3">${f['Notes']}</div>
-          </div>` : ''}
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Status</div>
-            <select id="status-select" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none">
-              ${statusOptions.map(s => `<option value="${s}" ${f['Status'] === s ? 'selected' : ''}>${s}</option>`).join('')}
+          <div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Services</div><div class="text-sm">${f['Services']||'—'}</div></div>
+          ${role==='owner'&&f['Price']!=null?`<div class="grid grid-cols-2 gap-4"><div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Price</div><div class="text-sm font-semibold text-primary-700">$${Number(f['Price']).toFixed(2)}</div></div><div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Payment</div>${f['Payment Method']==='stripe'?'<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Stripe</span>':f['Payment Method']==='in_person'?'<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">In Person</span>':'<span class="text-sm text-neutral-500">—</span>'}</div></div>`:''}
+          ${f['Notes']?`<div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Notes</div><div class="text-sm bg-neutral-50 rounded-lg p-3">${f['Notes']}</div></div>`:''}
+          <div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Status</div>
+            <select id="status-select" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none">
+              ${statusOptions.map(s=>`<option value="${s}" ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
             </select>
           </div>
-          <div>
-            <label class="flex items-center gap-2 cursor-pointer select-none">
-              <input type="checkbox" id="pending-payment-check" ${f['Pending Payment'] ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
-              <span class="text-sm font-medium text-neutral-700">Pending Payment (Unpaid)</span>
-            </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="pending-payment-check" ${f['Pending Payment']?'checked':''} class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
+            <span class="text-sm font-medium text-neutral-700">Pending Payment</span>
+          </label>
+          <div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Internal Notes</div>
+            <textarea id="internal-notes" rows="3" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none resize-none">${f['Internal Notes']||''}</textarea>
           </div>
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Internal Notes</div>
-            <textarea id="internal-notes" rows="3" placeholder="Add staff notes…"
-              class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none resize-none">${f['Internal Notes'] || ''}</textarea>
-          </div>
-          <div class="flex gap-3 pt-2">
-            <button id="save-detail-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors">Save Changes</button>
-            ${canDelete ? `<button id="delete-detail-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
+          <div class="flex gap-3">
+            <button id="save-detail-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors">Save</button>
+            ${canDelete?`<button id="delete-detail-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>`:''}
           </div>
           <div id="detail-msg" class="text-xs text-center text-neutral-400"></div>
-
-          <!-- Send Reminder -->
-          <div class="border-t border-neutral-100 pt-5 mt-2">
+          <div class="border-t border-neutral-100 pt-4">
             <div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-3">Send Reminder</div>
-            <div class="space-y-3">
+            <div class="space-y-2">
               <div class="flex gap-2">
-                <select id="reminder-channel" class="flex-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none">
-                  <option value="sms">SMS only</option>
-                  <option value="email">Email only</option>
-                  <option value="both">SMS + Email</option>
+                <select id="reminder-channel" class="flex-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none">
+                  <option value="sms">SMS</option><option value="email">Email</option><option value="both">SMS + Email</option>
                 </select>
-                <button id="fill-template-btn" class="px-3 py-2 text-xs border border-neutral-300 rounded-lg text-neutral-600 hover:bg-neutral-50 transition-colors whitespace-nowrap">Use Template</button>
+                <button id="fill-template-btn" class="px-3 py-2 text-xs border border-neutral-300 rounded-lg text-neutral-600 hover:bg-neutral-50 whitespace-nowrap">Template</button>
               </div>
-              <details class="text-xs">
-                <summary class="cursor-pointer text-neutral-400 hover:text-neutral-600 select-none py-1">Override recipient (optional)</summary>
-                <div class="grid grid-cols-2 gap-2 mt-2">
-                  <input id="reminder-override-phone" type="tel" placeholder="Alt phone (e.g. 8135550000)"
-                    class="px-2.5 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
-                  <input id="reminder-override-email" type="email" placeholder="Alt email address"
-                    class="px-2.5 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
-                </div>
-                <p class="text-neutral-400 mt-1.5 leading-snug">Leave blank to use the client's stored contact info. Filled values take priority.</p>
-              </details>
-              <input id="reminder-subject" type="text" placeholder="Email subject" value="Your Appointment Reminder — Bliss Dermacare"
-                class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none" />
-              <textarea id="reminder-message" rows="4" placeholder="Message to client…"
-                class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none resize-none"></textarea>
-              <button id="send-reminder-btn" class="w-full py-2.5 border border-primary-400 text-primary-600 hover:bg-primary-50 text-sm font-semibold rounded-xl transition-colors">Send Reminder</button>
+              <input id="reminder-subject" type="text" value="Your Appointment Reminder — Bliss Dermacare" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none"/>
+              <textarea id="reminder-message" rows="3" placeholder="Message…" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm outline-none resize-none"></textarea>
+              <button id="send-reminder-btn" class="w-full py-2 border border-primary-400 text-primary-600 hover:bg-primary-50 text-sm font-semibold rounded-xl transition-colors">Send</button>
               <div id="reminder-msg" class="text-xs text-center text-neutral-400 hidden"></div>
             </div>
           </div>
         </div>`;
-
-      panel?.classList.remove('hidden');
-      panel?.classList.add('flex');
-      overlay?.classList.remove('hidden');
-
+      panel?.classList.remove('hidden'); panel?.classList.add('flex');
+      document.getElementById('detail-overlay')?.classList.remove('hidden');
       document.getElementById('save-detail-btn')?.addEventListener('click', saveDetail);
       document.getElementById('delete-detail-btn')?.addEventListener('click', deleteDetail);
-
-      // Fill reminder template
       document.getElementById('fill-template-btn')?.addEventListener('click', () => {
-        const dateLabel = f['Date'] ? new Date(f['Date'] + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : 'your scheduled date';
-        const template =
-          `Hi ${(f['Client Name'] || 'there').split(' ')[0]}! 💗 This is a friendly reminder from Bliss Dermacare — ` +
-          `you have an appointment on ${dateLabel} at ${f['Time'] || 'your scheduled time'} ` +
-          `for ${f['Services'] || 'your appointment'}. ` +
-          `We're at 8905 Regents Park Dr, Tampa, FL 33647. ` +
-          `Questions? Call or text (609) 366-0857. See you soon!`;
-        (document.getElementById('reminder-message') as HTMLTextAreaElement).value = template;
+        const dl = f['Date'] ? new Date(f['Date']+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}) : 'your scheduled date';
+        (document.getElementById('reminder-message') as HTMLTextAreaElement).value =
+          `Hi ${(f['Client Name']||'there').split(' ')[0]}! 💗 Reminder from Bliss Dermacare — appointment on ${dl} at ${f['Time']||'your time'} for ${f['Services']||'your appointment'}. 8905 Regents Park Dr, Tampa FL 33647. Questions? (609) 366-0857`;
       });
-
-      // Send reminder
       document.getElementById('send-reminder-btn')?.addEventListener('click', async () => {
-        const channel       = (document.getElementById('reminder-channel') as HTMLSelectElement).value;
-        const message       = (document.getElementById('reminder-message') as HTMLTextAreaElement).value.trim();
-        const subject       = (document.getElementById('reminder-subject') as HTMLInputElement).value.trim();
-        const overridePhone = (document.getElementById('reminder-override-phone') as HTMLInputElement)?.value.trim() || '';
-        const overrideEmail = (document.getElementById('reminder-override-email') as HTMLInputElement)?.value.trim() || '';
-        const msgEl         = document.getElementById('reminder-msg')!;
-        if (!message) { msgEl.textContent = 'Please enter a message.'; msgEl.classList.remove('hidden', 'text-green-600', 'text-red-500'); msgEl.classList.add('text-red-500'); return; }
+        const channel = (document.getElementById('reminder-channel') as HTMLSelectElement).value;
+        const message = (document.getElementById('reminder-message') as HTMLTextAreaElement).value.trim();
+        const subject = (document.getElementById('reminder-subject') as HTMLInputElement).value.trim();
+        const msgEl   = document.getElementById('reminder-msg')!;
+        if (!message) { msgEl.textContent = 'Enter a message.'; msgEl.className='text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
         const btn = document.getElementById('send-reminder-btn') as HTMLButtonElement;
-        btn.disabled = true; btn.textContent = 'Sending…';
+        btn.disabled=true; btn.textContent='Sending…';
         try {
-          const result = await apiFetch('admin-send-reminder', { method: 'POST', body: { appointmentId: rec.id, channel, message, subject, overridePhone, overrideEmail } });
-          const parts: string[] = [];
-          if (result.smsSent)   parts.push('SMS sent');
-          if (result.emailSent) parts.push('Email sent');
-          if (result.errors?.length) parts.push(...result.errors);
-          msgEl.textContent = parts.join(' · ') || 'Sent';
-          msgEl.classList.remove('hidden', 'text-red-500');
-          msgEl.classList.add('text-green-600');
-        } catch (err: any) {
-          msgEl.textContent = `Error: ${err.message}`;
-          msgEl.classList.remove('hidden', 'text-green-600');
-          msgEl.classList.add('text-red-500');
-        } finally {
-          btn.disabled = false; btn.textContent = 'Send Reminder';
-          msgEl.classList.remove('hidden');
-        }
+          const r = await apiFetch('admin-send-reminder',{method:'POST',body:{appointmentId:rec.id,channel,message,subject}});
+          msgEl.textContent=[r.smsSent&&'SMS sent',r.emailSent&&'Email sent',...(r.errors||[])].filter(Boolean).join(' · ')||'Sent';
+          msgEl.className='text-xs text-center text-emerald-600'; msgEl.classList.remove('hidden');
+        } catch(e:any){ msgEl.textContent=`Error: ${e.message}`; msgEl.className='text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); }
+        finally{ btn.disabled=false; btn.textContent='Send'; }
       });
     }
-
     async function saveDetail() {
-      const status         = (document.getElementById('status-select')       as HTMLSelectElement)?.value;
-      const pendingPayment = (document.getElementById('pending-payment-check')as HTMLInputElement)?.checked;
-      const notes          = (document.getElementById('internal-notes')       as HTMLTextAreaElement)?.value;
-      const msg = document.getElementById('detail-msg');
+      const status  = (document.getElementById('status-select') as HTMLSelectElement)?.value;
+      const pp      = (document.getElementById('pending-payment-check') as HTMLInputElement)?.checked;
+      const notes   = (document.getElementById('internal-notes') as HTMLTextAreaElement)?.value;
+      const msg     = document.getElementById('detail-msg');
       try {
-        await apiFetch('admin-appointments', {
-          method: 'PATCH',
-          body: { id: currentRec.id, fields: { Status: status, 'Pending Payment': pendingPayment, 'Internal Notes': notes } },
-        });
-        if (msg) msg.textContent = '✓ Saved';
-        currentRec.fields['Status']          = status;
-        currentRec.fields['Pending Payment'] = pendingPayment;
-        currentRec.fields['Internal Notes']  = notes;
-        loadData(); // refresh list
-      } catch (err: any) {
-        if (msg) msg.textContent = `Error: ${err.message}`;
-      }
-    }
-
-    async function deleteDetail() {
-      if (!confirm(`Delete appointment for ${currentRec.fields['Client Name']}? This cannot be undone.`)) return;
-      try {
-        await apiFetch('admin-appointments', { method: 'DELETE', body: { id: currentRec.id } });
-        closeDetail();
+        await apiFetch('admin-appointments',{method:'PATCH',body:{id:currentRec.id,fields:{Status:status,'Pending Payment':pp,'Internal Notes':notes}}});
+        if(msg) msg.textContent='✓ Saved';
+        Object.assign(currentRec.fields,{Status:status,'Pending Payment':pp,'Internal Notes':notes});
         loadData();
-      } catch (err: any) {
-        alert(`Delete failed: ${err.message}`);
-      }
+      } catch(e:any){ if(msg) msg.textContent=`Error: ${e.message}`; }
     }
-
+    async function deleteDetail() {
+      if(!confirm(`Delete appointment for ${currentRec.fields['Client Name']}?`)) return;
+      try{ await apiFetch('admin-appointments',{method:'DELETE',body:{id:currentRec.id}}); closeDetail(); loadData(); }
+      catch(e:any){ alert(`Delete failed: ${e.message}`); }
+    }
     function closeDetail() {
       document.getElementById('detail-panel')?.classList.add('hidden');
       document.getElementById('detail-panel')?.classList.remove('flex');
       document.getElementById('detail-overlay')?.classList.add('hidden');
-      currentRec = null;
+      currentRec=null;
     }
-
     document.getElementById('close-detail')?.addEventListener('click', closeDetail);
     document.getElementById('detail-overlay')?.addEventListener('click', closeDetail);
 
+    // ── Mark-read handler (unified for all submission types) ──────────────────
+    function attachReadToggles(container: Element) {
+      container.querySelectorAll('.sub-toggle-read').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id       = (btn as HTMLElement).dataset.subId!;
+          const endpoint = (btn as HTMLElement).dataset.endpoint!;
+          const row      = btn.closest('.sub-row') as HTMLElement;
+          const isUnread = row.classList.contains('sub-unread');
+          const markRead = isUnread;
+          const dot      = row.querySelector<HTMLElement>('span.rounded-full');
+          const badge    = row.querySelector('.sub-unread-badge');
+          if (markRead) {
+            row.classList.remove('sub-unread');
+            if (dot) { dot.className = dot.className.replace(/bg-\w+-\d+/, 'bg-neutral-200'); }
+            badge?.remove();
+            (btn as HTMLElement).textContent = 'Unread';
+          } else {
+            row.classList.add('sub-unread');
+            if (dot) { dot.className = dot.className.replace('bg-neutral-200', 'bg-violet-500'); }
+            (btn as HTMLElement).textContent = 'Mark read';
+          }
+          apiFetch(endpoint, { method: 'PATCH', body: { id, read: markRead } }).catch(() => null);
+        });
+      });
+    }
+
     // ── Load data ─────────────────────────────────────────────────────────────
     async function loadData() {
-      const today = todayStr();
-      const weekEnd = addDays(today, 7);
+      const today    = todayStr();
+      const weekEnd  = addDays(today, 7);
+      const now      = new Date();
+      const monthStart = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
 
       document.getElementById('today-label')!.textContent = fullDateLabel(today);
 
-      const requests: Promise<any>[] = [
+      const [
+        todayData, weekData, pendingData,
+        psfData, demoData, careerData, consultData,
+        monthData,
+      ] = await Promise.all([
         apiFetch('admin-appointments', { params: { date: today } }),
-        apiFetch('admin-appointments', { params: { startDate: addDays(today, 1), endDate: weekEnd } }),
+        apiFetch('admin-appointments', { params: { startDate: addDays(today,1), endDate: weekEnd } }),
         apiFetch('admin-appointments', { params: { status: 'Pending Confirmation' } }),
-        apiFetch('admin-pre-service-forms', { params: { unread: 'true', limit: '100' } }).catch(() => null),
-        apiFetch('admin-pre-service-forms', { params: { limit: '30' } }).catch(() => null),
-      ];
-
-      const [todayData, weekData, pendingData, unreadPSFData, psfData] = await Promise.all(requests);
-
-      const allPSFs    = (psfData?.records || []) as any[];
-      const todayLocal = new Date().toLocaleDateString();
-      const todayPSFs  = allPSFs.filter((f: any) => f.created_at && new Date(f.created_at).toLocaleDateString() === todayLocal);
-      const unreadPSFs = (unreadPSFData?.records || []) as any[];
+        apiFetch('admin-pre-service-forms', { params: { unread: 'true', limit: '50' } }).catch(() => null),
+        apiFetch('admin-demo-models',    { params: { unread: 'true', limit: '20' } }).catch(() => null),
+        apiFetch('admin-careers',        { params: { unread: 'true', limit: '20' } }).catch(() => null),
+        apiFetch('admin-consultations',  { params: { unread: 'true', limit: '20' } }).catch(() => null),
+        role === 'owner'
+          ? apiFetch('admin-appointments', { params: { startDate: monthStart, endDate: today } }).catch(() => null)
+          : Promise.resolve(null),
+      ]);
 
       const todayRecs   = todayData?.records   || [];
       const weekRecs    = weekData?.records    || [];
       const pendingRecs = pendingData?.records || [];
+      const unreadPSFs  = psfData?.records     || [];
+      const unreadDemos = demoData?.records    || [];
+      const unreadJobs  = careerData?.records  || [];
+      const unreadCons  = consultData?.records || [];
+      const monthRecs   = monthData?.records   || [];
 
-      // ── Inbox: needs-attention alerts ──────────────────────────────────────
-      const inboxEl = document.getElementById('inbox-section')!;
-      const inboxItems: string[] = [];
+      const totalUnread = unreadPSFs.length + unreadDemos.length + unreadJobs.length + unreadCons.length;
 
-      if (pendingRecs.length > 0) {
-        inboxItems.push(`
-          <a href="/admin/appointments" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3.5 hover:bg-amber-100 transition-colors">
-            <div class="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center shrink-0">
-              <span class="text-amber-800 text-base font-bold">${pendingRecs.length}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold text-amber-900">Booking request${pendingRecs.length !== 1 ? 's' : ''} awaiting confirmation</div>
-              <div class="text-xs text-amber-700 truncate">${pendingRecs.map((r: any) => r.fields['Client Name'] || '?').slice(0, 4).join(', ')}${pendingRecs.length > 4 ? ` +${pendingRecs.length - 4} more` : ''}</div>
-            </div>
-            <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-          </a>`);
-      }
+      // ── Stats ───────────────────────────────────────────────────────────────
+      const monthRevenue = role === 'owner'
+        ? monthRecs.reduce((s: number, r: any) => s + (r.fields?.['Price'] ?? 0), 0) : 0;
+      const cols = role === 'owner' ? 'grid-cols-2 md:grid-cols-5' : 'grid-cols-2 md:grid-cols-4';
+      const statsRow = document.getElementById('stats-row')!;
+      statsRow.className = `grid ${cols} gap-3 mb-5`;
+      statsRow.innerHTML =
+        statCard('Today', todayRecs.length, 'appointment' + (todayRecs.length !== 1 ? 's' : ''), '', '/admin/calendar') +
+        statCard('This Week', weekRecs.length, 'upcoming', '', '/admin/appointments') +
+        statCard('Pending', pendingRecs.length, 'need confirmation',
+          pendingRecs.length > 0 ? 'border-l-4 border-amber-400' : '', '/admin/appointments') +
+        statCard('Unread Forms', totalUnread, 'new submissions',
+          totalUnread > 0 ? 'border-l-4 border-violet-400' : '') +
+        (role === 'owner' ? statCard('Revenue MTD', `$${monthRevenue.toFixed(0)}`, 'confirmed this month', 'border-l-4 border-emerald-400') : '');
 
-      if (unreadPSFs.length > 0) {
-        inboxItems.push(`
-          <a href="/admin/pre-service-forms" class="flex items-center gap-4 bg-blue-50 border border-blue-200 rounded-2xl px-5 py-3.5 hover:bg-blue-100 transition-colors">
-            <div class="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center shrink-0">
-              <span class="text-blue-800 text-base font-bold">${unreadPSFs.length}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold text-blue-900">${unreadPSFs.length} unread pre-service form${unreadPSFs.length !== 1 ? 's' : ''}</div>
-              <div class="text-xs text-blue-700 truncate">${unreadPSFs.map((r: any) => r.name || '?').slice(0, 4).join(', ')}${unreadPSFs.length > 4 ? ` +${unreadPSFs.length - 4} more` : ''}</div>
-            </div>
-            <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-          </a>`);
-      }
+      // ── Inbox ───────────────────────────────────────────────────────────────
+      const inbox = document.getElementById('inbox-section')!;
+      const items: string[] = [];
+      if (pendingRecs.length > 0) items.push(`
+        <a href="/admin/appointments" class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hover:bg-amber-100 transition-colors">
+          <span class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center text-amber-800 text-sm font-bold shrink-0">${pendingRecs.length}</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold text-amber-900">${pendingRecs.length} booking${pendingRecs.length!==1?'s':''} awaiting confirmation</div>
+            <div class="text-xs text-amber-700 truncate">${pendingRecs.map((r:any)=>r.fields['Client Name']||'?').slice(0,4).join(', ')}${pendingRecs.length>4?` +${pendingRecs.length-4} more`:''}</div>
+          </div>
+          <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>`);
+      inbox.innerHTML = items.join('');
+      inbox.classList.toggle('hidden', items.length === 0);
 
-      if (inboxItems.length > 0) {
-        inboxEl.innerHTML = inboxItems.join('');
-        inboxEl.classList.remove('hidden');
-      } else {
-        inboxEl.classList.add('hidden');
-      }
-
-      // Count badges
+      // ── Today ───────────────────────────────────────────────────────────────
       const todayBadge = document.getElementById('today-count-badge')!;
-      const weekBadge  = document.getElementById('week-count-badge')!;
-      if (todayRecs.length > 0) { todayBadge.textContent = String(todayRecs.length); todayBadge.classList.remove('hidden'); }
-      if (weekRecs.length > 0)  { weekBadge.textContent  = `${weekRecs.length} upcoming`; weekBadge.classList.remove('hidden'); }
-
-      // Today list
+      if (todayRecs.length) { todayBadge.textContent = String(todayRecs.length); todayBadge.classList.remove('hidden'); }
       const todayEl = document.getElementById('today-list')!;
-      if (todayRecs.length === 0) {
-        todayEl.innerHTML = `
-          <div class="px-6 py-10 text-center">
-            <div class="text-neutral-400 text-sm mb-3">No appointments scheduled for today 🌸</div>
-            <a href="/admin/new-appointment" class="inline-flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-700 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">
-              + Book an appointment for today
-            </a>
-          </div>`;
-      } else {
-        todayEl.innerHTML = todayRecs.map((r: any) => apptRow(r)).join('');
+      todayEl.innerHTML = todayRecs.length === 0
+        ? `<div class="px-5 py-8 text-center"><div class="text-neutral-400 text-sm mb-3">No appointments today 🌸</div><a href="/admin/new-appointment" class="text-xs text-primary-600 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">+ Book for today</a></div>`
+        : todayRecs.map((r:any) => apptRow(r)).join('');
+
+      // ── Week ────────────────────────────────────────────────────────────────
+      const weekBadge = document.getElementById('week-count-badge')!;
+      if (weekRecs.length) { weekBadge.textContent = `${weekRecs.length} upcoming`; weekBadge.classList.remove('hidden'); }
+      const weekEl = document.getElementById('upcoming-list')!;
+      weekEl.innerHTML = weekRecs.length === 0
+        ? `<div class="px-5 py-8 text-center"><div class="text-neutral-400 text-sm mb-3">Nothing in the next 7 days.</div><a href="/admin/new-appointment" class="text-xs text-primary-600 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">+ Add a booking</a></div>`
+        : weekRecs.map((r:any) => apptRow(r, true)).join('');
+
+      // ── Submission tabs ─────────────────────────────────────────────────────
+      function setBadge(id: string, count: number) {
+        const el = document.getElementById(id)!;
+        if (count > 0) { el.textContent = String(count); el.classList.remove('hidden'); }
+      }
+      setBadge('tab-badge-psf',     unreadPSFs.length);
+      setBadge('tab-badge-demo',    unreadDemos.length);
+      setBadge('tab-badge-careers', unreadJobs.length);
+      setBadge('tab-badge-consult', unreadCons.length);
+
+      function renderTab(panelId: string, records: any[], type: string, endpoint: string, dotColor: string, emptyMsg: string) {
+        const panel = document.getElementById(panelId)!;
+        panel.innerHTML = records.length === 0
+          ? `<div class="px-5 py-10 text-center text-neutral-400 text-sm">${emptyMsg}</div>`
+          : records.map((r:any) => submissionRow(r, type, endpoint, dotColor)).join('');
+        attachReadToggles(panel);
       }
 
-      // Upcoming list
-      const upcomingEl = document.getElementById('upcoming-list')!;
-      if (weekRecs.length === 0) {
-        upcomingEl.innerHTML = `
-          <div class="px-6 py-10 text-center">
-            <div class="text-neutral-400 text-sm mb-3">Nothing scheduled in the next 7 days.</div>
-            <a href="/admin/new-appointment" class="inline-flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-700 font-semibold border border-primary-200 rounded-full px-4 py-1.5 hover:bg-primary-50 transition-colors">
-              + Add a booking
-            </a>
-          </div>`;
-      } else {
-        upcomingEl.innerHTML = weekRecs.map((r: any) => apptRow(r, true)).join('');
-      }
+      renderTab('tab-panel-psf',     unreadPSFs,  'psf',    'admin-pre-service-forms', 'bg-violet-500', 'No unread pre-service forms.');
+      renderTab('tab-panel-demo',    unreadDemos, 'demo',   'admin-demo-models',        'bg-rose-500',   'No unread demo model applications.');
+      renderTab('tab-panel-careers', unreadJobs,  'career', 'admin-careers',            'bg-blue-500',   'No unread career applications.');
+      renderTab('tab-panel-consult', unreadCons,  'consult','admin-consultations',       'bg-emerald-500','No unread consultation requests.');
 
-      // PSF today section
-      const psfTodayEl = document.getElementById('psf-today-list')!;
-      const psfTodayBadge = document.getElementById('psf-today-badge')!;
-      if (todayPSFs.length === 0) {
-        psfTodayEl.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No forms submitted today.</div>';
-      } else {
-        psfTodayBadge.textContent = String(todayPSFs.length);
-        psfTodayBadge.classList.remove('hidden');
-        psfTodayEl.innerHTML = todayPSFs.map(psfRow).join('');
-      }
-
-      // PSF unread section
-      const psfRecentEl = document.getElementById('psf-recent-list')!;
-      const psfRecentBadge = document.getElementById('psf-recent-badge')!;
-      if (unreadPSFs.length === 0) {
-        psfRecentEl.innerHTML = '<div class="px-6 py-8 text-center text-neutral-400 text-sm">No unread forms.</div>';
-      } else {
-        psfRecentBadge.textContent = `${unreadPSFs.length} unread`;
-        psfRecentBadge.classList.remove('hidden');
-        psfRecentEl.innerHTML = unreadPSFs.map(psfRow).join('');
-      }
-
-      // Attach appointment click handlers
+      // ── Appointment click handlers ──────────────────────────────────────────
       document.querySelectorAll('.appt-row').forEach(el => {
         el.addEventListener('click', () => {
           const rec = JSON.parse((el as HTMLElement).dataset.rec || '{}');
           openDetail(rec);
         });
       });
-
-      // PSF toggle read/unread
-      document.querySelectorAll('.psf-toggle-read').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const id  = (btn as HTMLElement).dataset.psfId;
-          if (!id) return;
-          const row = btn.closest('.psf-row') as HTMLElement;
-          const isCurrentlyUnread = row.classList.contains('psf-unread');
-          const markRead = isCurrentlyUnread;
-
-          // Visual update
-          const dot   = row.querySelector<HTMLElement>('span.rounded-full.shrink-0');
-          const badge = row.querySelector('.psf-new-badge');
-          if (markRead) {
-            row.classList.remove('psf-unread');
-            row.dataset.read = 'true';
-            if (dot)   { dot.classList.remove('bg-violet-500'); dot.classList.add('bg-neutral-300'); }
-            if (badge) badge.remove();
-            (btn as HTMLElement).textContent = 'Mark unread';
-            btn.classList.remove('text-violet-600', 'hover:bg-violet-50');
-            btn.classList.add('text-neutral-400', 'hover:bg-neutral-100');
-            (btn as HTMLElement).title = 'Mark as unread';
-          } else {
-            row.classList.add('psf-unread');
-            row.dataset.read = 'false';
-            if (dot) { dot.classList.remove('bg-neutral-300'); dot.classList.add('bg-violet-500'); }
-            (btn as HTMLElement).textContent = 'Mark read';
-            btn.classList.remove('text-neutral-400', 'hover:bg-neutral-100');
-            btn.classList.add('text-violet-600', 'hover:bg-violet-50');
-            (btn as HTMLElement).title = 'Mark as read';
-          }
-
-          apiFetch('admin-pre-service-forms', { method: 'PATCH', body: { id, read: markRead } }).catch(() => null);
-        });
-      });
     }
 
+    initTabs();
     loadData().catch(err => console.error('Dashboard load error:', err));
   </script>
+
+  <style>
+    .active-tab {
+      background: white;
+      color: #1f2937;
+      border-bottom: 2px solid #7c3aed;
+      font-weight: 600;
+    }
+    .sub-tab-btn { border-bottom: 2px solid transparent; }
+  </style>
 
 </AdminLayout>
