@@ -76,7 +76,22 @@ const aCms = (id: string) => activeNav === id
       z-index: 100;
       pointer-events: none;
     }
-    [data-tip] { position: relative; }
+    /* ── Mobile: override sidebar margin ── */
+    @media (max-width: 1023px) {
+      #main-content { margin-left: 0 !important; }
+      body { overflow-x: hidden; }
+      /* Slide-overs: full width on phones */
+      .fixed.inset-y-0.right-0 { width: 100% !important; max-width: 100vw; }
+      /* Tighten page padding on mobile */
+      .p-6.lg\:p-8 { padding: 1rem !important; }
+    }
+    /* ── Very small phones (<480px): collapse 2-col grids + ensure table scroll ── */
+    @media (max-width: 480px) {
+      .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+      .grid.grid-cols-3 { grid-template-columns: 1fr 1fr !important; }
+      table { min-width: 480px; }
+      [class*="overflow-x-auto"] { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+    }
   </style>
   <script>
     (function () {
@@ -317,9 +332,15 @@ const aCms = (id: string) => activeNav === id
           <div class="mobile-owner-only hidden">
             <div class="h-px bg-white/[0.07] mx-1 my-2"></div>
             <p class="px-1.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-violet-600/80">Website CMS</p>
-            <a href="/admin/services" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Services & Pricing</a>
+            <a href="/admin/services" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Services &amp; Pricing</a>
             <a href="/admin/membership-plans" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Memberships</a>
             <a href="/admin/promo-codes" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Promo Codes</a>
+            <a href="/admin/pages" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Page Builder</a>
+            <a href="/admin/content" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Site Content</a>
+            <div class="h-px bg-white/[0.07] mx-1 my-2"></div>
+            <p class="px-1.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-600/80">Marketing</p>
+            <a href="/admin/marketing" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Campaigns</a>
+            <a href="/admin/analytics" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Analytics</a>
             <div class="h-px bg-white/[0.07] mx-1 my-2"></div>
             <p class="px-1.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-600">Settings</p>
             <a href="/admin/staff" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Staff</a>
@@ -370,13 +391,17 @@ const aCms = (id: string) => activeNav === id
     const CLOSED_W = '3.5rem';
 
     const isOpen = localStorage.getItem('bliss_sb2') !== 'closed';
+    const isMobile = () => window.innerWidth < 1024;
     function applySidebarState(open: boolean) {
       sidebar.style.width = open ? OPEN_W : CLOSED_W;
-      main.style.marginLeft = open ? OPEN_W : CLOSED_W;
+      main.style.marginLeft = isMobile() ? '0' : (open ? OPEN_W : CLOSED_W);
       sidebar.classList.toggle('sb-open', open);
       sidebar.classList.toggle('sb-closed', !open);
     }
     applySidebarState(isOpen);
+
+    // Reset margin on resize (e.g. rotating device)
+    window.addEventListener('resize', () => applySidebarState(sidebar.classList.contains('sb-open')));
 
     document.getElementById('sb-toggle')?.addEventListener('click', () => {
       const willOpen = sidebar.classList.contains('sb-closed');

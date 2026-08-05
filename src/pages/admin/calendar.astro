@@ -40,14 +40,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             </svg>
           </button>
         </div>
-        <!-- Day-of-week headers -->
-        <div class="grid grid-cols-7 border-b border-neutral-100">
-          {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-            <div class="py-2 text-center text-xs font-semibold text-neutral-400 uppercase tracking-widest">{d}</div>
-          ))}
+        <!-- Calendar scrollable on mobile -->
+        <div class="overflow-x-auto">
+          <div style="min-width:320px">
+            <!-- Day-of-week headers -->
+            <div class="grid grid-cols-7 border-b border-neutral-100">
+              {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
+                <div class="py-2 text-center text-xs font-semibold text-neutral-400 uppercase tracking-widest">{d}</div>
+              ))}
+            </div>
+            <!-- Calendar grid -->
+            <div id="calendar-grid" class="grid grid-cols-7"></div>
+          </div>
         </div>
-        <!-- Calendar grid -->
-        <div id="calendar-grid" class="grid grid-cols-7"></div>
       </div>
 
       <!-- Day panel -->
