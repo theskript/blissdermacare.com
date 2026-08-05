@@ -27,6 +27,11 @@
   from = "/unsubscribe"
   to = "/.netlify/functions/unsubscribe"
   status = 200
+
+[[redirects]]
+  from = "/p/*"
+  to = "/p/index.html"
+  status = 200
 [[redirects]]
   from = "/admin/*"
   to = "/admin/:splat"
