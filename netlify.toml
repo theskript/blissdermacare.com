@@ -22,6 +22,9 @@
 [functions."reminder-2h"]
   schedule = "0 * * * *"       # Every hour — 2h SMS reminders to clients
 
+[functions."marketing-scheduler"]
+  schedule = "*/15 * * * *"    # Every 15 min — send scheduled marketing campaigns
+
 # Admin panel — serve built static files; let Astro handle nested routes
 [[redirects]]
   from = "/unsubscribe"
