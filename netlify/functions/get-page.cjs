@@ -26,7 +26,7 @@ exports.handler = async (event) => {
       .single();
     if (error || !data) return { statusCode: 404, headers: CORS, body: JSON.stringify({ error: 'Page not found' }) };
     return { statusCode: 200, headers: CORS, body: JSON.stringify(data) };
-  } catch (err: any) {
+  } catch (err) {
     return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message }) };
   }
 };

@@ -55,7 +55,7 @@ exports.handler = async (event) => {
   // ── POST — admin: add or update unsubscribe ───────────────────────────────
   if (event.httpMethod === 'POST') {
     let user;
-    try { user = requireAuth(event); } catch (e: any) {
+    try { user = requireAuth(event); } catch (e) {
       return { statusCode: e.statusCode || 401, headers: CORS, body: JSON.stringify({ error: e.message }) };
     }
     let body;
@@ -65,7 +65,7 @@ exports.handler = async (event) => {
     const { email, phone, unsub_email = true, unsub_sms = false, notes, resubscribe = false } = body;
     if (!email && !phone) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'email or phone required' }) };
     void user;
-    const record: Record<string, any> = {
+    const record = {
       unsub_email: resubscribe ? false : unsub_email,
       unsub_sms:   resubscribe ? false : unsub_sms,
       source:      resubscribe ? 're-subscribe' : 'manual',

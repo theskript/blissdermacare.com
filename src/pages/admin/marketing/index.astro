@@ -348,12 +348,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       try {
         const { data } = await apiFetch('admin-marketing', {}) as any;
         void data;
-        // Fetch unsubscribes directly
-        const resp = await fetch('/.netlify/functions/unsubscribe', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('bliss_admin_token')}` }
-        });
-        // Since unsubscribe GET is public (token-based), we can't list them from here
-        // We'll show a placeholder note
         document.getElementById('unsubs-list')!.innerHTML =
           '<div class="px-6 py-6 text-neutral-400 text-sm text-center">Unsubscribe management — view and export from the Supabase dashboard under the <code>marketing_unsubscribes</code> table.<br/><br/>Use the "+ Add manually" button above to add/re-subscribe clients.</div>';
       } catch {}

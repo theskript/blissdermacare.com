@@ -71,7 +71,7 @@ exports.handler = async (event) => {
       const { id, ...rest } = body;
       if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id required' }) };
       const allowed = ['title', 'slug', 'meta_description', 'blocks', 'status'];
-      const update: Record<string, any> = Object.fromEntries(Object.entries(rest).filter(([k]) => allowed.includes(k)));
+      const update = Object.fromEntries(Object.entries(rest).filter(([k]) => allowed.includes(k)));
       if (update.slug) update.slug = update.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
       update.updated_at = new Date().toISOString();
       const { data, error } = await sb.from('site_pages').update(update).eq('id', id).select().single();
@@ -93,7 +93,7 @@ exports.handler = async (event) => {
     }
 
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };
-  } catch (err: any) {
+  } catch (err) {
     console.error('admin-pages error:', err);
     return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message }) };
   }

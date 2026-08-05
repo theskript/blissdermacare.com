@@ -33,7 +33,6 @@ function unsubLink(email, siteUrl) {
 
 // ── Segment queries ───────────────────────────────────────────────────────────
 async function getRecipients(sb, segmentType) {
-  const today = new Date().toISOString().split('T')[0];
   const days30 = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
   const days60 = new Date(Date.now() - 60 * 86400000).toISOString().split('T')[0];
   const days90 = new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0];
@@ -152,7 +151,7 @@ exports.handler = async (event) => {
       // ── Send ─────────────────────────────────────────────────────────────
       const recipients = await getRecipients(sb, segment_type);
       let sentCount = 0, failCount = 0;
-      const errors: string[] = [];
+      const errors = [];
 
       for (const r of recipients) {
         const emailAddr = r.client_email;
@@ -170,7 +169,7 @@ exports.handler = async (event) => {
           try {
             await sendEmail({ to: emailAddr, subject: subject || name, html, text: plain });
             sentCount++;
-          } catch (e: any) { failCount++; errors.push(`email:${emailAddr}: ${e.message}`); }
+          } catch (e) { failCount++; errors.push(`email:${emailAddr}: ${e.message}`); }
           await sleep(80); // ~12 emails/sec
         }
 
@@ -180,7 +179,7 @@ exports.handler = async (event) => {
           try {
             await sendSMS(phone, (body_sms || body_text || '') + stopNote);
             if (!channels.includes('email')) sentCount++;
-          } catch (e: any) { errors.push(`sms:${phone}: ${e.message}`); }
+          } catch (e) { errors.push(`sms:${phone}: ${e.message}`); }
           await sleep(200); // ~5 SMS/sec
         }
       }
@@ -229,7 +228,7 @@ exports.handler = async (event) => {
     }
 
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };
-  } catch (err: any) {
+  } catch (err) {
     console.error('admin-marketing error:', err);
     return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: err.message }) };
   }
