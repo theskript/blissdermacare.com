@@ -11,15 +11,13 @@ const activeSection = cmsItems.has(activeNav || '') ? 'cms'
   : settingsItems.has(activeNav || '') ? 'settings'
   : 'crm';
 
-const crm = (id: string) => activeNav === id
-  ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-white/10 text-white'
-  : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors';
-const cms = (id: string) => activeNav === id
-  ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-violet-500/20 text-violet-300'
-  : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors';
-const cfg = (id: string) => activeNav === id
-  ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-white/10 text-white'
-  : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors';
+/* active-state class helpers */
+const a = (id: string) => activeNav === id
+  ? 'nav-item flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-white/10 text-white'
+  : 'nav-item flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors';
+const aCms = (id: string) => activeNav === id
+  ? 'nav-item flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-violet-500/20 text-violet-300'
+  : 'nav-item flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +28,54 @@ const cfg = (id: string) => activeNav === id
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant:wght@400;600&display=swap" rel="stylesheet" />
   <meta name="robots" content="noindex, nofollow" />
+  <style>
+    #sidebar { transition: width 180ms cubic-bezier(.4,0,.2,1); }
+    #main-content { transition: margin-left 180ms cubic-bezier(.4,0,.2,1); }
+    .sb-label { transition: opacity 120ms ease, width 180ms ease; white-space: nowrap; overflow: hidden; }
+    #sidebar.sb-open  .sb-label { opacity: 1; width: auto; max-width: 200px; }
+    #sidebar.sb-closed .sb-label { opacity: 0; width: 0; max-width: 0; pointer-events: none; }
+    #sidebar.sb-open  .sb-section { display: block; }
+    #sidebar.sb-closed .sb-section { display: none; }
+    #sidebar.sb-open  .sb-divider { display: none; }
+    #sidebar.sb-closed .sb-divider { display: block; }
+    /* nav items — keep icon centred when collapsed */
+    #sidebar.sb-closed .nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+    #sidebar.sb-closed .nav-item svg { flex-shrink: 0; }
+    /* toggle arrow */
+    #sb-toggle svg { transition: transform 180ms ease; }
+    #sidebar.sb-open  #sb-toggle svg { transform: rotate(0deg); }
+    #sidebar.sb-closed #sb-toggle svg { transform: rotate(180deg); }
+    /* brand text */
+    #sidebar.sb-open  #brand-text { opacity: 1; width: auto; overflow: visible; }
+    #sidebar.sb-closed #brand-text { opacity: 0; width: 0; overflow: hidden; }
+    /* section New Appt btn */
+    #sidebar.sb-closed #new-appt-btn { justify-content: center; padding-left: 0; padding-right: 0; }
+    #sidebar.sb-closed #new-appt-btn .sb-label { display: none; }
+    /* user footer */
+    #sidebar.sb-open  #user-footer-actions { display: flex; }
+    #sidebar.sb-closed #user-footer-actions { display: none; }
+    #sidebar.sb-open  #user-footer-name { display: block; }
+    #sidebar.sb-closed #user-footer-name { display: none; }
+    /* tooltip shown only when collapsed */
+    #sidebar.sb-open  [data-tip]::after { display: none; }
+    #sidebar.sb-closed [data-tip]:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: #1f2937;
+      color: #f9fafb;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      z-index: 100;
+      pointer-events: none;
+    }
+    [data-tip] { position: relative; }
+  </style>
   <script>
     (function () {
       try {
@@ -63,123 +109,125 @@ const cfg = (id: string) => activeNav === id
 
   <div class="flex">
     <!-- ── Sidebar ──────────────────────────────────────────────────── -->
-    <aside id="sidebar" class="hidden lg:flex flex-col w-60 min-h-screen bg-neutral-900 fixed top-0 left-0 z-30">
+    <aside id="sidebar" class="hidden lg:flex flex-col bg-neutral-900 fixed top-0 left-0 z-30 h-screen sb-open" style="width:13rem">
 
-      <!-- Brand -->
-      <div class="px-5 py-5 border-b border-white/[0.08]">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-xl bg-primary-500 flex items-center justify-center shrink-0">
-            <span class="text-white text-sm font-bold">B</span>
-          </div>
-          <div>
-            <div class="font-serif text-sm font-semibold text-white leading-tight">Bliss Dermacare</div>
-            <div class="text-[11px] text-neutral-500 tracking-wide">Admin Panel</div>
-          </div>
+      <!-- Brand + toggle -->
+      <div class="flex items-center gap-2 px-3 py-4 border-b border-white/[0.07] shrink-0">
+        <div class="w-7 h-7 rounded-lg bg-primary-500 flex items-center justify-center shrink-0">
+          <span class="text-white text-xs font-bold">B</span>
         </div>
+        <div id="brand-text" class="sb-label min-w-0">
+          <div class="text-[11px] font-semibold text-white leading-tight truncate">Bliss Dermacare</div>
+          <div class="text-[10px] text-neutral-500 truncate">Admin Panel</div>
+        </div>
+        <button id="sb-toggle" class="ml-auto p-1 rounded text-neutral-600 hover:text-neutral-300 transition-colors shrink-0" title="Toggle sidebar">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+          </svg>
+        </button>
       </div>
 
       <!-- Nav -->
-      <nav class="flex-1 px-3 py-4 overflow-y-auto space-y-5" id="sidebar-nav" data-active-section={activeSection}>
+      <nav class="flex-1 px-2 py-3 overflow-y-auto overflow-x-hidden space-y-0.5" id="sidebar-nav" data-active-section={activeSection}>
 
-        <!-- Operations -->
-        <div id="nav-section-crm">
-          <button class="nav-section-header w-full flex items-center justify-between px-2 py-1 mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-600 hover:text-neutral-400 transition-colors select-none">
-            <span>Operations</span>
-            <svg class="nav-chevron w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div id="nav-body-crm" class="space-y-0.5">
-            <a href="/admin/" class={crm('dashboard')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-              Dashboard
-            </a>
-            <a href="/admin/calendar" class={crm('calendar')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              Calendar
-            </a>
-            <a href="/admin/appointments" class={crm('appointments')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-              Appointments
-            </a>
-            <a href="/admin/clients" class={crm('clients')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              Clients
-            </a>
-            <a href="/admin/pre-service-forms" class={crm('pre-service-forms')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              Pre-Service Forms
-            </a>
-            <a href="/admin/consultations" class={crm('consultations')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3-3-3z"/></svg>
-              Consultations
-            </a>
-            <a href="/admin/demo-models" class={crm('demo-models')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Demo Models
-            </a>
-            <a href="/admin/careers" class={crm('careers')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-              Careers
-            </a>
-            <a href="/admin/new-appointment"
-               class={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold mt-1 transition-colors ${activeNav === 'new-appointment' ? 'bg-primary-500 text-white' : 'bg-primary-600/90 text-white hover:bg-primary-500'}`}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              New Appointment
-            </a>
-          </div>
+        <!-- ── Operations ──────────────────────────────────────────── -->
+        <div class="sb-section px-1.5 pb-1 pt-0.5">
+          <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-600">Operations</span>
+        </div>
+        <div class="sb-divider h-px bg-white/[0.07] mx-1 my-1.5"></div>
+
+        <div id="nav-body-crm" class="space-y-0.5">
+          <a href="/admin/" class={a('dashboard')} data-tip="Dashboard">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span class="sb-label">Dashboard</span>
+          </a>
+          <a href="/admin/calendar" class={a('calendar')} data-tip="Calendar">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="sb-label">Calendar</span>
+          </a>
+          <a href="/admin/appointments" class={a('appointments')} data-tip="Appointments">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <span class="sb-label">Appointments</span>
+          </a>
+          <a href="/admin/clients" class={a('clients')} data-tip="Clients">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="sb-label">Clients</span>
+          </a>
+          <a href="/admin/pre-service-forms" class={a('pre-service-forms')} data-tip="Pre-Service Forms">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span class="sb-label">Pre-Service Forms</span>
+          </a>
+          <a href="/admin/consultations" class={a('consultations')} data-tip="Consultations">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3-3-3z"/></svg>
+            <span class="sb-label">Consultations</span>
+          </a>
+          <a href="/admin/demo-models" class={a('demo-models')} data-tip="Demo Models">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="sb-label">Demo Models</span>
+          </a>
+          <a href="/admin/careers" class={a('careers')} data-tip="Careers">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span class="sb-label">Careers</span>
+          </a>
+          <a href="/admin/new-appointment" id="new-appt-btn" data-tip="New Appointment"
+             class={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-semibold mt-1 transition-colors ${activeNav === 'new-appointment' ? 'bg-primary-500 text-white' : 'bg-primary-600/80 text-white hover:bg-primary-500'}`}>
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="sb-label">New Appointment</span>
+          </a>
         </div>
 
-        <!-- Website CMS (owner-only) -->
-        <div class="owner-only-nav hidden" id="nav-section-cms">
-          <button class="nav-section-header w-full flex items-center justify-between px-2 py-1 mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-violet-600 hover:text-violet-400 transition-colors select-none">
-            <span>Website CMS</span>
-            <svg class="nav-chevron w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          </button>
+        <!-- ── Website CMS (owner-only) ───────────────────────────── -->
+        <div class="owner-only-nav hidden">
+          <div class="sb-section px-1.5 pb-1 pt-3">
+            <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-violet-600/80">Website CMS</span>
+          </div>
+          <div class="sb-divider h-px bg-white/[0.07] mx-1 my-1.5"></div>
           <div id="nav-body-cms" class="space-y-0.5">
-            <a href="/admin/services" class={cms('services')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-              Services & Pricing
+            <a href="/admin/services" class={aCms('services')} data-tip="Services & Pricing">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              <span class="sb-label">Services & Pricing</span>
             </a>
-            <a href="/admin/membership-plans" class={cms('membership-plans')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-              Memberships
+            <a href="/admin/membership-plans" class={aCms('membership-plans')} data-tip="Memberships">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+              <span class="sb-label">Memberships</span>
             </a>
-            <a href="/admin/promo-codes" class={cms('promo-codes')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-              Promo Codes
+            <a href="/admin/promo-codes" class={aCms('promo-codes')} data-tip="Promo Codes">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+              <span class="sb-label">Promo Codes</span>
             </a>
           </div>
         </div>
 
-        <!-- Settings (owner-only) -->
-        <div class="owner-only-nav hidden" id="nav-section-settings">
-          <button class="nav-section-header w-full flex items-center justify-between px-2 py-1 mb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-600 hover:text-neutral-400 transition-colors select-none">
-            <span>Settings</span>
-            <svg class="nav-chevron w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          </button>
+        <!-- ── Settings (owner-only) ──────────────────────────────── -->
+        <div class="owner-only-nav hidden">
+          <div class="sb-section px-1.5 pb-1 pt-3">
+            <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-600">Settings</span>
+          </div>
+          <div class="sb-divider h-px bg-white/[0.07] mx-1 my-1.5"></div>
           <div id="nav-body-settings" class="space-y-0.5">
-            <a href="/admin/staff" class={cfg('staff')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-              Staff
+            <a href="/admin/staff" class={a('staff')} data-tip="Staff">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              <span class="sb-label">Staff</span>
             </a>
-            <a href="/admin/availability" class={cfg('availability')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Availability
+            <a href="/admin/availability" class={a('availability')} data-tip="Availability">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="sb-label">Availability</span>
             </a>
-            <a href="/admin/notification-settings" class={cfg('notifications')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-              Notifications
+            <a href="/admin/notification-settings" class={a('notifications')} data-tip="Notifications">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+              <span class="sb-label">Notifications</span>
             </a>
-            <a href="/admin/partners" class={cfg('partners')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-              Partners
+            <a href="/admin/partners" class={a('partners')} data-tip="Partners">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              <span class="sb-label">Partners</span>
             </a>
-            <a href="/admin/audit" class={cfg('audit')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-              Audit Log
+            <a href="/admin/audit" class={a('audit')} data-tip="Audit Log">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              <span class="sb-label">Audit Log</span>
             </a>
-            <a href="/admin/system" class={cfg('system')}>
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-              System
+            <a href="/admin/system" class={a('system')} data-tip="System">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+              <span class="sb-label">System</span>
             </a>
           </div>
         </div>
@@ -187,26 +235,26 @@ const cfg = (id: string) => activeNav === id
       </nav>
 
       <!-- User footer -->
-      <div class="px-4 pb-5 pt-3 border-t border-white/[0.08]">
-        <div class="flex items-center gap-2.5 mb-3 px-1">
-          <div id="sidebar-avatar" class="w-7 h-7 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center shrink-0">
-            <span id="sidebar-initials" class="text-primary-400 text-[11px] font-bold">—</span>
+      <div class="px-2 py-3 border-t border-white/[0.07] shrink-0">
+        <div class="flex items-center gap-2 px-1 mb-2">
+          <div id="sidebar-avatar" class="w-6 h-6 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center shrink-0">
+            <span id="sidebar-initials" class="text-primary-400 text-[10px] font-bold">—</span>
           </div>
-          <div class="flex-1 min-w-0">
-            <div id="sidebar-username" class="text-xs font-semibold text-white capitalize truncate">—</div>
-            <div id="sidebar-role" class="text-[11px] text-neutral-500 capitalize">—</div>
+          <div id="user-footer-name" class="sb-label min-w-0">
+            <div id="sidebar-username" class="text-[11px] font-semibold text-white truncate">—</div>
+            <div id="sidebar-role" class="text-[10px] text-neutral-500 capitalize truncate">—</div>
           </div>
         </div>
-        <div class="flex gap-1">
-          <a href="/" target="_blank"
-            class="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] text-neutral-500 hover:text-white hover:bg-white/[0.06] transition-colors">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            Site
+        <div id="user-footer-actions" class="flex gap-1">
+          <a href="/" target="_blank" data-tip="View Site"
+            class="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-md text-[10px] text-neutral-500 hover:text-white hover:bg-white/[0.06] transition-colors">
+            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span class="sb-label">Site</span>
           </a>
-          <button id="logout-btn"
-            class="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            Log Out
+          <button id="logout-btn" data-tip="Log Out"
+            class="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-md text-[10px] text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span class="sb-label">Log Out</span>
           </button>
         </div>
       </div>
@@ -215,53 +263,53 @@ const cfg = (id: string) => activeNav === id
     <!-- Mobile sidebar drawer -->
     <div id="mobile-sidebar" class="hidden fixed inset-0 z-50 lg:hidden">
       <div class="absolute inset-0 bg-black/60" id="mobile-sidebar-overlay"></div>
-      <aside class="absolute left-0 top-0 bottom-0 w-64 bg-neutral-900 shadow-2xl flex flex-col">
-        <div class="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
+      <aside class="absolute left-0 top-0 bottom-0 w-56 bg-neutral-900 shadow-2xl flex flex-col">
+        <div class="px-4 py-4 border-b border-white/[0.07] flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
             <div class="w-7 h-7 rounded-lg bg-primary-500 flex items-center justify-center">
               <span class="text-white text-xs font-bold">B</span>
             </div>
-            <span class="font-serif text-sm font-semibold text-white">Bliss Admin</span>
+            <span class="font-semibold text-sm text-white">Bliss Admin</span>
           </div>
           <button id="mobile-close-btn" class="p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-white/10 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
-        <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          <p class="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-600 mb-1">Operations</p>
-          <a href="/admin/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Dashboard</a>
-          <a href="/admin/calendar" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Calendar</a>
-          <a href="/admin/appointments" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Appointments</a>
-          <a href="/admin/clients" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Clients</a>
-          <a href="/admin/pre-service-forms" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Pre-Service Forms</a>
-          <a href="/admin/consultations" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Consultations</a>
-          <a href="/admin/demo-models" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Demo Models</a>
-          <a href="/admin/careers" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Careers</a>
-          <a href="/admin/new-appointment" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold bg-primary-600 text-white mt-1">+ New Appointment</a>
+        <nav class="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
+          <p class="px-1.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-600">Operations</p>
+          <a href="/admin/" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Dashboard</a>
+          <a href="/admin/calendar" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Calendar</a>
+          <a href="/admin/appointments" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Appointments</a>
+          <a href="/admin/clients" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Clients</a>
+          <a href="/admin/pre-service-forms" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Pre-Service Forms</a>
+          <a href="/admin/consultations" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Consultations</a>
+          <a href="/admin/demo-models" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Demo Models</a>
+          <a href="/admin/careers" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Careers</a>
+          <a href="/admin/new-appointment" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-primary-600/80 text-white mt-1">+ New Appointment</a>
           <div class="mobile-owner-only hidden">
-            <div class="my-3 border-t border-white/[0.08]"></div>
-            <p class="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-violet-600 mb-1">Website CMS</p>
-            <a href="/admin/services" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Services & Pricing</a>
-            <a href="/admin/membership-plans" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Memberships</a>
-            <a href="/admin/promo-codes" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Promo Codes</a>
-            <div class="my-3 border-t border-white/[0.08]"></div>
-            <p class="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-600 mb-1">Settings</p>
-            <a href="/admin/staff" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Staff</a>
-            <a href="/admin/availability" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Availability</a>
-            <a href="/admin/notification-settings" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Notifications</a>
-            <a href="/admin/partners" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Partners</a>
-            <a href="/admin/audit" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">Audit Log</a>
-            <a href="/admin/system" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-white/[0.06]">System</a>
+            <div class="h-px bg-white/[0.07] mx-1 my-2"></div>
+            <p class="px-1.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-violet-600/80">Website CMS</p>
+            <a href="/admin/services" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Services & Pricing</a>
+            <a href="/admin/membership-plans" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Memberships</a>
+            <a href="/admin/promo-codes" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Promo Codes</a>
+            <div class="h-px bg-white/[0.07] mx-1 my-2"></div>
+            <p class="px-1.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-600">Settings</p>
+            <a href="/admin/staff" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Staff</a>
+            <a href="/admin/availability" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Availability</a>
+            <a href="/admin/notification-settings" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Notifications</a>
+            <a href="/admin/partners" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Partners</a>
+            <a href="/admin/audit" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Audit Log</a>
+            <a href="/admin/system" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">System</a>
           </div>
         </nav>
-        <div class="px-4 py-4 border-t border-white/[0.08]">
-          <button id="mobile-logout-btn" class="w-full text-left px-3 py-2 text-sm text-neutral-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">Log Out</button>
+        <div class="px-2 py-3 border-t border-white/[0.07]">
+          <button id="mobile-logout-btn" class="w-full text-left px-2.5 py-1.5 text-xs text-neutral-500 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors">Log Out</button>
         </div>
       </aside>
     </div>
 
     <!-- Main content -->
-    <main class="lg:ml-60 flex-1 min-h-screen bg-neutral-100">
+    <main id="main-content" class="flex-1 min-h-screen bg-neutral-100" style="margin-left:13rem">
       <slot />
     </main>
   </div>
@@ -287,32 +335,25 @@ const cfg = (id: string) => activeNav === id
       document.querySelectorAll('.mobile-owner-only').forEach(el => el.classList.remove('hidden'));
     }
 
-    // ── Collapsible sections (accordion — one open at a time) ────────────────
-    const activeSection = document.getElementById('sidebar-nav')?.dataset.activeSection || 'crm';
-    const sectionIds    = ['crm', 'cms', 'settings'];
+    // ── Sidebar collapse toggle ───────────────────────────────────────────────
+    const sidebar = document.getElementById('sidebar')!;
+    const main    = document.getElementById('main-content')!;
+    const OPEN_W  = '13rem';
+    const CLOSED_W = '3.5rem';
 
-    function setSection(openId: string) {
-      sectionIds.forEach(id => {
-        const body    = document.getElementById(`nav-body-${id}`);
-        const section = document.getElementById(`nav-section-${id}`);
-        const chevron = section?.querySelector<HTMLElement>('.nav-chevron');
-        if (!body) return;
-        const open = id === openId;
-        body.style.display = open ? '' : 'none';
-        if (chevron) chevron.style.transform = open ? '' : 'rotate(-90deg)';
-      });
+    const isOpen = localStorage.getItem('bliss_sb2') !== 'closed';
+    function applySidebarState(open: boolean) {
+      sidebar.style.width = open ? OPEN_W : CLOSED_W;
+      main.style.marginLeft = open ? OPEN_W : CLOSED_W;
+      sidebar.classList.toggle('sb-open', open);
+      sidebar.classList.toggle('sb-closed', !open);
     }
+    applySidebarState(isOpen);
 
-    setSection(activeSection);
-
-    sectionIds.forEach(id => {
-      const section = document.getElementById(`nav-section-${id}`);
-      const btn     = section?.querySelector<HTMLElement>('.nav-section-header');
-      const body    = document.getElementById(`nav-body-${id}`);
-      btn?.addEventListener('click', () => {
-        const nowOpen = body?.style.display !== 'none';
-        setSection(nowOpen ? '' : id);
-      });
+    document.getElementById('sb-toggle')?.addEventListener('click', () => {
+      const willOpen = sidebar.classList.contains('sb-closed');
+      applySidebarState(willOpen);
+      localStorage.setItem('bliss_sb2', willOpen ? 'open' : 'closed');
     });
 
     function doLogout() { clearAuth(); window.location.href = '/admin/login'; }
