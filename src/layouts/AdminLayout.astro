@@ -291,28 +291,19 @@ const cfg = (id: string) => activeNav === id
     const activeSection = document.getElementById('sidebar-nav')?.dataset.activeSection || 'crm';
     const sectionIds    = ['crm', 'cms', 'settings'];
 
-    function getState(): Record<string, boolean> {
-      try { return JSON.parse(localStorage.getItem('bliss_nav_v2') || '{}'); } catch { return {}; }
-    }
-    function saveState(s: Record<string, boolean>) { localStorage.setItem('bliss_nav_v2', JSON.stringify(s)); }
-
-    const state = getState();
-
     sectionIds.forEach(id => {
       const body    = document.getElementById(`nav-body-${id}`);
       const section = document.getElementById(`nav-section-${id}`);
       const chevron = section?.querySelector<HTMLElement>('.nav-chevron');
       const btn     = section?.querySelector<HTMLElement>('.nav-section-header');
       if (!body) return;
-      const open = id === activeSection ? true : (state[id] === true);
+      const open = id === activeSection;
       body.style.display = open ? '' : 'none';
       if (chevron) chevron.style.transform = open ? '' : 'rotate(-90deg)';
       btn?.addEventListener('click', () => {
         const nowOpen = body.style.display !== 'none';
         body.style.display = nowOpen ? 'none' : '';
         if (chevron) chevron.style.transform = nowOpen ? 'rotate(-90deg)' : '';
-        state[id] = !nowOpen;
-        saveState(state);
       });
     });
 
