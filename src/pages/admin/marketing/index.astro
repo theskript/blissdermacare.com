@@ -2,752 +2,709 @@
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 <AdminLayout title="Marketing" activeNav="marketing">
-<div class="p-6 lg:p-8">
+<style>
+  .tab-active { border-bottom: 2px solid #7c3aed; color: #6d28d9; font-weight: 600; }
+  .email-preview-frame { border: 1px solid #e5e7eb; border-radius: 0.75rem; background: white; min-height: 300px; overflow-y: auto; padding: 1.5rem; font-family: sans-serif; font-size: 14px; line-height: 1.6; }
+  [contenteditable]:empty::before { content: attr(placeholder); color: #9ca3af; }
+  .recipient-tag { display: inline-flex; align-items: center; gap: 4px; background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
+  .client-result { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #f3f4f6; }
+  .client-result:hover { background: #f9fafb; }
+</style>
 
+<div class="p-6 lg:p-8">
   <!-- Header -->
   <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
     <div>
       <h1 class="text-2xl font-serif font-semibold text-neutral-900">Marketing</h1>
-      <p class="text-sm text-neutral-500 mt-0.5">Email and SMS campaigns for your client list.</p>
+      <p class="text-sm text-neutral-500 mt-0.5">Send targeted email and SMS campaigns to your client list.</p>
     </div>
-    <button id="compose-btn" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
+    <button id="compose-btn"
+      class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
       New Campaign
     </button>
   </div>
 
   <!-- Stats -->
-  <div id="mkt-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div>
+  <div id="mkt-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"></div>
 
   <!-- Tabs -->
-  <div class="flex gap-1 mb-4 border-b border-neutral-200">
-    <button class="mkt-tab active-mtab px-4 py-2 text-sm font-semibold border-b-2 border-primary-600 text-primary-700 -mb-px" data-tab="campaigns">Campaigns</button>
-    <button class="mkt-tab px-4 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-tab="templates">Templates</button>
-    <button class="mkt-tab px-4 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-tab="audiences">Audiences</button>
-    <button class="mkt-tab px-4 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-tab="unsubs">Unsubscribes</button>
+  <div class="flex gap-0 mb-5 border-b border-neutral-200">
+    <button class="mkt-tab tab-active px-4 py-2.5 text-sm border-b-2 -mb-px" data-tab="campaigns">Campaigns</button>
+    <button class="mkt-tab px-4 py-2.5 text-sm text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-tab="templates">Templates</button>
+    <button class="mkt-tab px-4 py-2.5 text-sm text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-tab="audiences">Audiences</button>
+    <button class="mkt-tab px-4 py-2.5 text-sm text-neutral-500 hover:text-neutral-800 border-b-2 border-transparent -mb-px" data-tab="unsubs">Unsubscribes</button>
   </div>
 
   <div id="tab-campaigns"><div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden"><div id="campaigns-list" class="overflow-x-auto"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div></div></div>
-  <div id="tab-templates" class="hidden"><div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden"><div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100"><h2 class="font-semibold text-neutral-900 text-sm">Email Templates</h2><button id="save-as-template-btn" class="text-xs text-primary-600 hover:text-primary-700 font-medium hidden">Save current draft as template</button></div><div id="templates-list"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div></div></div>
-  <div id="tab-audiences" class="hidden"><div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden"><div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100"><h2 class="font-semibold text-neutral-900 text-sm">Saved Audiences</h2><button id="add-audience-btn" class="text-xs text-primary-600 hover:text-primary-700 font-medium">+ New Audience</button></div><div id="audiences-list"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div></div></div>
+  <div id="tab-templates" class="hidden"><div id="templates-list" class="bg-white rounded-2xl border border-neutral-200 overflow-hidden"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div></div>
+  <div id="tab-audiences" class="hidden"><div id="audiences-list" class="bg-white rounded-2xl border border-neutral-200 overflow-hidden"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div></div>
   <div id="tab-unsubs" class="hidden">
-    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100 gap-3 flex-wrap">
-        <h2 class="font-semibold text-neutral-900 text-sm">Unsubscribes</h2>
-        <div class="flex items-center gap-2">
-          <input id="unsub-search" type="text" placeholder="Search by email…" class="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs focus:border-primary-400 outline-none w-48"/>
-          <button id="add-unsub-btn" class="text-xs text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap">+ Add / Re-subscribe</button>
-        </div>
-      </div>
-      <div id="unsubs-list"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div>
+    <div class="flex gap-3 mb-3">
+      <input id="unsub-search" type="text" placeholder="Search by email…" class="flex-1 px-3 py-2 rounded-xl border border-neutral-300 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none"/>
+      <button id="add-unsub-btn" class="px-4 py-2 bg-white border border-neutral-300 hover:border-neutral-400 text-sm text-neutral-700 rounded-xl transition-colors">+ Add manually</button>
     </div>
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden"><div id="unsubs-list" class="overflow-x-auto"><div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div></div></div>
   </div>
 </div>
 
-<!-- ── Compose panel (full-width, two-column) ───────────────────────────────── -->
-<div id="compose-overlay" class="hidden fixed inset-0 bg-black/40 z-40"></div>
-<div id="compose-panel" class="hidden fixed inset-4 lg:inset-8 bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden">
+<!-- ══ Compose slide-over ══════════════════════════════════════════════════════ -->
+<div id="compose-panel" class="hidden fixed inset-0 z-50 flex">
+  <div class="absolute inset-0 bg-black/40" id="compose-overlay"></div>
+  <div class="relative ml-auto w-full max-w-5xl bg-white shadow-2xl border-l border-neutral-200 flex flex-col h-full">
 
-  <!-- Panel header -->
-  <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
-    <h3 class="font-semibold text-neutral-900">New Campaign</h3>
-    <div class="flex items-center gap-2">
-      <span id="autosave-indicator" class="text-xs text-neutral-400 hidden">Auto-saved</span>
-      <button id="compose-close" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Two-column layout: form (left) + preview (right) -->
-  <div class="flex flex-1 overflow-hidden">
-
-    <!-- Left: form -->
-    <div class="w-full lg:w-1/2 overflow-y-auto p-6 space-y-4 border-r border-neutral-100">
-
-      <!-- Campaign name -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Campaign Name *</label>
-        <input id="c-name" type="text" placeholder="e.g. Summer Promo 2026"
-          class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
-      </div>
-
-      <!-- Channels -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1.5">Channels</label>
-        <div class="flex gap-4">
-          <label class="flex items-center gap-2 cursor-pointer select-none text-sm"><input type="checkbox" id="ch-email" checked class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/> Email</label>
-          <label class="flex items-center gap-2 cursor-pointer select-none text-sm"><input type="checkbox" id="ch-sms" class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/> SMS</label>
-        </div>
-      </div>
-
-      <!-- Recipients -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1.5">Recipients</label>
-        <div class="flex gap-3 mb-2">
-          <label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="radio" name="recip-mode" value="segment" checked class="accent-primary-600"/> Audience Segment</label>
-          <label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="radio" name="recip-mode" value="custom" class="accent-primary-600"/> Specific Clients</label>
-        </div>
-        <div id="segment-picker">
-          <select id="c-segment" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none bg-white">
-            <option value="all">All Clients</option>
-            <option value="recent_30">Recent — Last 30 Days</option>
-            <option value="recent_60">Recent — Last 60 Days</option>
-            <option value="lapsed_90">Lapsed — 90+ Days</option>
-            <option value="members">Active Members</option>
-            <option value="new_clients">New Clients (1 visit)</option>
-          </select>
-          <div id="segment-preview" class="mt-1 text-xs text-neutral-400">Estimating audience…</div>
-        </div>
-        <div id="custom-picker" class="hidden">
-          <div class="relative">
-            <input id="client-search-input" type="text" placeholder="Search by name, email, or phone…"
-              class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none"/>
-            <div id="client-search-results" class="hidden absolute top-full left-0 right-0 bg-white border border-neutral-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto mt-1"></div>
-          </div>
-          <div id="selected-recipients" class="mt-2 flex flex-wrap gap-1.5 min-h-[28px]"></div>
-          <div id="custom-count" class="text-xs text-neutral-400 mt-1">0 recipients selected</div>
-        </div>
-      </div>
-
-      <!-- Email subject -->
-      <div id="email-subject-row">
-        <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Email Subject *</label>
-        <input id="c-subject" type="text" placeholder="Your exclusive offer from Bliss Dermacare"
-          class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
-      </div>
-
-      <!-- Email body -->
-      <div id="email-body-row">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-xs font-semibold uppercase tracking-widest text-neutral-400">Email Body</label>
-          <button id="load-template-btn" class="text-xs text-violet-600 hover:text-violet-700 font-medium">📂 Load Template</button>
-        </div>
-        <div class="flex gap-0.5 p-1.5 bg-neutral-50 rounded-t-lg border border-b-0 border-neutral-200">
-          <button type="button" data-cmd="bold"       class="fmt-btn px-2 py-0.5 text-xs font-bold rounded hover:bg-neutral-200">B</button>
-          <button type="button" data-cmd="italic"     class="fmt-btn px-2 py-0.5 text-xs italic rounded hover:bg-neutral-200">I</button>
-          <button type="button" data-cmd="underline"  class="fmt-btn px-2 py-0.5 text-xs underline rounded hover:bg-neutral-200">U</button>
-          <span class="w-px bg-neutral-300 mx-0.5"></span>
-          <button type="button" id="insert-link-btn"  class="px-2 py-0.5 text-xs rounded hover:bg-neutral-200">🔗 Link</button>
-          <button type="button" data-cmd="formatBlock" data-val="h2" class="fmt-btn px-2 py-0.5 text-xs font-semibold rounded hover:bg-neutral-200">H2</button>
-          <button type="button" data-cmd="insertUnorderedList" class="fmt-btn px-2 py-0.5 text-xs rounded hover:bg-neutral-200">• List</button>
-          <button type="button" id="insert-cta-btn"   class="px-2 py-0.5 text-xs rounded hover:bg-neutral-200 ml-auto">+ CTA Button</button>
-        </div>
-        <div id="c-body-html" contenteditable="true"
-          class="min-h-[200px] px-3 py-2.5 rounded-b-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
-          style="line-height:1.7"></div>
-        <p class="text-xs text-neutral-400 mt-1">Unsubscribe footer added automatically.</p>
-      </div>
-
-      <!-- SMS body -->
-      <div id="sms-body-row" class="hidden">
-        <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">SMS Message</label>
-        <textarea id="c-body-sms" rows="3" maxlength="160"
-          class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-none"></textarea>
-        <div class="flex justify-between mt-1">
-          <p class="text-xs text-neutral-400">"Reply STOP to unsubscribe" added automatically.</p>
-          <span id="sms-counter" class="text-xs text-neutral-400">0/160</span>
-        </div>
-      </div>
-
-      <!-- Schedule / Send timing -->
-      <div class="border-t border-neutral-100 pt-4">
-        <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Send Timing</label>
-        <div class="space-y-2">
-          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="send-timing" value="now" checked class="accent-primary-600"/> Send immediately</label>
-          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="send-timing" value="schedule" class="accent-primary-600"/> Schedule for later</label>
-        </div>
-        <div id="schedule-picker" class="hidden mt-2 flex gap-2">
-          <input type="date" id="c-sched-date" class="flex-1 px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none"/>
-          <input type="time" id="c-sched-time" class="px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none"/>
-        </div>
-        <p id="schedule-label" class="text-xs text-neutral-400 mt-1 hidden"></p>
-      </div>
-
-      <!-- Action buttons -->
-      <div class="flex gap-2 pt-2 border-t border-neutral-100 flex-wrap">
-        <button id="test-send-btn"
-          class="flex items-center gap-1.5 px-4 py-2 border border-neutral-300 text-neutral-600 hover:bg-neutral-50 text-sm font-medium rounded-xl transition-colors">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          Test Send
-        </button>
-        <button id="save-draft-btn"
-          class="px-4 py-2 border border-neutral-300 text-neutral-600 hover:bg-neutral-50 text-sm font-medium rounded-xl transition-colors">
-          Save Draft
-        </button>
-        <button id="send-campaign-btn"
-          class="flex-1 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
-          Send Now
-        </button>
-      </div>
-      <div id="send-msg" class="text-xs text-center hidden"></div>
-    </div>
-
-    <!-- Right: live preview -->
-    <div class="hidden lg:flex flex-col w-1/2 bg-neutral-50">
-      <div class="flex items-center justify-between px-4 py-2.5 border-b border-neutral-200 shrink-0">
-        <span class="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Preview</span>
-        <div class="flex gap-1">
-          <button id="preview-desktop" class="preview-mode-btn px-2.5 py-1 text-xs rounded-lg bg-neutral-200 text-neutral-700 font-medium">Desktop</button>
-          <button id="preview-mobile"  class="preview-mode-btn px-2.5 py-1 text-xs rounded-lg text-neutral-400 font-medium hover:bg-neutral-200">Mobile</button>
-        </div>
-      </div>
-      <div class="flex-1 overflow-y-auto p-4 flex justify-center">
-        <div id="preview-wrap" class="w-full max-w-2xl transition-all duration-200">
-          <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
-            <div class="bg-neutral-800 px-4 py-2.5 text-xs text-neutral-400 flex items-center gap-2">
-              <span class="font-medium text-white">From:</span> Bliss Dermacare &lt;noreply@blissdermacare.com&gt;
-            </div>
-            <div class="bg-neutral-700 px-4 py-2 text-xs text-neutral-300">
-              <span class="font-medium text-white">Subject:</span> <span id="preview-subject">—</span>
-            </div>
-            <div id="preview-body" class="p-6 text-sm text-neutral-700" style="line-height:1.75;min-height:200px">
-              <p class="text-neutral-400 text-center py-8">Start typing your email to see a preview here.</p>
-            </div>
-            <div class="px-6 py-4 border-t border-neutral-100 text-center" style="font-size:11px;color:#9ca3af">
-              You are receiving this because you've booked with Bliss Dermacare.<br/>
-              8905 Regents Park Dr, Tampa, FL 33647 · (609) 366-0857<br/>
-              <a href="#" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Template picker modal -->
-<div id="template-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-black/50" id="template-modal-overlay"></div>
-  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col z-10">
+    <!-- Panel header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
-      <h3 class="font-semibold text-neutral-900">Load Template</h3>
-      <button id="template-modal-close" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
+      <h3 id="compose-title" class="font-semibold text-neutral-900">New Campaign</h3>
+      <div class="flex items-center gap-2">
+        <span id="compose-save-msg" class="text-xs text-neutral-400 hidden"></span>
+        <button id="compose-close" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
     </div>
-    <div id="template-picker-list" class="overflow-y-auto p-4 space-y-2 flex-1"></div>
+
+    <!-- Two-col: form + preview -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- Left: form -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-5 border-r border-neutral-100" style="min-width:0">
+
+        <!-- Campaign meta -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Campaign Name *</label>
+            <input id="c-name" type="text" placeholder="e.g. Summer Promo 2026" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Channels</label>
+            <div class="flex gap-4 pt-1">
+              <label class="flex items-center gap-1.5 cursor-pointer select-none"><input type="checkbox" id="ch-email" checked class="w-3.5 h-3.5 rounded accent-primary-600"/><span class="text-sm font-medium text-neutral-700">Email</span></label>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none"><input type="checkbox" id="ch-sms" class="w-3.5 h-3.5 rounded accent-primary-600"/><span class="text-sm font-medium text-neutral-700">SMS</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subject -->
+        <div id="email-subject-wrap">
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Email Subject *</label>
+          <input id="c-subject" type="text" placeholder="Your subject line" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+
+        <!-- Recipients -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Recipients</label>
+          <div class="flex gap-3 mb-2">
+            <label class="flex items-center gap-1.5 cursor-pointer text-sm">
+              <input type="radio" name="rec-type" value="segment" checked class="accent-primary-600"/> Audience Segment
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-sm">
+              <input type="radio" name="rec-type" value="custom" class="accent-primary-600"/> Specific Clients
+            </label>
+          </div>
+          <!-- Segment mode -->
+          <div id="rec-segment-wrap">
+            <select id="c-segment" class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none bg-white">
+              <option value="all">All Clients</option>
+              <option value="recent_30">Recent — Last 30 days</option>
+              <option value="recent_60">Recent — Last 60 days</option>
+              <option value="lapsed_90">Lapsed — 90+ days since last visit</option>
+              <option value="members">Active Members only</option>
+              <option value="new_clients">New Clients (1 visit)</option>
+            </select>
+            <p id="segment-preview" class="text-xs text-neutral-400 mt-1.5">Estimating audience…</p>
+          </div>
+          <!-- Individual picker -->
+          <div id="rec-custom-wrap" class="hidden">
+            <div class="relative mb-2">
+              <input id="client-search-input" type="text" placeholder="Search by name, email, or phone…"
+                class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none"/>
+              <div id="client-results" class="hidden absolute top-full left-0 right-0 bg-white border border-neutral-200 rounded-lg shadow-lg z-10 max-h-40 overflow-y-auto"></div>
+            </div>
+            <div id="selected-recipients" class="flex flex-wrap gap-1.5 min-h-[28px]"></div>
+            <p id="custom-count" class="text-xs text-neutral-400 mt-1">0 recipients selected</p>
+          </div>
+        </div>
+
+        <!-- Templates picker -->
+        <div id="email-body-wrap">
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold uppercase tracking-widest text-neutral-400">Email Body *</label>
+            <button id="load-template-btn" class="text-xs text-primary-600 hover:text-primary-700 font-medium">Use Template ▾</button>
+          </div>
+          <div id="template-picker" class="hidden mb-2 bg-white border border-neutral-200 rounded-lg shadow-lg z-10 max-h-56 overflow-y-auto"></div>
+          <!-- Toolbar -->
+          <div class="flex flex-wrap gap-0.5 p-1 bg-neutral-50 rounded-t-lg border border-b-0 border-neutral-200">
+            <button type="button" onclick="document.execCommand('bold')" class="px-2 py-1 text-xs font-bold rounded hover:bg-neutral-200" title="Bold">B</button>
+            <button type="button" onclick="document.execCommand('italic')" class="px-2 py-1 text-xs italic rounded hover:bg-neutral-200" title="Italic">I</button>
+            <button type="button" onclick="document.execCommand('underline')" class="px-2 py-1 text-xs underline rounded hover:bg-neutral-200" title="Underline">U</button>
+            <span class="w-px bg-neutral-300 mx-0.5"></span>
+            <button type="button" onclick="insertLink()" class="px-2 py-1 text-xs rounded hover:bg-neutral-200" title="Link">🔗</button>
+            <button type="button" onclick="document.execCommand('formatBlock',false,'h2')" class="px-2 py-1 text-xs font-semibold rounded hover:bg-neutral-200">H2</button>
+            <button type="button" onclick="document.execCommand('formatBlock',false,'p')" class="px-2 py-1 text-xs rounded hover:bg-neutral-200">¶</button>
+            <button type="button" onclick="document.execCommand('insertUnorderedList')" class="px-2 py-1 text-xs rounded hover:bg-neutral-200">• List</button>
+            <span class="w-px bg-neutral-300 mx-0.5"></span>
+            <button type="button" onclick="document.getElementById('c-body-html').innerHTML=''" class="px-2 py-1 text-xs text-neutral-400 rounded hover:bg-neutral-200" title="Clear">✕ Clear</button>
+          </div>
+          <div id="c-body-html" contenteditable="true" placeholder="Write your email here…"
+            class="min-h-[200px] px-3 py-2.5 rounded-b-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none"
+            style="line-height:1.6"></div>
+          <p class="text-xs text-neutral-400 mt-1">Unsubscribe link added automatically to footer.</p>
+        </div>
+
+        <!-- SMS body -->
+        <div id="sms-body-wrap" class="hidden">
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">SMS Message *</label>
+          <textarea id="c-body-sms" rows="3" maxlength="160" placeholder="Your SMS (160 chars max)…"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none resize-none"></textarea>
+          <div class="flex justify-between mt-1">
+            <p class="text-xs text-neutral-400">Reply STOP appended automatically.</p>
+            <span id="sms-counter" class="text-xs text-neutral-400">0/160</span>
+          </div>
+        </div>
+
+        <!-- Schedule -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">When to Send</label>
+          <div class="flex gap-3 mb-2">
+            <label class="flex items-center gap-1.5 cursor-pointer text-sm"><input type="radio" name="when" value="now" checked class="accent-primary-600"/> Send Now</label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-sm"><input type="radio" name="when" value="schedule" class="accent-primary-600"/> Schedule</label>
+          </div>
+          <div id="schedule-wrap" class="hidden">
+            <input id="c-scheduled-for" type="datetime-local" class="px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none"/>
+            <p id="schedule-preview" class="text-xs text-neutral-400 mt-1"></p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-2 pt-2 border-t border-neutral-100">
+          <button id="send-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Send Now</button>
+          <button id="save-draft-btn" class="px-4 py-2.5 border border-neutral-300 text-neutral-600 hover:bg-neutral-50 text-sm rounded-xl transition-colors">Save Draft</button>
+          <button id="test-send-btn" class="px-4 py-2.5 border border-violet-300 text-violet-600 hover:bg-violet-50 text-sm rounded-xl transition-colors">🧪 Test Send</button>
+        </div>
+        <div id="action-msg" class="text-xs text-center hidden"></div>
+
+      </div>
+
+      <!-- Right: preview -->
+      <div class="w-96 shrink-0 flex flex-col bg-neutral-50 overflow-hidden">
+        <div class="px-4 py-3 border-b border-neutral-200 bg-white flex items-center justify-between">
+          <p class="text-xs font-semibold uppercase tracking-widest text-neutral-400">Live Preview</p>
+          <div class="flex gap-1">
+            <button id="preview-desktop" class="px-2 py-1 text-[10px] font-medium rounded bg-neutral-900 text-white">Desktop</button>
+            <button id="preview-mobile" class="px-2 py-1 text-[10px] font-medium rounded text-neutral-500 hover:bg-neutral-100">Mobile</button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4">
+          <div id="preview-container" class="transition-all" style="max-width:100%">
+            <div class="bg-neutral-800 rounded-t-lg px-4 py-2 flex items-center gap-2">
+              <div class="flex gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span><span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span><span class="w-2.5 h-2.5 rounded-full bg-green-400"></span></div>
+              <span id="preview-subject-bar" class="text-xs text-neutral-400 truncate flex-1">(no subject)</span>
+            </div>
+            <div id="email-preview-body" class="email-preview-frame rounded-b-lg" style="border-top:none;border-radius:0 0 0.75rem 0.75rem">
+              <p style="color:#9ca3af;text-align:center;padding:2rem 0">Start typing to see preview…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <script>
-import { requireLogin, apiFetch } from '../../../scripts/adminAuth.js';
-requireLogin();
+  import { requireLogin, apiFetch } from '../../../scripts/adminAuth.js';
+  requireLogin();
 
-function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  (window as any).insertLink = () => { const u = prompt('URL:'); if (u) document.execCommand('createLink', false, u); };
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let customRecipients: any[] = [];
-let templates: any[] = [];
-let audiences: any[] = [];
-
-// ── Tab switching ─────────────────────────────────────────────────────────────
-document.querySelectorAll('.mkt-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tab = (btn as HTMLElement).dataset.tab!;
-    document.querySelectorAll('.mkt-tab').forEach(b => {
-      const active = (b as HTMLElement).dataset.tab === tab;
-      b.classList.toggle('active-mtab', active);
-      b.classList.toggle('border-primary-600', active);
-      b.classList.toggle('text-primary-700', active);
-      b.classList.toggle('font-semibold', active);
-      b.classList.toggle('text-neutral-500', !active);
-      b.classList.toggle('border-transparent', !active);
-      b.classList.toggle('font-medium', !active);
+  // ── Tabs ───────────────────────────────────────────────────────────────────
+  document.querySelectorAll('.mkt-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = (btn as HTMLElement).dataset.tab!;
+      document.querySelectorAll('.mkt-tab').forEach(b => {
+        const a = (b as HTMLElement).dataset.tab === tab;
+        b.classList.toggle('tab-active', a);
+        b.classList.toggle('text-neutral-500', !a);
+        b.classList.toggle('border-transparent', !a);
+      });
+      ['campaigns','templates','audiences','unsubs'].forEach(t =>
+        document.getElementById(`tab-${t}`)?.classList.toggle('hidden', t !== tab));
+      if (tab === 'templates') loadTemplates();
+      if (tab === 'audiences') loadAudiences();
+      if (tab === 'unsubs') loadUnsubs();
     });
-    ['campaigns','templates','audiences','unsubs'].forEach(t =>
-      document.getElementById(`tab-${t}`)?.classList.toggle('hidden', t !== tab)
-    );
-    if (tab === 'templates') loadTemplates();
-    if (tab === 'audiences') loadAudiences();
-    if (tab === 'unsubs') loadUnsubs();
   });
-});
 
-// ── Compose panel ─────────────────────────────────────────────────────────────
-function openCompose() {
-  (document.getElementById('c-name')  as HTMLInputElement).value = '';
-  (document.getElementById('c-subject') as HTMLInputElement).value = '';
-  (document.getElementById('c-body-html') as HTMLElement).innerHTML = '';
-  (document.getElementById('c-body-sms') as HTMLTextAreaElement).value = '';
-  customRecipients = [];
-  renderCustomRecipients();
-  document.getElementById('send-msg')!.className = 'text-xs text-center hidden';
-  document.getElementById('compose-panel')?.classList.remove('hidden');
-  document.getElementById('compose-overlay')?.classList.remove('hidden');
-  previewUpdate();
-  previewSegment();
-}
-function closeCompose() {
-  document.getElementById('compose-panel')?.classList.add('hidden');
-  document.getElementById('compose-overlay')?.classList.add('hidden');
-}
-document.getElementById('compose-btn')?.addEventListener('click', openCompose);
-document.getElementById('compose-close')?.addEventListener('click', closeCompose);
-document.getElementById('compose-overlay')?.addEventListener('click', closeCompose);
+  // ── Compose helpers ────────────────────────────────────────────────────────
+  const chEmail = () => (document.getElementById('ch-email') as HTMLInputElement).checked;
+  const chSms   = () => (document.getElementById('ch-sms')   as HTMLInputElement).checked;
 
-// ── Channel toggles ───────────────────────────────────────────────────────────
-document.getElementById('ch-email')?.addEventListener('change', () => {
-  const on = (document.getElementById('ch-email') as HTMLInputElement).checked;
-  document.getElementById('email-subject-row')?.classList.toggle('hidden', !on);
-  document.getElementById('email-body-row')?.classList.toggle('hidden', !on);
-});
-document.getElementById('ch-sms')?.addEventListener('change', () => {
-  document.getElementById('sms-body-row')?.classList.toggle('hidden',
-    !(document.getElementById('ch-sms') as HTMLInputElement).checked);
-});
-document.getElementById('c-body-sms')?.addEventListener('input', (e) => {
-  const len = (e.target as HTMLTextAreaElement).value.length;
-  const el  = document.getElementById('sms-counter')!;
-  el.textContent = `${len}/160`;
-  el.className = `text-xs ${len > 140 ? 'text-amber-600' : 'text-neutral-400'}`;
-});
-
-// ── Recipient mode ────────────────────────────────────────────────────────────
-document.querySelectorAll('input[name="recip-mode"]').forEach(r => {
-  r.addEventListener('change', () => {
-    const mode = (document.querySelector('input[name="recip-mode"]:checked') as HTMLInputElement).value;
-    document.getElementById('segment-picker')?.classList.toggle('hidden', mode === 'custom');
-    document.getElementById('custom-picker')?.classList.toggle('hidden', mode !== 'custom');
-    updateSendButton();
+  document.getElementById('ch-email')?.addEventListener('change', () => {
+    document.getElementById('email-subject-wrap')?.classList.toggle('hidden', !chEmail());
+    document.getElementById('email-body-wrap')?.classList.toggle('hidden', !chEmail());
+    updatePreview();
   });
-});
+  document.getElementById('ch-sms')?.addEventListener('change', () => {
+    document.getElementById('sms-body-wrap')?.classList.toggle('hidden', !chSms());
+  });
 
-// ── Segment preview ───────────────────────────────────────────────────────────
-let segTimer: ReturnType<typeof setTimeout>;
-async function previewSegment() {
-  const seg = (document.getElementById('c-segment') as HTMLSelectElement).value;
-  const el  = document.getElementById('segment-preview')!;
-  el.textContent = 'Estimating…';
-  try {
-    const d = await apiFetch('admin-marketing', { params: { recipients: 'true', segment: seg } });
-    el.textContent = `~${d.count} recipient${d.count !== 1 ? 's' : ''}${d.preview?.length ? ': ' + d.preview.slice(0,3).map((p:any) => p.name || p.email).join(', ') + (d.count > 3 ? '…' : '') : ''}`;
-  } catch { el.textContent = 'Could not estimate'; }
-}
-document.getElementById('c-segment')?.addEventListener('change', () => {
-  clearTimeout(segTimer); segTimer = setTimeout(previewSegment, 400);
-});
+  // Schedule toggle
+  document.querySelectorAll('input[name="when"]').forEach(r => {
+    r.addEventListener('change', () => {
+      const sched = (document.querySelector('input[name="when"]:checked') as HTMLInputElement)?.value === 'schedule';
+      document.getElementById('schedule-wrap')?.classList.toggle('hidden', !sched);
+      document.getElementById('send-btn')!.textContent = sched ? 'Schedule Campaign' : 'Send Now';
+    });
+  });
 
-// ── Client search for custom picker ──────────────────────────────────────────
-let searchTimer: ReturnType<typeof setTimeout>;
-const searchInput = document.getElementById('client-search-input') as HTMLInputElement;
-const searchResults = document.getElementById('client-search-results')!;
+  // Schedule preview
+  document.getElementById('c-scheduled-for')?.addEventListener('input', (e) => {
+    const dt = new Date((e.target as HTMLInputElement).value);
+    const el = document.getElementById('schedule-preview')!;
+    if (isNaN(dt.getTime())) { el.textContent = ''; return; }
+    const diff = dt.getTime() - Date.now();
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    el.textContent = diff < 0 ? '⚠ Date is in the past' : `Sends in ${h > 0 ? h + 'h ' : ''}${m}m (${dt.toLocaleString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })})`;
+    el.className = `text-xs mt-1 ${diff < 0 ? 'text-red-500' : 'text-neutral-400'}`;
+  });
 
-searchInput?.addEventListener('input', () => {
-  clearTimeout(searchTimer);
-  const q = searchInput.value.trim();
-  if (!q) { searchResults.classList.add('hidden'); return; }
-  searchTimer = setTimeout(async () => {
+  // SMS counter
+  document.getElementById('c-body-sms')?.addEventListener('input', (e) => {
+    const l = (e.target as HTMLTextAreaElement).value.length;
+    const el = document.getElementById('sms-counter')!;
+    el.textContent = `${l}/160`; el.className = `text-xs ${l > 140 ? 'text-amber-600' : 'text-neutral-400'}`;
+  });
+
+  // ── Live preview ───────────────────────────────────────────────────────────
+  let previewMode = 'desktop';
+  document.getElementById('preview-desktop')?.addEventListener('click', () => {
+    previewMode = 'desktop';
+    document.getElementById('preview-container')!.style.maxWidth = '100%';
+    document.getElementById('preview-desktop')!.className = 'px-2 py-1 text-[10px] font-medium rounded bg-neutral-900 text-white';
+    document.getElementById('preview-mobile')!.className  = 'px-2 py-1 text-[10px] font-medium rounded text-neutral-500 hover:bg-neutral-100';
+  });
+  document.getElementById('preview-mobile')?.addEventListener('click', () => {
+    previewMode = 'mobile';
+    document.getElementById('preview-container')!.style.maxWidth = '375px';
+    document.getElementById('preview-mobile')!.className = 'px-2 py-1 text-[10px] font-medium rounded bg-neutral-900 text-white';
+    document.getElementById('preview-desktop')!.className  = 'px-2 py-1 text-[10px] font-medium rounded text-neutral-500 hover:bg-neutral-100';
+  });
+
+  function updatePreview() {
+    const subject = (document.getElementById('c-subject') as HTMLInputElement)?.value || '(no subject)';
+    const body    = (document.getElementById('c-body-html') as HTMLElement)?.innerHTML || '';
+    document.getElementById('preview-subject-bar')!.textContent = subject;
+    const footer = `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;text-align:center;">Bliss Dermacare · Tampa, FL · <span style="color:#9ca3af;text-decoration:underline;">Unsubscribe</span></div>`;
+    document.getElementById('email-preview-body')!.innerHTML = body
+      ? (body + footer)
+      : '<p style="color:#9ca3af;text-align:center;padding:2rem 0">Start typing to see preview…</p>';
+  }
+
+  document.getElementById('c-subject')?.addEventListener('input', updatePreview);
+  document.getElementById('c-body-html')?.addEventListener('input', updatePreview);
+
+  // ── Recipients ─────────────────────────────────────────────────────────────
+  document.querySelectorAll('input[name="rec-type"]').forEach(r => {
+    r.addEventListener('change', () => {
+      const isCustom = (document.querySelector('input[name="rec-type"]:checked') as HTMLInputElement)?.value === 'custom';
+      document.getElementById('rec-segment-wrap')?.classList.toggle('hidden', isCustom);
+      document.getElementById('rec-custom-wrap')?.classList.toggle('hidden', !isCustom);
+    });
+  });
+
+  // Segment preview
+  let segTimer: ReturnType<typeof setTimeout>;
+  async function previewSegment() {
+    const seg = (document.getElementById('c-segment') as HTMLSelectElement)?.value;
+    const el  = document.getElementById('segment-preview')!;
+    el.textContent = 'Estimating…';
     try {
-      const d = await apiFetch('admin-marketing', { params: { clientSearch: q } });
-      const clients = d.clients || [];
-      if (!clients.length) { searchResults.innerHTML = '<div class="px-3 py-2 text-xs text-neutral-400">No clients found.</div>'; }
-      else {
-        searchResults.innerHTML = clients.map((c: any) => `
-          <div class="px-3 py-2 text-sm hover:bg-neutral-50 cursor-pointer flex items-center gap-2 client-result" data-email="${esc(c.client_email)}" data-name="${esc(c.client_name)}" data-phone="${esc(c.client_phone||'')}">
-            <div class="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold text-primary-600 shrink-0">${(c.client_name||'?')[0].toUpperCase()}</div>
-            <div><div class="font-medium text-neutral-900">${esc(c.client_name||'—')}</div><div class="text-xs text-neutral-400">${esc(c.client_email)}</div></div>
-          </div>`).join('');
-        searchResults.querySelectorAll('.client-result').forEach(el => {
-          el.addEventListener('click', () => {
-            const e = (el as HTMLElement).dataset.email!;
-            if (!customRecipients.find(r => r.email === e)) {
-              customRecipients.push({ name: (el as HTMLElement).dataset.name, email: e, phone: (el as HTMLElement).dataset.phone });
-              renderCustomRecipients();
+      const d = await apiFetch('admin-marketing', { params: { recipients: 'true', segment: seg } });
+      const names = (d.preview || []).map((p: any) => p.name || p.email).join(', ');
+      el.textContent = `~${d.count} recipient${d.count !== 1 ? 's' : ''}${names ? ': ' + names + (d.count > (d.preview?.length || 0) ? '…' : '') : ''}`;
+    } catch { el.textContent = 'Could not estimate'; }
+  }
+  document.getElementById('c-segment')?.addEventListener('change', () => { clearTimeout(segTimer); segTimer = setTimeout(previewSegment, 400); });
+
+  // Client picker
+  let customRecipients: {name:string, email:string, phone?:string}[] = [];
+  let clientSearchTimer: ReturnType<typeof setTimeout>;
+  const searchInput = document.getElementById('client-search-input') as HTMLInputElement;
+  const resultsDiv  = document.getElementById('client-results')!;
+
+  searchInput?.addEventListener('input', () => {
+    clearTimeout(clientSearchTimer);
+    const q = searchInput.value.trim();
+    if (!q) { resultsDiv.classList.add('hidden'); return; }
+    clientSearchTimer = setTimeout(async () => {
+      try {
+        const d = await apiFetch('admin-marketing', { params: { clientSearch: q } });
+        const clients = d.clients || [];
+        if (!clients.length) { resultsDiv.innerHTML = '<div class="px-3 py-2 text-xs text-neutral-400">No results</div>'; resultsDiv.classList.remove('hidden'); return; }
+        resultsDiv.innerHTML = clients.map((c: any) => `<div class="client-result" data-name="${esc(c.client_name)}" data-email="${esc(c.client_email)}" data-phone="${esc(c.client_phone||'')}"><div class="text-sm font-medium text-neutral-900">${esc(c.client_name||c.client_email)}</div><div class="text-xs text-neutral-400">${esc(c.client_email)}</div></div>`).join('');
+        resultsDiv.querySelectorAll('.client-result').forEach(row => {
+          row.addEventListener('click', () => {
+            const r = row as HTMLElement;
+            const email = r.dataset.email!;
+            if (!customRecipients.find(x => x.email === email)) {
+              customRecipients.push({ name: r.dataset.name || email, email, phone: r.dataset.phone });
+              renderRecipientTags();
             }
-            searchInput.value = ''; searchResults.classList.add('hidden');
+            searchInput.value = ''; resultsDiv.classList.add('hidden');
           });
         });
-      }
-      searchResults.classList.remove('hidden');
-    } catch {}
-  }, 300);
-});
-document.addEventListener('click', (e) => { if (!searchInput.contains(e.target as Node) && !searchResults.contains(e.target as Node)) searchResults.classList.add('hidden'); });
-
-function renderCustomRecipients() {
-  const el    = document.getElementById('selected-recipients')!;
-  const count = document.getElementById('custom-count')!;
-  el.innerHTML = customRecipients.map((r, i) => `
-    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-primary-100 text-primary-700 font-medium">
-      ${esc(r.name || r.email)}
-      <button class="hover:text-primary-900 ml-0.5" data-idx="${i}" onclick="removeRecipient(${i})">×</button>
-    </span>`).join('');
-  count.textContent = `${customRecipients.length} recipient${customRecipients.length !== 1 ? 's' : ''} selected`;
-  updateSendButton();
-}
-(window as any).removeRecipient = (i: number) => { customRecipients.splice(i, 1); renderCustomRecipients(); };
-
-function updateSendButton() {
-  const mode = (document.querySelector('input[name="recip-mode"]:checked') as HTMLInputElement)?.value;
-  const btn  = document.getElementById('send-campaign-btn') as HTMLButtonElement;
-  if (!btn) return;
-  const disabled = mode === 'custom' && customRecipients.length === 0;
-  btn.disabled = disabled;
-  btn.title    = disabled ? 'Add at least one recipient' : '';
-}
-
-// ── Schedule picker ───────────────────────────────────────────────────────────
-document.querySelectorAll('input[name="send-timing"]').forEach(r => {
-  r.addEventListener('change', () => {
-    const sched = (document.querySelector('input[name="send-timing"]:checked') as HTMLInputElement).value === 'schedule';
-    document.getElementById('schedule-picker')?.classList.toggle('hidden', !sched);
-    const btn = document.getElementById('send-campaign-btn')!;
-    btn.textContent = sched ? 'Schedule Campaign' : 'Send Now';
-    updateScheduleLabel();
+        resultsDiv.classList.remove('hidden');
+      } catch {}
+    }, 300);
   });
-});
-['c-sched-date','c-sched-time'].forEach(id => document.getElementById(id)?.addEventListener('change', updateScheduleLabel));
-function updateScheduleLabel() {
-  const lbl   = document.getElementById('schedule-label')!;
-  const date  = (document.getElementById('c-sched-date') as HTMLInputElement).value;
-  const time  = (document.getElementById('c-sched-time') as HTMLInputElement).value;
-  if (!date || !time) { lbl.classList.add('hidden'); return; }
-  const dt = new Date(`${date}T${time}`);
-  const diff = Math.round((dt.getTime() - Date.now()) / 60000);
-  lbl.textContent = diff > 0 ? `Sends in ~${diff < 60 ? diff + ' min' : Math.round(diff/60) + 'h ' + (diff%60) + 'min'}` : 'Date is in the past!';
-  lbl.className = diff > 0 ? 'text-xs text-neutral-400 mt-1' : 'text-xs text-red-500 mt-1';
-  lbl.classList.remove('hidden');
-}
+  document.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('#rec-custom-wrap')) resultsDiv.classList.add('hidden'); });
 
-// ── Live preview ──────────────────────────────────────────────────────────────
-function previewUpdate() {
-  const subject = (document.getElementById('c-subject') as HTMLInputElement).value || '(no subject)';
-  const body    = (document.getElementById('c-body-html') as HTMLElement).innerHTML;
-  document.getElementById('preview-subject')!.textContent = subject;
-  document.getElementById('preview-body')!.innerHTML = body || '<p style="color:#9ca3af;text-align:center;padding:2rem 0">Start typing your email…</p>';
-}
-document.getElementById('c-subject')?.addEventListener('input', previewUpdate);
-document.getElementById('c-body-html')?.addEventListener('input', previewUpdate);
-
-// Mobile/desktop preview toggle
-document.getElementById('preview-desktop')?.addEventListener('click', () => {
-  document.getElementById('preview-wrap')!.style.maxWidth = '42rem';
-  document.getElementById('preview-desktop')!.className = 'preview-mode-btn px-2.5 py-1 text-xs rounded-lg bg-neutral-200 text-neutral-700 font-medium';
-  document.getElementById('preview-mobile')!.className  = 'preview-mode-btn px-2.5 py-1 text-xs rounded-lg text-neutral-400 font-medium hover:bg-neutral-200';
-});
-document.getElementById('preview-mobile')?.addEventListener('click', () => {
-  document.getElementById('preview-wrap')!.style.maxWidth = '22rem';
-  document.getElementById('preview-mobile')!.className  = 'preview-mode-btn px-2.5 py-1 text-xs rounded-lg bg-neutral-200 text-neutral-700 font-medium';
-  document.getElementById('preview-desktop')!.className = 'preview-mode-btn px-2.5 py-1 text-xs rounded-lg text-neutral-400 font-medium hover:bg-neutral-200';
-});
-
-// ── Rich text toolbar ─────────────────────────────────────────────────────────
-document.querySelectorAll('.fmt-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const cmd = (btn as HTMLElement).dataset.cmd!;
-    const val = (btn as HTMLElement).dataset.val;
-    document.getElementById('c-body-html')?.focus();
-    document.execCommand(cmd, false, val || undefined);
-    previewUpdate();
-  });
-});
-document.getElementById('insert-link-btn')?.addEventListener('click', () => {
-  const url = prompt('Enter URL:');
-  if (url) { document.execCommand('createLink', false, url); previewUpdate(); }
-});
-document.getElementById('insert-cta-btn')?.addEventListener('click', () => {
-  const text = prompt('Button text:', 'Book Now');
-  const href = prompt('Button URL:', 'https://blissdermacare.com/book/');
-  if (text && href) {
-    document.execCommand('insertHTML', false, `<div style="text-align:center;margin:16px 0"><a href="${href}" style="display:inline-block;background:#7c3aed;color:white;padding:12px 24px;border-radius:9999px;text-decoration:none;font-weight:600;font-size:14px">${text}</a></div>`);
-    previewUpdate();
-  }
-});
-
-// ── Template loading ──────────────────────────────────────────────────────────
-document.getElementById('load-template-btn')?.addEventListener('click', async () => {
-  if (!templates.length) {
-    try { const d = await apiFetch('admin-marketing', { params: { resource: 'templates' } }); templates = d.templates || []; } catch {}
-  }
-  const list = document.getElementById('template-picker-list')!;
-  list.innerHTML = templates.map(t => `
-    <div class="border border-neutral-200 rounded-xl p-4 hover:border-primary-300 cursor-pointer template-pick" data-id="${esc(t.id)}">
-      <div class="font-semibold text-sm text-neutral-900 mb-0.5">${esc(t.name)}</div>
-      <div class="text-xs text-neutral-500 truncate">${esc(t.subject || '(no subject)')}</div>
-    </div>`).join('');
-  list.querySelectorAll('.template-pick').forEach(el => {
-    el.addEventListener('click', () => {
-      const t = templates.find(x => x.id === (el as HTMLElement).dataset.id);
-      if (!t) return;
-      if (t.subject) (document.getElementById('c-subject') as HTMLInputElement).value = t.subject;
-      if (t.body_html) (document.getElementById('c-body-html') as HTMLElement).innerHTML = t.body_html;
-      if (t.body_sms) (document.getElementById('c-body-sms') as HTMLTextAreaElement).value = t.body_sms;
-      previewUpdate();
-      document.getElementById('template-modal')?.classList.add('hidden');
+  function renderRecipientTags() {
+    const container = document.getElementById('selected-recipients')!;
+    container.innerHTML = customRecipients.map((r, i) => `<span class="recipient-tag">${esc(r.name||r.email)}<button data-i="${i}" class="rm-tag ml-0.5 hover:text-red-600 text-neutral-500">×</button></span>`).join('');
+    container.querySelectorAll('.rm-tag').forEach(btn => {
+      btn.addEventListener('click', () => { customRecipients.splice(parseInt((btn as HTMLElement).dataset.i!), 1); renderRecipientTags(); });
     });
-  });
-  document.getElementById('template-modal')?.classList.remove('hidden');
-});
-document.getElementById('template-modal-close')?.addEventListener('click', () => document.getElementById('template-modal')?.classList.add('hidden'));
-document.getElementById('template-modal-overlay')?.addEventListener('click', () => document.getElementById('template-modal')?.classList.add('hidden'));
-
-// ── Test send ─────────────────────────────────────────────────────────────────
-document.getElementById('test-send-btn')?.addEventListener('click', async () => {
-  const email = prompt('Send test to (email address):');
-  if (!email) return;
-  const btn = document.getElementById('test-send-btn') as HTMLButtonElement;
-  const msg = document.getElementById('send-msg')!;
-  btn.disabled = true; btn.textContent = 'Sending…';
-  try {
-    await apiFetch('admin-marketing', { method: 'POST', body: {
-      name: (document.getElementById('c-name') as HTMLInputElement).value || 'Test',
-      subject: (document.getElementById('c-subject') as HTMLInputElement).value,
-      body_html: (document.getElementById('c-body-html') as HTMLElement).innerHTML,
-      body_text: '', action: 'test', test_email: email,
-    }});
-    msg.textContent = `✓ Test email sent to ${email}`; msg.className = 'text-xs text-center text-emerald-600'; msg.classList.remove('hidden');
-  } catch (e: any) {
-    msg.textContent = `Error: ${e.message}`; msg.className = 'text-xs text-center text-red-500'; msg.classList.remove('hidden');
-  } finally { btn.disabled = false; btn.textContent = 'Test Send'; }
-});
-
-// ── Submit campaign ───────────────────────────────────────────────────────────
-async function submitCampaign(action: string) {
-  const name     = (document.getElementById('c-name')     as HTMLInputElement).value.trim();
-  const subject  = (document.getElementById('c-subject')  as HTMLInputElement).value.trim();
-  const bodyHtml = (document.getElementById('c-body-html') as HTMLElement).innerHTML.trim();
-  const bodySms  = (document.getElementById('c-body-sms') as HTMLTextAreaElement).value.trim();
-  const emailOn  = (document.getElementById('ch-email')   as HTMLInputElement).checked;
-  const smsOn    = (document.getElementById('ch-sms')     as HTMLInputElement).checked;
-  const mode     = (document.querySelector('input[name="recip-mode"]:checked') as HTMLInputElement).value;
-  const segment  = (document.getElementById('c-segment')  as HTMLSelectElement).value;
-  const timing   = (document.querySelector('input[name="send-timing"]:checked') as HTMLInputElement).value;
-  const schedDate= (document.getElementById('c-sched-date') as HTMLInputElement).value;
-  const schedTime= (document.getElementById('c-sched-time') as HTMLInputElement).value;
-  const msgEl    = document.getElementById('send-msg')!;
-
-  if (!name) { msgEl.textContent = 'Campaign name is required.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
-  if (action === 'send' || action === 'schedule') {
-    if (emailOn && !bodyHtml) { msgEl.textContent = 'Email body is required.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
-    if (timing === 'schedule' && (!schedDate || !schedTime)) { msgEl.textContent = 'Please set a schedule date and time.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
+    document.getElementById('custom-count')!.textContent = `${customRecipients.length} recipient${customRecipients.length !== 1 ? 's' : ''} selected`;
   }
 
-  const actualAction = timing === 'schedule' && action === 'send' ? 'schedule' : action;
-  const btn = document.getElementById(action === 'send' ? 'send-campaign-btn' : 'save-draft-btn') as HTMLButtonElement;
-  btn.disabled = true; btn.textContent = action === 'send' ? (actualAction === 'schedule' ? 'Scheduling…' : 'Sending…') : 'Saving…';
-  if (actualAction === 'send') { msgEl.textContent = 'Sending — please wait…'; msgEl.className = 'text-xs text-center text-neutral-400'; msgEl.classList.remove('hidden'); }
+  // ── Templates ──────────────────────────────────────────────────────────────
+  let allTemplates: any[] = [];
+  document.getElementById('load-template-btn')?.addEventListener('click', async () => {
+    const picker = document.getElementById('template-picker')!;
+    if (!picker.classList.contains('hidden')) { picker.classList.add('hidden'); return; }
+    if (!allTemplates.length) {
+      try { const d = await apiFetch('admin-marketing', { params: { resource: 'templates' } }); allTemplates = d.templates || []; } catch {}
+    }
+    if (!allTemplates.length) { picker.innerHTML = '<div class="px-3 py-2 text-xs text-neutral-400">No templates yet.</div>'; }
+    else {
+      picker.innerHTML = allTemplates.map(t => `<div class="client-result cursor-pointer" data-tid="${esc(t.id)}"><div class="text-sm font-medium text-neutral-900">${esc(t.name)}</div><div class="text-xs text-neutral-400 truncate">${esc(t.subject||'')}</div></div>`).join('');
+      picker.querySelectorAll('.client-result').forEach(row => {
+        row.addEventListener('click', () => {
+          const t = allTemplates.find(x => x.id === (row as HTMLElement).dataset.tid)!;
+          if (t.subject)    (document.getElementById('c-subject') as HTMLInputElement).value = t.subject;
+          if (t.body_html)  (document.getElementById('c-body-html') as HTMLElement).innerHTML = t.body_html;
+          if (t.body_sms)   (document.getElementById('c-body-sms') as HTMLTextAreaElement).value = t.body_sms;
+          picker.classList.add('hidden'); updatePreview();
+        });
+      });
+    }
+    picker.classList.remove('hidden');
+  });
+  document.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('#email-body-wrap')) document.getElementById('template-picker')?.classList.add('hidden'); });
 
-  try {
-    const result = await apiFetch('admin-marketing', { method: 'POST', body: {
-      name, subject, body_html: bodyHtml, body_sms: bodySms,
-      channels: [...(emailOn ? ['email'] : []), ...(smsOn ? ['sms'] : [])],
-      segment_type: mode === 'custom' ? 'custom' : segment,
-      segment_label: mode === 'custom' ? `${customRecipients.length} specific clients` : segment,
-      custom_recipients: mode === 'custom' ? customRecipients.map(r => ({ email: r.email, name: r.name, phone: r.phone })) : [],
-      scheduled_for: actualAction === 'schedule' ? new Date(`${schedDate}T${schedTime}`).toISOString() : undefined,
-      action: actualAction,
-    }});
+  // ── Submit handlers ─────────────────────────────────────────────────────────
+  async function submit(action: string) {
+    const msgEl   = document.getElementById('action-msg')!;
+    const btn     = document.getElementById(action === 'test' ? 'test-send-btn' : action === 'draft' ? 'save-draft-btn' : 'send-btn') as HTMLButtonElement;
+    const name    = (document.getElementById('c-name')    as HTMLInputElement).value.trim();
+    const subject = (document.getElementById('c-subject') as HTMLInputElement).value.trim();
+    const bodyHtml = (document.getElementById('c-body-html') as HTMLElement).innerHTML.trim();
+    const bodySms  = (document.getElementById('c-body-sms')  as HTMLTextAreaElement).value.trim();
+    const segmentType = (document.getElementById('c-segment') as HTMLSelectElement)?.value || 'all';
+    const isCustom    = (document.querySelector('input[name="rec-type"]:checked') as HTMLInputElement)?.value === 'custom';
+    const isSched     = (document.querySelector('input[name="when"]:checked') as HTMLInputElement)?.value === 'schedule';
+    const schedFor    = (document.getElementById('c-scheduled-for') as HTMLInputElement)?.value;
 
-    if (actualAction === 'schedule') {
-      msgEl.textContent = `✓ Campaign scheduled for ${new Date(`${schedDate}T${schedTime}`).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}.`;
-      msgEl.className = 'text-xs text-center text-emerald-600';
-    } else if (actualAction === 'send') {
-      msgEl.textContent = `✓ Sent to ${result.sentCount} of ${result.total} recipients.${result.errorCount > 0 ? ` (${result.errorCount} failed)` : ''}`;
-      msgEl.className = 'text-xs text-center text-emerald-600';
+    if (!name) { msgEl.textContent = 'Campaign name is required.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
+
+    if (action === 'test') {
+      const testEmail = prompt('Send test to email address:'); if (!testEmail) return;
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const r = await apiFetch('admin-marketing', { params: { resource: 'campaign' }, method: 'POST', body: { name, subject, body_html: bodyHtml, body_text: '', body_sms: bodySms, channels: [chEmail() && 'email', chSms() && 'sms'].filter(Boolean), action: 'test', test_email: testEmail } });
+        msgEl.textContent = `✓ Test sent to ${r.sentTo}`; msgEl.className = 'text-xs text-center text-emerald-600';
+      } catch (e: any) { msgEl.textContent = `Error: ${e.message}`; msgEl.className = 'text-xs text-center text-red-500'; }
+      finally { btn.disabled = false; btn.textContent = '🧪 Test Send'; msgEl.classList.remove('hidden'); }
+      return;
     }
 
-    setTimeout(() => { closeCompose(); loadData(); }, 2500);
-  } catch (e: any) {
-    msgEl.textContent = `Error: ${e.message}`; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden');
-    btn.disabled = false; btn.textContent = action === 'send' ? (timing === 'schedule' ? 'Schedule Campaign' : 'Send Now') : 'Save Draft';
+    const effectiveAction = isSched ? 'schedule' : action;
+    if (effectiveAction === 'send' || effectiveAction === 'schedule') {
+      if (chEmail() && (!subject || !bodyHtml)) { msgEl.textContent = 'Email subject and body are required.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
+      if (chSms() && !bodySms) { msgEl.textContent = 'SMS message is required.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
+      if (effectiveAction === 'schedule' && !schedFor) { msgEl.textContent = 'Please select a send date/time.'; msgEl.className = 'text-xs text-center text-red-500'; msgEl.classList.remove('hidden'); return; }
+    }
+
+    btn.disabled = true;
+    btn.textContent = effectiveAction === 'send' ? 'Sending…' : effectiveAction === 'schedule' ? 'Scheduling…' : 'Saving…';
+    if (effectiveAction === 'send') { msgEl.textContent = 'Sending — this may take a moment for large lists…'; msgEl.className = 'text-xs text-center text-neutral-400'; msgEl.classList.remove('hidden'); }
+
+    try {
+      const result = await apiFetch('admin-marketing', {
+        params: { resource: 'campaign' },
+        method: 'POST',
+        body: {
+          name, subject, body_html: bodyHtml, body_text: '', body_sms: bodySms,
+          channels: [chEmail() && 'email', chSms() && 'sms'].filter(Boolean),
+          segment_type: isCustom ? 'custom' : segmentType,
+          segment_label: isCustom ? `${customRecipients.length} specific clients` : segmentType,
+          custom_recipients: isCustom ? customRecipients.map(r => ({ name: r.name, email: r.email, phone: r.phone })) : [],
+          scheduled_for: schedFor ? new Date(schedFor).toISOString() : null,
+          action: effectiveAction,
+        },
+      });
+      if (effectiveAction === 'send') {
+        msgEl.textContent = `✓ Sent to ${result.sentCount} of ${result.total} recipients.`;
+        msgEl.className = 'text-xs text-center text-emerald-600';
+        setTimeout(() => { closeCompose(); loadData(); }, 2500);
+      } else if (effectiveAction === 'schedule') {
+        msgEl.textContent = `✓ Scheduled for ${new Date(schedFor!).toLocaleString()}.`;
+        msgEl.className = 'text-xs text-center text-emerald-600';
+        setTimeout(() => { closeCompose(); loadData(); }, 2000);
+      } else { closeCompose(); loadData(); }
+    } catch (e: any) {
+      msgEl.textContent = `Error: ${e.message}`; msgEl.className = 'text-xs text-center text-red-500';
+      btn.disabled = false;
+      btn.textContent = effectiveAction === 'send' ? 'Send Now' : effectiveAction === 'schedule' ? 'Schedule Campaign' : 'Save Draft';
+    }
+    msgEl.classList.remove('hidden');
   }
-}
-document.getElementById('send-campaign-btn')?.addEventListener('click', () => submitCampaign('send'));
-document.getElementById('save-draft-btn')?.addEventListener('click', () => submitCampaign('draft'));
 
-// ── Load campaigns ────────────────────────────────────────────────────────────
-async function loadData() {
-  try {
-    const data = await apiFetch('admin-marketing', {});
-    const campaigns = data?.campaigns || [];
-    const sent      = campaigns.filter((c: any) => c.status === 'sent');
-    const scheduled = campaigns.filter((c: any) => c.status === 'scheduled');
-    const drafts    = campaigns.filter((c: any) => c.status === 'draft');
-    const totalSent = sent.reduce((s: number, c: any) => s + (c.sent_count || 0), 0);
+  document.getElementById('send-btn')?.addEventListener('click',       () => submit('send'));
+  document.getElementById('save-draft-btn')?.addEventListener('click', () => submit('draft'));
+  document.getElementById('test-send-btn')?.addEventListener('click',  () => submit('test'));
 
-    document.getElementById('mkt-stats')!.innerHTML = [
-      `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Campaigns</div><div class="text-2xl font-bold text-neutral-900">${campaigns.length}</div></div>`,
-      `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Emails Sent</div><div class="text-2xl font-bold text-neutral-900">${totalSent.toLocaleString()}</div></div>`,
-      `<div class="bg-white rounded-xl border ${scheduled.length > 0 ? 'border-l-4 border-amber-400' : 'border-neutral-200'} px-4 py-3.5"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Scheduled</div><div class="text-2xl font-bold text-neutral-900">${scheduled.length}</div></div>`,
-      `<div class="bg-white rounded-xl border ${data.unsubCount > 0 ? 'border-l-4 border-red-300' : 'border-neutral-200'} px-4 py-3.5"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Unsubscribes</div><div class="text-2xl font-bold text-neutral-900">${data.unsubCount}</div></div>`,
-    ].join('');
+  // ── Open / close compose ───────────────────────────────────────────────────
+  function openCompose() {
+    (document.getElementById('c-name') as HTMLInputElement).value = '';
+    (document.getElementById('c-subject') as HTMLInputElement).value = '';
+    (document.getElementById('c-body-html') as HTMLElement).innerHTML = '';
+    (document.getElementById('c-body-sms') as HTMLTextAreaElement).value = '';
+    customRecipients = []; renderRecipientTags();
+    document.getElementById('action-msg')!.className = 'text-xs text-center hidden';
+    document.getElementById('send-btn')!.textContent = 'Send Now';
+    document.getElementById('compose-panel')?.classList.remove('hidden');
+    updatePreview(); previewSegment();
+  }
+  function closeCompose() {
+    document.getElementById('compose-panel')?.classList.add('hidden');
+  }
+  document.getElementById('compose-btn')?.addEventListener('click', openCompose);
+  document.getElementById('compose-close')?.addEventListener('click', closeCompose);
+  document.getElementById('compose-overlay')?.addEventListener('click', closeCompose);
 
-    const STATUS: Record<string, string> = {
-      sent: 'bg-emerald-100 text-emerald-700', draft: 'bg-neutral-100 text-neutral-600',
-      sending: 'bg-amber-100 text-amber-700', scheduled: 'bg-blue-100 text-blue-700',
-    };
-    const wrap = document.getElementById('campaigns-list')!;
-    if (!campaigns.length) {
-      wrap.innerHTML = '<div class="px-6 py-12 text-center text-neutral-400 text-sm">No campaigns yet. Click "New Campaign" to start.</div>';
-    } else {
+  // ── Load main data ─────────────────────────────────────────────────────────
+  const STATUS_CLS: Record<string,string> = {
+    sent: 'bg-emerald-100 text-emerald-700', draft: 'bg-neutral-100 text-neutral-600',
+    sending: 'bg-amber-100 text-amber-700', scheduled: 'bg-blue-100 text-blue-700',
+  };
+
+  async function loadData() {
+    try {
+      const data = await apiFetch('admin-marketing', {});
+      const campaigns = data?.campaigns || [];
+      const sent      = campaigns.filter((c: any) => c.status === 'sent');
+      const drafts    = campaigns.filter((c: any) => c.status === 'draft');
+      const scheduled = campaigns.filter((c: any) => c.status === 'scheduled');
+      const totalSent = sent.reduce((s: number, c: any) => s + (c.sent_count || 0), 0);
+
+      document.getElementById('mkt-stats')!.innerHTML = [
+        `<a href="#" class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 hover:border-neutral-300 transition-colors"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Total Campaigns</div><div class="text-2xl font-bold text-neutral-900">${campaigns.length}</div><div class="text-[11px] text-neutral-400">${drafts.length} draft · ${scheduled.length} scheduled</div></a>`,
+        `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Total Sends</div><div class="text-2xl font-bold text-neutral-900">${totalSent.toLocaleString()}</div><div class="text-[11px] text-neutral-400">across ${sent.length} campaigns</div></div>`,
+        `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 ${scheduled.length > 0 ? 'border-l-4 border-blue-400' : ''}"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Scheduled</div><div class="text-2xl font-bold text-neutral-900">${scheduled.length}</div><div class="text-[11px] text-neutral-400">queued to send</div></div>`,
+        `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 ${data.unsubCount > 0 ? 'border-l-4 border-red-300' : ''}"><div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">Unsubscribes</div><div class="text-2xl font-bold text-neutral-900">${data.unsubCount}</div><div class="text-[11px] text-neutral-400">total opted out</div></div>`,
+      ].join('');
+
+      const wrap = document.getElementById('campaigns-list')!;
+      if (!campaigns.length) {
+        wrap.innerHTML = '<div class="px-6 py-12 text-center text-neutral-400 text-sm">No campaigns yet. Click "New Campaign" to get started.</div>';
+        return;
+      }
       wrap.innerHTML = `<table class="min-w-full text-sm"><thead><tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
         <th class="px-5 py-3 text-left">Campaign</th>
         <th class="px-5 py-3 text-left hidden md:table-cell">Audience</th>
         <th class="px-5 py-3 text-center">Status</th>
-        <th class="px-5 py-3 text-right hidden md:table-cell">Sent / Total</th>
+        <th class="px-5 py-3 text-right hidden md:table-cell">Sent</th>
+        <th class="px-5 py-3 text-right hidden md:table-cell">Errors</th>
         <th class="px-5 py-3 text-left hidden lg:table-cell">Date</th>
-        <th class="px-5 py-3 text-right"></th>
+        <th class="px-5 py-3 text-right">Actions</th>
       </tr></thead><tbody class="divide-y divide-neutral-50">${campaigns.map((c: any) => `
         <tr class="hover:bg-neutral-50 transition-colors">
-          <td class="px-5 py-3.5"><div class="font-medium text-neutral-900">${esc(c.name)}</div>${c.subject ? `<div class="text-xs text-neutral-400 truncate max-w-[180px]">${esc(c.subject)}</div>` : ''}</td>
+          <td class="px-5 py-3.5">
+            <div class="font-medium text-neutral-900">${esc(c.name)}</div>
+            ${c.subject ? `<div class="text-xs text-neutral-400 truncate max-w-[200px]">${esc(c.subject)}</div>` : ''}
+            <div class="flex gap-1 mt-0.5">${(c.channels||['email']).map((ch: string) => `<span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-neutral-100 text-neutral-500">${ch}</span>`).join('')}</div>
+          </td>
           <td class="px-5 py-3.5 hidden md:table-cell text-xs text-neutral-500">${esc(c.segment_label || c.segment_type)}</td>
-          <td class="px-5 py-3.5 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${STATUS[c.status]||'bg-neutral-100 text-neutral-600'}">${c.status}</span></td>
-          <td class="px-5 py-3.5 text-right text-xs hidden md:table-cell">${c.sent_count != null ? `${c.sent_count}${c.recipient_count ? ' / '+c.recipient_count : ''}${c.error_count ? ' <span class="text-red-400">('+c.error_count+' err)</span>' : ''}` : '—'}</td>
-          <td class="px-5 py-3.5 hidden lg:table-cell text-xs text-neutral-400">${c.sent_at ? new Date(c.sent_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : c.scheduled_for ? '🕐 ' + new Date(c.scheduled_for).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
-          <td class="px-5 py-3.5 text-right">${['draft','scheduled'].includes(c.status) ? `<button class="del-campaign text-xs text-red-400 hover:text-red-600 font-medium" data-id="${esc(c.id)}">Delete</button>` : ''}</td>
+          <td class="px-5 py-3.5 text-center">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${STATUS_CLS[c.status] || 'bg-neutral-100 text-neutral-600'}">${c.status}</span>
+            ${c.status === 'scheduled' && c.scheduled_for ? `<div class="text-[10px] text-blue-500 mt-0.5">${new Date(c.scheduled_for).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div>` : ''}
+          </td>
+          <td class="px-5 py-3.5 text-right text-xs text-neutral-500 hidden md:table-cell">${c.sent_count != null ? `${c.sent_count}/${c.recipient_count||0}` : '—'}</td>
+          <td class="px-5 py-3.5 text-right text-xs hidden md:table-cell ${c.error_count > 0 ? 'text-red-400' : 'text-neutral-300'}">${c.error_count || 0}</td>
+          <td class="px-5 py-3.5 hidden lg:table-cell text-xs text-neutral-400">${c.sent_at ? new Date(c.sent_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : c.scheduled_for ? '⏰ Scheduled' : new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
+          <td class="px-5 py-3.5 text-right">
+            ${(c.status === 'draft' || c.status === 'scheduled') ? `<button class="del-campaign-btn text-xs text-red-400 hover:text-red-600 font-medium" data-id="${esc(c.id)}">Delete</button>` : ''}
+          </td>
         </tr>`).join('')}</tbody></table>`;
-      wrap.querySelectorAll('.del-campaign').forEach(btn => {
+      wrap.querySelectorAll('.del-campaign-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
           if (!confirm('Delete this campaign?')) return;
-          try { await apiFetch('admin-marketing', { method: 'DELETE', body: { id: (btn as HTMLElement).dataset.id } }); await loadData(); }
+          try { await apiFetch('admin-marketing', { params: { resource: 'campaign' }, method: 'DELETE', body: { id: (btn as HTMLElement).dataset.id } }); await loadData(); }
           catch (e: any) { alert(e.message); }
         });
       });
+    } catch (e: any) {
+      document.getElementById('campaigns-list')!.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${e.message}</div>`;
     }
-  } catch (e: any) {
-    document.getElementById('campaigns-list')!.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${e.message}</div>`;
   }
-}
 
-// ── Load templates ────────────────────────────────────────────────────────────
-async function loadTemplates() {
-  try {
-    const d = await apiFetch('admin-marketing', { params: { resource: 'templates' } });
-    templates = d.templates || [];
-    const el = document.getElementById('templates-list')!;
-    if (!templates.length) { el.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No templates.</div>'; return; }
-    el.innerHTML = `<div class="divide-y divide-neutral-50">${templates.map(t => `
-      <div class="px-5 py-4 flex items-center justify-between gap-4 hover:bg-neutral-50">
-        <div class="flex-1 min-w-0">
-          <div class="font-medium text-neutral-900 text-sm">${esc(t.name)}</div>
-          <div class="text-xs text-neutral-400 truncate">${esc(t.subject||'(no subject)')}</div>
+  // ── Templates tab ──────────────────────────────────────────────────────────
+  async function loadTemplates() {
+    const wrap = document.getElementById('templates-list')!;
+    try {
+      const d = await apiFetch('admin-marketing', { params: { resource: 'templates' } });
+      const templates = d.templates || [];
+      wrap.innerHTML = `
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
+          <h2 class="font-semibold text-neutral-900 text-sm">Email Templates</h2>
+          <button id="new-template-btn" class="text-xs text-primary-600 hover:text-primary-700 font-medium">+ New template</button>
         </div>
-        <div class="flex gap-2 shrink-0">
-          <button class="use-template text-xs text-primary-600 hover:text-primary-700 font-medium" data-id="${esc(t.id)}">Use</button>
-          <button class="del-template text-xs text-red-400 hover:text-red-600 font-medium" data-id="${esc(t.id)}">Delete</button>
-        </div>
-      </div>`).join('')}</div>`;
-    el.querySelectorAll('.use-template').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const t = templates.find(x => x.id === (btn as HTMLElement).dataset.id);
-        if (!t) return;
-        openCompose();
-        if (t.subject) (document.getElementById('c-subject') as HTMLInputElement).value = t.subject;
-        if (t.body_html) (document.getElementById('c-body-html') as HTMLElement).innerHTML = t.body_html;
-        if (t.body_sms) (document.getElementById('c-body-sms') as HTMLTextAreaElement).value = t.body_sms;
-        previewUpdate();
-        document.querySelectorAll('.mkt-tab').forEach(b => {
-          const active = (b as HTMLElement).dataset.tab === 'campaigns';
-          b.classList.toggle('active-mtab', active);
-          b.classList.toggle('border-primary-600', active); b.classList.toggle('text-primary-700', active); b.classList.toggle('font-semibold', active);
-          b.classList.toggle('text-neutral-500', !active); b.classList.toggle('border-transparent', !active); b.classList.toggle('font-medium', !active);
+        <div class="divide-y divide-neutral-50">
+          ${templates.length ? templates.map((t: any) => `
+          <div class="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-neutral-50">
+            <div class="flex-1 min-w-0">
+              <div class="font-medium text-neutral-900 text-sm">${esc(t.name)}</div>
+              <div class="text-xs text-neutral-400 truncate">${esc(t.subject||'(no subject)')}</div>
+            </div>
+            <div class="flex gap-2 shrink-0">
+              <button class="use-template-btn text-xs text-primary-600 hover:text-primary-700 font-medium" data-tid="${esc(t.id)}">Use</button>
+              <button class="del-template-btn text-xs text-red-400 hover:text-red-600 font-medium" data-tid="${esc(t.id)}">Delete</button>
+            </div>
+          </div>`).join('') : '<div class="px-5 py-8 text-center text-neutral-400 text-sm">No custom templates. 5 starter templates are available when composing.</div>'}
+        </div>`;
+      document.getElementById('new-template-btn')?.addEventListener('click', async () => {
+        const name = prompt('Template name:'); if (!name) return;
+        const subject = prompt('Default subject (optional):') || '';
+        await apiFetch('admin-marketing', { params: { resource: 'templates' }, method: 'POST', body: { name, subject, body_html: '', body_sms: '' } });
+        loadTemplates(); allTemplates = [];
+      });
+      wrap.querySelectorAll('.use-template-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = templates.find((x: any) => x.id === (btn as HTMLElement).dataset.tid);
+          if (t) { if (t.subject) (document.getElementById('c-subject') as HTMLInputElement).value = t.subject; if (t.body_html) (document.getElementById('c-body-html') as HTMLElement).innerHTML = t.body_html; openCompose(); updatePreview(); }
         });
-        document.getElementById('tab-campaigns')?.classList.remove('hidden');
-        document.getElementById('tab-templates')?.classList.add('hidden');
       });
-    });
-    el.querySelectorAll('.del-template').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Delete this template?')) return;
-        await apiFetch('admin-marketing', { method: 'DELETE', body: { id: (btn as HTMLElement).dataset.id }, params: { resource: 'templates' } });
-        templates = templates.filter(t => t.id !== (btn as HTMLElement).dataset.id);
-        loadTemplates();
-      });
-    });
-  } catch {}
-}
-
-// ── Load audiences ────────────────────────────────────────────────────────────
-async function loadAudiences() {
-  try {
-    const d = await apiFetch('admin-marketing', { params: { resource: 'audiences' } });
-    audiences = d.audiences || [];
-    const el = document.getElementById('audiences-list')!;
-    if (!audiences.length) { el.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No saved audiences.</div>'; return; }
-    el.innerHTML = `<div class="divide-y divide-neutral-50">${audiences.map(a => `
-      <div class="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-neutral-50">
-        <div>
-          <div class="font-medium text-neutral-900 text-sm">${esc(a.name)}</div>
-          ${a.description ? `<div class="text-xs text-neutral-400">${esc(a.description)}</div>` : ''}
-        </div>
-        <div class="flex gap-2">
-          <button class="audience-use text-xs text-primary-600 hover:text-primary-700 font-medium" data-seg="${esc(a.segment_type)}">Use</button>
-        </div>
-      </div>`).join('')}</div>`;
-    el.querySelectorAll('.audience-use').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const seg = (btn as HTMLElement).dataset.seg!;
-        openCompose();
-        (document.getElementById('c-segment') as HTMLSelectElement).value = seg;
-        previewSegment();
-        document.querySelectorAll('.mkt-tab').forEach(b => {
-          const active = (b as HTMLElement).dataset.tab === 'campaigns';
-          b.classList.toggle('active-mtab', active); b.classList.toggle('border-primary-600', active); b.classList.toggle('text-primary-700', active); b.classList.toggle('font-semibold', active);
-          b.classList.toggle('text-neutral-500', !active); b.classList.toggle('border-transparent', !active); b.classList.toggle('font-medium', !active);
+      wrap.querySelectorAll('.del-template-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this template?')) return;
+          await apiFetch('admin-marketing', { params: { resource: 'templates' }, method: 'DELETE', body: { id: (btn as HTMLElement).dataset.tid } });
+          loadTemplates(); allTemplates = [];
         });
-        document.getElementById('tab-campaigns')?.classList.remove('hidden');
-        document.getElementById('tab-audiences')?.classList.add('hidden');
       });
-    });
-  } catch {}
-}
+    } catch (e: any) { wrap.innerHTML = `<div class="px-5 py-6 text-red-500 text-sm">${e.message}</div>`; }
+  }
 
-// ── Load unsubscribes ─────────────────────────────────────────────────────────
-async function loadUnsubs(search = '') {
-  try {
-    const params: Record<string, string> = { resource: 'unsubscribes' };
-    if (search) params.search = search;
-    const d = await apiFetch('admin-marketing', { params });
-    const unsubs = d.unsubscribes || [];
-    const el = document.getElementById('unsubs-list')!;
-    if (!unsubs.length) { el.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No unsubscribes yet.</div>'; return; }
-    el.innerHTML = `<table class="min-w-full text-sm"><thead><tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
-      <th class="px-5 py-3 text-left">Email</th>
-      <th class="px-5 py-3 text-center">Email Unsub</th>
-      <th class="px-5 py-3 text-center">SMS Unsub</th>
-      <th class="px-5 py-3 text-left hidden md:table-cell">Source</th>
-      <th class="px-5 py-3 text-left hidden lg:table-cell">Date</th>
-      <th class="px-5 py-3 text-right">Actions</th>
-    </tr></thead><tbody class="divide-y divide-neutral-50">${unsubs.map((u: any) => `
-      <tr class="hover:bg-neutral-50">
-        <td class="px-5 py-3.5 text-sm font-medium text-neutral-900">${esc(u.email||'—')}</td>
-        <td class="px-5 py-3.5 text-center text-xs">${u.unsub_email ? '<span class="text-red-500 font-bold">✗</span>' : '<span class="text-emerald-500">✓</span>'}</td>
-        <td class="px-5 py-3.5 text-center text-xs">${u.unsub_sms   ? '<span class="text-red-500 font-bold">✗</span>' : '<span class="text-emerald-500">✓</span>'}</td>
-        <td class="px-5 py-3.5 hidden md:table-cell text-xs text-neutral-400">${esc(u.source||'—')}</td>
-        <td class="px-5 py-3.5 hidden lg:table-cell text-xs text-neutral-400">${new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
-        <td class="px-5 py-3.5 text-right">
-          <button class="resub-btn text-xs text-emerald-600 hover:text-emerald-700 font-medium" data-id="${esc(u.id)}">Re-subscribe</button>
+  // ── Audiences tab ──────────────────────────────────────────────────────────
+  async function loadAudiences() {
+    const wrap = document.getElementById('audiences-list')!;
+    try {
+      const d = await apiFetch('admin-marketing', { params: { resource: 'audiences' } });
+      const audiences = d.audiences || [];
+      wrap.innerHTML = `
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
+          <h2 class="font-semibold text-neutral-900 text-sm">Saved Audiences</h2>
+          <button id="new-audience-btn" class="text-xs text-primary-600 hover:text-primary-700 font-medium">+ New audience</button>
+        </div>
+        <table class="min-w-full text-sm"><thead><tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+          <th class="px-5 py-3 text-left">Name</th>
+          <th class="px-5 py-3 text-left">Segment Rule</th>
+          <th class="px-5 py-3 text-left hidden md:table-cell">Description</th>
+          <th class="px-5 py-3 text-right">Actions</th>
+        </tr></thead><tbody class="divide-y divide-neutral-50">
+        ${audiences.map((a: any) => `<tr class="hover:bg-neutral-50">
+          <td class="px-5 py-3.5 font-medium text-neutral-900">${esc(a.name)}</td>
+          <td class="px-5 py-3.5"><code class="text-xs bg-neutral-100 px-2 py-0.5 rounded">${esc(a.segment_type)}</code></td>
+          <td class="px-5 py-3.5 text-xs text-neutral-400 hidden md:table-cell">${esc(a.description||'')}</td>
+          <td class="px-5 py-3.5 text-right">
+            <button class="use-audience-btn text-xs text-primary-600 hover:text-primary-700 font-medium mr-2" data-seg="${esc(a.segment_type)}" data-name="${esc(a.name)}">Use</button>
+            ${!['all','recent_30','recent_60','lapsed_90','members','new_clients'].includes(a.segment_type) ? `<button class="del-audience-btn text-xs text-red-400 hover:text-red-600 font-medium" data-aid="${esc(a.id)}">Delete</button>` : ''}
+          </td>
+        </tr>`).join('')}
+        </tbody></table>`;
+      document.getElementById('new-audience-btn')?.addEventListener('click', async () => {
+        const name = prompt('Audience name:'); if (!name) return;
+        const segOpts = ['all','recent_30','recent_60','lapsed_90','members','new_clients'];
+        const seg = prompt(`Segment rule (${segOpts.join(' | ')}):`);
+        if (!seg || !segOpts.includes(seg)) { alert('Invalid segment type'); return; }
+        const desc = prompt('Description (optional):') || '';
+        await apiFetch('admin-marketing', { params: { resource: 'audiences' }, method: 'POST', body: { name, segment_type: seg, description: desc } });
+        loadAudiences();
+      });
+      wrap.querySelectorAll('.use-audience-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const el = document.getElementById('c-segment') as HTMLSelectElement;
+          if (el) el.value = (btn as HTMLElement).dataset.seg!;
+          document.querySelector('input[name="rec-type"][value="segment"]')?.dispatchEvent(new Event('change'));
+          (document.querySelector('input[name="rec-type"][value="segment"]') as HTMLInputElement).checked = true;
+          openCompose(); previewSegment();
+        });
+      });
+      wrap.querySelectorAll('.del-audience-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this audience?')) return;
+          await apiFetch('admin-marketing', { params: { resource: 'audiences' }, method: 'DELETE', body: { id: (btn as HTMLElement).dataset.aid } });
+          loadAudiences();
+        });
+      });
+    } catch (e: any) { wrap.innerHTML = `<div class="px-5 py-6 text-red-500 text-sm">${e.message}</div>`; }
+  }
+
+  // ── Unsubscribes tab ───────────────────────────────────────────────────────
+  let unsubTimer: ReturnType<typeof setTimeout>;
+  async function loadUnsubs(search = '') {
+    const wrap = document.getElementById('unsubs-list')!;
+    wrap.innerHTML = '<div class="px-5 py-6 text-center text-neutral-400 text-sm">Loading…</div>';
+    try {
+      const params: Record<string,string> = { resource: 'unsubscribes' };
+      if (search) params.search = search;
+      const d = await apiFetch('admin-marketing', { params });
+      const unsubs = d.unsubscribes || [];
+      if (!unsubs.length) { wrap.innerHTML = '<div class="px-5 py-8 text-center text-neutral-400 text-sm">No unsubscribes found.</div>'; return; }
+      wrap.innerHTML = `<table class="min-w-full text-sm"><thead><tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+        <th class="px-5 py-3 text-left">Email</th>
+        <th class="px-5 py-3 text-center">Email</th>
+        <th class="px-5 py-3 text-center">SMS</th>
+        <th class="px-5 py-3 text-left hidden md:table-cell">Source</th>
+        <th class="px-5 py-3 text-left hidden lg:table-cell">Date</th>
+        <th class="px-5 py-3 text-right">Actions</th>
+      </tr></thead><tbody class="divide-y divide-neutral-50">
+      ${unsubs.map((u: any) => `<tr class="hover:bg-neutral-50">
+        <td class="px-5 py-3 font-mono text-xs text-neutral-900">${esc(u.email||'')}</td>
+        <td class="px-5 py-3 text-center">${u.unsub_email ? '🔴' : '🟢'}</td>
+        <td class="px-5 py-3 text-center">${u.unsub_sms ? '🔴' : '🟢'}</td>
+        <td class="px-5 py-3 text-xs text-neutral-400 hidden md:table-cell">${esc(u.source||'')}</td>
+        <td class="px-5 py-3 text-xs text-neutral-400 hidden lg:table-cell">${new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+        <td class="px-5 py-3 text-right">
+          <button class="resub-btn text-xs text-emerald-600 hover:text-emerald-700 font-medium" data-uid="${esc(u.id)}">Re-subscribe</button>
         </td>
-      </tr>`).join('')}</tbody></table>`;
-    el.querySelectorAll('.resub-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Re-subscribe this address?')) return;
-        await apiFetch('admin-marketing', { method: 'PATCH', body: { id: (btn as HTMLElement).dataset.id, resubscribe: true }, params: { resource: 'unsubscribes' } });
-        loadUnsubs(search);
+      </tr>`).join('')}
+      </tbody></table>`;
+      wrap.querySelectorAll('.resub-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await apiFetch('admin-marketing', { params: { resource: 'unsubscribes' }, method: 'PATCH', body: { id: (btn as HTMLElement).dataset.uid, resubscribe: true } });
+          loadUnsubs(search);
+        });
       });
-    });
-  } catch {}
-}
+    } catch (e: any) { wrap.innerHTML = `<div class="px-5 py-6 text-red-500 text-sm">${e.message}</div>`; }
+  }
 
-let unsubSearchTimer: ReturnType<typeof setTimeout>;
-document.getElementById('unsub-search')?.addEventListener('input', (e) => {
-  clearTimeout(unsubSearchTimer);
-  unsubSearchTimer = setTimeout(() => loadUnsubs((e.target as HTMLInputElement).value.trim()), 350);
-});
-document.getElementById('add-unsub-btn')?.addEventListener('click', async () => {
-  const email = prompt('Email to unsubscribe / re-subscribe:');
-  if (!email) return;
-  const action = confirm('OK = Unsubscribe · Cancel = Re-subscribe');
-  await apiFetch('unsubscribe', { method: 'POST', body: { email, unsub_email: action, resubscribe: !action } });
-  loadUnsubs();
-});
+  document.getElementById('unsub-search')?.addEventListener('input', (e) => {
+    clearTimeout(unsubTimer);
+    unsubTimer = setTimeout(() => loadUnsubs((e.target as HTMLInputElement).value.trim()), 400);
+  });
 
-loadData();
-previewSegment();
+  document.getElementById('add-unsub-btn')?.addEventListener('click', async () => {
+    const email = prompt('Email to add/update:'); if (!email) return;
+    const reSubscribe = !confirm(`Click OK to UNSUBSCRIBE this email.\nClick Cancel to RE-SUBSCRIBE.`);
+    await apiFetch('unsubscribe', { method: 'POST', body: { email, unsub_email: !reSubscribe, resubscribe: reSubscribe } });
+    loadUnsubs();
+  });
+
+  loadData();
 </script>
-
-<style>
-  .active-mtab { border-bottom-color: #7c3aed !important; color: #6d28d9 !important; font-weight: 600 !important; }
-</style>
 </AdminLayout>
