@@ -287,23 +287,31 @@ const cfg = (id: string) => activeNav === id
       document.querySelectorAll('.mobile-owner-only').forEach(el => el.classList.remove('hidden'));
     }
 
-    // ── Collapsible sections ──────────────────────────────────────────────────
+    // ── Collapsible sections (accordion — one open at a time) ────────────────
     const activeSection = document.getElementById('sidebar-nav')?.dataset.activeSection || 'crm';
     const sectionIds    = ['crm', 'cms', 'settings'];
 
+    function setSection(openId: string) {
+      sectionIds.forEach(id => {
+        const body    = document.getElementById(`nav-body-${id}`);
+        const section = document.getElementById(`nav-section-${id}`);
+        const chevron = section?.querySelector<HTMLElement>('.nav-chevron');
+        if (!body) return;
+        const open = id === openId;
+        body.style.display = open ? '' : 'none';
+        if (chevron) chevron.style.transform = open ? '' : 'rotate(-90deg)';
+      });
+    }
+
+    setSection(activeSection);
+
     sectionIds.forEach(id => {
-      const body    = document.getElementById(`nav-body-${id}`);
       const section = document.getElementById(`nav-section-${id}`);
-      const chevron = section?.querySelector<HTMLElement>('.nav-chevron');
       const btn     = section?.querySelector<HTMLElement>('.nav-section-header');
-      if (!body) return;
-      const open = id === activeSection;
-      body.style.display = open ? '' : 'none';
-      if (chevron) chevron.style.transform = open ? '' : 'rotate(-90deg)';
+      const body    = document.getElementById(`nav-body-${id}`);
       btn?.addEventListener('click', () => {
-        const nowOpen = body.style.display !== 'none';
-        body.style.display = nowOpen ? 'none' : '';
-        if (chevron) chevron.style.transform = nowOpen ? 'rotate(-90deg)' : '';
+        const nowOpen = body?.style.display !== 'none';
+        setSection(nowOpen ? '' : id);
       });
     });
 
