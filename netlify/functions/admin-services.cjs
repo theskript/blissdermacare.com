@@ -18,6 +18,13 @@ const CORS = {
 
 const WRITABLE = new Set(['slug','name','category','price','duration','description','tagline','image_url','is_package','is_bookable','active','featured','badge','sort_order']);
 
+// Converts any string into a URL-safe lowercase slug
+function slugify(str) {
+  return String(str || '').toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function sanitize(body = {}) {
   const clean = {};
   for (const [k, v] of Object.entries(body)) { if (WRITABLE.has(k)) clean[k] = v; }
@@ -64,9 +71,12 @@ exports.handler = async (event) => {
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON' }) };
       }
       const fields = sanitize(body);
-      if (!fields.slug || !fields.name || !fields.category) {
-        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'slug, name, and category are required' }) };
+      if (!fields.name || !fields.category) {
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'name and category are required' }) };
       }
+      // Auto-generate slug from name — never trust a user-submitted slug
+      fields.slug = slugify(fields.name);
+      if (!fields.slug) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Could not generate a valid slug from the name provided' }) };
       if (typeof fields.price !== 'number') fields.price = parseInt(fields.price || 0, 10);
       fields.updated_at = new Date().toISOString();
       const { data, error } = await sb.from('services').insert(fields).select().single();
@@ -85,6 +95,8 @@ exports.handler = async (event) => {
       if (!id) return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'id is required' }) };
       const fields = sanitize(rest);
       if (typeof fields.price === 'string') fields.price = parseInt(fields.price, 10);
+      // Sanitize slug if explicitly provided; otherwise preserve existing slug
+      if (fields.slug !== undefined) fields.slug = slugify(fields.slug);
       // is_bookable always mirrors active — no separate toggle needed
       if (fields.active !== undefined) fields.is_bookable = fields.active;
       fields.updated_at = new Date().toISOString();

@@ -209,12 +209,15 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <input id="f-name" type="text" value="${esc(svc?.name || '')}"
             class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
         </div>
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Slug *</label>
-          <input id="f-slug" type="text" value="${esc(svc?.slug || '')}" ${svc ? '' : 'placeholder="auto-generated from name"'}
-            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm font-mono focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
-          <p class="text-xs text-neutral-400 mt-1">URL-safe identifier used in the booking form. <strong>Don't change</strong> for existing services — it would break booked appointments referencing this slug.</p>
-        </div>
+        ${svc
+          ? `<div>
+               <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Slug <span class="text-neutral-300 font-normal normal-case tracking-normal">(read-only — auto-generated from name at creation)</span></label>
+               <p class="w-full px-3 py-2 rounded-lg bg-neutral-50 border border-neutral-200 text-sm font-mono text-neutral-500">${esc(svc.slug)}</p>
+             </div>`
+          : `<div class="px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700">
+               <strong>Slug is auto-generated</strong> from the service name when you save. You cannot set it manually.
+             </div>`
+        }
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Category *</label>
@@ -293,18 +296,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <div id="f-msg" class="text-xs text-center hidden"></div>
       `;
 
-      // Auto-generate slug from name for new services
-      if (!svc) {
-        const nameEl = document.getElementById('f-name') as HTMLInputElement;
-        const slugEl = document.getElementById('f-slug') as HTMLInputElement;
-        nameEl.addEventListener('input', () => {
-          if (!slugEl.dataset.manual) {
-            slugEl.value = nameEl.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-          }
-        });
-        slugEl.addEventListener('input', () => { slugEl.dataset.manual = '1'; });
-      }
-
       // Image URL live preview
       const imgUrlEl  = document.getElementById('f-image-url') as HTMLInputElement;
       const previewEl = document.getElementById('f-img-preview') as HTMLElement;
@@ -351,7 +342,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         const btn = document.getElementById('f-save-btn') as HTMLButtonElement;
         const msg = document.getElementById('f-msg')!;
         const name     = (document.getElementById('f-name')     as HTMLInputElement).value.trim();
-        const slug     = (document.getElementById('f-slug')     as HTMLInputElement).value.trim();
         const category = (document.getElementById('f-category') as HTMLSelectElement).value;
         const priceRaw = (document.getElementById('f-price')    as HTMLInputElement).value;
         const duration = parseInt((document.getElementById('f-duration') as HTMLInputElement).value || '0', 10);
@@ -364,8 +354,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         const featured = (document.getElementById('f-featured')  as HTMLInputElement).checked;
         const badge    = (document.getElementById('f-badge')     as HTMLInputElement).value.trim() || null;
 
-        if (!name || !slug || !category || !priceRaw) {
-          msg.textContent = 'Name, slug, category, and price are required.';
+        if (!name || !category || !priceRaw) {
+          msg.textContent = 'Name, category, and price are required.';
           msg.className = 'text-xs text-center text-red-500';
           return;
         }
@@ -373,7 +363,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
         btn.disabled = true; btn.textContent = 'Saving…';
         try {
-          const fields = { name, slug, category, price, duration: duration || null,
+          const fields = { name, category, price, duration: duration || null,
             sort_order: sortOrder, tagline: tagline || null, description: desc || null,
             image_url: imageUrl || null, is_bookable: active, is_package: isPackage, active, featured, badge };
           if (editingId) {

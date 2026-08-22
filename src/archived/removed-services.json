@@ -1,0 +1,132 @@
+{
+  "_note": "Services removed from production codebase on 2026-08-22. These slugs are not present in the Supabase services table. Restore by re-adding to the DB via Admin → Services and re-adding the hardcoded cards to the relevant pages.",
+  "services": [
+    {
+      "slug": "brightening-peel",
+      "name": "Brightening Peel",
+      "category": "facials",
+      "price_usd": 128,
+      "duration_min": 45,
+      "description": "Medical-grade chemical exfoliation for texture & hyperpigmentation.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "high-frequency-skin-tightening",
+      "name": "High Frequency Skin Tightening",
+      "category": "facials",
+      "price_usd": 95,
+      "duration_min": 45,
+      "description": "Electrical current firms, tightens & lifts. Reduces pores, stimulates collagen & clears blemishes.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "pumpkin-enzyme-facial",
+      "name": "Pumpkin Enzyme Facial",
+      "category": "facials",
+      "price_usd": 85,
+      "duration_min": 60,
+      "description": "Gentle enzyme exfoliation that brightens and smooths — ideal for all skin types, including sensitive.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro", "src/pages/index.astro"]
+    },
+    {
+      "slug": "chlorophyll-skin-tightening-facial",
+      "name": "Chlorophyll Skin Tightening Facial",
+      "category": "facials",
+      "price_usd": 105,
+      "duration_min": 60,
+      "description": "Plant-powered formula visibly reduces fine lines & wrinkles while firming the skin's surface.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro", "src/pages/index.astro"]
+    },
+    {
+      "slug": "pineapple-enzyme-facial",
+      "name": "Pineapple Enzyme Facial",
+      "category": "facials",
+      "price_usd": 88,
+      "duration_min": 60,
+      "description": "Bromelain-rich exfoliation that refines pores & evens texture. Perfect for combination skin.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro", "src/pages/index.astro"]
+    },
+    {
+      "slug": "skin-recovery-facial",
+      "name": "Skin Recovery Facial",
+      "category": "facials",
+      "price_usd": 92,
+      "duration_min": 60,
+      "description": "Multi-vitamin infusion deeply nourishes & replenishes dry and dehydrated skin back to radiance.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro", "src/pages/index.astro"]
+    },
+    {
+      "slug": "dermaplane-glow-facial",
+      "name": "Dermaplane Glow Facial",
+      "category": "facials",
+      "price_usd": 105,
+      "duration_min": 60,
+      "description": "Surgical scalpel removes dead cells and vellus hair. Brightening serum + hydrating glow mask. Zero downtime.",
+      "badge": "NEW",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "vampire-facial-prp",
+      "name": "Vampire Facial (PRP)",
+      "category": "facials",
+      "price_usd": 380,
+      "duration_min": 75,
+      "description": "PRP + microneedling fades scars, reverses aging & resurfaces skin. Note: DB has prp-treatment instead.",
+      "pages_removed_from": ["src/pages/services/facials/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "collagen-induction-therapy",
+      "name": "Collagen Induction Therapy",
+      "category": "advanced",
+      "price_usd": 299,
+      "duration_min": 60,
+      "description": "Precision microneedling triggers natural collagen production. Reduces fine lines, scars, enlarged pores.",
+      "pages_removed_from": ["src/pages/services/advanced-treatments/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "lip-neutralization",
+      "name": "Lip Neutralization",
+      "category": "semipermanent",
+      "price_usd": 399,
+      "duration_min": 120,
+      "description": "Corrects dark, uneven, or discolored lip pigmentation. Prepares lips for lip blush.",
+      "pages_removed_from": ["src/pages/services/semipermanent-makeup/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "custom-semipermanent-makeup",
+      "name": "Custom Semipermanent Makeup",
+      "category": "semipermanent",
+      "price_usd": 450,
+      "duration_min": 120,
+      "description": "Fully bespoke permanent makeup design. Consultation-based.",
+      "pages_removed_from": ["src/pages/services/semipermanent-makeup/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "lab-collection",
+      "name": "Personalized Lab Collection",
+      "category": "wellness",
+      "price_usd": 199,
+      "duration_min": 30,
+      "description": "Comprehensive bloodwork drawn and analyzed for total body optimization.",
+      "pages_removed_from": ["src/pages/services/ancillary/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "hormone-lab-panel",
+      "name": "Hormone Lab Panel Support",
+      "category": "wellness",
+      "price_usd": 349,
+      "duration_min": 45,
+      "description": "Specialized hormone panel draw with clinical consultation.",
+      "pages_removed_from": ["src/pages/services/ancillary/index.astro", "src/pages/book/index.astro"]
+    },
+    {
+      "slug": "regenerative-blood-services",
+      "name": "Regenerative Blood-Based Services",
+      "category": "wellness",
+      "price_usd": 450,
+      "duration_min": 60,
+      "description": "Advanced regenerative therapies using biological components — exosomes, PRP derivatives, plasma.",
+      "pages_removed_from": ["src/pages/services/ancillary/index.astro", "src/pages/book/index.astro"]
+    }
+  ]
+}
