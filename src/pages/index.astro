@@ -9,10 +9,10 @@ import Layout from '../layouts/Layout.astro';
       <div class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
         <div class="order-2 lg:order-1">
           <span class="mb-4 block text-xs font-semibold uppercase tracking-[0.24em] text-primary-600">Tampa, Florida</span>
-          <h1 class="mb-6 max-w-3xl text-4xl font-serif leading-tight text-neutral-900 md:text-5xl lg:text-6xl">
+          <h1 class="mb-6 max-w-3xl text-4xl font-serif leading-tight text-neutral-900 md:text-5xl lg:text-6xl" data-sc="hero_h1">
             Clinical skincare with a softer, more personal approach.
           </h1>
-          <p class="mb-8 max-w-2xl text-lg leading-relaxed text-neutral-600 md:text-xl">
+          <p class="mb-8 max-w-2xl text-lg leading-relaxed text-neutral-600 md:text-xl" data-sc="hero_sub">
             Bliss Dermacare offers customized facials and skin-focused treatments designed to restore clarity, calm, and confidence without the rushed feel of a typical medspa visit.
           </p>
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -572,6 +572,19 @@ import Layout from '../layouts/Layout.astro';
           }
         });
       }).catch(() => {});
+  </script>
+
+  <script is:inline>
+    fetch('/.netlify/functions/get-content?page=home')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var c=d.content||{};
+        Object.keys(c).forEach(function(k){
+          var el=document.querySelector('[data-sc="'+k+'"]');
+          if(!el||!c[k].value)return;
+          el.textContent=c[k].value;
+        });
+      }).catch(function(){});
   </script>
 
 </Layout>

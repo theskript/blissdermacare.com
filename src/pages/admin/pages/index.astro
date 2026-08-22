@@ -59,12 +59,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         </div>
       </details>
 
+      <!-- Mobile tab strip (one panel at a time on small screens) -->
+      <div class="flex border border-neutral-200 rounded-xl overflow-hidden mb-3 lg:hidden bg-white">
+        <button class="builder-panel-tab flex-1 py-2.5 text-xs font-semibold bg-neutral-900 text-white" data-target="panel-palette">Add Block</button>
+        <button class="builder-panel-tab flex-1 py-2.5 text-xs font-medium text-neutral-500 bg-white border-l border-neutral-200" data-target="panel-canvas">Canvas</button>
+        <button class="builder-panel-tab flex-1 py-2.5 text-xs font-medium text-neutral-500 bg-white border-l border-neutral-200" data-target="panel-props">Properties</button>
+      </div>
+
       <!-- Editor canvas -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
         <!-- Block palette (left) -->
-        <div class="lg:col-span-1">
-          <div class="bg-white rounded-xl border border-neutral-200 p-3 sticky top-4">
+        <div class="lg:col-span-1" id="panel-palette">
+          <div class="bg-white rounded-xl border border-neutral-200 p-3 lg:sticky lg:top-4">
             <p class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2.5">Add Block</p>
             <div class="space-y-1" id="block-palette">
               <!-- Populated by JS -->
@@ -73,7 +80,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         </div>
 
         <!-- Canvas (center) -->
-        <div class="lg:col-span-2">
+        <div class="lg:col-span-2 hidden lg:block" id="panel-canvas">
           <div id="canvas-blocks" class="space-y-2 min-h-[400px]">
             <div id="canvas-empty" class="border-2 border-dashed border-neutral-200 rounded-xl p-12 text-center text-neutral-400 text-sm">
               Click a block type from the left panel to start building your page.
@@ -82,8 +89,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         </div>
 
         <!-- Properties panel (right) -->
-        <div class="lg:col-span-1">
-          <div id="props-panel" class="bg-white rounded-xl border border-neutral-200 p-4 sticky top-4">
+        <div class="lg:col-span-1 hidden lg:block" id="panel-props">
+          <div id="props-panel" class="bg-white rounded-xl border border-neutral-200 p-4 lg:sticky lg:top-4">
             <p class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-3">Block Properties</p>
             <p class="text-xs text-neutral-400 text-center py-4">Select a block to edit its properties.</p>
           </div>
@@ -135,6 +142,28 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     let selectedBlockId: string | null = null;
     let dragSrcId: string | null = null;
 
+    // ── Mobile panel switching ────────────────────────────────────────────────
+    function switchMobilePanel(panelId: string) {
+      if (window.innerWidth >= 1024) return;
+      ['panel-palette', 'panel-canvas', 'panel-props'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== panelId);
+      });
+      document.querySelectorAll<HTMLElement>('.builder-panel-tab').forEach(btn => {
+        const isActive = btn.dataset.target === panelId;
+        btn.classList.toggle('bg-neutral-900', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('font-semibold', isActive);
+        btn.classList.toggle('text-neutral-500', !isActive);
+        btn.classList.toggle('font-medium', !isActive);
+        btn.classList.toggle('bg-white', !isActive);
+      });
+    }
+
+    document.querySelectorAll<HTMLElement>('.builder-panel-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchMobilePanel(btn.dataset.target!));
+    });
+
     // ── Render block palette ──────────────────────────────────────────────────
     function renderPalette() {
       const el = document.getElementById('block-palette')!;
@@ -149,6 +178,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           renderCanvas();
           selectedBlockId = blocks[blocks.length - 1].id;
           renderProps();
+          switchMobilePanel('panel-canvas');
         });
       });
     }
@@ -188,6 +218,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           if (target.classList.contains('block-up') || target.classList.contains('block-down') || target.classList.contains('block-del')) return;
           selectedBlockId = block.id;
           renderCanvas(); renderProps();
+          switchMobilePanel('panel-props');
         });
 
         // Move up/down

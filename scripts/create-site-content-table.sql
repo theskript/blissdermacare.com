@@ -2,7 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS site_content (
   id          uuid    DEFAULT gen_random_uuid() PRIMARY KEY,
-  page_key    text    NOT NULL,   -- 'about' | 'faq' | 'contact'
+  page_key    text    NOT NULL,   -- 'home' | 'about' | 'faq' | 'contact' | 'services'
   section_key text    NOT NULL,   -- e.g. 'hero_h1', 'about_p1', 'faq_items'
   label       text    NOT NULL,   -- admin display label
   type        text    NOT NULL DEFAULT 'text',  -- 'text' | 'textarea' | 'html' | 'image' | 'json'
@@ -63,4 +63,16 @@ INSERT INTO site_content (page_key, section_key, label, type, value, sort_order)
   ('contact', 'address_note',  'Address Note',          'text',  'We operate as a private studio — appointments required.', 110),
   ('contact', 'cta_h2',        'CTA Heading',           'text',  'Ready to book?',                               120),
   ('contact', 'cta_p',         'CTA Paragraph',         'text',  'Submit a booking request online and we''ll confirm within 24 hours.', 130)
+ON CONFLICT (page_key, section_key) DO NOTHING;
+
+-- ─── Seed: Home page ──────────────────────────────────────────────────────────
+INSERT INTO site_content (page_key, section_key, label, type, value, sort_order) VALUES
+  ('home', 'hero_h1',  'Hero Heading',    'text',     'Clinical skincare with a softer, more personal approach.', 10),
+  ('home', 'hero_sub', 'Hero Subheading', 'textarea', 'Bliss Dermacare offers customized facials and skin-focused treatments designed to restore clarity, calm, and confidence without the rushed feel of a typical medspa visit.', 20)
+ON CONFLICT (page_key, section_key) DO NOTHING;
+
+-- ─── Seed: Services page ─────────────────────────────────────────────────────
+INSERT INTO site_content (page_key, section_key, label, type, value, sort_order) VALUES
+  ('services', 'hero_h1',  'Page Heading',  'text', 'Our Services',                                                                                                                          10),
+  ('services', 'hero_sub', 'Page Subtitle', 'text', 'Every treatment is personalized. Browse by category to find what''s right for you, then book your appointment.', 20)
 ON CONFLICT (page_key, section_key) DO NOTHING;

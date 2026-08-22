@@ -8,8 +8,8 @@ import Layout from '../../layouts/Layout.astro';
   <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Treatments &amp; Packages</span>
-      <h1 class="text-5xl font-serif text-neutral-900 mb-4">Our Services</h1>
-      <p class="text-lg text-neutral-600 max-w-xl mx-auto">Every treatment is personalized. Browse by category to find what's right for you, then book your appointment.</p>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4" data-sc="hero_h1">Our Services</h1>
+      <p class="text-lg text-neutral-600 max-w-xl mx-auto" data-sc="hero_sub">Every treatment is personalized. Browse by category to find what's right for you, then book your appointment.</p>
     </div>
   </section>
 
@@ -173,3 +173,16 @@ import Layout from '../../layouts/Layout.astro';
   </section>
 
 </Layout>
+
+<script is:inline>
+  fetch('/.netlify/functions/get-content?page=services')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var c=d.content||{};
+      Object.keys(c).forEach(function(k){
+        var el=document.querySelector('[data-sc="'+k+'"]');
+        if(!el||!c[k].value)return;
+        el.textContent=c[k].value;
+      });
+    }).catch(function(){});
+</script>

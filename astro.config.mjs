@@ -8,4 +8,10 @@ export default defineConfig({
   integrations: [
     tailwind()
   ],
+  vite: {
+    build: {
+      // lightningcss (Vite 8 default) rejects some Tailwind CSS; esbuild handles it fine
+      cssMinify: 'esbuild',
+    },
+  },
 });
