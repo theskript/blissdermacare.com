@@ -8,22 +8,29 @@ const { getSupabase, sendEmail, sendSMS, formatTime, getNotificationSettings } =
 
 const APPOINTMENTS_TABLE = 'appointments';
 
-const DISCOUNT_PCT = {
-  'none':                    0,
-  'first-responder-veteran': 15,
-  'teacher-educator':        10,
-  'senior-65-plus':          10,
-  'student':                 10,
-};
+// Fetch community discount % from site_content; falls back to defaults if rows missing
+async function getDiscountPct() {
+  const keys = ['discount_first_responder_veteran','discount_teacher_educator','discount_senior_65_plus','discount_student'];
+  const { data } = await getSupabase().from('site_content').select('section_key,value').eq('page_key','global').in('section_key',keys);
+  const map = { 'none':0, 'first-responder-veteran':15, 'teacher-educator':10, 'senior-65-plus':10, 'student':10 };
+  if (data) for (const r of data) {
+    const pct = parseInt(r.value || '0', 10);
+    if (r.section_key === 'discount_first_responder_veteran') map['first-responder-veteran'] = pct;
+    else if (r.section_key === 'discount_teacher_educator')  map['teacher-educator']  = pct;
+    else if (r.section_key === 'discount_senior_65_plus')    map['senior-65-plus']    = pct;
+    else if (r.section_key === 'discount_student')           map['student']           = pct;
+  }
+  return map;
+}
+
+const ALLOWED_DISCOUNTS = new Set(['none','first-responder-veteran','teacher-educator','senior-65-plus','student']);
 
 const DISCOUNT_LABELS = {
-  'first-responder-veteran': 'First Responder / Veteran Discount (15%)',
-  'teacher-educator':        'Teacher / Educator Discount (10%)',
-  'senior-65-plus':          'Senior 65+ Discount (10%)',
-  'student':                 'Student Discount (10%)',
+  'first-responder-veteran': 'First Responder / Veteran Discount',
+  'teacher-educator':        'Teacher / Educator Discount',
+  'senior-65-plus':          'Senior 65+ Discount',
+  'student':                 'Student Discount',
 };
-
-const ALLOWED_DISCOUNTS = new Set(Object.keys(DISCOUNT_PCT));
 
 async function getServiceMaps() {
   const { data, error } = await getSupabase()
@@ -60,6 +67,7 @@ exports.handler = async (event) => {
   }
 
   const { SERVICE_LABELS, PRICES, ALLOWED_SERVICES } = await getServiceMaps();
+  const DISCOUNT_PCT = await getDiscountPct();
 
   let body;
   try {

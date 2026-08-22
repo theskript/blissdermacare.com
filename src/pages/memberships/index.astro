@@ -58,7 +58,7 @@ import Layout from '../../layouts/Layout.astro';
       <div class="grid lg:grid-cols-3 gap-6 items-stretch">
 
         <!-- TIER 1: The Glow Ritual -->
-        <div class="relative rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-xl transition-all bg-white flex flex-col overflow-hidden group">
+        <div data-plan-card="glow-ritual" class="relative rounded-2xl border-2 border-neutral-200 hover:border-primary-300 hover:shadow-xl transition-all bg-white flex flex-col overflow-hidden group">
           <div class="p-7 flex-1">
             <div class="mb-5">
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary-500 mb-2">Tier 1</p>
@@ -128,7 +128,7 @@ import Layout from '../../layouts/Layout.astro';
         </div>
 
         <!-- TIER 2: The Radiance Plan — MOST POPULAR -->
-        <div class="relative rounded-2xl border-2 border-primary-500 hover:border-primary-600 hover:shadow-2xl transition-all bg-white flex flex-col overflow-hidden group shadow-xl">
+        <div data-plan-card="radiance-plan" class="relative rounded-2xl border-2 border-primary-500 hover:border-primary-600 hover:shadow-2xl transition-all bg-white flex flex-col overflow-hidden group shadow-xl">
           <!-- Popular badge -->
           <div class="absolute top-0 left-0 right-0 bg-primary-600 text-white text-xs font-bold text-center py-2 tracking-[0.15em] uppercase">
             ✦ Most Popular
@@ -213,7 +213,7 @@ import Layout from '../../layouts/Layout.astro';
         </div>
 
         <!-- TIER 3: The VIP Luxe -->
-        <div class="relative rounded-2xl border-2 border-neutral-200 hover:border-amber-400 hover:shadow-xl transition-all bg-white flex flex-col overflow-hidden group">
+        <div data-plan-card="vip-luxe" class="relative rounded-2xl border-2 border-neutral-200 hover:border-amber-400 hover:shadow-xl transition-all bg-white flex flex-col overflow-hidden group">
           <div class="p-7 flex-1">
             <div class="mb-5">
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-amber-500 mb-2">Tier 3 — VIP</p>
@@ -921,6 +921,31 @@ import Layout from '../../layouts/Layout.astro';
         errDiv.classList.add('flex');
       }
     });
+  </script>
+
+  <script>
+    /* Update plan prices and names from DB; preserves page design, just refreshes data */
+    fetch('/.netlify/functions/get-services?includePlans=true')
+      .then(r => r.json())
+      .then(({ plans }) => {
+        if (!plans?.length) return;
+        plans.forEach((plan: any) => {
+          const price = Math.round(plan.price / 100);
+          const card = document.querySelector<HTMLElement>(`[data-plan-card="${plan.slug}"]`);
+          if (card) {
+            const priceEl = card.querySelector<HTMLElement>('.text-4xl.font-bold');
+            if (priceEl) priceEl.textContent = '$' + price;
+            const nameEl = card.querySelector<HTMLElement>('h3');
+            if (nameEl && plan.name) nameEl.textContent = plan.name;
+            card.querySelectorAll<HTMLElement>('[data-plan-price]').forEach(btn => {
+              btn.setAttribute('data-plan-price', String(price));
+              if (plan.name) btn.setAttribute('data-plan-name', plan.name);
+              const txt = btn.textContent || '';
+              btn.textContent = txt.replace(/\$\d+\/mo/, '$' + price + '/mo').replace(/\$\d+\/month/, '$' + price + '/month');
+            });
+          }
+        });
+      }).catch(() => {});
   </script>
 
 </Layout>
