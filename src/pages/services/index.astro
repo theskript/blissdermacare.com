@@ -1,5 +1,41 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.SUPABASE_URL!,
+  import.meta.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Fetch categories and service counts/min-prices in parallel
+const [{ data: cats }, { data: services }] = await Promise.all([
+  supabase.from('service_categories').select('id,slug,name,tagline,description,page_url,image_url,active').eq('active', true).order('sort_order', { ascending: true }),
+  supabase.from('services').select('category,price').neq('active', false),
+]);
+
+type CatStats = { count: number; min: number };
+const stats: Record<string, CatStats> = {};
+for (const s of services ?? []) {
+  if (!stats[s.category]) stats[s.category] = { count: 0, min: Infinity };
+  stats[s.category].count++;
+  const p = Math.round((s.price ?? 0) / 100);
+  if (p > 0 && p < stats[s.category].min) stats[s.category].min = p;
+}
+
+// URL slug ↔ DB category key mappings (for stats lookup and href generation)
+const URL_SLUG: Record<string, string> = { advanced: 'advanced-treatments', semipermanent: 'semipermanent-makeup', wellness: 'ancillary' };
+const STAT_KEY: Record<string, string> = { 'advanced-treatments': 'advanced', 'semipermanent-makeup': 'semipermanent', 'ancillary': 'wellness' };
+const FALLBACK_IMG: Record<string, string> = {
+  'facials': '/images/dermaplane-glow-facial.jpg',
+  'lash-brow-body': 'https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'advanced': '/images/collagen-induction-therapy.jpg',
+  'semipermanent': '/images/eyebrow-permanent-makeup.jpg',
+  'wellness': '/images/ancillary-services-hub.jpg',
+  'packages': '/images/bronze-bare-glow-package.jpg',
+};
+const allCats = cats ?? [];
 ---
 
 <Layout title="Services – Bliss Dermacare" description="Browse all skincare, aesthetic, and wellness services at Bliss Dermacare in Tampa, FL — facials, lash, brow, body, advanced treatments, semipermanent makeup, ancillary wellness, and seasonal packages.">
@@ -13,108 +49,43 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- Service Category Hub -->
+  <!-- Service Category Hub — server-rendered from DB -->
   <section class="py-14 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Facials -->
-        <a href="/services/facials/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
-          <div class="h-52 overflow-hidden relative">
-            <img src="/images/dermaplane-glow-facial.jpg" alt="Facials at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h2 class="text-xl font-serif font-bold mb-0.5">Facials</h2>
-              <p class="text-xs text-neutral-300">Dermaplaning · Enzyme Facials · Peels · PRP · &amp; more</p>
-            </div>
-          </div>
-          <div class="p-5 flex items-center justify-between">
-            <div><p class="text-sm font-semibold text-neutral-800">12 treatments</p><p class="text-xs text-neutral-500">From $64</p></div>
-            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
-          </div>
-        </a>
-
-        <!-- Lash, Brow & Body -->
-        <a href="/services/lash-brow-body/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
-          <div class="h-52 overflow-hidden relative">
-            <img src="https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash, Brow & Body at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h2 class="text-xl font-serif font-bold mb-0.5">Lash, Brow &amp; Body</h2>
-              <p class="text-xs text-neutral-300">Lash Extensions · Waxing · Spray Tan · Scalp Therapy</p>
-            </div>
-          </div>
-          <div class="p-5 flex items-center justify-between">
-            <div><p class="text-sm font-semibold text-neutral-800">7 treatments</p><p class="text-xs text-neutral-500">From $43</p></div>
-            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
-          </div>
-        </a>
-
-        <!-- Advanced Treatments -->
-        <a href="/services/advanced-treatments/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
-          <div class="h-52 overflow-hidden relative">
-            <img src="/images/collagen-induction-therapy.jpg" alt="Advanced Treatments — medical-grade injectables and skin procedures at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h2 class="text-xl font-serif font-bold mb-0.5">Advanced Treatments</h2>
-              <p class="text-xs text-neutral-300">PRP · Lip Filler · Injectables · CIT · Weight Loss</p>
-            </div>
-          </div>
-          <div class="p-5 flex items-center justify-between">
-            <div><p class="text-sm font-semibold text-neutral-800">5 treatments</p><p class="text-xs text-neutral-500">From $299</p></div>
-            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
-          </div>
-        </a>
-
-        <!-- Semipermanent Makeup -->
-        <a href="/services/semipermanent-makeup/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
-          <div class="h-52 overflow-hidden relative">
-            <img src="/images/eyebrow-permanent-makeup.jpg" alt="Semipermanent Makeup — brows, lip blush, scalp micropigmentation at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h2 class="text-xl font-serif font-bold mb-0.5">Semipermanent Makeup</h2>
-              <p class="text-xs text-neutral-300">Nano Brows · Powder Brows · Lip Blush · Scalp SMP</p>
-            </div>
-          </div>
-          <div class="p-5 flex items-center justify-between">
-            <div><p class="text-sm font-semibold text-neutral-800">6 treatments</p><p class="text-xs text-neutral-500">From $250</p></div>
-            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
-          </div>
-        </a>
-
-        <!-- Ancillary Services -->
-        <a href="/services/ancillary/" class="group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all">
-          <div class="h-52 overflow-hidden relative">
-            <img src="/images/ancillary-services-hub.jpg" alt="Ancillary Services — medical lab, IV therapy and wellness at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h2 class="text-xl font-serif font-bold mb-0.5">Ancillary Services</h2>
-              <p class="text-xs text-neutral-300">IV Hydration · Lab Collection · Hormone Panel · Regenerative</p>
-            </div>
-          </div>
-          <div class="p-5 flex items-center justify-between">
-            <div><p class="text-sm font-semibold text-neutral-800">4 services</p><p class="text-xs text-neutral-500">From $149</p></div>
-            <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
-          </div>
-        </a>
-
-        <!-- Seasonal Packages -->
-        <a href="/services/packages/" class="group block rounded-2xl overflow-hidden border-2 border-amber-200 hover:border-amber-400 hover:shadow-xl transition-all relative">
-          <div class="absolute top-3 right-3 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">SUMMER 2026</span></div>
-          <div class="h-52 overflow-hidden relative">
-            <img src="/images/bronze-bare-glow-package.jpg" alt="Seasonal Packages at Bliss Dermacare" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h2 class="text-xl font-serif font-bold mb-0.5">Seasonal Packages</h2>
-              <p class="text-xs text-neutral-300">Two services · One visit · Up to $27 savings</p>
-            </div>
-          </div>
-          <div class="p-5 flex items-center justify-between">
-            <div><p class="text-sm font-semibold text-neutral-800">5 packages</p><p class="text-xs text-neutral-500">From $110</p></div>
-            <span class="inline-flex items-center gap-1 text-sm font-semibold text-amber-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
-          </div>
-        </a>
-
+        {allCats.map(cat => {
+          const urlSlug = URL_SLUG[cat.slug] ?? cat.slug;
+          const statKey = STAT_KEY[urlSlug] ?? urlSlug;
+          const href = cat.page_url ?? `/services/${urlSlug}/`;
+          const st = stats[statKey];
+          const label = cat.slug === 'packages' ? 'packages' : cat.slug === 'wellness' ? 'services' : 'treatments';
+          const isPackages = cat.slug === 'packages';
+          const imgSrc = cat.image_url || FALLBACK_IMG[cat.slug] || FALLBACK_IMG[urlSlug] || '/images/dermaplane-glow-facial.jpg';
+          return (
+            <a href={href} class={`group block rounded-2xl overflow-hidden border-2 hover:shadow-xl transition-all relative ${isPackages ? 'border-amber-200 hover:border-amber-400' : 'border-primary-100 hover:border-primary-400'}`}>
+              {isPackages && (
+                <div class="absolute top-3 right-3 z-10"><span class="bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">{cat.tagline ?? 'SEASONAL'}</span></div>
+              )}
+              <div class="h-52 overflow-hidden relative">
+                <img src={imgSrc} alt={`${cat.name} at Bliss Dermacare`} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+                  <h2 class="text-xl font-serif font-bold mb-0.5">{cat.name}</h2>
+                  {cat.description && <p class="text-xs text-neutral-300">{cat.description}</p>}
+                </div>
+              </div>
+              <div class="p-5 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-neutral-800">{st ? `${st.count} ${label}` : '—'}</p>
+                  <p class="text-xs text-neutral-500">{st && st.min < Infinity ? `From $${st.min}` : '—'}</p>
+                </div>
+                <span class={`inline-flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all ${isPackages ? 'text-amber-600' : 'text-primary-600'}`}>
+                  Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </span>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -186,90 +157,4 @@ import Layout from '../../layouts/Layout.astro';
         if(el)el.textContent='$'+price;
       });
     }).catch(function(){});
-</script>
-
-<script is:inline>
-  fetch('/.netlify/functions/get-content?page=services')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var c=d.content||{};
-      Object.keys(c).forEach(function(k){
-        var el=document.querySelector('[data-sc="'+k+'"]');
-        if(!el||!c[k].value)return;
-        el.textContent=c[k].value;
-      });
-    }).catch(function(){});
-</script>
-
-<script is:inline>
-  (function () {
-    var MAP = {
-      'facials':        { href: '/services/facials/',              label: 'treatments' },
-      'lash-brow-body': { href: '/services/lash-brow-body/',       label: 'treatments' },
-      'advanced':       { href: '/services/advanced-treatments/',  label: 'treatments' },
-      'semipermanent':  { href: '/services/semipermanent-makeup/', label: 'treatments' },
-      'wellness':       { href: '/services/ancillary/',             label: 'services'   },
-      'packages':       { href: '/services/packages/',              label: 'packages'   },
-    };
-    fetch('/.netlify/functions/get-services')
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        var svcs = d.services || [];
-        var groups = {};
-        for (var i = 0; i < svcs.length; i++) {
-          var s = svcs[i];
-          if (!groups[s.category]) groups[s.category] = { count: 0, min: Infinity };
-          groups[s.category].count++;
-          var p = Math.round(s.price / 100);
-          if (p > 0 && p < groups[s.category].min) groups[s.category].min = p;
-        }
-        Object.keys(MAP).forEach(function (cat) {
-          var g = groups[cat];
-          if (!g) return;
-          var card = document.querySelector('a[href="' + MAP[cat].href + '"]');
-          if (!card) return;
-          var ps = card.querySelectorAll('.p-5 p');
-          if (ps[0]) ps[0].textContent = g.count + ' ' + MAP[cat].label;
-          if (ps[1] && g.min < Infinity) ps[1].textContent = 'From $' + g.min;
-        });
-      }).catch(function () {});
-  }());
-</script>
-
-<script is:inline>
-  /* Update category card names/taglines/hrefs from DB; renders new cards for DB-only categories */
-  (function () {
-    function _e(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    fetch('/.netlify/functions/get-categories')
-      .then(function(r){return r.json();})
-      .then(function(d){
-        var cats = d.categories || [];
-        var grid = document.querySelector('.grid.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
-        if (!grid) return;
-        cats.forEach(function(cat) {
-          var url = cat.page_url || ('/services/' + cat.slug + '/');
-          var card = document.querySelector('a[href="' + url + '"]');
-          if (card) {
-            var h2 = card.querySelector('h2');
-            if (h2 && cat.name) h2.textContent = cat.name;
-            var tagline = card.querySelector('.text-xs.text-neutral-300');
-            if (tagline && cat.tagline) tagline.textContent = cat.tagline;
-            if (url !== card.getAttribute('href')) card.setAttribute('href', url);
-          } else if (cat.image_url || cat.tagline) {
-            /* Render a new card for DB categories not in hardcoded HTML */
-            var a = document.createElement('a');
-            a.href = url;
-            a.className = 'group block rounded-2xl overflow-hidden border-2 border-primary-100 hover:border-primary-400 hover:shadow-xl transition-all';
-            a.innerHTML = '<div class="h-52 overflow-hidden relative">' +
-              (cat.image_url ? '<img src="' + _e(cat.image_url) + '" alt="' + _e(cat.name) + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"/>' : '<div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50"></div>') +
-              '<div class="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-neutral-900/20 to-transparent"></div>' +
-              '<div class="absolute bottom-0 left-0 right-0 p-5 text-white"><h2 class="text-xl font-serif font-bold mb-0.5">' + _e(cat.name) + '</h2>' +
-              (cat.tagline ? '<p class="text-xs text-neutral-300">' + _e(cat.tagline) + '</p>' : '') + '</div></div>' +
-              '<div class="p-5 flex items-center justify-between"><div><p class="text-sm font-semibold text-neutral-800">—</p><p class="text-xs text-neutral-500">—</p></div>' +
-              '<span class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 group-hover:gap-2 transition-all">Explore <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span></div>';
-            grid.appendChild(a);
-          }
-        });
-      }).catch(function(){});
-  }());
 </script>

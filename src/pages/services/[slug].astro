@@ -1,56 +1,121 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
-
-const META: Record<string, { title: string; desc: string }> = {
-  'facials':              { title: 'Facials – Bliss Dermacare',               desc: 'Professional facial treatments at Bliss Dermacare in Tampa, FL. Dermaplaning, enzyme facials, PRP, chemical peels, diamond glow & more.' },
-  'lash-brow-body':       { title: 'Lash, Brow & Body – Bliss Dermacare',     desc: 'Lash extensions, lash lift, brow lamination, body waxing, Brazilian wax, scalp therapy, airbrush spray tan & more at Bliss Dermacare in Tampa, FL.' },
-  'advanced-treatments':  { title: 'Advanced Treatments – Bliss Dermacare',   desc: 'Medical-grade aesthetic procedures at Bliss Dermacare: PRP, Lip Filler, ED Injectables, Collagen Induction Therapy, and GLP-1 Weight Loss Program in Tampa, FL.' },
-  'semipermanent-makeup': { title: 'Semipermanent Makeup – Bliss Dermacare',  desc: 'Professional semipermanent makeup at Bliss Dermacare: Nano Brows, Powder Brows, Lip Blush, Lip Neutralization, Scalp Micropigmentation & Custom SPMU in Tampa, FL.' },
-  'ancillary':            { title: 'Ancillary Services – Bliss Dermacare',    desc: 'IV Hydration Therapy, Personalized Lab Collection, Hormone Lab Panel Support, and Regenerative Blood-Based Services at Bliss Dermacare in Tampa, FL.' },
-  'packages':             { title: 'Seasonal Packages – Bliss Dermacare',     desc: 'Seasonal face & body packages at Bliss Dermacare: Bronze & Bare Glow, Lash & Body Smooth, Brow Lash & Wax Ritual, Glow & Smooth Escape, Mix & Match Escape in Tampa, FL.' },
-};
-
-export async function getStaticPaths() {
-  return [
-    'facials','lash-brow-body','advanced-treatments','semipermanent-makeup','ancillary','packages',
-  ].map(slug => ({ params: { slug } }));
-}
+import { createClient } from '@supabase/supabase-js';
 
 const { slug } = Astro.params as { slug: string };
-const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', desc: '' };
+
+const CATEGORY_KEY: Record<string, string> = {
+  'advanced-treatments':  'advanced',
+  'semipermanent-makeup': 'semipermanent',
+  'ancillary':            'wellness',
+};
+const dbCategory = CATEGORY_KEY[slug] ?? slug;
+
+const supabase = createClient(
+  import.meta.env.SUPABASE_URL!,
+  import.meta.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const [{ data: allCats }, { data: rawServices }] = await Promise.all([
+  supabase.from('service_categories').select('id,slug,name,tagline,description,page_url').eq('active', true).order('sort_order', { ascending: true }),
+  supabase.from('services').select('id,slug,name,tagline,description,price,duration,image_url,badge,is_package,active').eq('category', dbCategory).neq('active', false).order('sort_order', { ascending: true }),
+]);
+
+const cats    = allCats ?? [];
+const svcs    = rawServices ?? [];
+const thisCat = cats.find(c => c.slug === slug || c.slug === dbCategory);
+const others  = cats.filter(c => c.slug !== slug && c.slug !== dbCategory);
+
+// Redirect unknown slugs
+if (!thisCat && !svcs.length) return Astro.redirect('/services/', 302);
+
+const catName = thisCat?.name ?? slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+const title   = `${catName} – Bliss Dermacare`;
+const desc    = thisCat?.description ?? thisCat?.tagline ?? `${catName} at Bliss Dermacare in Tampa, FL.`;
 ---
 
 <Layout title={title} description={desc}>
 
-  <!-- slug passed to client script via data attr -->
-  <div id="__cat" data-slug={slug} aria-hidden="true" style="display:none"></div>
-
-  <!-- Page Header — populated by JS from get-categories -->
-  <section id="cat-header" class="py-14 bg-[#faf9f7] border-b border-neutral-100" style="opacity:0">
+  <!-- Page Header â€” server-rendered -->
+  <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <div class="flex items-center justify-center gap-2 text-sm text-neutral-500 mb-4">
         <a href="/services/" class="hover:text-primary-600 transition-colors">All Services</a>
         <span>/</span>
-        <span id="cat-breadcrumb" class="text-neutral-900 font-medium">&nbsp;</span>
+        <span class="text-neutral-900 font-medium">{catName}</span>
       </div>
-      <span id="cat-tagline" class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">&nbsp;</span>
-      <h1 id="cat-h1" class="text-5xl font-serif text-neutral-900 mb-4">&nbsp;</h1>
-      <p id="cat-desc-p" class="text-lg text-neutral-600 max-w-xl mx-auto">&nbsp;</p>
+      {thisCat?.tagline && (
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">{thisCat.tagline}</span>
+      )}
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4">{catName}</h1>
+      {(thisCat?.description) && (
+        <p class="text-lg text-neutral-600 max-w-xl mx-auto">{thisCat.description}</p>
+      )}
     </div>
   </section>
 
-  <!-- Service Cards — populated by JS from get-services -->
-  <section class="py-14 bg-white" id="svc-section" style="opacity:0">
-    <div class="max-w-7xl mx-auto px-6"></div>
-  </section>
-
-  <!-- Also Explore — populated by JS from get-categories (all other cats) -->
-  <section class="py-10 bg-neutral-50 border-t border-neutral-100">
+  <!-- Service Cards â€” server-rendered -->
+  <section class="py-14 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-      <p class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-4">Also Explore</p>
-      <div id="also-explore" class="flex flex-wrap gap-3"></div>
+      {svcs.length > 0 ? (
+        <div class={`grid gap-6 ${dbCategory === 'packages' ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
+          {svcs.map(svc => {
+            const price = svc.price ? '$' + Math.round(svc.price / 100) : 'Contact us';
+            const dur   = svc.duration ? svc.duration + ' min' : '';
+            const body  = svc.tagline || svc.description;
+            return (
+              <div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all border-2 border-primary-100 hover:border-primary-300 relative">
+                <div class="relative h-44 overflow-hidden">
+                  {svc.image_url ? (
+                    <img src={svc.image_url} alt={svc.name} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+                  ) : (
+                    <div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50 flex items-center justify-center">
+                      <svg class="w-10 h-10 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                    </div>
+                  )}
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  {svc.badge && (
+                    <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">{svc.badge}</span>
+                  )}
+                </div>
+                <div class="p-6">
+                  <h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">{svc.name}</h3>
+                  {body && <p class="text-neutral-600 text-sm mb-4">{body}</p>}
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-2xl font-bold text-primary-600">{price}</p>
+                      {dur && <p class="text-xs text-neutral-500">{dur}</p>}
+                    </div>
+                    <a href="/book/" data-service-id={svc.slug} class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="text-center text-neutral-400 py-12">No services currently available in this category.</p>
+      )}
     </div>
   </section>
+
+  <!-- Also Explore â€” server-rendered -->
+  {others.length > 0 && (
+    <section class="py-10 bg-neutral-50 border-t border-neutral-100">
+      <div class="max-w-7xl mx-auto px-6">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-4">Also Explore</p>
+        <div class="flex flex-wrap gap-3">
+          {others.map(c => (
+            <a href={c.page_url ?? `/services/${c.slug}/`} class="px-4 py-2 bg-white border border-neutral-200 rounded-full text-sm text-neutral-700 hover:border-primary-300 hover:text-primary-600 transition-colors">
+              {c.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- Book CTA -->
   <section class="py-14 bg-neutral-900 text-white text-center">
@@ -63,106 +128,5 @@ const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', d
       </a>
     </div>
   </section>
-
-  <script>
-    const catSlug: string = (document.getElementById('__cat') as HTMLElement)?.dataset.slug ?? '';
-
-    // URL slug → DB category key (where they differ)
-    const CATEGORY_KEY: Record<string, string> = {
-      'advanced-treatments':  'advanced',
-      'semipermanent-makeup': 'semipermanent',
-      'ancillary':            'wellness',
-    };
-    const dbCategory = CATEGORY_KEY[catSlug] ?? catSlug;
-
-    function _esc(s: unknown): string {
-      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function _card(svc: any): string {
-      const price = svc.price ? '$' + Math.round(svc.price / 100) : 'Contact us';
-      const dur   = svc.duration ? svc.duration + ' min' : '';
-      const img   = svc.image_url
-        ? '<img src="' + _esc(svc.image_url) + '" alt="' + _esc(svc.name) + '" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy"/>'
-        : '<div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50 flex items-center justify-center"><svg class="w-10 h-10 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg></div>';
-      const desc  = (svc.tagline || svc.description)
-        ? '<p class="text-neutral-600 text-sm mb-4">' + _esc(svc.tagline || svc.description) + '</p>'
-        : '';
-      const badge = svc.badge
-        ? '<span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">' + _esc(svc.badge) + '</span>'
-        : '';
-      return (
-        '<div class="group bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all border-2 border-primary-100 hover:border-primary-300 relative">' +
-        '<div class="relative h-44 overflow-hidden">' + img + '<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>' + badge + '</div>' +
-        '<div class="p-6"><h3 class="text-xl font-bold font-serif text-neutral-900 mb-2">' + _esc(svc.name) + '</h3>' + desc +
-        '<div class="flex items-center justify-between"><div>' +
-        '<p class="text-2xl font-bold text-primary-600">' + _esc(price) + '</p>' +
-        (dur ? '<p class="text-xs text-neutral-500">' + _esc(dur) + '</p>' : '') +
-        '</div><a href="/book/" data-service-id="' + _esc(svc.slug) + '" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a></div></div></div>'
-      );
-    }
-
-    function _showSvc(): void {
-      const s = document.getElementById('svc-section');
-      if (s) { s.style.transition = 'opacity 0.2s'; s.style.opacity = '1'; }
-    }
-
-    function _showHeader(): void {
-      const h = document.getElementById('cat-header');
-      if (h) { h.style.transition = 'opacity 0.2s'; h.style.opacity = '1'; }
-    }
-
-    // Fetch category info → populate header + also explore
-    fetch('/.netlify/functions/get-categories')
-      .then(r => r.json())
-      .then(({ categories }) => {
-        const cats: any[] = categories ?? [];
-        const thisCat = cats.find((c: any) => c.slug === catSlug || c.slug === dbCategory);
-        if (thisCat) {
-          const bc  = document.getElementById('cat-breadcrumb');
-          const tag = document.getElementById('cat-tagline');
-          const h1  = document.getElementById('cat-h1');
-          const dp  = document.getElementById('cat-desc-p');
-          if (bc) bc.textContent = thisCat.name;
-          if (tag && thisCat.tagline) tag.textContent = thisCat.tagline;
-          if (h1) h1.textContent = thisCat.name;
-          if (dp && (thisCat.description || thisCat.tagline)) dp.textContent = thisCat.description || thisCat.tagline;
-          document.title = thisCat.name + ' – Bliss Dermacare';
-        }
-        // Also Explore: all other categories
-        const others = cats.filter((c: any) => c.slug !== catSlug);
-        const explore = document.getElementById('also-explore');
-        if (explore && others.length) {
-          explore.innerHTML = others.map((c: any) => {
-            const url = c.page_url || '/services/' + _esc(c.slug) + '/';
-            return '<a href="' + url + '" class="px-4 py-2 bg-white border border-neutral-200 rounded-full text-sm text-neutral-700 hover:border-primary-300 hover:text-primary-600 transition-colors">' + _esc(c.name) + '</a>';
-          }).join('');
-        }
-        _showHeader();
-      }).catch(_showHeader);
-
-    // Fetch services → populate svc-section
-    fetch('/.netlify/functions/get-services?category=' + encodeURIComponent(dbCategory))
-      .then(r => r.json())
-      .then(({ services }) => {
-        if (!services?.length) { _showSvc(); return; }
-        const wrap = document.querySelector<HTMLElement>('#svc-section .max-w-7xl');
-        if (wrap) {
-          const g = document.createElement('div');
-          g.className = dbCategory === 'packages'
-            ? 'grid md:grid-cols-2 gap-6'
-            : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6';
-          g.innerHTML = (services as any[]).map(_card).join('');
-          wrap.appendChild(g);
-          // Register any new services with the cart and inject Add buttons
-          (services as any[]).forEach((svc: any) => {
-            const W = (window as any).BlissCart;
-            if (W?.register) W.register(svc.slug, svc.name, Math.round(svc.price / 100), svc.duration ?? 60, svc.is_package || ['advanced','semipermanent','wellness'].includes(svc.category));
-          });
-          if ((window as any).BlissCart?.inject) (window as any).BlissCart.inject();
-        }
-        _showSvc();
-      }).catch(_showSvc);
-  </script>
 
 </Layout>
