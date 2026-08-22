@@ -7,6 +7,7 @@ const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Cache-Control': 'no-cache',
 };
 
 exports.handler = async (event) => {
@@ -22,7 +23,7 @@ exports.handler = async (event) => {
     let query = sb
       .from('partners')
       .select('id, name, category, tagline, url, logo_url, badge_text, featured')
-      .eq('active', true)
+      .neq('active', false)
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true });
 

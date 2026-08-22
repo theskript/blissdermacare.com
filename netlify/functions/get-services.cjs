@@ -25,7 +25,7 @@ exports.handler = async (event) => {
     let query = getSupabase()
       .from('services')
       .select('id,slug,name,category,price,duration,description,tagline,image_url,is_package,is_bookable,sort_order')
-      .eq('active', true)
+      .neq('active', false)
       .order('category')
       .order('sort_order');
 
