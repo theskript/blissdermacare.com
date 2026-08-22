@@ -6,6 +6,10 @@
 UPDATE services SET image_url = 'https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=600'
   WHERE slug = 'signature-radiance-facial';
 
+-- Anti-Aging Facial — must differ from signature radiance (same Pexels series, different photo)
+UPDATE services SET image_url = 'https://images.pexels.com/photos/3985150/pexels-photo-3985150.jpeg?auto=compress&cs=tinysrgb&w=600'
+  WHERE slug = 'anti-aging-facial';
+
 -- Teen facial — young woman applying cleanser / acne care (different from above)
 UPDATE services SET image_url = 'https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg?auto=compress&cs=tinysrgb&w=600'
   WHERE slug = 'teen-skincare-facial';

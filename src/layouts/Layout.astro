@@ -636,6 +636,27 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           }
         }).catch(function(){});
 
+      /* Update footer contact info from site_content */
+      fetch('/.netlify/functions/get-content?page=contact')
+        .then(function(r){return r.json();})
+        .then(function(d){
+          var c=d.content||{};
+          ['phone','email','address_1','address_2'].forEach(function(k){
+            var el=document.querySelector('[data-sc="footer_'+k+'"]');
+            if(!el||!c[k]||!c[k].value)return;
+            if(k==='phone')el.textContent=c[k].value;
+            else if(k==='email'){
+              el.textContent=c[k].value;
+              var lk=document.getElementById('footer-email-link');
+              if(lk)lk.href='mailto:'+c[k].value;
+            } else if(k==='address_1')el.textContent=c[k].value;
+            else if(k==='address_2'){
+              var addr=document.querySelector('[data-sc="footer_address"]');
+              if(addr&&c.address_1&&c.address_1.value)addr.innerHTML=c.address_1.value+'<br/>'+c[k].value;
+            }
+          });
+        }).catch(function(){});
+
       /* Hide packages nav links if no active packages */
       fetch('/.netlify/functions/get-services?category=packages')
         .then(function(r){return r.json();})
@@ -764,15 +785,15 @@ const { title, description = 'Professional aesthetician services in a serene, mo
             <ul class="space-y-2">
               <li class="flex items-start">
                 <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                <span>(609) 366-0857</span>
+                <span data-sc="footer_phone">(609) 366-0857</span>
               </li>
               <li class="flex items-start">
                 <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                <a href="mailto:info@blissdermacare.com" class="hover:text-primary-400 transition-colors">info@blissdermacare.com</a>
+                <a id="footer-email-link" href="mailto:info@blissdermacare.com" class="hover:text-primary-400 transition-colors"><span data-sc="footer_email">info@blissdermacare.com</span></a>
               </li>
               <li class="flex items-start">
                 <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span>8905 Regents Park Dr<br/>Tampa, FL 33647</span>
+                <span data-sc="footer_address">8905 Regents Park Dr<br/>Tampa, FL 33647</span>
               </li>
             </ul>
           </div>
@@ -999,44 +1020,38 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     <script is:inline>
     (function () {
       const KEY = 'bliss_cart_v1';
+      /* Prices reflect live DB values; all are overwritten by the get-services sync in init() */
       const SERVICES = {
-        'signature-radiance-facial':       { name: 'Signature Radiance Facial',         price: 99,  duration: '60 min' },
-        'brightening-peel':                { name: 'Brightening Peel',                  price: 128, duration: '45 min' },
-        'diamond-glow':                    { name: 'Diamond Glow',                       price: 119, duration: '50 min' },
-        'teen-skincare-facial':            { name: 'Teen Skincare Facial',               price: 64,  duration: '45 min' },
-        'smooth-canvas-facial':            { name: 'Smooth Canvas Facial',               price: 89,  duration: '45 min' },
-        'high-frequency-skin-tightening':  { name: 'High Frequency Skin Tightening',    price: 95,  duration: '45 min' },
-        'pumpkin-enzyme-facial':           { name: 'Pumpkin Enzyme Facial',              price: 85,  duration: '60 min' },
-        'chlorophyll-skin-tightening-facial': { name: 'Chlorophyll Skin Tightening Facial', price: 105, duration: '60 min' },
-        'pineapple-enzyme-facial':         { name: 'Pineapple Enzyme Facial',            price: 88,  duration: '60 min' },
-        'skin-recovery-facial':            { name: 'Skin Recovery Facial',               price: 92,  duration: '60 min' },
-        'vampire-facial-prp':              { name: 'Vampire Facial (PRP)',               price: 380, duration: '75 min' },
-        'lash-lift-brow-lamination':       { name: 'Lash Lift & Brow Lamination',        price: 79,  duration: '60 min' },
-        'lash-extensions':                 { name: 'Lash Extensions',                    price: 159, duration: '2 hr' },
-        'lash-extensions-fill':            { name: 'Lash Extensions Fill',               price: 43,  duration: '1 hr' },
-        'body-and-face-waxing':            { name: 'Body & Face Waxing',                 price: 65,  duration: '45–60 min' },
-        'brazilian-wax':                   { name: 'Brazilian Wax',                      price: 87,  duration: '45–60 min' },
-        'spray-tan':                       { name: 'Custom Airbrush Spray Tan',          price: 65,  duration: '30–45 min' },
-        'lash-body-smooth':                { name: 'Lash & Body Smooth Package',         price: 185, duration: '~2 hrs 15 min' },
-        'brow-lash-wax-ritual':            { name: 'Brow, Lash & Wax Ritual Package',    price: 115, duration: '~2 hrs 15 min' },
-        'glow-smooth-escape':              { name: 'Glow & Smooth Escape Package',       price: 135, duration: '~2 hrs 15 min' },
-        'mix-match-package':               { name: 'Mix & Match Escape Package',         price: 129, duration: '~2 hrs 15 min' },
-        'bronze-bare-glow':                { name: 'Bronze & Bare Glow Package',         price: 110, duration: '~1 hr 45 min' },
-        'prp-treatment':                   { name: 'PRP (Platelet-Rich Plasma)',          price: 399, duration: '60 min' },
-        'lip-filler':                      { name: 'Lip Filler',                          price: 599, duration: '45 min' },
-        'ed-injectables':                  { name: 'Erectile Dysfunction Injectables',    price: 499, duration: '60 min' },
-        'collagen-induction-therapy':      { name: 'Collagen Induction Therapy',          price: 299, duration: '60 min' },
-        'weight-loss-program':             { name: 'Weight Loss Program (GLP-1)',         price: 299, duration: '30 min' },
-        'scalp-micropigmentation':         { name: 'Scalp Micropigmentation',             price: 650, duration: '3 hr' },
-        'lip-neutralization': { name: 'Lip Neutralization', price: 399, duration: '2 hr' },
-        'lip-blush':                       { name: 'Lip Blush',                           price: 499, duration: '2 hr' },
-        'nano-brows':                      { name: 'Nano Brows',                          price: 499, duration: '2.5 hr' },
-        'powder-brows':                    { name: 'Powder Brows',                        price: 549, duration: '2.5 hr' },
-        'custom-semipermanent-makeup':     { name: 'Custom Semipermanent Makeup',         price: 450, duration: '2 hr' },
-        'iv-hydration-therapy':            { name: 'IV Hydration Therapy',                 price: 149, duration: '60 min' },
-        'lab-collection':                  { name: 'Personalized Lab Collection',          price: 199, duration: '30 min' },
-        'hormone-lab-panel':               { name: 'Hormone Lab Panel Support',            price: 349, duration: '45 min' },
-        'regenerative-blood-services':     { name: 'Regenerative Blood-Based Services',   price: 450, duration: '60 min' },
+        'signature-radiance-facial':  { name: 'Signature Radiance Facial',        price: 65,  duration: '60 min' },
+        'diamond-glow':               { name: 'Diamond Glow',                      price: 99,  duration: '50 min' },
+        'teen-skincare-facial':       { name: 'Teen Skincare Facial',              price: 45,  duration: '45 min' },
+        'smooth-canvas-facial':       { name: 'Smooth Canvas Facial',              price: 99,  duration: '45 min' },
+        'microneedling-facial':       { name: 'Microneedling Facial',              price: 130, duration: '60 min' },
+        'chemical-peel':              { name: 'Chemical Peel',                     price: 130, duration: '60 min' },
+        'anti-aging-facial':          { name: 'Anti-Aging Facial',                 price: 99,  duration: '60 min' },
+        'lash-extensions':            { name: 'Lash Extensions',                   price: 65,  duration: '2 hr' },
+        'lash-extensions-fill':       { name: 'Lash Extensions Fill',              price: 55,  duration: '1 hr' },
+        'lash-lift-brow-lamination':  { name: 'Lash Lift & Brow Lamination',       price: 65,  duration: '60 min' },
+        'body-and-face-waxing':       { name: 'Body & Face Waxing',                price: 65,  duration: '45–60 min' },
+        'brazilian-wax':              { name: 'Brazilian Wax',                     price: 45,  duration: '45–60 min' },
+        'spray-tan':                  { name: 'Custom Airbrush Spray Tan',         price: 35,  duration: '30–45 min' },
+        'lash-body-smooth':           { name: 'Lash & Body Smooth Package',        price: 185, duration: '~2 hrs 15 min' },
+        'brow-lash-wax-ritual':       { name: 'Brow, Lash & Wax Ritual Package',   price: 115, duration: '~2 hrs 15 min' },
+        'glow-smooth-escape':         { name: 'Glow & Smooth Escape Package',      price: 135, duration: '~2 hrs 15 min' },
+        'mix-match-package':          { name: 'Mix & Match Escape Package',        price: 129, duration: '~2 hrs 15 min' },
+        'bronze-bare-glow':           { name: 'Bronze & Bare Glow Package',        price: 110, duration: '~1 hr 45 min' },
+        'prp-treatment':              { name: 'PRP (Platelet-Rich Plasma)',         price: 299, duration: '90 min' },
+        'lip-filler':                 { name: 'Lip Filler',                         price: 299, duration: '60 min' },
+        'ed-injectables':             { name: 'Erectile Dysfunction Injectables',  price: 299, duration: '60 min' },
+        'collagen-induction-therapy': { name: 'Collagen Induction Therapy',         price: 299, duration: '60 min' },
+        'weight-loss-program':        { name: 'Weight Loss Program (GLP-1)',        price: 299, duration: '30 min' },
+        'scalp-micropigmentation':    { name: 'Scalp Micropigmentation',            price: 299, duration: '3 hr' },
+        'lip-blush':                  { name: 'Lip Blush',                          price: 199, duration: '2 hr' },
+        'nano-brows':                 { name: 'Nano Brows',                         price: 239, duration: '2.5 hr' },
+        'powder-brows':               { name: 'Powder Brows',                       price: 210, duration: '2.5 hr' },
+        'lip-neutralization':         { name: 'Lip Neutralization',                 price: 399, duration: '2 hr' },
+        'custom-semipermanent-makeup':{ name: 'Custom Semipermanent Makeup',        price: 450, duration: '2 hr' },
+        'iv-hydration-therapy':       { name: 'IV Hydration Therapy',               price: 399, duration: '60 min' },
       };
 
       // ── Mirrors booking-page rules exactly ────────────────────────────────
@@ -1067,22 +1082,20 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         'iv-hydration-therapy', 'lab-collection', 'hormone-lab-panel', 'regenerative-blood-services',
       ]);
 
-      // Services eligible for Mix & Match (mirrors booking page checkboxes)
-      // cat: 'facial' | 'lash' | 'wax' — the 2 chosen services must be from different categories
+      /* Mix & Match options — populated from DB in booking page; used here for global cart modal */
       const MM_OPTIONS = [
-        { value: 'mm-signature-radiance', label: 'Signature Radiance Facial',            price: 99,  dur: '60 min',  cat: 'facial' },
-        { value: 'mm-brightening-peel',   label: 'Brightening Peel',                    price: 128, dur: '45 min',  cat: 'facial' },
-        { value: 'mm-diamond-glow',       label: 'Diamond Glow',                         price: 119, dur: '50 min',  cat: 'facial' },
-        { value: 'mm-high-freq',          label: 'High Frequency Skin Tightening',       price: 95,  dur: '45 min',  cat: 'facial' },
-        { value: 'mm-teen-facial',        label: 'Teen Skincare Facial',                 price: 64,  dur: '45 min',  cat: 'facial' },
-        { value: 'mm-pumpkin-enzyme',     label: 'Pumpkin Enzyme Facial',                price: 85,  dur: '60 min',  cat: 'facial' },
-        { value: 'mm-chlorophyll',        label: 'Chlorophyll Skin Tightening Facial',   price: 105, dur: '60 min',  cat: 'facial' },
-        { value: 'mm-pineapple-enzyme',   label: 'Pineapple Enzyme Facial',              price: 88,  dur: '60 min',  cat: 'facial' },
-        { value: 'mm-skin-recovery',      label: 'Skin Recovery Facial',                 price: 92,  dur: '60 min',  cat: 'facial' },
-        { value: 'mm-lash-lift',          label: 'Lash Lift & Brow Lamination',          price: 79,  dur: '60 min',  cat: 'lash'   },
-        { value: 'mm-lash-ext',           label: 'Lash Extensions',                      price: 159, dur: '120 min', cat: 'lash'   },
-        { value: 'mm-body-wax',           label: 'Body & Face Waxing',                   price: 65,  dur: '60 min',  cat: 'wax'    },
-        { value: 'mm-brazilian',          label: 'Brazilian Wax',                        price: 87,  dur: '60 min',  cat: 'wax'    },
+        { value: 'mm-signature-radiance', label: 'Signature Radiance Facial',  price: 65,  dur: '60 min', cat: 'facial' },
+        { value: 'mm-diamond-glow',       label: 'Diamond Glow',               price: 99,  dur: '50 min', cat: 'facial' },
+        { value: 'mm-smooth-canvas',      label: 'Smooth Canvas Facial',       price: 99,  dur: '45 min', cat: 'facial' },
+        { value: 'mm-microneedling',      label: 'Microneedling Facial',       price: 130, dur: '60 min', cat: 'facial' },
+        { value: 'mm-chemical-peel',      label: 'Chemical Peel',              price: 130, dur: '60 min', cat: 'facial' },
+        { value: 'mm-anti-aging',         label: 'Anti-Aging Facial',          price: 99,  dur: '60 min', cat: 'facial' },
+        { value: 'mm-teen-facial',        label: 'Teen Skincare Facial',       price: 45,  dur: '45 min', cat: 'facial' },
+        { value: 'mm-lash-lift',          label: 'Lash Lift & Brow Lamination',price: 65,  dur: '60 min', cat: 'lash'   },
+        { value: 'mm-lash-ext',           label: 'Lash Extensions',            price: 65,  dur: '120 min',cat: 'lash'   },
+        { value: 'mm-body-wax',           label: 'Body & Face Waxing',         price: 65,  dur: '60 min', cat: 'wax'    },
+        { value: 'mm-brazilian',          label: 'Brazilian Wax',              price: 45,  dur: '60 min', cat: 'wax'    },
+        { value: 'mm-spray-tan',          label: 'Custom Airbrush Spray Tan',  price: 35,  dur: '45 min', cat: 'wax'    },
       ];
 
       // ── Storage ────────────────────────────────────────────────────────────

@@ -17,8 +17,7 @@ INSERT INTO site_content (page_key, section_key, label, value, type, sort_order)
   ('home', 'cats_section_h2',  'New Categories: Heading',    'Advanced Treatments & Semipermanent Makeup.',          'text', 20),
   ('home', 'cats_section_sub', 'New Categories: Subheading', 'Two new service lines — medical-grade aesthetic procedures and precision permanent makeup, now available at Bliss Dermacare.', 'textarea', 21),
 
-  -- ── New This Season / Packages section ────────────────────────────────
-  ('home', 'season_h2',  'Packages Strip: Heading',    'Advanced Treatments, Semipermanent Makeup, new facials & seasonal packages.', 'text', 30),
+  -- ── New This Season / Packages section ────────────────────────────────  ('home', 'season_badge', 'Season Badge Text',        'Summer 2026',                                                                                                                                                                           'text',     29),  ('home', 'season_h2',  'Packages Strip: Heading',    'Advanced Treatments, Semipermanent Makeup, new facials & seasonal packages.', 'text', 30),
   ('home', 'season_sub', 'Packages Strip: Subheading', 'Two new treatment categories — Advanced Treatments and Semipermanent Makeup — plus enzyme facials, Dermaplane Glow, Smooth Canvas Facial, custom airbrush spray tan, and seasonal face & body packages.', 'textarea', 31),
 
   -- ── Membership Feature section ─────────────────────────────────────────

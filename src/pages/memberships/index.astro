@@ -79,7 +79,7 @@ import Layout from '../../layouts/Layout.astro';
                   <svg class="w-4 h-4 text-primary-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   <div>
                     <p class="text-sm font-semibold text-neutral-900">1 Facial Credit</p>
-                    <p class="text-xs text-neutral-500 mt-0.5">Choose from: Signature Radiance ($99), Pineapple Enzyme ($88), Skin Recovery ($92), Pumpkin Enzyme ($85), or Teen Facial ($64)</p>
+                    <p data-sc="tier1_facial_credit_desc" class="text-xs text-neutral-500 mt-0.5">Choose from any eligible facial: Signature Radiance ($65), Teen Facial ($45), Smooth Canvas ($99), Anti-Aging ($99), Diamond Glow ($99) &amp; more</p>
                   </div>
                 </div>
               </div>
@@ -152,15 +152,15 @@ import Layout from '../../layouts/Layout.astro';
                 <div class="flex items-start gap-3 p-3 bg-primary-50 rounded-xl border border-primary-100">
                   <svg class="w-4 h-4 text-primary-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   <div>
-                    <p class="text-sm font-semibold text-neutral-900">1 Premium Facial Credit <span class="text-xs text-neutral-400 font-normal">(up to $128 value)</span></p>
-                    <p class="text-xs text-neutral-500 mt-0.5">Diamond Glow, Brightening Peel, Dermaplane Glow, Chlorophyll Skin Tightening, Smooth Canvas, High Frequency + all Tier 1 facials</p>
+                    <p class="text-sm font-semibold text-neutral-900">1 Premium Facial Credit <span class="text-xs text-neutral-400 font-normal">(up to $130 value)</span></p>
+                    <p data-sc="tier2_facial_credit_desc" class="text-xs text-neutral-500 mt-0.5">Diamond Glow ($99), Smooth Canvas ($99), Microneedling ($130), Chemical Peel ($130), Anti-Aging ($99) + all Tier 1 facials</p>
                   </div>
                 </div>
                 <div class="flex items-start gap-3 p-3 bg-rose-50 rounded-xl border border-rose-100">
                   <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   <div>
-                    <p class="text-sm font-semibold text-neutral-900">1 Lash, Brow, or Body Credit <span class="text-xs text-neutral-400 font-normal">(up to $87 value)</span></p>
-                    <p class="text-xs text-neutral-500 mt-0.5">Lash Lift & Brow Lamination ($79), Body & Face Waxing ($65), Brazilian Wax ($87), or Custom Spray Tan ($65)</p>
+                    <p class="text-sm font-semibold text-neutral-900">1 Lash, Brow, or Body Credit <span class="text-xs text-neutral-400 font-normal">(up to $65 value)</span></p>
+                    <p data-sc="tier2_body_credit_desc" class="text-xs text-neutral-500 mt-0.5">Lash Lift &amp; Brow Lamination ($65), Body &amp; Face Waxing ($65), Brazilian Wax ($45), or Custom Spray Tan ($35)</p>
                   </div>
                 </div>
               </div>
@@ -240,15 +240,15 @@ import Layout from '../../layouts/Layout.astro';
                 <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
                   <svg class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   <div>
-                    <p class="text-sm font-semibold text-neutral-900">1 Lash Service Credit <span class="text-xs text-neutral-400 font-normal">(up to $159 value)</span></p>
-                    <p class="text-xs text-neutral-500 mt-0.5">Full Lash Extensions ($159), Lash Fill ($43), or Lash Lift & Brow Lamination ($79)</p>
+                    <p class="text-sm font-semibold text-neutral-900">1 Lash Service Credit <span class="text-xs text-neutral-400 font-normal">(up to $65 value)</span></p>
+                    <p data-sc="tier3_lash_credit_desc" class="text-xs text-neutral-500 mt-0.5">Full Lash Extensions ($65), Lash Fill ($55), or Lash Lift &amp; Brow Lamination ($65)</p>
                   </div>
                 </div>
                 <div class="flex items-start gap-3 p-3 bg-rose-50 rounded-xl border border-rose-100">
                   <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   <div>
-                    <p class="text-sm font-semibold text-neutral-900">1 Body Treatment Credit <span class="text-xs text-neutral-400 font-normal">(up to $87 value)</span></p>
-                    <p class="text-xs text-neutral-500 mt-0.5">Body & Face Waxing ($65), Brazilian Wax ($87), or Custom Spray Tan ($65)</p>
+                    <p class="text-sm font-semibold text-neutral-900">1 Body Treatment Credit <span class="text-xs text-neutral-400 font-normal">(up to $65 value)</span></p>
+                    <p data-sc="tier3_body_credit_desc" class="text-xs text-neutral-500 mt-0.5">Body &amp; Face Waxing ($65), Brazilian Wax ($45), or Custom Spray Tan ($35)</p>
                   </div>
                 </div>
               </div>
@@ -463,17 +463,17 @@ import Layout from '../../layouts/Layout.astro';
               <div class="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
                 <p class="font-semibold text-neutral-900 mb-1">Example — Glow Ritual</p>
                 <p class="text-neutral-500 text-xs">You get your monthly Signature Radiance Facial (covered by credit). You also want a Brazilian Wax.</p>
-                <p class="text-emerald-700 font-semibold text-xs mt-2">Brazilian Wax: $87 → <strong>$78.30</strong> with 10% off</p>
+                <p class="text-emerald-700 font-semibold text-xs mt-2">Brazilian Wax: $45 → <strong>$40.50</strong> with 10% off</p>
               </div>
               <div class="bg-primary-50 rounded-xl p-4 border border-primary-100">
                 <p class="font-semibold text-neutral-900 mb-1">Example — Radiance Plan</p>
                 <p class="text-neutral-500 text-xs">Facial + Lash Lift covered by credits. You add a Spray Tan.</p>
-                <p class="text-emerald-700 font-semibold text-xs mt-2">Spray Tan: $65 → <strong>$55.25</strong> with 15% off</p>
+                <p class="text-emerald-700 font-semibold text-xs mt-2">Spray Tan: $35 → <strong>$29.75</strong> with 15% off</p>
               </div>
               <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
                 <p class="font-semibold text-neutral-900 mb-1">Example — Bliss VIP</p>
-                <p class="text-neutral-500 text-xs">Facial + Lash Extensions + Waxing covered by credits. You add a Brightening Peel.</p>
-                <p class="text-emerald-700 font-semibold text-xs mt-2">Brightening Peel: $128 → <strong>$102.40</strong> with 20% off</p>
+                <p class="text-neutral-500 text-xs">Facial + Lash Extensions + Waxing covered by credits. You add a Microneedling Facial.</p>
+                <p class="text-emerald-700 font-semibold text-xs mt-2">Microneedling: $130 → <strong>$104.00</strong> with 20% off</p>
               </div>
             </div>
           </div>
@@ -921,6 +921,19 @@ import Layout from '../../layouts/Layout.astro';
         errDiv.classList.add('flex');
       }
     });
+  </script>
+
+  <script is:inline>
+    /* Sync credit descriptions from site_content if admin has overridden them */
+    fetch('/.netlify/functions/get-content?page=memberships')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var c=d.content||{};
+        Object.keys(c).forEach(function(k){
+          var el=document.querySelector('[data-sc="'+k+'"]');
+          if(el&&c[k]&&c[k].value)el.textContent=c[k].value;
+        });
+      }).catch(function(){});
   </script>
 
   <script>
