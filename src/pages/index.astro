@@ -96,7 +96,7 @@ import Layout from '../layouts/Layout.astro';
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
         </a>
       </div>
-      <div class="grid md:grid-cols-3 gap-6">
+      <div id="featured-svcs-wrap" class="grid md:grid-cols-3 gap-6">
         <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
             <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
@@ -558,19 +558,50 @@ import Layout from '../layouts/Layout.astro';
     fetch('/.netlify/functions/get-services')
       .then(r => r.json())
       .then(({ services }) => {
+        if (!services?.length) return;
         const map = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
+
+        // Update/hide cards with data-service-id
         document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
           const slug = link.getAttribute('data-service-id') || '';
           const svc  = map.get(slug);
           const card = link.closest('.group') as HTMLElement | null;
           if (!card) return;
           if (!svc) { card.style.display = 'none'; return; }
-          // Update price text if present
           const priceEl = card.querySelector<HTMLElement>('[class*="font-bold"][class*="text-primary"]');
           if (priceEl && /^\$\d/.test(priceEl.textContent || '')) {
             priceEl.textContent = '$' + Math.round(svc.price / 100);
           }
         });
+
+        // Replace "Popular treatments" grid with featured services if any are set
+        function _e(s: unknown): string {
+          return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+        const featured = (services as any[]).filter((s: any) => s.featured);
+        if (featured.length) {
+          const wrap = document.getElementById('featured-svcs-wrap');
+          if (wrap) {
+            wrap.innerHTML = featured.map((s: any) => {
+              const price = Math.round(s.price / 100);
+              const img = s.image_url
+                ? '<img src="' + _e(s.image_url) + '" alt="' + _e(s.name) + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />'
+                : '<div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50"></div>';
+              const desc = s.tagline || s.description
+                ? '<p class="text-neutral-500 text-sm mb-4">' + _e(s.tagline || s.description) + '</p>'
+                : '';
+              return '<div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">' +
+                '<div class="h-48 overflow-hidden">' + img + '</div>' +
+                '<div class="p-6">' +
+                '<h3 class="text-xl font-serif text-neutral-900 mb-2">' + _e(s.name) + '</h3>' +
+                desc +
+                '<div class="flex items-center justify-between">' +
+                '<span class="text-2xl font-bold text-primary-600">$' + price + '</span>' +
+                '<a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>' +
+                '</div></div></div>';
+            }).join('');
+          }
+        }
       }).catch(() => {});
   </script>
 

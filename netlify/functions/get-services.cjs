@@ -24,12 +24,13 @@ exports.handler = async (event) => {
     const q = event.queryStringParameters || {};
     let query = getSupabase()
       .from('services')
-      .select('id,slug,name,category,price,duration,description,tagline,image_url,is_package,is_bookable,sort_order')
+      .select('id,slug,name,category,price,duration,description,tagline,image_url,is_package,is_bookable,featured,sort_order')
       .neq('active', false)
       .order('category')
       .order('sort_order');
 
     if (q.category) query = query.eq('category', q.category);
+    if (q.featured === 'true') query = query.eq('featured', true);
 
     const { data, error } = await query;
     if (error) throw new Error(error.message);
