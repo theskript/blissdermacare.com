@@ -117,7 +117,7 @@ const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', d
       .then(r => r.json())
       .then(({ categories }) => {
         const cats: any[] = categories ?? [];
-        const thisCat = cats.find((c: any) => c.slug === catSlug);
+        const thisCat = cats.find((c: any) => c.slug === catSlug || c.slug === dbCategory);
         if (thisCat) {
           const bc  = document.getElementById('cat-breadcrumb');
           const tag = document.getElementById('cat-tagline');
