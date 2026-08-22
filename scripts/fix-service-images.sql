@@ -31,8 +31,8 @@ UPDATE services SET image_url = 'https://images.pexels.com/photos/29648626/pexel
 UPDATE services SET image_url = 'https://images.pexels.com/photos/5128234/pexels-photo-5128234.jpeg?auto=compress&cs=tinysrgb&w=600'
   WHERE slug = 'lash-extensions';
 
--- Lash fill — same lash application scene but lighter session; use fill angle
-UPDATE services SET image_url = 'https://images.pexels.com/photos/5128238/pexels-photo-5128238.jpeg?auto=compress&cs=tinysrgb&w=600'
+-- Lash fill — soft eyelash close-up (different from full-set photo)
+UPDATE services SET image_url = 'https://images.pexels.com/photos/4041391/pexels-photo-4041391.jpeg?auto=compress&cs=tinysrgb&w=600'
   WHERE slug = 'lash-extensions-fill';
 
 -- Lash Lift & Brow Lamination — brow shaping / lamination treatment
@@ -89,4 +89,18 @@ UPDATE services SET image_url = 'https://images.pexels.com/photos/3985150/pexels
   WHERE slug = 'mix-match-package';
 
 -- ── VERIFY — shows slug, name, image_url for all services ─────────────────
+-- ── CATCH-ALL: any remaining service without an image gets a generic spa photo
+UPDATE services
+  SET image_url = 'https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=600'
+  WHERE (image_url IS NULL OR image_url = '') AND is_package = false;
+UPDATE services
+  SET image_url = 'https://images.pexels.com/photos/3985150/pexels-photo-3985150.jpeg?auto=compress&cs=tinysrgb&w=600'
+  WHERE (image_url IS NULL OR image_url = '') AND is_package = true;
+
+-- ── Chemical Peel (common slug variants) ─────────────────────────────────
+UPDATE services SET image_url = '/images/pineapple-enzyme-facial.jpg'
+  WHERE slug IN ('chemical-peel', 'brightening-chemical-peel', 'light-chemical-peel');
+UPDATE services SET image_url = '/images/pumpkin-enzyme-facial.jpg'
+  WHERE slug IN ('deep-chemical-peel', 'medium-chemical-peel');
+
 SELECT slug, name, image_url FROM services ORDER BY category, name;
