@@ -88,7 +88,7 @@ import Layout from '../../layouts/Layout.astro';
                 </div>
               </div>
               <p class="text-sm text-neutral-500 mb-5">Select one or more services. <strong class="text-neutral-700">2-hour max</strong> for combined individual services. Packages are standalone bookings.</p>
-              <div class="space-y-6">
+              <div class="space-y-6" id="svc-picker" style="opacity:0">
 
                 <!-- Facials -->
                 <div>
@@ -179,7 +179,7 @@ import Layout from '../../layouts/Layout.astro';
                     <label class="cursor-pointer">
                       <input type="checkbox" name="service" value="dermaplane-glow-facial" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
-                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>NEW</span>
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Dermaplane Glow Facial</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$105</p>
                         <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
@@ -189,7 +189,7 @@ import Layout from '../../layouts/Layout.astro';
                     <label class="cursor-pointer">
                       <input type="checkbox" name="service" value="smooth-canvas-facial" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
-                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>NEW</span>
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Smooth Canvas Facial</p>
                         <p class="text-primary-600 font-bold text-sm mt-1.5">$89</p>
                         <p class="text-xs text-neutral-400 mt-0.5">45 min</p>
@@ -199,9 +199,13 @@ import Layout from '../../layouts/Layout.astro';
                   </div>
                 </div>
 
-                <!-- Lash & Brow -->
+                <!-- Lash, Brow & Body -->
                 <div>
-                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Lash &amp; Brow</p>
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Lash, Brow &amp; Body</p>
+                  <div class="flex items-start gap-2 mb-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+                    <svg class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2m0-14a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <p class="text-xs text-amber-800"><strong>Age 21+</strong> required for waxing services only</p>
+                  </div>
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
 
                     <label class="cursor-pointer">
@@ -231,75 +235,53 @@ import Layout from '../../layouts/Layout.astro';
                       </div>
                     </label>
 
+                    <label class="cursor-pointer block">
+                      <input type="checkbox" name="service" value="body-and-face-waxing" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900">Body &amp; Face Waxing</p>
+                        <p class="text-xs text-neutral-600 mt-1">Facial, arms, legs, underarms</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer block">
+                      <input type="checkbox" name="service" value="brazilian-wax" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
+                        <p class="font-semibold text-sm text-neutral-900">Brazilian Wax</p>
+                        <p class="text-xs text-neutral-600 mt-1">Complete bikini area hair removal</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$87</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
+                      </div>
+                    </label>
+
+                    <label class="cursor-pointer block">
+                      <input type="checkbox" name="service" value="spray-tan" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all relative h-full">
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>NEW</span>
+                        <p class="font-semibold text-sm text-neutral-900">Custom Airbrush Spray Tan</p>
+                        <p class="text-xs text-neutral-600 mt-1">Streak-free, custom bronze glow &mdash; no age restriction</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">30–45 min</p>
+                      </div>
+                    </label>
+
                   </div>
                 </div>
 
-                <!-- Body & Advanced -->
-                <div class="grid sm:grid-cols-2 gap-6">
-
-                  <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Body Treatments</p>
-                    <div class="flex items-start gap-2 mb-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
-                      <svg class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2m0-14a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      <p class="text-xs text-amber-800"><strong>Age 21+</strong> required for waxing services only</p>
-                    </div>
-                    <div class="space-y-2">
-                      <label class="cursor-pointer block">
-                        <input type="checkbox" name="service" value="body-and-face-waxing" class="sr-only peer" />
-                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                          <p class="font-semibold text-sm text-neutral-900">Body &amp; Face Waxing</p>
-                          <p class="text-xs text-neutral-600 mt-1">Facial, arms, legs, underarms</p>
-                          <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
-                          <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
-                        </div>
-                      </label>
-
-                      <label class="cursor-pointer block">
-                        <input type="checkbox" name="service" value="brazilian-wax" class="sr-only peer" />
-                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                          <p class="font-semibold text-sm text-neutral-900">Brazilian Wax</p>
-                          <p class="text-xs text-neutral-600 mt-1">Complete bikini area hair removal</p>
-                          <p class="text-primary-600 font-bold text-sm mt-1.5">$87</p>
-                          <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
-                        </div>
-                      </label>
-
-                      <label class="cursor-pointer block">
-                        <input type="checkbox" name="service" value="spray-tan" class="sr-only peer" />
-                        <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all relative">
-                          <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
-                          <p class="font-semibold text-sm text-neutral-900">Custom Airbrush Spray Tan</p>
-                          <p class="text-xs text-neutral-600 mt-1">Streak-free, custom bronze glow &mdash; no age restriction</p>
-                          <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
-                          <p class="text-xs text-neutral-400 mt-0.5">30–45 min</p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Advanced Treatments</p>
-                    <div class="space-y-2">
-
-                      <label class="cursor-pointer block">
-                        <input type="checkbox" name="service" value="vampire-facial-prp" class="sr-only peer" />
-                        <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                          <p class="font-semibold text-sm text-neutral-900">Vampire Facial (PRP)</p>
-                          <p class="text-primary-600 font-bold text-sm mt-1.5">$380</p>
-                          <p class="text-xs text-neutral-400 mt-0.5">75 min</p>
-                        </div>
-                      </label>
-
-
-
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Advanced Treatments (New Clinical Services) -->
+                <!-- Advanced Treatments -->
                 <div>
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Advanced Treatments</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
+                    <label class="cursor-pointer block">
+                      <input type="checkbox" name="service" value="vampire-facial-prp" class="sr-only peer" />
+                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
+                        <p class="font-semibold text-sm text-neutral-900">Vampire Facial (PRP)</p>
+                        <p class="text-primary-600 font-bold text-sm mt-1.5">$380</p>
+                        <p class="text-xs text-neutral-400 mt-0.5">75 min</p>
+                      </div>
+                    </label>
 
                     <label class="cursor-pointer block">
                       <input type="checkbox" name="service" value="prp-treatment" class="sr-only peer" />
@@ -519,7 +501,7 @@ import Layout from '../../layouts/Layout.astro';
                     <label class="cursor-pointer">
                       <input type="checkbox" name="service" value="bronze-bare-glow" class="sr-only peer" />
                       <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
-                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full">NEW</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>NEW</span>
                         <p class="font-semibold text-sm text-neutral-900 leading-snug">Bronze &amp; Bare Glow</p>
                         <p class="text-xs text-neutral-500 mt-0.5">Body Waxing + Custom Spray Tan</p>
                         <p class="text-amber-600 font-bold text-sm mt-1.5">$110</p>
@@ -1141,6 +1123,18 @@ import Layout from '../../layouts/Layout.astro';
             const priceEl = cb.closest('label')?.querySelector<HTMLElement>('[class*="text-primary-600"][class*="font-bold"],[class*="text-amber-6"][class*="font-bold"]');
             if (priceEl) priceEl.textContent = cb.value === 'mix-match-package' ? `From $${p}` : `$${p}`;
           });
+          // Update or hide badge spans based on DB badge field
+          const _bmap = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
+          document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
+            const svc = _bmap.get(cb.value);
+            const lbl = cb.closest('label');
+            if (!lbl) return;
+            const badgeEl = lbl.querySelector<HTMLElement>('[data-svc-badge]');
+            if (badgeEl) {
+              if (svc?.badge) { badgeEl.textContent = svc.badge; }
+              else { badgeEl.style.display = 'none'; }
+            }
+          });
           // Update mix-match picker prices by matching on label text
           document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => {
             const matched = (services as any[]).find((s: any) => s.name === cb.dataset.mmLabel);
@@ -1187,6 +1181,9 @@ import Layout from '../../layouts/Layout.astro';
       } catch (fetchErr) {
         console.warn('Could not load live service prices:', fetchErr);
       }
+      // Reveal service picker after processing (or after failure, showing hardcoded defaults)
+      const _pickerEl = document.getElementById('svc-picker');
+      if (_pickerEl) { _pickerEl.style.transition = 'opacity 0.2s'; _pickerEl.style.opacity = '1'; }
 
       const DISCOUNT_PCT: Record<string, number> = {
         'none': 0,

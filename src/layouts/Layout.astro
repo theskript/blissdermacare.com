@@ -341,15 +341,15 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     <!-- Navigation -->
     <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white dark:bg-[#1a1714] border-b border-neutral-200 dark:border-neutral-800 shadow-sm transition-transform duration-300">
       <!-- Promo Bar -->
-      <div class="bg-gradient-to-r from-amber-500 via-primary-600 to-rose-500 text-white py-2.5 px-4 font-sans font-medium text-sm">
+      <div id="promo-bar" class="bg-gradient-to-r from-amber-500 via-primary-600 to-rose-500 text-white py-2.5 px-4 font-sans font-medium text-sm">
         <div class="max-w-7xl mx-auto flex items-center justify-center gap-4 flex-wrap">
           <div class="flex items-center gap-2">
             <svg class="w-4 h-4 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-            <span class="hidden sm:inline">Now offering Advanced Treatments &amp; Semipermanent Makeup &mdash; plus member plans from <strong>$89/mo</strong>.</span>
-            <span class="sm:hidden">Advanced Treatments &amp; Semipermanent Makeup — now booking!</span>
+            <span id="promo-text-lg" class="hidden sm:inline">Now offering Advanced Treatments &amp; Semipermanent Makeup &mdash; plus member plans from <strong>$89/mo</strong>.</span>
+            <span id="promo-text-sm" class="sm:hidden">Advanced Treatments &amp; Semipermanent Makeup — now booking!</span>
           </div>
           <div class="flex items-center gap-3">
-            <a href="/memberships/" class="underline underline-offset-2 font-bold hover:text-amber-100 transition-colors whitespace-nowrap">See member plans &rarr;</a>
+            <a id="promo-link" href="/memberships/" class="underline underline-offset-2 font-bold hover:text-amber-100 transition-colors whitespace-nowrap">See member plans &rarr;</a>
             <span class="hidden sm:inline text-white/40">|</span>
             <a href="/services/" class="hidden sm:inline underline underline-offset-2 font-medium hover:text-amber-100 transition-colors whitespace-nowrap">All services &rarr;</a>
           </div>
@@ -504,12 +504,24 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-100 dark:border-neutral-800 pt-3 pb-3">
-          <a href="/services/facials/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Facials</a>
-          <a href="/services/lash-brow-body/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Lash, Brow &amp; Body</a>
-          <a href="/services/advanced-treatments/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Advanced Treatments</a>
-          <a href="/services/semipermanent-makeup/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Semipermanent Makeup</a>
-          <a href="/services/ancillary/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Ancillary Services</a>
-          <a href="/services/packages/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
+
+          <!-- Services accordion -->
+          <div>
+            <button id="mob-services-btn" class="flex items-center justify-between w-full py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              Services
+              <svg id="mob-services-icon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div id="mob-services-sub" class="hidden pl-4 pb-1 border-l border-neutral-100 dark:border-neutral-700 ml-1 space-y-0.5">
+              <a href="/services/" class="block py-2 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors">All Services &rarr;</a>
+              <a href="/services/facials/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Facials</a>
+              <a href="/services/lash-brow-body/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Lash, Brow &amp; Body</a>
+              <a href="/services/advanced-treatments/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Advanced Treatments</a>
+              <a href="/services/semipermanent-makeup/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Semipermanent Makeup</a>
+              <a href="/services/ancillary/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Ancillary Services</a>
+              <a href="/services/packages/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
+            </div>
+          </div>
+
           <a href="/memberships/" class="flex items-center gap-2 py-2.5 px-1 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
             Memberships
@@ -551,6 +563,23 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         </div>
       </div>
     </nav>
+
+    <script is:inline>
+      /* Load admin-controlled promo bar text/visibility */
+      fetch('/.netlify/functions/get-content?page=global')
+        .then(function(r){return r.json();})
+        .then(function(d){
+          var c=d.content||{};
+          var bar=document.getElementById('promo-bar');
+          if(!bar)return;
+          if(c.promo_bar_enabled&&c.promo_bar_enabled.value==='false'){bar.style.display='none';return;}
+          var tl=document.getElementById('promo-text-lg'),ts=document.getElementById('promo-text-sm'),lk=document.getElementById('promo-link');
+          if(tl&&c.promo_bar_text&&c.promo_bar_text.value)tl.textContent=c.promo_bar_text.value;
+          if(ts&&c.promo_bar_text_mobile&&c.promo_bar_text_mobile.value)ts.textContent=c.promo_bar_text_mobile.value;
+          if(lk&&c.promo_bar_link_text&&c.promo_bar_link_text.value)lk.textContent=c.promo_bar_link_text.value;
+          if(lk&&c.promo_bar_link_url&&c.promo_bar_link_url.value)lk.href=c.promo_bar_link_url.value;
+        }).catch(function(){});
+    </script>
 
     <!-- ═══════════════════════════════════════════════════════════════
          GLOBAL CART DRAWER
@@ -723,6 +752,13 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       document.getElementById('mobile-menu-button')?.addEventListener('click', () => {
         const menu = document.getElementById('mobile-menu');
         menu?.classList.toggle('hidden');
+      });
+
+      // Mobile accordion: Services
+      document.getElementById('mob-services-btn')?.addEventListener('click', () => {
+        document.getElementById('mob-services-sub')?.classList.toggle('hidden');
+        const icon = document.getElementById('mob-services-icon');
+        if (icon) icon.style.transform = icon.style.transform === 'rotate(180deg)' ? '' : 'rotate(180deg)';
       });
 
       // Mobile accordion: About

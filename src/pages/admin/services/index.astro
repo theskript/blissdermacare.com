@@ -274,6 +274,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           </label>
         </div>
 
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">Badge Text <span class="text-neutral-300 font-normal normal-case tracking-normal">(e.g. NEW, TRENDING — leave blank to hide)</span></label>
+          <input id="f-badge" type="text" value="${esc(svc?.badge || '')}" placeholder="NEW"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+        </div>
+
         <div class="flex gap-3 pt-2">
           <button id="f-save-btn" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">Save</button>
           ${svc ? `<button id="f-del-btn" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>` : ''}
@@ -350,6 +356,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         const isPackage= (document.getElementById('f-package')  as HTMLInputElement).checked;
         const active   = (document.getElementById('f-active')   as HTMLInputElement).checked;
         const featured = (document.getElementById('f-featured')  as HTMLInputElement).checked;
+        const badge    = (document.getElementById('f-badge')     as HTMLInputElement).value.trim() || null;
 
         if (!name || !slug || !category || !priceRaw) {
           msg.textContent = 'Name, slug, category, and price are required.';
@@ -362,7 +369,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         try {
           const fields = { name, slug, category, price, duration: duration || null,
             sort_order: sortOrder, tagline: tagline || null, description: desc || null,
-            image_url: imageUrl || null, is_bookable: active, is_package: isPackage, active, featured };
+            image_url: imageUrl || null, is_bookable: active, is_package: isPackage, active, featured, badge };
           if (editingId) {
             await apiFetch('admin-services', { method: 'PATCH', body: { id: editingId, ...fields } });
           } else {

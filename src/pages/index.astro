@@ -96,7 +96,7 @@ import Layout from '../layouts/Layout.astro';
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
         </a>
       </div>
-      <div id="featured-svcs-wrap" class="grid md:grid-cols-3 gap-6">
+      <div id="featured-svcs-wrap" class="grid md:grid-cols-3 gap-6" style="opacity:0">
         <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
             <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
@@ -558,7 +558,11 @@ import Layout from '../layouts/Layout.astro';
     fetch('/.netlify/functions/get-services')
       .then(r => r.json())
       .then(({ services }) => {
-        if (!services?.length) return;
+        if (!services?.length) {
+          const fw = document.getElementById('featured-svcs-wrap');
+          if (fw) { fw.style.transition = 'opacity 0.2s'; fw.style.opacity = '1'; }
+          return;
+        }
         const map = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
 
         // Update/hide cards with data-service-id
@@ -602,7 +606,12 @@ import Layout from '../layouts/Layout.astro';
             }).join('');
           }
         }
-      }).catch(() => {});
+        const fw2 = document.getElementById('featured-svcs-wrap');
+        if (fw2) { fw2.style.transition = 'opacity 0.2s'; fw2.style.opacity = '1'; }
+      }).catch(() => {
+        const fw3 = document.getElementById('featured-svcs-wrap');
+        if (fw3) fw3.style.opacity = '1';
+      });
   </script>
 
   <script is:inline>

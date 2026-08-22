@@ -16,7 +16,7 @@ const CORS = {
   'Access-Control-Allow-Methods':'GET, POST, PATCH, DELETE, OPTIONS',
 };
 
-const WRITABLE = new Set(['slug','name','category','price','duration','description','tagline','image_url','is_package','is_bookable','active','featured','sort_order']);
+const WRITABLE = new Set(['slug','name','category','price','duration','description','tagline','image_url','is_package','is_bookable','active','featured','badge','sort_order']);
 
 function sanitize(body = {}) {
   const clean = {};
