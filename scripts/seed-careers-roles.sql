@@ -1,10 +1,11 @@
 -- Seed careers job openings into site_content table.
 -- Run in Supabase SQL Editor after confirming site_content table and columns (page_key, section_key, value).
 
-INSERT INTO site_content (page_key, section_key, value)
+INSERT INTO site_content (page_key, section_key, label, value)
 VALUES (
   'careers',
   'openings',
+  'Job Openings',
   '[
     {
       "title": "Licensed Esthetician",
@@ -57,4 +58,4 @@ VALUES (
     }
   ]'
 )
-ON CONFLICT (page_key, section_key) DO UPDATE SET value = EXCLUDED.value;
+ON CONFLICT (page_key, section_key) DO UPDATE SET label = EXCLUDED.label, value = EXCLUDED.value;

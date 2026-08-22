@@ -1004,6 +1004,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         'brightening-peel':                { name: 'Brightening Peel',                  price: 128, duration: '45 min' },
         'diamond-glow':                    { name: 'Diamond Glow',                       price: 119, duration: '50 min' },
         'teen-skincare-facial':            { name: 'Teen Skincare Facial',               price: 64,  duration: '45 min' },
+        'smooth-canvas-facial':            { name: 'Smooth Canvas Facial',               price: 89,  duration: '45 min' },
         'high-frequency-skin-tightening':  { name: 'High Frequency Skin Tightening',    price: 95,  duration: '45 min' },
         'pumpkin-enzyme-facial':           { name: 'Pumpkin Enzyme Facial',              price: 85,  duration: '60 min' },
         'chlorophyll-skin-tightening-facial': { name: 'Chlorophyll Skin Tightening Facial', price: 105, duration: '60 min' },
@@ -1015,10 +1016,12 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         'lash-extensions-fill':            { name: 'Lash Extensions Fill',               price: 43,  duration: '1 hr' },
         'body-and-face-waxing':            { name: 'Body & Face Waxing',                 price: 65,  duration: '45–60 min' },
         'brazilian-wax':                   { name: 'Brazilian Wax',                      price: 87,  duration: '45–60 min' },
+        'spray-tan':                       { name: 'Custom Airbrush Spray Tan',          price: 65,  duration: '30–45 min' },
         'lash-body-smooth':                { name: 'Lash & Body Smooth Package',         price: 185, duration: '~2 hrs 15 min' },
         'brow-lash-wax-ritual':            { name: 'Brow, Lash & Wax Ritual Package',    price: 115, duration: '~2 hrs 15 min' },
         'glow-smooth-escape':              { name: 'Glow & Smooth Escape Package',       price: 135, duration: '~2 hrs 15 min' },
         'mix-match-package':               { name: 'Mix & Match Escape Package',         price: 129, duration: '~2 hrs 15 min' },
+        'bronze-bare-glow':                { name: 'Bronze & Bare Glow Package',         price: 110, duration: '~1 hr 45 min' },
         'prp-treatment':                   { name: 'PRP (Platelet-Rich Plasma)',          price: 399, duration: '60 min' },
         'lip-filler':                      { name: 'Lip Filler',                          price: 599, duration: '45 min' },
         'ed-injectables':                  { name: 'Erectile Dysfunction Injectables',    price: 499, duration: '60 min' },
@@ -1039,14 +1042,15 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       // ── Mirrors booking-page rules exactly ────────────────────────────────
       const DURATIONS = {
         'signature-radiance-facial': 60, 'brightening-peel': 45, 'diamond-glow': 50,
-        'teen-skincare-facial': 45, 'high-frequency-skin-tightening': 45,
+        'teen-skincare-facial': 45, 'smooth-canvas-facial': 45,
+        'high-frequency-skin-tightening': 45,
         'pumpkin-enzyme-facial': 60, 'chlorophyll-skin-tightening-facial': 60,
         'pineapple-enzyme-facial': 60, 'skin-recovery-facial': 60,
         'vampire-facial-prp': 75, 'lash-lift-brow-lamination': 60,
         'lash-extensions': 120, 'lash-extensions-fill': 60,
-        'body-and-face-waxing': 60, 'brazilian-wax': 60,
+        'body-and-face-waxing': 60, 'brazilian-wax': 60, 'spray-tan': 45,
         'lash-body-smooth': 135, 'brow-lash-wax-ritual': 135,
-        'glow-smooth-escape': 135, 'mix-match-package': 135,
+        'glow-smooth-escape': 135, 'mix-match-package': 135, 'bronze-bare-glow': 105,
         'prp-treatment': 60, 'lip-filler': 45, 'ed-injectables': 60,
         'collagen-induction-therapy': 60, 'weight-loss-program': 30,
         'scalp-micropigmentation': 180, 'lip-neutralization': 120,
@@ -1057,7 +1061,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       // Solo = must be booked alone (matches booking page SOLO_SERVICES)
       const SOLO = new Set([
         'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
-        'mix-match-package',
+        'mix-match-package', 'bronze-bare-glow',
         'prp-treatment', 'lip-filler', 'ed-injectables', 'collagen-induction-therapy', 'weight-loss-program',
         'scalp-micropigmentation', 'lip-neutralization', 'lip-blush', 'nano-brows', 'powder-brows', 'custom-semipermanent-makeup',
         'iv-hydration-therapy', 'lab-collection', 'hormone-lab-panel', 'regenerative-blood-services',
@@ -1439,7 +1443,13 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       });
 
       // ── Public API ─────────────────────────────────────────────────────────
-      window.BlissCart = { add: addItem, remove: removeItem, clear: clearAll, get: getCart, open: openDrawer, close: closeDrawer };
+      function registerService(id, name, price, durationMins, solo) {
+        if (!SERVICES[id]) SERVICES[id] = { name, price, duration: typeof durationMins === 'string' ? durationMins : durationMins + ' min' };
+        if (!DURATIONS[id]) DURATIONS[id] = typeof durationMins === 'number' ? durationMins : 60;
+        if (solo) SOLO.add(id);
+      }
+
+      window.BlissCart = { add: addItem, remove: removeItem, clear: clearAll, get: getCart, open: openDrawer, close: closeDrawer, inject: injectCartButtons, register: registerService };
 
       // ── Init ───────────────────────────────────────────────────────────────
       function init() { renderAll(); injectCartButtons(); }
@@ -1448,6 +1458,10 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       } else {
         init();
       }
+
+      // Re-inject cart buttons when new data-service-id links are added to the DOM
+      new MutationObserver(() => { injectCartButtons(); renderAll(); })
+        .observe(document.body, { childList: true, subtree: true });
     })();
     </script>
   </body>

@@ -67,6 +67,14 @@ const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', d
   <script>
     const catSlug: string = (document.getElementById('__cat') as HTMLElement)?.dataset.slug ?? '';
 
+    // URL slug → DB category key (where they differ)
+    const CATEGORY_KEY: Record<string, string> = {
+      'advanced-treatments':  'advanced',
+      'semipermanent-makeup': 'semipermanent',
+      'ancillary':            'wellness',
+    };
+    const dbCategory = CATEGORY_KEY[catSlug] ?? catSlug;
+
     function _esc(s: unknown): string {
       return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
@@ -76,7 +84,7 @@ const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', d
       const dur   = svc.duration ? svc.duration + ' min' : '';
       const img   = svc.image_url
         ? '<img src="' + _esc(svc.image_url) + '" alt="' + _esc(svc.name) + '" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy"/>'
-        : '<div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50"></div>';
+        : '<div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50 flex items-center justify-center"><svg class="w-10 h-10 text-primary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg></div>';
       const desc  = (svc.tagline || svc.description)
         ? '<p class="text-neutral-600 text-sm mb-4">' + _esc(svc.tagline || svc.description) + '</p>'
         : '';
@@ -90,7 +98,7 @@ const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', d
         '<div class="flex items-center justify-between"><div>' +
         '<p class="text-2xl font-bold text-primary-600">' + _esc(price) + '</p>' +
         (dur ? '<p class="text-xs text-neutral-500">' + _esc(dur) + '</p>' : '') +
-        '</div><a href="/book/" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a></div></div></div>'
+        '</div><a href="/book/" data-service-id="' + _esc(svc.slug) + '" class="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700 transition-colors">Book</a></div></div></div>'
       );
     }
 
@@ -134,18 +142,24 @@ const { title, desc } = META[slug] ?? { title: 'Services – Bliss Dermacare', d
       }).catch(_showHeader);
 
     // Fetch services → populate svc-section
-    fetch('/.netlify/functions/get-services?category=' + encodeURIComponent(catSlug))
+    fetch('/.netlify/functions/get-services?category=' + encodeURIComponent(dbCategory))
       .then(r => r.json())
       .then(({ services }) => {
         if (!services?.length) { _showSvc(); return; }
         const wrap = document.querySelector<HTMLElement>('#svc-section .max-w-7xl');
         if (wrap) {
           const g = document.createElement('div');
-          g.className = catSlug === 'packages'
+          g.className = dbCategory === 'packages'
             ? 'grid md:grid-cols-2 gap-6'
             : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6';
           g.innerHTML = (services as any[]).map(_card).join('');
           wrap.appendChild(g);
+          // Register any new services with the cart and inject Add buttons
+          (services as any[]).forEach((svc: any) => {
+            const W = (window as any).BlissCart;
+            if (W?.register) W.register(svc.slug, svc.name, Math.round(svc.price / 100), svc.duration ?? 60, svc.is_package || ['advanced','semipermanent','wellness'].includes(svc.category));
+          });
+          if ((window as any).BlissCart?.inject) (window as any).BlissCart.inject();
         }
         _showSvc();
       }).catch(_showSvc);
