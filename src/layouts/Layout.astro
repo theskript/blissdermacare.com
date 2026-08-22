@@ -1452,7 +1452,26 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       window.BlissCart = { add: addItem, remove: removeItem, clear: clearAll, get: getCart, open: openDrawer, close: closeDrawer, inject: injectCartButtons, register: registerService };
 
       // ── Init ───────────────────────────────────────────────────────────────
-      function init() { renderAll(); injectCartButtons(); }
+      function init() {
+        renderAll();
+        injectCartButtons();
+        // Sync SERVICES prices from DB so cart always matches page-displayed prices
+        fetch('/.netlify/functions/get-services')
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            (d.services || []).forEach(function(svc) {
+              var price = Math.round(svc.price / 100);
+              if (SERVICES[svc.slug]) {
+                SERVICES[svc.slug].price    = price;
+                SERVICES[svc.slug].name     = svc.name;
+                if (svc.duration) SERVICES[svc.slug].duration = svc.duration + ' min';
+              } else {
+                SERVICES[svc.slug] = { name: svc.name, price: price, duration: svc.duration ? svc.duration + ' min' : '60 min' };
+              }
+              if (svc.duration) DURATIONS[svc.slug] = svc.duration;
+            });
+          }).catch(function() {});
+      }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
       } else {
