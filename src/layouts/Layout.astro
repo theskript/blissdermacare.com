@@ -338,6 +338,12 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     </style>
   </head>
   <body class="bg-white dark:bg-[#1a1714] text-neutral-900 dark:text-stone-100 antialiased font-serif font-semibold text-xl leading-tight">
+    <!-- Maintenance mode overlay — shown by JS when maintenance_mode=true -->
+    <div id="maintenance-overlay" class="hidden fixed inset-0 bg-white z-[9999] flex flex-col items-center justify-center p-6 text-center">
+      <svg class="w-16 h-16 text-primary-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <h1 class="text-4xl font-serif text-neutral-900 mb-4">We'll Be Back Soon</h1>
+      <p id="maintenance-msg" class="text-lg text-neutral-500 max-w-md leading-relaxed">We are currently performing maintenance. Please check back soon.</p>
+    </div>
     <!-- Navigation -->
     <nav id="main-nav" class="fixed top-0 left-0 right-0 z-[100] bg-white dark:bg-[#1a1714] border-b border-neutral-200 dark:border-neutral-800 shadow-sm transition-transform duration-300">
       <!-- Promo Bar -->
@@ -472,10 +478,10 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               </div>
             </div>
 
-            <a href="/faq/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">FAQ</a>
-            <a href="/partners/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Partners</a>
-            <a href="/contact/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Contact</a>
-            <a href="/careers/" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">
+            <a href="/faq/" data-nav-id="faq" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">FAQ</a>
+            <a href="/partners/" data-nav-id="partners" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Partners</a>
+            <a href="/contact/" data-nav-id="contact" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">Contact</a>
+            <a href="/careers/" data-nav-id="careers" class="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base">
               Careers
             </a>
             <!-- Cart Button -->
@@ -551,10 +557,10 @@ const { title, description = 'Professional aesthetician services in a serene, mo
             </div>
           </div>
 
-          <a href="/faq/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">FAQ</a>
-          <a href="/partners/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Partners</a>
-          <a href="/contact/" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contact</a>
-          <a href="/careers/" class="flex items-center gap-2 py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          <a href="/faq/" data-nav-id="faq" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">FAQ</a>
+          <a href="/partners/" data-nav-id="partners" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Partners</a>
+          <a href="/contact/" data-nav-id="contact" class="block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contact</a>
+          <a href="/careers/" data-nav-id="careers" class="flex items-center gap-2 py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             Careers
           </a>
           <a href="/book/" class="block mt-3 bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-all font-medium text-center text-sm">
@@ -565,19 +571,69 @@ const { title, description = 'Professional aesthetician services in a serene, mo
     </nav>
 
     <script is:inline>
-      /* Load admin-controlled promo bar text/visibility */
+      /* Load admin-controlled promo bar text/visibility, maintenance mode, and nav customisation */
       fetch('/.netlify/functions/get-content?page=global')
         .then(function(r){return r.json();})
         .then(function(d){
           var c=d.content||{};
+          /* Maintenance mode — admin bypasses */
+          if(c.maintenance_mode&&c.maintenance_mode.value==='true'&&!window.location.pathname.startsWith('/admin')){
+            var mo=document.getElementById('maintenance-overlay');
+            if(mo){
+              mo.classList.remove('hidden');
+              var mm=document.getElementById('maintenance-msg');
+              if(mm&&c.maintenance_message&&c.maintenance_message.value)mm.textContent=c.maintenance_message.value;
+            }
+            return; /* stop all further processing */
+          }
+          /* Promo bar */
           var bar=document.getElementById('promo-bar');
-          if(!bar)return;
-          if(c.promo_bar_enabled&&c.promo_bar_enabled.value==='false'){bar.style.display='none';return;}
-          var tl=document.getElementById('promo-text-lg'),ts=document.getElementById('promo-text-sm'),lk=document.getElementById('promo-link');
-          if(tl&&c.promo_bar_text&&c.promo_bar_text.value)tl.textContent=c.promo_bar_text.value;
-          if(ts&&c.promo_bar_text_mobile&&c.promo_bar_text_mobile.value)ts.textContent=c.promo_bar_text_mobile.value;
-          if(lk&&c.promo_bar_link_text&&c.promo_bar_link_text.value)lk.textContent=c.promo_bar_link_text.value;
-          if(lk&&c.promo_bar_link_url&&c.promo_bar_link_url.value)lk.href=c.promo_bar_link_url.value;
+          if(bar){
+            if(c.promo_bar_enabled&&c.promo_bar_enabled.value==='false'){bar.style.display='none';}
+            else{
+              var tl=document.getElementById('promo-text-lg'),ts=document.getElementById('promo-text-sm'),lk=document.getElementById('promo-link');
+              if(tl&&c.promo_bar_text&&c.promo_bar_text.value)tl.textContent=c.promo_bar_text.value;
+              if(ts&&c.promo_bar_text_mobile&&c.promo_bar_text_mobile.value)ts.textContent=c.promo_bar_text_mobile.value;
+              if(lk&&c.promo_bar_link_text&&c.promo_bar_link_text.value)lk.textContent=c.promo_bar_link_text.value;
+              if(lk&&c.promo_bar_link_url&&c.promo_bar_link_url.value)lk.href=c.promo_bar_link_url.value;
+            }
+          }
+          /* Hide nav items */
+          if(c.nav_hidden&&c.nav_hidden.value){
+            try{
+              var hidden=JSON.parse(c.nav_hidden.value);
+              hidden.forEach(function(id){
+                document.querySelectorAll('[data-nav-id="'+id+'"]').forEach(function(el){el.style.display='none';});
+              });
+            }catch(e){}
+          }
+          /* Extra nav items */
+          if(c.nav_extra&&c.nav_extra.value){
+            try{
+              var extra=JSON.parse(c.nav_extra.value);
+              if(extra.length){
+                var dNav=document.querySelector('.hidden.md\\:flex.items-center.gap-6');
+                var mNav=document.getElementById('mobile-menu');
+                extra.forEach(function(item){
+                  if(!item.label||!item.url)return;
+                  if(dNav){
+                    var da=document.createElement('a');
+                    da.href=item.url;da.textContent=item.label;
+                    da.className='text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-base';
+                    var cb=dNav.querySelector('#cart-btn');
+                    if(cb)dNav.insertBefore(da,cb);else dNav.appendChild(da);
+                  }
+                  if(mNav){
+                    var ma=document.createElement('a');
+                    ma.href=item.url;ma.textContent=item.label;
+                    ma.className='block py-2.5 px-1 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors';
+                    var mb=mNav.querySelector('a[href="/book/"]');
+                    if(mb)mNav.insertBefore(ma,mb);else mNav.appendChild(ma);
+                  }
+                });
+              }
+            }catch(e){}
+          }
         }).catch(function(){});
     </script>
 

@@ -1,11 +1,11 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content' | 'analytics';
+  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'categories' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content' | 'analytics';
 }
 const { title, activeNav } = Astro.props;
 
-const cmsItems      = new Set(['services', 'membership-plans', 'promo-codes', 'page-builder', 'site-content']);
+const cmsItems      = new Set(['services', 'categories', 'membership-plans', 'promo-codes', 'page-builder', 'site-content']);
 const marketingItems = new Set(['marketing']);
 const settingsItems = new Set(['staff', 'availability', 'notifications', 'partners', 'audit', 'system']);
 const activeSection = cmsItems.has(activeNav || '') ? 'cms'
@@ -211,8 +211,10 @@ const aCms = (id: string) => activeNav === id
             <a href="/admin/services" class={aCms('services')} data-tip="Services & Pricing">
               <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
               <span class="sb-label">Services & Pricing</span>
-            </a>
-            <a href="/admin/membership-plans" class={aCms('membership-plans')} data-tip="Memberships">
+            </a>            <a href="/admin/categories" class={aCms('categories')} data-tip="Service Categories">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+              <span class="sb-label">Categories</span>
+            </a>            <a href="/admin/membership-plans" class={aCms('membership-plans')} data-tip="Memberships">
               <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
               <span class="sb-label">Memberships</span>
             </a>
