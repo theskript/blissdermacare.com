@@ -16,6 +16,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       </button>
     </div>
 
+    <!-- Quick-view tabs -->
+    <div class="flex items-center gap-2 mb-5">
+      <button id="view-all-tab" class="px-4 py-2 rounded-xl text-sm font-semibold bg-neutral-900 text-white transition-colors">All Services</button>
+      <button id="view-pkg-tab" class="px-4 py-2 rounded-xl text-sm font-medium border border-neutral-200 text-neutral-600 hover:border-amber-300 hover:text-amber-700 transition-colors">📦 Packages Only</button>
+    </div>
+
     <!-- Filters -->
     <div class="flex flex-wrap items-center gap-3 mb-5">
       <div class="relative">
@@ -150,7 +156,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                       ? `<img src="${esc(svc.image_url)}" class="w-10 h-10 rounded-lg object-cover shrink-0 bg-neutral-100" loading="lazy"/>`
                       : `<div class="w-10 h-10 rounded-lg bg-neutral-100 shrink-0 flex items-center justify-center text-neutral-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>`}
                     <div>
-                      <div class="font-semibold text-neutral-900">${esc(svc.name)}</div>
+                      <div class="font-semibold text-neutral-900">${esc(svc.name)}${svc.is_package ? '<span class="ml-1.5 text-[9px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">PKG</span>' : ''}</div>
                       <div class="text-xs text-neutral-400 font-mono">${esc(svc.slug)}</div>
                     </div>
                   </div>
@@ -418,6 +424,25 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     document.getElementById('svc-search')?.addEventListener('input', debouncedLoad);
     document.getElementById('svc-category-filter')?.addEventListener('change', load);
     document.getElementById('svc-status-filter')?.addEventListener('change', load);
+
+    // Quick-view tab handlers
+    function setActiveTab(id: string) {
+      ['view-all-tab','view-pkg-tab'].forEach(tid => {
+        const btn = document.getElementById(tid) as HTMLButtonElement;
+        const isActive = tid === id;
+        btn.className = isActive
+          ? 'px-4 py-2 rounded-xl text-sm font-semibold bg-neutral-900 text-white transition-colors'
+          : 'px-4 py-2 rounded-xl text-sm font-medium border border-neutral-200 text-neutral-600 hover:border-amber-300 hover:text-amber-700 transition-colors';
+      });
+    }
+    document.getElementById('view-all-tab')?.addEventListener('click', () => {
+      (document.getElementById('svc-category-filter') as HTMLSelectElement).value = '';
+      setActiveTab('view-all-tab'); load();
+    });
+    document.getElementById('view-pkg-tab')?.addEventListener('click', () => {
+      (document.getElementById('svc-category-filter') as HTMLSelectElement).value = 'packages';
+      setActiveTab('view-pkg-tab'); load();
+    });
 
     load();
   </script>
