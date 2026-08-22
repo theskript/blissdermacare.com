@@ -431,7 +431,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
                       <p class="text-[11px] text-neutral-400 leading-snug">IV Hydration · Lab Collection · Hormone · Regenerative</p>
                     </div>
                   </a>
-                  <a href="/services/packages/" class="flex items-start gap-3 px-5 py-2.5 hover:bg-amber-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
+                  <a href="/services/packages/" data-nav-packages class="flex items-start gap-3 px-5 py-2.5 hover:bg-amber-50 dark:hover:bg-neutral-700/50 transition-colors group/item">
                     <div class="w-7 h-7 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
                       <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707"/></svg>
                     </div>
@@ -524,7 +524,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
               <a href="/services/advanced-treatments/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Advanced Treatments</a>
               <a href="/services/semipermanent-makeup/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Semipermanent Makeup</a>
               <a href="/services/ancillary/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Ancillary Services</a>
-              <a href="/services/packages/" class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
+              <a href="/services/packages/" data-nav-packages class="block py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Seasonal Packages</a>
             </div>
           </div>
 
@@ -633,6 +633,15 @@ const { title, description = 'Professional aesthetician services in a serene, mo
                 });
               }
             }catch(e){}
+          }
+        }).catch(function(){});
+
+      /* Hide packages nav links if no active packages */
+      fetch('/.netlify/functions/get-services?category=packages')
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(!d.services||!d.services.length){
+            document.querySelectorAll('[data-nav-packages]').forEach(function(el){el.style.display='none';});
           }
         }).catch(function(){});
     </script>

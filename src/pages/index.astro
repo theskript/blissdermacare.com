@@ -147,7 +147,7 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- ✨ NEW: Spray Tan Spotlight -->
-  <section class="py-14 bg-gradient-to-br from-amber-50 via-[#fdf6ec] to-rose-50">
+  <section id="spray-tan-spotlight" class="py-14 bg-gradient-to-br from-amber-50 via-[#fdf6ec] to-rose-50">
     <div class="max-w-6xl mx-auto px-6 lg:px-12">
       <div class="grid lg:grid-cols-2 gap-12 items-center">
         <div>
@@ -165,7 +165,7 @@ import Layout from '../layouts/Layout.astro';
           </ul>
           <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div class="bg-white rounded-xl px-5 py-3 border border-amber-200 shadow-sm">
-              <p class="text-2xl font-bold text-neutral-900">$65</p>
+              <p class="text-2xl font-bold text-neutral-900" id="spray-tan-spotlight-price">$65</p>
               <p class="text-xs text-neutral-500">30–45 min &middot; individual service</p>
             </div>
             <a href="/book/" data-service-id="spray-tan" class="inline-flex items-center gap-2 bg-amber-500 text-white px-7 py-3.5 rounded-full font-semibold hover:bg-amber-600 transition-colors shadow-md hover:shadow-lg">
@@ -249,7 +249,7 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- New This Season -->
-  <section class="py-14 bg-[#faf9f7] border-y border-neutral-100">
+  <section id="home-new-this-season" class="py-14 bg-[#faf9f7] border-y border-neutral-100">
     <div class="max-w-6xl mx-auto px-6 lg:px-12">
       <div class="flex items-end justify-between mb-8">
         <div>
@@ -387,20 +387,20 @@ import Layout from '../layouts/Layout.astro';
           <div class="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/8 hover:border-white/20 transition-all">
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-2">Tier 1</p>
             <p class="text-xl font-serif text-white mb-1">The Glow Ritual</p>
-            <p class="text-2xl font-bold text-primary-400 mb-2">$89<span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-2xl font-bold text-primary-400 mb-2"><span data-home-plan-price="glow-ritual">$89</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
             <p class="text-xs text-neutral-400">1 facial credit/month + 10% off</p>
           </div>
           <div class="bg-primary-600/20 border-2 border-primary-500/50 rounded-2xl p-5 relative">
             <span class="absolute -top-2.5 left-4 text-[10px] font-bold bg-primary-500 text-white px-2.5 py-0.5 rounded-full">Most Popular</span>
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-primary-300 mb-2">Tier 2</p>
             <p class="text-xl font-serif text-white mb-1">The Radiance Plan</p>
-            <p class="text-2xl font-bold text-primary-400 mb-2">$159<span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-2xl font-bold text-primary-400 mb-2"><span data-home-plan-price="radiance-plan">$159</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
             <p class="text-xs text-neutral-400">Facial + lash/brow/body + 15% off</p>
           </div>
           <div class="bg-white/5 border border-amber-500/20 rounded-2xl p-5 hover:bg-white/8 hover:border-amber-500/40 transition-all">
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-amber-400 mb-2">Tier 3 — VIP</p>
             <p class="text-xl font-serif text-white mb-1">The Bliss VIP</p>
-            <p class="text-2xl font-bold text-amber-400 mb-2">$249<span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-2xl font-bold text-amber-400 mb-2"><span data-home-plan-price="vip-luxe">$249</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
             <p class="text-xs text-neutral-400">3 credits + 20% off + quarterly bonus</p>
           </div>
         </div>
@@ -515,17 +515,38 @@ import Layout from '../layouts/Layout.astro';
         const map = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
 
         // Update/hide cards with data-service-id
+        const activePackageSlugs = new Set<string>();
         document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
           const slug = link.getAttribute('data-service-id') || '';
           const svc  = map.get(slug);
-          const card = link.closest('.group') as HTMLElement | null;
+          // card = .group parent (featured cards) OR .rounded-xl grandparent (mini package cards)
+          const card = (link.closest('.group') || link.closest('[class*="rounded-xl"]')) as HTMLElement | null;
           if (!card) return;
           if (!svc) { card.style.display = 'none'; return; }
-          const priceEl = card.querySelector<HTMLElement>('[class*="font-bold"][class*="text-primary"]');
-          if (priceEl && /^\$\d/.test(priceEl.textContent || '')) {
+          if (svc.is_package || svc.category === 'packages') activePackageSlugs.add(slug);
+          const priceEl = card.querySelector<HTMLElement>('.font-bold.text-primary-600, [class*="font-bold"][class*="text-primary"]');
+          if (priceEl && /^\$\d|From/.test(priceEl.textContent || '')) {
             priceEl.textContent = '$' + Math.round(svc.price / 100);
           }
         });
+
+        // Spray tan spotlight: hide section if service inactive, update standalone price
+        const stSvc = map.get('spray-tan');
+        const stSec = document.getElementById('spray-tan-spotlight');
+        if (stSec) {
+          if (!stSvc) { stSec.style.display = 'none'; }
+          else {
+            const stPrice = document.getElementById('spray-tan-spotlight-price');
+            if (stPrice) stPrice.textContent = '$' + Math.round(stSvc.price / 100);
+          }
+        }
+
+        // Packages section: hide if no active packages
+        const pkgSec = document.getElementById('home-new-this-season');
+        if (pkgSec) {
+          const hasActivePkgs = (services as any[]).some((s: any) => s.category === 'packages');
+          if (!hasActivePkgs) pkgSec.style.display = 'none';
+        }
 
         // Replace "Popular treatments" grid with featured services if any are set
         function _e(s: unknown): string {
@@ -572,6 +593,20 @@ import Layout from '../layouts/Layout.astro';
           var el=document.querySelector('[data-sc="'+k+'"]');
           if(!el||!c[k].value)return;
           el.textContent=c[k].value;
+        });
+      }).catch(function(){});
+  </script>
+
+  <script is:inline>
+    /* Update membership plan prices on home page from DB */
+    fetch('/.netlify/functions/get-services?includePlans=true')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var plans=d.plans||[];
+        plans.forEach(function(plan){
+          var price=Math.round(plan.price/100);
+          var el=document.querySelector('[data-home-plan-price="'+plan.slug+'"]');
+          if(el)el.textContent='$'+price;
         });
       }).catch(function(){});
   </script>

@@ -91,7 +91,7 @@ import Layout from '../../layouts/Layout.astro';
               <div class="space-y-6" id="svc-picker" style="opacity:0">
 
                 <!-- Facials -->
-                <div>
+                <div data-cat-section="facials">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Facials</p>
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
 
@@ -136,7 +136,7 @@ import Layout from '../../layouts/Layout.astro';
                 </div>
 
                 <!-- Lash, Brow & Body -->
-                <div>
+                <div data-cat-section="lash-brow-body">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Lash, Brow &amp; Body</p>
                   <div class="flex items-start gap-2 mb-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
                     <svg class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2m0-14a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -206,7 +206,7 @@ import Layout from '../../layouts/Layout.astro';
                 </div>
 
                 <!-- Advanced Treatments -->
-                <div>
+                <div data-cat-section="advanced">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Advanced Treatments</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
@@ -254,7 +254,7 @@ import Layout from '../../layouts/Layout.astro';
                 </div>
 
                 <!-- Semipermanent Makeup -->
-                <div>
+                <div data-cat-section="semipermanent">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Semipermanent Makeup</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
@@ -302,7 +302,7 @@ import Layout from '../../layouts/Layout.astro';
                 </div>
 
                 <!-- Ancillary Services -->
-                <div>
+                <div data-cat-section="wellness">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Ancillary Services</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
@@ -939,23 +939,36 @@ import Layout from '../../layouts/Layout.astro';
             if (s.is_package || SOLO_CATEGORIES.has(s.category)) SOLO_SERVICES.add(s.slug);
           }
           if (extras.length) {
-            const svcsContainer = document.querySelector<HTMLElement>('#booking-form .space-y-6');
-            if (svcsContainer) {
-              const sec = document.createElement('div');
-              sec.innerHTML = '<p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Additional Services</p>' +
-                '<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">' +
-                (extras as any[]).map((s: any) => {
-                  const price = Math.round(s.price / 100);
-                  return '<label class="cursor-pointer block">' +
-                    '<input type="checkbox" name="service" value="' + _bEsc(s.slug) + '" class="sr-only peer"/>' +
-                    '<div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">' +
-                    '<p class="font-semibold text-sm text-neutral-900">' + _bEsc(s.name) + '</p>' +
-                    '<p class="text-primary-600 font-bold text-sm mt-1.5">$' + price + '</p>' +
-                    (s.duration ? '<p class="text-xs text-neutral-400 mt-0.5">' + s.duration + ' min</p>' : '') +
-                    '</div></label>';
-                }).join('') +
-                '</div>';
-              svcsContainer.appendChild(sec);
+            for (const s of extras as any[]) {
+              if (s.is_package) continue; // packages handled in packages section
+              const catKey = s.category === 'wellness' ? 'wellness' : s.category;
+              const section = document.querySelector<HTMLElement>(`[data-cat-section="${catKey}"]`);
+              const price = Math.round(s.price / 100);
+              const lbl = document.createElement('label');
+              lbl.className = 'cursor-pointer block';
+              lbl.innerHTML = '<input type="checkbox" name="service" value="' + _bEsc(s.slug) + '" class="sr-only peer"/>'+
+                '<div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">'+ 
+                '<p class="font-semibold text-sm text-neutral-900">' + _bEsc(s.name) + '</p>'+
+                '<p class="text-primary-600 font-bold text-sm mt-1.5">$' + price + '</p>'+
+                (s.duration ? '<p class="text-xs text-neutral-400 mt-0.5">' + s.duration + ' min</p>' : '')+'</div>';
+              if (section) {
+                const grid = section.querySelector<HTMLElement>('.grid');
+                if (grid) grid.appendChild(lbl);
+              } else {
+                /* Unknown category — append a new section */
+                const svcsContainer = document.querySelector<HTMLElement>('#booking-form .space-y-6');
+                if (svcsContainer) {
+                  let sec = svcsContainer.querySelector<HTMLElement>(`[data-cat-section="${_bEsc(catKey)}"]`);
+                  if (!sec) {
+                    sec = document.createElement('div');
+                    sec.dataset.catSection = catKey;
+                    sec.innerHTML = '<p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">' + _bEsc(s.category) + '</p><div class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>';
+                    svcsContainer.insertBefore(sec, svcsContainer.querySelector('#booking-packages-section'));
+                  }
+                  const g = sec.querySelector<HTMLElement>('.grid');
+                  if (g) g.appendChild(lbl);
+                }
+              }
             }
           }
           // Populate mix-match picker from active non-package services in eligible categories

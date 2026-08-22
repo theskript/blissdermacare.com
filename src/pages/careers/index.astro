@@ -1,57 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-
-const roles = [
-  {
-    title: 'Licensed Esthetician',
-    type: 'Full-time or Part-time',
-    typeColor: 'bg-primary-100 text-primary-700',
-    description: "Join our client-facing team delivering customized facials, chemical peels, and advanced skin treatments. You'll work one-on-one with clients in a private, calm studio setting — no rushed medspa energy.",
-    requirements: [
-      'Active Florida State Esthetician License (required)',
-      '1+ years of professional experience preferred (new grads welcome to apply)',
-      'Experience with facials, extractions, and chemical peels',
-      'Strong communication and client care skills',
-      'Passion for skincare education and results-driven care',
-    ],
-    preferred: [
-      'Experience with microneedling, LED therapy, or lash/brow services',
-      'Familiarity with professional skincare brands (PCA Skin, Dermalogica, etc.)',
-    ],
-  },
-  {
-    title: 'Client Experience Coordinator',
-    type: 'Part-time',
-    typeColor: 'bg-neutral-100 text-neutral-700',
-    description: "Be the first point of contact for our clients — managing bookings, responding to inquiries, and keeping the studio running smoothly. This is a key role for someone who loves people, is organized, and takes pride in delivering a warm first impression.",
-    requirements: [
-      'Excellent written and verbal communication skills',
-      'Highly organized with strong attention to detail',
-      'Comfortable managing scheduling, follow-ups, and client communication',
-      'Professional demeanor and reliability',
-    ],
-    preferred: [
-      'Background in beauty, wellness, or hospitality',
-      'Experience with booking platforms or CRM tools',
-      'Social media savvy (helpful for occasional content support)',
-    ],
-  },
-  {
-    title: 'Part-time / Seasonal Esthetician',
-    type: 'Flexible',
-    typeColor: 'bg-amber-100 text-amber-700',
-    description: "Looking for flexible, high-quality work without a rigid schedule? We schedule part-time and seasonal estheticians to support demand during peak periods. Great for licensed estheticians who want supplemental income and a great working environment.",
-    requirements: [
-      'Active Florida State Esthetician License (required)',
-      'Availability for at least 2 days per week',
-      'Reliable, professional, and client-focused',
-    ],
-    preferred: [
-      'At least one specialized service beyond basic facials',
-      'Comfortable working independently in a private studio setting',
-    ],
-  },
-];
 ---
 
 <Layout title="Careers – Bliss Dermacare" description="Join the Bliss Dermacare team in Tampa, FL. We're hiring licensed estheticians and a client experience coordinator. Apply online today.">
@@ -108,45 +56,7 @@ const roles = [
       </div>
 
       <div class="space-y-6" id="roles-list" style="opacity:0">
-        {roles.map((role, i) => (
-          <div class="bg-white rounded-2xl border border-neutral-200 p-8 hover:border-primary-200 hover:shadow-sm transition-all">
-            <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
-              <div>
-                <h3 class="text-2xl font-serif text-neutral-900">{role.title}</h3>
-                <span class={`inline-block mt-2 text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full ${role.typeColor}`}>{role.type}</span>
-              </div>
-              <a href="#apply" class="flex-shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-full hover:bg-primary-700 transition-colors font-medium text-sm">
-                Apply for this role
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-              </a>
-            </div>
-            <p class="text-neutral-600 mb-6 leading-relaxed">{role.description}</p>
-            <div class="grid sm:grid-cols-2 gap-6">
-              <div>
-                <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-3">Requirements</p>
-                <ul class="space-y-2">
-                  {role.requirements.map(req => (
-                    <li class="flex items-start gap-2 text-sm text-neutral-600">
-                      <svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                      {req}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-3">Nice to Have</p>
-                <ul class="space-y-2">
-                  {role.preferred.map(pref => (
-                    <li class="flex items-start gap-2 text-sm text-neutral-500">
-                      <svg class="w-4 h-4 text-neutral-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                      {pref}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        ))}
+        <!-- Populated by JS from get-content?page=careers (section key: openings) -->
       </div>
     </div>
   </section>

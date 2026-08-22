@@ -103,6 +103,16 @@ import Layout from '../../layouts/Layout.astro';
           if(!el||!c[k].value)return;
           el.textContent=c[k].value;
         });
+        /* Update phone href */
+        if(c.phone&&c.phone.value){
+          var ph=document.querySelector('a[href^="tel:"]');
+          if(ph)ph.setAttribute('href','tel:+1'+c.phone.value.replace(/\D/g,''));
+        }
+        /* Update email href */
+        if(c.email&&c.email.value){
+          var em=document.querySelector('a[href^="mailto:"]');
+          if(em)em.setAttribute('href','mailto:'+c.email.value);
+        }
       }).catch(function(){});
   </script>
 
