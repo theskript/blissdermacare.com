@@ -1105,6 +1105,18 @@ import Layout from '../../layouts/Layout.astro';
         'regenerative-blood-services': 60, 'other': 60,
       };
 
+      // Categories where all services must be booked standalone
+      const SOLO_CATEGORIES = new Set(['packages', 'semipermanent', 'advanced', 'wellness']);
+
+      // Services that must be booked alone — defined early so the fetch block can extend it
+      const SOLO_SERVICES = new Set<string>([
+        'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
+        'mix-match-package', 'bronze-bare-glow', 'other',
+        'prp-treatment', 'lip-filler', 'ed-injectables', 'collagen-induction-therapy', 'weight-loss-program',
+        'scalp-micropigmentation', 'lip-neutralization', 'lip-blush', 'nano-brows', 'powder-brows', 'custom-semipermanent-makeup',
+        'iv-hydration-therapy', 'lab-collection', 'hormone-lab-panel', 'regenerative-blood-services',
+      ]);
+
       // Load live prices/names from DB, update card display
       try {
         const resp = await fetch('/.netlify/functions/get-services');
@@ -1139,6 +1151,38 @@ import Layout from '../../layouts/Layout.astro';
               if (priceEl) priceEl.textContent = `$${newPrice}`;
             }
           });
+
+          // Render checkboxes for any active DB services without a hardcoded card
+          function _bEsc(s: unknown): string {
+            return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+          }
+          const covered = new Set(Array.from(
+            document.querySelectorAll<HTMLInputElement>('input[name="service"]')
+          ).map(cb => cb.value));
+          const extras = (services as any[]).filter((s: any) => !covered.has(s.slug));
+          for (const s of extras as any[]) {
+            if (s.is_package || SOLO_CATEGORIES.has(s.category)) SOLO_SERVICES.add(s.slug);
+          }
+          if (extras.length) {
+            const svcsContainer = document.querySelector<HTMLElement>('#booking-form .space-y-6');
+            if (svcsContainer) {
+              const sec = document.createElement('div');
+              sec.innerHTML = '<p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Additional Services</p>' +
+                '<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">' +
+                (extras as any[]).map((s: any) => {
+                  const price = Math.round(s.price / 100);
+                  return '<label class="cursor-pointer block">' +
+                    '<input type="checkbox" name="service" value="' + _bEsc(s.slug) + '" class="sr-only peer"/>' +
+                    '<div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">' +
+                    '<p class="font-semibold text-sm text-neutral-900">' + _bEsc(s.name) + '</p>' +
+                    '<p class="text-primary-600 font-bold text-sm mt-1.5">$' + price + '</p>' +
+                    (s.duration ? '<p class="text-xs text-neutral-400 mt-0.5">' + s.duration + ' min</p>' : '') +
+                    '</div></label>';
+                }).join('') +
+                '</div>';
+              svcsContainer.appendChild(sec);
+            }
+          }
         }
       } catch (fetchErr) {
         console.warn('Could not load live service prices:', fetchErr);
@@ -1208,15 +1252,6 @@ import Layout from '../../layouts/Layout.astro';
           update();
         }
       });
-
-      // Services that must be booked alone (packages, hairline restoration, other)
-      const SOLO_SERVICES = new Set([
-        'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
-        'mix-match-package', 'bronze-bare-glow', 'other',
-        'prp-treatment', 'lip-filler', 'ed-injectables', 'collagen-induction-therapy', 'weight-loss-program',
-        'scalp-micropigmentation', 'lip-neutralization', 'lip-blush', 'nano-brows', 'powder-brows', 'custom-semipermanent-makeup',
-        'iv-hydration-therapy', 'lab-collection', 'hormone-lab-panel', 'regenerative-blood-services',
-      ]);
 
       function getChecked(): string[] {
         return Array.from(
@@ -1383,10 +1418,15 @@ import Layout from '../../layouts/Layout.astro';
       } catch (_) {}
       // ── End Cart Pre-population ────────────────────────────────────────────
 
-      document.querySelectorAll<HTMLInputElement>('input[name="service"]')
-        .forEach(el => el.addEventListener('change', () => onServiceChange(el)));
-      document.querySelectorAll<HTMLInputElement>('input[name="discount"]')
-        .forEach(el => el.addEventListener('change', update));
+      // Use delegation so dynamically added service checkboxes also work
+      const bookingForm = document.getElementById('booking-form');
+      if (bookingForm) {
+        bookingForm.addEventListener('change', (e: Event) => {
+          const el = e.target as HTMLInputElement;
+          if (el.matches('input[name="service"]')) onServiceChange(el);
+          else if (el.matches('input[name="discount"]')) update();
+        });
+      }
 
       // ── Mix & Match Panel ──────────────────────────────────────────────────
       const MM_DISCOUNT = 15;

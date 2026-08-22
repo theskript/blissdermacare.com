@@ -30,8 +30,8 @@ async function getServiceMaps() {
   const { data, error } = await getSupabase()
     .from('services')
     .select('slug, name, price')
-    .eq('active', true)
-    .eq('is_bookable', true);
+    .neq('active', false)
+    .neq('is_bookable', false);
   if (error || !data?.length) {
     // Fallback to empty — checkout will reject unknown slugs
     console.error('Failed to load services from DB:', error?.message);

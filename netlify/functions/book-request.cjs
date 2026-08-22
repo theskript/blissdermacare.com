@@ -29,8 +29,8 @@ async function getServiceMaps() {
   const { data, error } = await getSupabase()
     .from('services')
     .select('slug, name, price')
-    .eq('active', true)
-    .eq('is_bookable', true);
+    .neq('active', false)
+    .neq('is_bookable', false);
   if (error || !data?.length) {
     console.error('Failed to load services from DB:', error?.message);
     return { SERVICE_LABELS: {}, PRICES: {}, ALLOWED_SERVICES: new Set() };
