@@ -1459,9 +1459,14 @@ const { title, description = 'Professional aesthetician services in a serene, mo
         init();
       }
 
-      // Re-inject cart buttons when new data-service-id links are added to the DOM
-      new MutationObserver(() => { injectCartButtons(); renderAll(); })
-        .observe(document.body, { childList: true, subtree: true });
+      // Re-inject cart buttons when new data-service-id links are added to the DOM.
+      // Only calls injectCartButtons (not renderAll) to avoid a feedback loop.
+      let _injectPending = false;
+      new MutationObserver(() => {
+        if (_injectPending) return;
+        _injectPending = true;
+        requestAnimationFrame(() => { injectCartButtons(); _injectPending = false; });
+      }).observe(document.body, { childList: true, subtree: true });
     })();
     </script>
   </body>
