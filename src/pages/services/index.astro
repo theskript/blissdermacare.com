@@ -186,3 +186,39 @@ import Layout from '../../layouts/Layout.astro';
       });
     }).catch(function(){});
 </script>
+
+<script is:inline>
+  (function () {
+    var MAP = {
+      'facials':        { href: '/services/facials/',              label: 'treatments' },
+      'lash-brow-body': { href: '/services/lash-brow-body/',       label: 'treatments' },
+      'advanced':       { href: '/services/advanced-treatments/',  label: 'treatments' },
+      'semipermanent':  { href: '/services/semipermanent-makeup/', label: 'treatments' },
+      'wellness':       { href: '/services/ancillary/',             label: 'services'   },
+      'packages':       { href: '/services/packages/',              label: 'packages'   },
+    };
+    fetch('/.netlify/functions/get-services')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var svcs = d.services || [];
+        var groups = {};
+        for (var i = 0; i < svcs.length; i++) {
+          var s = svcs[i];
+          if (!groups[s.category]) groups[s.category] = { count: 0, min: Infinity };
+          groups[s.category].count++;
+          var p = Math.round(s.price / 100);
+          if (p > 0 && p < groups[s.category].min) groups[s.category].min = p;
+        }
+        Object.keys(MAP).forEach(function (cat) {
+          var g = groups[cat];
+          if (!g) return;
+          var card = document.querySelector('a[href="' + MAP[cat].href + '"]');
+          if (!card) return;
+          var ps = card.querySelectorAll('.p-5 p');
+          if (ps[0]) ps[0].textContent = g.count + ' ' + MAP[cat].label;
+          if (ps[1] && g.min < Infinity) ps[1].textContent = 'From $' + g.min;
+        });
+      }).catch(function () {});
+  }());
+</script>
+</script>
