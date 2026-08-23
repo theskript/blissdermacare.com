@@ -239,30 +239,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <svg class="w-3.5 h-3.5 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </div>`;
     }
-            ? `<div class="text-center w-14 shrink-0">
-                <div class="text-[9px] font-bold text-neutral-400 uppercase">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})}</div>
-                <div class="text-[10px] text-neutral-500">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
-                <div class="text-sm font-bold text-neutral-800">${tMain}</div>
-                <div class="text-[10px] text-neutral-400">${tPeriod}</div>
-              </div>`
-            : `<div class="text-center w-12 shrink-0">
-                <div class="text-lg font-bold text-neutral-900">${tMain}</div>
-                <div class="text-[10px] text-neutral-400">${tPeriod}</div>
-              </div>`}
-          <div class="w-px bg-neutral-100 self-stretch shrink-0"></div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-              <span class="text-sm font-semibold text-neutral-900">${f['Client Name']||'Unknown'}</span>
-              ${statusBadge(f['Status'])}
-              ${f['Pending Payment'] ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Unpaid</span>' : ''}
-              ${noPsf}
-            </div>
-            <div class="text-xs text-neutral-400 truncate">${(f['Services']||'—').substring(0,60)}</div>
-          </div>
-          ${price}
-          <svg class="w-3.5 h-3.5 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </div>`;
-    }
 
     // ── Submission row (all form types) ───────────────────────────────────────
     function submissionRow(record: any, type: string, endpoint: string, dotColor: string) {
