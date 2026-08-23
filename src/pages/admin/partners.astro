@@ -127,18 +127,33 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 class="w-full border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition" />
             </div>
 
-            <div class="col-span-2 flex gap-6 pt-1">
-              <label class="flex items-center gap-2.5 cursor-pointer select-none">
-                <input id="f-featured" type="checkbox" class="w-4 h-4 text-primary-600 rounded border-neutral-300 focus:ring-primary-200 cursor-pointer" />
-                <span class="text-sm text-neutral-700">
-                  <span class="font-medium">Featured</span>
-                  <span class="text-neutral-400 ml-1">— shown on homepage strip</span>
-                </span>
-              </label>
-              <label class="flex items-center gap-2.5 cursor-pointer select-none">
-                <input id="f-active" type="checkbox" class="w-4 h-4 text-primary-600 rounded border-neutral-300 focus:ring-primary-200 cursor-pointer" checked />
-                <span class="text-sm font-medium text-neutral-700">Active</span>
-              </label>
+            <div class="col-span-2 grid grid-cols-2 gap-3 pt-1">
+              <div class="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+                <div>
+                  <p class="text-sm font-semibold text-neutral-800">Featured</p>
+                  <p class="text-xs text-neutral-400">Show on homepage strip</p>
+                </div>
+                <button type="button" id="f-featured" role="switch" aria-checked="false"
+                  data-on="false"
+                  class="toggle-btn relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+                  style="background-color:#e5e7eb">
+                  <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                    style="transform:translateX(0px)"></span>
+                </button>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+                <div>
+                  <p class="text-sm font-semibold text-neutral-800">Active</p>
+                  <p class="text-xs text-neutral-400">Visible on public page</p>
+                </div>
+                <button type="button" id="f-active" role="switch" aria-checked="true"
+                  data-on="true"
+                  class="toggle-btn relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+                  style="background-color:#10b981">
+                  <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                    style="transform:translateX(1.25rem)"></span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -192,8 +207,20 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const fDesc      = document.getElementById('f-description') as HTMLTextAreaElement;
   const fLogo      = document.getElementById('f-logo') as HTMLInputElement;
   const fBadge     = document.getElementById('f-badge') as HTMLInputElement;
-  const fFeatured  = document.getElementById('f-featured') as HTMLInputElement;
-  const fActive    = document.getElementById('f-active') as HTMLInputElement;
+  const fFeatured  = document.getElementById('f-featured') as HTMLButtonElement;
+  const fActive    = document.getElementById('f-active') as HTMLButtonElement;
+
+  // Toggle button helper
+  function setToggle(btn: HTMLButtonElement, on: boolean) {
+    btn.dataset.on = String(on);
+    btn.setAttribute('aria-checked', String(on));
+    btn.style.backgroundColor = on ? '#10b981' : '#e5e7eb';
+    (btn.querySelector('span') as HTMLElement).style.transform = `translateX(${on ? '1.25rem' : '0px'})`;
+  }
+  [fFeatured, fActive].forEach(btn => {
+    btn.addEventListener('click', () => setToggle(btn, btn.dataset.on !== 'true'));
+  });
+
   const deleteModal = document.getElementById('delete-modal')!;
   const deleteName  = document.getElementById('delete-name')!;
 
@@ -299,8 +326,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     fDesc.value = '';
     fLogo.value = '';
     fBadge.value = '';
-    fFeatured.checked = false;
-    fActive.checked = true;
+    setToggle(fFeatured, false);
+    setToggle(fActive, true);
     modalError.classList.add('hidden');
     modalError.textContent = '';
   }
@@ -327,8 +354,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     fDesc.value = f['Description'] || '';
     fLogo.value = f['Logo URL'] || '';
     fBadge.value = f['Badge Text'] || '';
-    fFeatured.checked = Boolean(f['Featured']);
-    fActive.checked = f['Active'] !== false;
+    setToggle(fFeatured, Boolean(f['Featured']));
+    setToggle(fActive, f['Active'] !== false);
     modalTitle.textContent = 'Edit Partner';
     document.getElementById('modal-save')!.textContent = 'Save Changes';
     modal.classList.remove('hidden');
@@ -367,8 +394,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       'Description': fDesc.value.trim() || null,
       'Logo URL': fLogo.value.trim() || null,
       'Badge Text': fBadge.value.trim() || null,
-      'Featured': fFeatured.checked,
-      'Active': fActive.checked,
+      'Featured': fFeatured.dataset.on === 'true',
+      'Active': fActive.dataset.on === 'true',
     };
 
     const id = editId.value;

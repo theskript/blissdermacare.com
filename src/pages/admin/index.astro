@@ -8,16 +8,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <!-- ── Header ──────────────────────────────────────────────────────────── -->
     <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
       <div>
+        <p id="greeting-label" class="text-xs font-semibold uppercase tracking-widest text-primary-500 mb-0.5">Loading…</p>
         <h1 class="text-2xl font-serif font-semibold text-neutral-900">Dashboard</h1>
-        <p id="today-label" class="text-sm text-neutral-500 mt-0.5">Loading…</p>
+        <p id="today-label" class="text-sm text-neutral-400 mt-0.5">Loading…</p>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <div class="text-right hidden sm:block">
-          <div id="live-clock" class="text-lg font-semibold text-neutral-900 tabular-nums">—</div>
+          <div id="live-clock" class="text-lg font-bold text-neutral-800 tabular-nums">—</div>
           <div class="text-xs text-neutral-400">local time</div>
         </div>
         <a href="/admin/new-appointment"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
           New Appointment
         </a>
@@ -26,22 +27,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     <!-- ── Stats row ────────────────────────────────────────────────────────── -->
     <div id="stats-row" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
-        <div class="h-4 bg-neutral-100 rounded w-16 mb-2"></div>
-        <div class="h-7 bg-neutral-100 rounded w-10"></div>
-      </div>
-      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
-        <div class="h-4 bg-neutral-100 rounded w-20 mb-2"></div>
-        <div class="h-7 bg-neutral-100 rounded w-10"></div>
-      </div>
-      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
-        <div class="h-4 bg-neutral-100 rounded w-24 mb-2"></div>
-        <div class="h-7 bg-neutral-100 rounded w-10"></div>
-      </div>
-      <div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 animate-pulse">
-        <div class="h-4 bg-neutral-100 rounded w-20 mb-2"></div>
-        <div class="h-7 bg-neutral-100 rounded w-10"></div>
-      </div>
+      {Array.from({length: 4}).map(() => (
+        <div class="bg-white rounded-xl border border-neutral-200 px-4 py-4 animate-pulse">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="h-3 bg-neutral-100 rounded w-5"></div>
+            <div class="h-3 bg-neutral-100 rounded w-20"></div>
+          </div>
+          <div class="h-7 bg-neutral-100 rounded w-12 mb-1"></div>
+          <div class="h-3 bg-neutral-100 rounded w-24"></div>
+        </div>
+      ))}
     </div>
 
     <!-- ── Inbox alerts ─────────────────────────────────────────────────────── -->
@@ -55,11 +50,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
           <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900 text-sm">Today's Schedule</h2>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-primary-500"></div>
+              <h2 class="font-semibold text-neutral-900 text-sm">Today's Schedule</h2>
               <span id="today-count-badge" class="hidden text-xs bg-primary-100 text-primary-700 font-bold px-2 py-0.5 rounded-full"></span>
-              <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium">Calendar →</a>
             </div>
+            <a href="/admin/calendar" class="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">Calendar &rarr;</a>
           </div>
           <div id="today-list" class="divide-y divide-neutral-50">
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
@@ -68,8 +64,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
           <div class="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-            <h2 class="font-semibold text-neutral-900 text-sm">Next 7 Days</h2>
-            <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2 py-0.5 rounded-full"></span>
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-neutral-300"></div>
+              <h2 class="font-semibold text-neutral-900 text-sm">Next 7 Days</h2>
+              <span id="week-count-badge" class="hidden text-xs bg-neutral-100 text-neutral-600 font-bold px-2 py-0.5 rounded-full"></span>
+            </div>
+            <a href="/admin/appointments" class="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors">All &rarr;</a>
           </div>
           <div id="upcoming-list" class="divide-y divide-neutral-50">
             <div class="px-5 py-10 text-center text-neutral-400 text-sm">Loading…</div>
@@ -80,39 +80,42 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       <!-- New Submissions (right 2/5) -->
       <div class="lg:col-span-2">
-        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden h-full">
+        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden h-full flex flex-col">
 
           <!-- Tab bar -->
-          <div class="flex border-b border-neutral-100 px-3 pt-2 gap-0.5 overflow-x-auto">
-            <button class="sub-tab-btn active-tab shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors" data-tab="psf">
-              Pre-Service
-              <span id="tab-badge-psf" class="hidden text-[10px] font-bold bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded-full"></span>
-            </button>
-            <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="demo">
-              Demo Models
-              <span id="tab-badge-demo" class="hidden text-[10px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-full"></span>
-            </button>
-            <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="careers">
-              Careers
-              <span id="tab-badge-careers" class="hidden text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full"></span>
-            </button>
-            <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="consult">
-              Consults
-              <span id="tab-badge-consult" class="hidden text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full"></span>
-            </button>
+          <div class="px-4 pt-3 pb-0 border-b border-neutral-100">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">New Submissions</div>
+            <div class="flex gap-0.5 overflow-x-auto">
+              <button class="sub-tab-btn active-tab shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors" data-tab="psf">
+                Pre-Service
+                <span id="tab-badge-psf" class="hidden text-[10px] font-bold bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded-full"></span>
+              </button>
+              <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="demo">
+                Demo Models
+                <span id="tab-badge-demo" class="hidden text-[10px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-full"></span>
+              </button>
+              <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="careers">
+                Careers
+                <span id="tab-badge-careers" class="hidden text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full"></span>
+              </button>
+              <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="consult">
+                Consults
+                <span id="tab-badge-consult" class="hidden text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full"></span>
+              </button>
+            </div>
           </div>
 
           <!-- Tab panels -->
-          <div id="tab-panel-psf" class="tab-panel divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+          <div id="tab-panel-psf" class="tab-panel flex-1 divide-y divide-neutral-50 overflow-y-auto" style="max-height:580px">
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
-          <div id="tab-panel-demo" class="tab-panel hidden divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+          <div id="tab-panel-demo" class="tab-panel hidden flex-1 divide-y divide-neutral-50 overflow-y-auto" style="max-height:580px">
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
-          <div id="tab-panel-careers" class="tab-panel hidden divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+          <div id="tab-panel-careers" class="tab-panel hidden flex-1 divide-y divide-neutral-50 overflow-y-auto" style="max-height:580px">
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
-          <div id="tab-panel-consult" class="tab-panel hidden divide-y divide-neutral-50 max-h-[600px] overflow-y-auto">
+          <div id="tab-panel-consult" class="tab-panel hidden flex-1 divide-y divide-neutral-50 overflow-y-auto" style="max-height:580px">
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
 
@@ -138,6 +141,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     import { requireLogin, apiFetch, getRole, formatDate, formatTime } from '../../scripts/adminAuth.js';
     requireLogin();
     const role = getRole();
+
+    // ── Greeting ─────────────────────────────────────────────────────────────
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('greeting-label')!.textContent = greet;
 
     function todayStr() {
       const d = new Date();
@@ -172,14 +180,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     // ── Stat card ─────────────────────────────────────────────────────────────
     function statCard(label: string, value: string | number, sub: string, accent = '', href = '') {
-      const cls = accent ? `border-l-4 ${accent}` : '';
+      const [borderCls, iconCls] = accent.includes('emerald') ? ['border-l-4 border-emerald-400', 'text-emerald-500']
+        : accent.includes('amber')  ? ['border-l-4 border-amber-400',  'text-amber-500']
+        : accent.includes('violet') ? ['border-l-4 border-violet-400', 'text-violet-500']
+        : ['', 'text-neutral-300'];
       const inner = `
-        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-1">${label}</div>
-        <div class="text-2xl font-bold text-neutral-900 leading-none mb-0.5">${value}</div>
-        <div class="text-[11px] text-neutral-400">${sub}</div>`;
+        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-400 mb-2">${label}</div>
+        <div class="text-2xl font-bold text-neutral-900 leading-none mb-1">${value}</div>
+        <div class="text-xs text-neutral-400">${sub}</div>`;
       return href
-        ? `<a href="${href}" class="block bg-white rounded-xl border border-neutral-200 px-4 py-3.5 hover:border-neutral-300 hover:shadow-sm transition-all ${cls}">${inner}</a>`
-        : `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-3.5 ${cls}">${inner}</div>`;
+        ? `<a href="${href}" class="block bg-white rounded-xl border border-neutral-200 px-4 py-4 hover:border-neutral-300 hover:shadow-sm transition-all ${borderCls}">${inner}</a>`
+        : `<div class="bg-white rounded-xl border border-neutral-200 px-4 py-4 ${borderCls}">${inner}</div>`;
     }
 
     // ── Appointment row ───────────────────────────────────────────────────────
@@ -194,9 +205,40 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         ? `<div class="text-sm font-bold text-primary-700 shrink-0">$${Number(f['Price']).toFixed(0)}</div>` : '';
       const noPsf = f['hasPSF'] === false
         ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">No PSF</span>` : '';
+      // Left border color by status for quick visual scanning
+      const borderCls = f['Status'] === 'Confirmed' ? 'border-l-4 border-emerald-400'
+        : f['Status'] === 'Completed'            ? 'border-l-4 border-blue-300'
+        : f['Status'] === 'Pending Confirmation' ? 'border-l-4 border-amber-400'
+        : f['Status'] === 'Cancelled'            ? 'border-l-4 border-red-300'
+        : f['Status'] === 'No-Show'              ? 'border-l-4 border-purple-300'
+        : '';
       return `
-        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer appt-row flex items-center gap-3" data-rec='${JSON.stringify(rec).replace(/'/g,"&#39;")}'>
+        <div class="px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer appt-row flex items-center gap-3 ${borderCls}" data-rec='${JSON.stringify(rec).replace(/'/g,"&#39;")}'>
           ${showDate
+            ? `<div class="text-center w-14 shrink-0">
+                <div class="text-[9px] font-bold text-neutral-400 uppercase">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})}</div>
+                <div class="text-[10px] text-neutral-500">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+                <div class="text-sm font-bold text-neutral-800">${tMain}</div>
+                <div class="text-[10px] text-neutral-400">${tPeriod}</div>
+              </div>`
+            : `<div class="text-center w-12 shrink-0">
+                <div class="text-lg font-bold text-neutral-900">${tMain}</div>
+                <div class="text-[10px] text-neutral-400">${tPeriod}</div>
+              </div>`}
+          <div class="w-px bg-neutral-100 self-stretch shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+              <span class="text-sm font-semibold text-neutral-900">${f['Client Name']||'Unknown'}</span>
+              ${statusBadge(f['Status'])}
+              ${f['Pending Payment'] ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Unpaid</span>' : ''}
+              ${noPsf}
+            </div>
+            <div class="text-xs text-neutral-400 truncate">${(f['Services']||'—').substring(0,60)}</div>
+          </div>
+          ${price}
+          <svg class="w-3.5 h-3.5 text-neutral-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>`;
+    }
             ? `<div class="text-center w-14 shrink-0">
                 <div class="text-[9px] font-bold text-neutral-400 uppercase">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})}</div>
                 <div class="text-[10px] text-neutral-500">${new Date((f['Date']||'')+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
@@ -298,10 +340,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               ${statusOptions.map(s=>`<option value="${s}" ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
             </select>
           </div>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" id="pending-payment-check" ${f['Pending Payment']?'checked':''} class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
-            <span class="text-sm font-medium text-neutral-700">Pending Payment</span>
-          </label>
+          <div class="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+            <div>
+              <p class="text-sm font-semibold text-neutral-800">Pending Payment</p>
+              <p class="text-xs text-neutral-400">Client owes payment at appointment</p>
+            </div>
+            <button type="button" id="pending-payment-check" role="switch" aria-checked="${f['Pending Payment']}"
+              data-on="${f['Pending Payment'] ? 'true' : 'false'}"
+              class="toggle-btn relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+              style="background-color:${f['Pending Payment'] ? '#f59e0b' : '#e5e7eb'}">
+              <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                style="transform:translateX(${f['Pending Payment'] ? '1.25rem' : '0px'})"></span>
+            </button>
+          </div>
           <div><div class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2">Internal Notes</div>
             <textarea id="internal-notes" rows="3" class="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm focus:border-primary-500 outline-none resize-none">${f['Internal Notes']||''}</textarea>
           </div>
@@ -328,6 +379,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </div>`;
       panel?.classList.remove('hidden'); panel?.classList.add('flex');
       document.getElementById('detail-overlay')?.classList.remove('hidden');
+      // Wire pending payment toggle
+      const ppToggle = document.getElementById('pending-payment-check') as HTMLButtonElement | null;
+      if (ppToggle) {
+        ppToggle.addEventListener('click', () => {
+          const nowOn = ppToggle.dataset.on !== 'true';
+          ppToggle.dataset.on = String(nowOn);
+          ppToggle.setAttribute('aria-checked', String(nowOn));
+          ppToggle.style.backgroundColor = nowOn ? '#f59e0b' : '#e5e7eb';
+          (ppToggle.querySelector('span') as HTMLElement).style.transform = `translateX(${nowOn ? '1.25rem' : '0px'})`;
+        });
+      }
       document.getElementById('save-detail-btn')?.addEventListener('click', saveDetail);
       document.getElementById('delete-detail-btn')?.addEventListener('click', deleteDetail);
       document.getElementById('fill-template-btn')?.addEventListener('click', () => {
@@ -353,7 +415,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     }
     async function saveDetail() {
       const status  = (document.getElementById('status-select') as HTMLSelectElement)?.value;
-      const pp      = (document.getElementById('pending-payment-check') as HTMLInputElement)?.checked;
+      const ppBtn   = document.getElementById('pending-payment-check') as HTMLButtonElement | null;
+      const pp      = ppBtn?.dataset.on === 'true';
       const notes   = (document.getElementById('internal-notes') as HTMLTextAreaElement)?.value;
       const msg     = document.getElementById('detail-msg');
       try {
@@ -460,11 +523,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const todayParam = today;
       const weekEndParam = weekEnd;
       statsRow.innerHTML =
-        statCard('Today', todayRecs.length, 'appointment' + (todayRecs.length !== 1 ? 's' : ''), '', `/admin/appointments?date=${todayParam}`) +
-        statCard('This Week', weekRecs.length, 'upcoming', '', `/admin/appointments?startDate=${addDays(today,1)}&endDate=${weekEndParam}`) +
+        statCard('Today', todayRecs.length, todayRecs.length === 1 ? '1 appointment' : `${todayRecs.length} appointments`, '', `/admin/appointments?date=${todayParam}`) +
+        statCard('This Week', weekRecs.length, 'upcoming appointments', '', `/admin/appointments?startDate=${addDays(today,1)}&endDate=${weekEndParam}`) +
         statCard('Pending', pendingRecs.length, 'need confirmation',
           pendingRecs.length > 0 ? 'border-l-4 border-amber-400' : '', '/admin/appointments?status=Pending+Confirmation') +
-        statCard('Unread Forms', totalUnread, 'new submissions',
+        statCard('New Forms', totalUnread, 'unread submissions',
           totalUnread > 0 ? 'border-l-4 border-violet-400' : '') +
         (role === 'owner' ? statCard('Revenue MTD', `$${monthRevenue.toFixed(0)}`, 'confirmed this month', 'border-l-4 border-emerald-400', '/admin/analytics') : '');
 
