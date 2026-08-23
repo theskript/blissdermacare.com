@@ -31,129 +31,317 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
     let activePage = 'home';
     let sections: any[] = [];
-    let saveTimers: Record<string, ReturnType<typeof setTimeout>> = {};
+
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
     // ── Tab switching ─────────────────────────────────────────────────────────
     document.querySelectorAll('.page-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         activePage = (btn as HTMLElement).dataset.page!;
         document.querySelectorAll('.page-tab').forEach(b => {
-          const isActive = (b as HTMLElement).dataset.page === activePage;
-          b.classList.toggle('active-ptab', isActive);
-          b.classList.toggle('border-primary-600', isActive);
-          b.classList.toggle('text-primary-700', isActive);
-          b.classList.toggle('font-semibold', isActive);
-          b.classList.toggle('text-neutral-500', !isActive);
-          b.classList.toggle('border-transparent', !isActive);
-          b.classList.toggle('font-medium', !isActive);
+          const active = (b as HTMLElement).dataset.page === activePage;
+          b.classList.toggle('border-primary-600', active);
+          b.classList.toggle('text-primary-700', active);
+          b.classList.toggle('font-semibold', active);
+          b.classList.toggle('text-neutral-500', !active);
+          b.classList.toggle('border-transparent', !active);
         });
         loadPage(activePage);
       });
     });
 
-    // ── Load sections for a page ──────────────────────────────────────────────
+    // ── Load ──────────────────────────────────────────────────────────────────
     async function loadPage(page: string) {
       const area = document.getElementById('content-area')!;
-      area.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>';
+      area.innerHTML = '<div class="py-10 text-center text-neutral-400 text-sm">Loading…</div>';
       try {
         const data = await apiFetch('admin-content', { params: { page } });
         sections = data?.sections || [];
         renderSections(sections, page);
       } catch (err: any) {
-        area.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${err.message}</div>`;
+        area.innerHTML = `<div class="py-6 text-red-500 text-sm">${err.message}</div>`;
       }
     }
 
+    // ── Render helper ─────────────────────────────────────────────────────────
+    function renderField(s: any, page: string): string {
+      const key = s.section_key;
+      const val = s.value || '';
+      const TYPE_BADGES: Record<string, string> = {
+        text: 'bg-sky-50 text-sky-600', textarea: 'bg-violet-50 text-violet-600',
+        html: 'bg-amber-50 text-amber-700', image: 'bg-rose-50 text-rose-600',
+        json: 'bg-emerald-50 text-emerald-700', boolean: 'bg-orange-50 text-orange-700',
+      };
+      const TYPE_LABELS: Record<string, string> = {
+        text: 'Short Text', textarea: 'Long Text', html: 'HTML', image: 'Image URL',
+        json: 'Structured Content', boolean: 'On / Off Toggle',
+      };
+      const badge = `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${TYPE_BADGES[s.type] || 'bg-neutral-100 text-neutral-500'}">${TYPE_LABELS[s.type] || s.type}</span>`;
+      const header = `
+        <div class="flex items-start justify-between mb-3 gap-3">
+          <div class="min-w-0">
+            <label class="text-sm font-semibold text-neutral-800">${esc(s.label)}</label>
+            ${s.description ? `<p class="text-xs text-neutral-400 mt-0.5">${esc(s.description)}</p>` : ''}
+          </div>
+          <div class="flex items-center gap-2 shrink-0">${badge}</div>
+        </div>`;
+
+      // ── Boolean toggle ──────────────────────────────────────────────────────
+      if (s.type === 'boolean') {
+        const on = val !== 'false';
+        return `<div class="bg-white rounded-xl border border-neutral-200 p-4" id="wrap-${key}">${header}
+          <div class="flex items-center gap-3">
+            <button type="button" role="switch" id="field-${key}" aria-checked="${on}"
+              data-key="${key}" data-page="${page}" data-value="${on}"
+              class="bool-toggle relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+              style="background-color:${on ? '#7c3aed' : '#e5e7eb'}">
+              <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                style="transform:translateX(${on ? '1.25rem' : '0px'})"></span>
+            </button>
+            <span id="bool-lbl-${key}" class="text-sm text-neutral-600 font-medium">${on ? '✓ Enabled / Visible' : '✗ Disabled / Hidden'}</span>
+          </div>
+        </div>`;
+      }
+
+      // ── JSON: FAQ editor ({q, a} arrays) or Bullet list (string arrays) ────
+      if (s.type === 'json') {
+        let parsed: any[] = [];
+        try { parsed = JSON.parse(val) || []; } catch { parsed = []; }
+        const isFaq = Array.isArray(parsed) && (parsed.length === 0 || (typeof parsed[0] === 'object' && ('q' in parsed[0] || 'a' in parsed[0])));
+
+        if (isFaq) {
+          const rows = parsed.map((item: any, i: number) => `
+            <div class="faq-item border border-neutral-200 rounded-lg p-3 space-y-2" data-index="${i}">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[10px] font-bold uppercase tracking-wide text-neutral-400">Question ${i + 1}</span>
+                <button type="button" class="faq-del-btn text-red-400 hover:text-red-600 transition-colors rounded p-0.5" data-key="${key}" data-index="${i}" title="Delete this question">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+              <input type="text" class="faq-q w-full px-2.5 py-1.5 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none" placeholder="Question…" value="${esc(item.q || '')}"/>
+              <textarea class="faq-a w-full px-2.5 py-1.5 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none resize-none" rows="2" placeholder="Answer…">${esc(item.a || '')}</textarea>
+            </div>`).join('');
+          return `<div class="bg-white rounded-xl border border-neutral-200 p-4" id="wrap-${key}">${header}
+            <div id="faq-list-${key}" class="space-y-2 mb-3">${rows || '<p class="text-xs text-neutral-400 py-2 text-center">No questions yet — add one below.</p>'}</div>
+            <button type="button" class="faq-add-btn w-full py-2 border-2 border-dashed border-neutral-300 hover:border-primary-400 text-neutral-500 hover:text-primary-600 text-sm rounded-lg transition-colors flex items-center justify-center gap-1.5" data-key="${key}" data-page="${page}">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add Question
+            </button>
+            <input type="hidden" id="field-${key}" data-key="${key}" data-page="${page}" value="${esc(val)}"/>
+          </div>`;
+        } else {
+          // Bullet list editor
+          const bullets: string[] = Array.isArray(parsed) ? parsed.filter(b => typeof b === 'string') : [];
+          const rows = bullets.map((b: string, i: number) => `
+            <div class="bullet-item flex items-center gap-2" data-index="${i}">
+              <svg class="w-3 h-3 text-neutral-400 shrink-0" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>
+              <input type="text" class="bullet-input flex-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none" value="${esc(b)}"/>
+              <button type="button" class="bullet-del-btn text-red-400 hover:text-red-600 transition-colors p-1 rounded shrink-0" data-key="${key}" data-index="${i}" title="Remove">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>`).join('');
+          return `<div class="bg-white rounded-xl border border-neutral-200 p-4" id="wrap-${key}">${header}
+            <div id="bullet-list-${key}" class="space-y-1.5 mb-3">${rows || '<p class="text-xs text-neutral-400 py-2 text-center">No items yet.</p>'}</div>
+            <button type="button" class="bullet-add-btn w-full py-2 border-2 border-dashed border-neutral-300 hover:border-primary-400 text-neutral-500 hover:text-primary-600 text-sm rounded-lg transition-colors flex items-center justify-center gap-1.5" data-key="${key}" data-page="${page}">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add Bullet
+            </button>
+            <input type="hidden" id="field-${key}" data-key="${key}" data-page="${page}" value="${esc(val)}"/>
+          </div>`;
+        }
+      }
+
+      // ── Image ───────────────────────────────────────────────────────────────
+      if (s.type === 'image') {
+        return `<div class="bg-white rounded-xl border border-neutral-200 p-4" id="wrap-${key}">${header}
+          <input type="url" id="field-${key}" value="${esc(val)}" data-key="${key}" data-page="${page}"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none" placeholder="https://…"/>
+          ${val ? `<div class="mt-2 flex items-center gap-3"><img src="${esc(val)}" class="h-20 w-32 rounded-lg object-cover border border-neutral-200" onerror="this.closest('div').style.display='none'" alt=""/><p class="text-xs text-neutral-400">Current image preview</p></div>` : ''}
+        </div>`;
+      }
+
+      // ── Long text / HTML ────────────────────────────────────────────────────
+      if (s.type === 'html' || s.type === 'textarea') {
+        return `<div class="bg-white rounded-xl border border-neutral-200 p-4" id="wrap-${key}">${header}
+          <textarea id="field-${key}" rows="${s.type === 'html' ? 6 : 3}" data-key="${key}" data-page="${page}"
+            class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-y${s.type === 'html' ? ' font-mono text-xs' : ''}">${esc(val)}</textarea>
+          ${s.type === 'html' ? '<p class="text-[11px] text-neutral-400 mt-1">⚠️ This field accepts HTML markup. Be careful with tags.</p>' : ''}
+        </div>`;
+      }
+
+      // ── Default: short text ─────────────────────────────────────────────────
+      return `<div class="bg-white rounded-xl border border-neutral-200 p-4" id="wrap-${key}">${header}
+        <input type="text" id="field-${key}" value="${esc(val)}" data-key="${key}" data-page="${page}"
+          class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"/>
+      </div>`;
+    }
+
+    // ── Render all sections ───────────────────────────────────────────────────
     function renderSections(sects: any[], page: string) {
       const area = document.getElementById('content-area')!;
       if (!sects.length) {
-        area.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No editable sections found for this page. Run the SQL migration first.</div>';
+        area.innerHTML = '<div class="py-10 text-center text-neutral-400 text-sm">No editable sections found for this page.<br/>Run the SQL seed migration first.</div>';
         return;
       }
       area.innerHTML = `
         <div class="space-y-4">
-          ${sects.map(s => {
-            const isJson = s.type === 'json';
-            const isHtml = s.type === 'html';
-            const isImage = s.type === 'image';
-            const isLong = s.type === 'textarea' || s.type === 'html';
-            const displayVal = s.value || '';
-            return `
-              <div class="bg-white rounded-xl border border-neutral-200 p-4">
-                <div class="flex items-center justify-between mb-2 gap-4">
-                  <label class="text-sm font-semibold text-neutral-800">${s.label}</label>
-                  <div class="flex items-center gap-2 shrink-0">
-                    <span id="save-msg-${s.section_key}" class="text-xs text-neutral-400 hidden"></span>
-                    <span class="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-1.5 py-0.5 rounded">${s.section_key}</span>
-                  </div>
-                </div>
-                ${isJson
-                  ? `<div class="mb-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">Edit as JSON array: <code>[{"q":"Question","a":"Answer"}, …]</code></div>
-                     <textarea id="field-${s.section_key}" rows="8"
-                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs font-mono focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-y"
-                       data-key="${s.section_key}" data-page="${page}">${displayVal}</textarea>`
-                  : isImage
-                  ? `<input type="url" id="field-${s.section_key}" value="${displayVal}"
-                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
-                       data-key="${s.section_key}" data-page="${page}" placeholder="https://…"/>
-                     ${displayVal ? `<img src="${displayVal}" class="mt-2 h-20 rounded object-cover" alt=""/>` : ''}`
-                  : isLong
-                  ? `<textarea id="field-${s.section_key}" rows="${isHtml ? 6 : 3}"
-                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none resize-y"
-                       data-key="${s.section_key}" data-page="${page}">${displayVal}</textarea>`
-                  : `<input type="text" id="field-${s.section_key}" value="${displayVal}"
-                       class="w-full px-3 py-2 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 focus:ring-2 focus:ring-primary-100 outline-none"
-                       data-key="${s.section_key}" data-page="${page}"/>`
-                }
-              </div>`;
-          }).join('')}
-          <button id="save-all-btn"
-            class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors mt-2">
-            Save All Changes
-          </button>
-          <div id="save-all-msg" class="text-xs text-center hidden"></div>
+          ${sects.map(s => renderField(s, page)).join('')}
+          <div class="flex items-center gap-3">
+            <button id="save-all-btn"
+              class="flex-1 py-3 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
+              Save All Changes
+            </button>
+            <div id="save-all-msg" class="hidden text-sm font-medium"></div>
+          </div>
         </div>`;
 
-      // Save all button
-      document.getElementById('save-all-btn')?.addEventListener('click', async () => {
-        const btn = document.getElementById('save-all-btn') as HTMLButtonElement;
-        const msg = document.getElementById('save-all-msg')!;
-        btn.disabled = true; btn.textContent = 'Saving…';
-        let saved = 0, errors = 0;
-        for (const s of sects) {
-          const el = document.getElementById(`field-${s.section_key}`) as HTMLInputElement | HTMLTextAreaElement | null;
-          if (!el) continue;
-          const newVal = el.value;
-          if (newVal === (s.value || '')) continue; // skip unchanged
-          // Validate JSON sections
-          if (s.type === 'json') {
-            try { JSON.parse(newVal); } catch {
-              msg.textContent = `Invalid JSON in "${s.label}". Fix before saving.`;
-              msg.className = 'text-xs text-center text-red-500'; msg.classList.remove('hidden');
-              btn.disabled = false; btn.textContent = 'Save All Changes';
-              return;
-            }
-          }
-          try {
-            await apiFetch('admin-content', { method: 'PATCH', body: { page_key: page, section_key: s.section_key, value: newVal } });
-            s.value = newVal;
-            saved++;
-          } catch { errors++; }
-        }
-        btn.disabled = false; btn.textContent = 'Save All Changes';
-        if (errors > 0) {
-          msg.textContent = `Saved ${saved}, failed ${errors}.`;
-          msg.className = 'text-xs text-center text-red-500';
-        } else if (saved > 0) {
-          msg.textContent = `✓ ${saved} section${saved !== 1 ? 's' : ''} saved.`;
-          msg.className = 'text-xs text-center text-emerald-600';
-        } else {
-          msg.textContent = 'No changes to save.';
-          msg.className = 'text-xs text-center text-neutral-400';
-        }
-        msg.classList.remove('hidden');
-        setTimeout(() => msg.classList.add('hidden'), 3000);
+      // ── Boolean toggles ─────────────────────────────────────────────────────
+      area.querySelectorAll<HTMLButtonElement>('.bool-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const nowOn = btn.dataset.value !== 'true';
+          btn.dataset.value = String(nowOn);
+          btn.setAttribute('aria-checked', String(nowOn));
+          btn.style.backgroundColor = nowOn ? '#7c3aed' : '#e5e7eb';
+          (btn.querySelector('span') as HTMLElement).style.transform = `translateX(${nowOn ? '1.25rem' : '0px'})`;
+          const lbl = document.getElementById(`bool-lbl-${btn.dataset.key}`);
+          if (lbl) lbl.textContent = nowOn ? '✓ Enabled / Visible' : '✗ Disabled / Hidden';
+        });
       });
+
+      // ── FAQ: Add question ──────────────────────────────────────────────────
+      area.querySelectorAll<HTMLButtonElement>('.faq-add-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.key!;
+          const list = document.getElementById(`faq-list-${key}`)!;
+          const idx = list.querySelectorAll('.faq-item').length;
+          const empty = list.querySelector('p.text-neutral-400');
+          if (empty) empty.remove();
+          const div = document.createElement('div');
+          div.className = 'faq-item border border-neutral-200 rounded-lg p-3 space-y-2';
+          div.dataset.index = String(idx);
+          div.innerHTML = `
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wide text-neutral-400">Question ${idx + 1}</span>
+              <button type="button" class="faq-del-btn text-red-400 hover:text-red-600 transition-colors rounded p-0.5" data-key="${key}" data-index="${idx}" title="Delete">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+            <input type="text" class="faq-q w-full px-2.5 py-1.5 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none" placeholder="Question…" value=""/>
+            <textarea class="faq-a w-full px-2.5 py-1.5 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none resize-none" rows="2" placeholder="Answer…"></textarea>`;
+          list.appendChild(div);
+          div.querySelector('.faq-del-btn')!.addEventListener('click', () => { div.remove(); renumberFaq(key); });
+          (div.querySelector('.faq-q') as HTMLElement).focus();
+        });
+      });
+
+      // ── FAQ: Delete question ───────────────────────────────────────────────
+      area.querySelectorAll<HTMLButtonElement>('.faq-del-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.key!;
+          btn.closest('.faq-item')?.remove();
+          renumberFaq(key);
+        });
+      });
+
+      // ── Bullets: Add bullet ────────────────────────────────────────────────
+      area.querySelectorAll<HTMLButtonElement>('.bullet-add-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.key!;
+          const list = document.getElementById(`bullet-list-${key}`)!;
+          const empty = list.querySelector('p.text-neutral-400');
+          if (empty) empty.remove();
+          const div = document.createElement('div');
+          div.className = 'bullet-item flex items-center gap-2';
+          div.innerHTML = `
+            <svg class="w-3 h-3 text-neutral-400 shrink-0" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>
+            <input type="text" class="bullet-input flex-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 text-sm focus:border-primary-400 outline-none" placeholder="New bullet…" value=""/>
+            <button type="button" class="bullet-del-btn text-red-400 hover:text-red-600 transition-colors p-1 rounded shrink-0" title="Remove">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>`;
+          div.querySelector('.bullet-del-btn')!.addEventListener('click', () => div.remove());
+          list.appendChild(div);
+          (div.querySelector('.bullet-input') as HTMLElement).focus();
+        });
+      });
+
+      // ── Bullets: Delete ────────────────────────────────────────────────────
+      area.querySelectorAll<HTMLButtonElement>('.bullet-del-btn').forEach(btn => {
+        btn.addEventListener('click', () => btn.closest('.bullet-item')?.remove());
+      });
+
+      // ── Save all ──────────────────────────────────────────────────────────
+      document.getElementById('save-all-btn')?.addEventListener('click', () => saveAll(sects, page));
+    }
+
+    function renumberFaq(key: string) {
+      const list = document.getElementById(`faq-list-${key}`)!;
+      list.querySelectorAll('.faq-item').forEach((item, i) => {
+        const lbl = item.querySelector<HTMLElement>('.text-\\[10px\\]');
+        if (lbl) lbl.textContent = `Question ${i + 1}`;
+      });
+    }
+
+    // ── Collect current value for a section ──────────────────────────────────
+    function collectValue(s: any): string | null {
+      const key = s.section_key;
+
+      if (s.type === 'boolean') {
+        const btn = document.getElementById(`field-${key}`) as HTMLButtonElement | null;
+        return btn ? btn.dataset.value! : null;
+      }
+
+      if (s.type === 'json') {
+        let parsed: any[] = [];
+        try { parsed = JSON.parse(s.value || '[]'); } catch { parsed = []; }
+        const isFaq = Array.isArray(parsed) && (parsed.length === 0 || (typeof parsed[0] === 'object'));
+
+        if (isFaq) {
+          const list = document.getElementById(`faq-list-${key}`)!;
+          const items = Array.from(list.querySelectorAll('.faq-item')).map(item => ({
+            q: (item.querySelector('.faq-q') as HTMLInputElement).value.trim(),
+            a: (item.querySelector('.faq-a') as HTMLTextAreaElement).value.trim(),
+          })).filter(i => i.q || i.a);
+          return JSON.stringify(items);
+        } else {
+          const list = document.getElementById(`bullet-list-${key}`)!;
+          const items = Array.from(list.querySelectorAll('.bullet-input')).map(inp => (inp as HTMLInputElement).value.trim()).filter(Boolean);
+          return JSON.stringify(items);
+        }
+      }
+
+      const el = document.getElementById(`field-${key}`) as HTMLInputElement | HTMLTextAreaElement | null;
+      return el ? el.value : null;
+    }
+
+    async function saveAll(sects: any[], page: string) {
+      const btn = document.getElementById('save-all-btn') as HTMLButtonElement;
+      const msg = document.getElementById('save-all-msg')!;
+      btn.disabled = true; btn.textContent = 'Saving…';
+      let saved = 0, errors = 0;
+
+      for (const s of sects) {
+        const newVal = collectValue(s);
+        if (newVal === null || newVal === (s.value || '')) continue;
+        try {
+          await apiFetch('admin-content', { method: 'PATCH', body: { page_key: page, section_key: s.section_key, value: newVal } });
+          s.value = newVal;
+          saved++;
+        } catch { errors++; }
+      }
+
+      btn.disabled = false; btn.textContent = 'Save All Changes';
+      if (errors > 0) {
+        msg.textContent = `Saved ${saved}, failed ${errors}.`;
+        msg.className = 'text-sm font-medium text-red-500';
+      } else if (saved > 0) {
+        msg.textContent = `✓ ${saved} section${saved !== 1 ? 's' : ''} saved`;
+        msg.className = 'text-sm font-medium text-emerald-600';
+      } else {
+        msg.textContent = 'No changes to save.';
+        msg.className = 'text-sm font-medium text-neutral-400';
+      }
+      msg.classList.remove('hidden');
+      setTimeout(() => msg.classList.add('hidden'), 3000);
     }
 
     loadPage('home');

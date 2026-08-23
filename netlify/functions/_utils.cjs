@@ -134,8 +134,21 @@ function partnerToDB(fields) {
 
 function auditFromDB(row) {
   if (!row) return null;
+  let details = row.details;
+  // Try to parse details as JSON for structured display
+  if (typeof details === 'string' && (details.startsWith('{') || details.startsWith('['))) {
+    try { details = JSON.parse(details); } catch { /* keep as string */ }
+  }
   return {
-    id: row.id,
+    id:         row.id,
+    action:     row.action,
+    username:   row.username,
+    role:       row.role,
+    details,
+    target_id:  row.target_id,
+    ip_address: row.ip_address,
+    created_at: row.created_at,
+    // Legacy fields shape for backward compat
     fields: {
       'Action':     row.action,
       'Username':   row.username,
@@ -143,7 +156,7 @@ function auditFromDB(row) {
       'Details':    row.details,
       'Target ID':  row.target_id,
       'IP Address': row.ip_address,
-      'Timestamp':  row.created_at, // maps created_at → Timestamp for frontend
+      'Timestamp':  row.created_at,
     },
   };
 }
@@ -264,11 +277,12 @@ async function sendEmail({ to, subject, html, text }) {
 
 async function logAudit({ action, username = '', role = '', details = '', targetId = '', ip = '' }) {
   try {
+    const detailsStr = typeof details === 'object' ? JSON.stringify(details) : String(details);
     const { error } = await getSupabase().from('audit_log').insert({
       action,
       username,
       role,
-      details: String(details).substring(0, 1000),
+      details: detailsStr.substring(0, 2000),
       target_id: targetId,
       ip_address: ip,
     });

@@ -268,19 +268,26 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <div id="upload-progress" class="hidden mt-2 text-xs text-neutral-400"></div>
         </div>
 
-        <div class="flex gap-4">
-          <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" id="f-package" ${svc?.is_package ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-primary-600"/>
-            <span class="text-sm font-medium text-neutral-700">Is a package</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" id="f-active" ${(svc?.active ?? true) ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-emerald-500"/>
-            <span class="text-sm font-medium text-neutral-700">Active</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" id="f-featured" ${svc?.featured ? 'checked' : ''} class="w-4 h-4 rounded border-neutral-300 accent-amber-500"/>
-            <span class="text-sm font-medium text-neutral-700">Featured on home</span>
-          </label>
+        <!-- Toggles row: Active, Featured, Is Package -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          ${[
+            { id: 'f-active',   label: 'Active',           sub: 'Show on website & booking form', on: svc?.active ?? true,  color: '#10b981' },
+            { id: 'f-featured', label: 'Featured on Home', sub: 'Show in "Popular Treatments" grid', on: !!svc?.featured,   color: '#f59e0b' },
+            { id: 'f-package',  label: 'Is a Package',     sub: 'Bundles multiple services together', on: !!svc?.is_package, color: '#8b5cf6' },
+          ].map(t => `
+            <div class="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+              <div class="min-w-0 mr-3">
+                <p class="text-sm font-semibold text-neutral-800">${t.label}</p>
+                <p class="text-xs text-neutral-400 leading-snug">${t.sub}</p>
+              </div>
+              <button type="button" role="switch" id="${t.id}" aria-checked="${t.on}"
+                data-on="${t.on}"
+                class="toggle-btn relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+                style="background-color:${t.on ? t.color : '#e5e7eb'}">
+                <span class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                  style="transform:translateX(${t.on ? '1.25rem' : '0px'})"></span>
+              </button>
+            </div>`).join('')}
         </div>
 
         <div>
@@ -295,6 +302,18 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         </div>
         <div id="f-msg" class="text-xs text-center hidden"></div>
       `;
+
+      // Toggle button behavior
+      const TOGGLE_COLORS: Record<string, string> = { 'f-active': '#10b981', 'f-featured': '#f59e0b', 'f-package': '#8b5cf6' };
+      body.querySelectorAll<HTMLButtonElement>('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const nowOn = btn.dataset.on !== 'true';
+          btn.dataset.on = String(nowOn);
+          btn.setAttribute('aria-checked', String(nowOn));
+          btn.style.backgroundColor = nowOn ? (TOGGLE_COLORS[btn.id] || '#7c3aed') : '#e5e7eb';
+          (btn.querySelector('span') as HTMLElement).style.transform = `translateX(${nowOn ? '1.25rem' : '0px'})`;
+        });
+      });
 
       // Image URL live preview
       const imgUrlEl  = document.getElementById('f-image-url') as HTMLInputElement;
@@ -349,9 +368,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         const tagline  = (document.getElementById('f-tagline')  as HTMLInputElement).value.trim();
         const desc     = (document.getElementById('f-desc')     as HTMLTextAreaElement).value.trim();
         const imageUrl = (document.getElementById('f-image-url')as HTMLInputElement).value.trim();
-        const isPackage= (document.getElementById('f-package')  as HTMLInputElement).checked;
-        const active   = (document.getElementById('f-active')   as HTMLInputElement).checked;
-        const featured = (document.getElementById('f-featured')  as HTMLInputElement).checked;
+        const isPackage= (document.getElementById('f-package')  as HTMLButtonElement).dataset.on === 'true';
+        const active   = (document.getElementById('f-active')   as HTMLButtonElement).dataset.on === 'true';
+        const featured = (document.getElementById('f-featured')  as HTMLButtonElement).dataset.on === 'true';
         const badge    = (document.getElementById('f-badge')     as HTMLInputElement).value.trim() || null;
 
         if (!name || !category || !priceRaw) {

@@ -24,7 +24,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <option value="Update Appointment">Update Appointment</option>
             <option value="Delete Appointment">Delete Appointment</option>
           </optgroup>
-          <optgroup label="Staff / Clients">
+          <optgroup label="Services & Content">
+            <option value="Create Service">Create Service</option>
+            <option value="Update Service">Update Service</option>
+            <option value="Delete Service">Delete Service</option>
+            <option value="Update Site Content">Update Site Content</option>
+          </optgroup>
+          <optgroup label="Staff & Clients">
             <option value="Create Staff">Create Staff</option>
             <option value="Update Staff">Update Staff</option>
             <option value="Activate Staff">Activate Staff</option>
@@ -32,6 +38,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <option value="Reset Password">Reset Password</option>
             <option value="Update Client">Update Client</option>
             <option value="Delete Client">Delete Client</option>
+          </optgroup>
+          <optgroup label="Marketing & Promos">
+            <option value="Create Promo Code">Create Promo Code</option>
+            <option value="Deactivate Promo Code">Deactivate Promo Code</option>
+            <option value="Create Page">Create Page</option>
+            <option value="Update Page">Update Page</option>
+          </optgroup>
+          <optgroup label="Settings">
+            <option value="Update Availability">Update Availability</option>
+            <option value="Update Notification Settings">Update Notification Settings</option>
+            <option value="Create Partner">Create Partner</option>
+            <option value="Update Partner">Update Partner</option>
           </optgroup>
           <optgroup label="Messaging">
             <option value="SMS Sent">SMS Sent</option>
@@ -53,7 +71,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       </div>
       <div class="px-6 py-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
         <span id="audit-count">—</span>
-        <span>Showing most recent 200 entries</span>
+        <div class="flex items-center gap-3">
+          <span id="audit-last-loaded" class="hidden">—</span>
+          <button id="refresh-btn" class="text-primary-500 hover:text-primary-700 font-medium transition-colors flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Refresh
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -108,6 +132,255 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     import { requireLogin, getRole, apiFetch } from '../../scripts/adminAuth.js';
     requireLogin();
     if (getRole() !== 'owner') window.location.href = '/admin/';
+
+    function esc(s: unknown) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // ── Action color + category map ──────────────────────────────────────────
+    type BadgeCls = string;
+    const ACTION_COLORS: Record<string, BadgeCls> = {
+      'Login': 'bg-emerald-100 text-emerald-700',
+      'Failed Login': 'bg-red-100 text-red-700',
+      'Create Appointment': 'bg-blue-100 text-blue-700',
+      'Update Appointment': 'bg-sky-100 text-sky-700',
+      'Delete Appointment': 'bg-red-100 text-red-700',
+      'Create Service': 'bg-violet-100 text-violet-700',
+      'Update Service': 'bg-violet-100 text-violet-700',
+      'Delete Service': 'bg-red-100 text-red-700',
+      'Update Site Content': 'bg-amber-100 text-amber-700',
+      'Create Staff': 'bg-purple-100 text-purple-700',
+      'Update Staff': 'bg-purple-100 text-purple-700',
+      'Activate Staff': 'bg-emerald-100 text-emerald-700',
+      'Deactivate Staff': 'bg-orange-100 text-orange-700',
+      'Reset Password': 'bg-amber-100 text-amber-700',
+      'Update Client': 'bg-sky-100 text-sky-700',
+      'Delete Client': 'bg-red-100 text-red-700',
+      'Create Promo Code': 'bg-teal-100 text-teal-700',
+      'Update Promo Code': 'bg-teal-100 text-teal-700',
+      'Deactivate Promo Code': 'bg-orange-100 text-orange-700',
+      'Create Membership Plan': 'bg-rose-100 text-rose-700',
+      'Update Membership Plan': 'bg-rose-100 text-rose-700',
+      'Delete Membership Plan': 'bg-red-100 text-red-700',
+      'Update Availability': 'bg-cyan-100 text-cyan-700',
+      'Update Notification Settings': 'bg-indigo-100 text-indigo-700',
+      'Create Partner': 'bg-lime-100 text-lime-700',
+      'Update Partner': 'bg-lime-100 text-lime-700',
+      'Delete Partner': 'bg-red-100 text-red-700',
+      'Create Page': 'bg-violet-100 text-violet-700',
+      'Update Page': 'bg-violet-100 text-violet-700',
+      'Delete Page': 'bg-red-100 text-red-700',
+      'SMS Sent': 'bg-sky-100 text-sky-700',
+      'SMS Failed': 'bg-red-100 text-red-700',
+      'Email Sent': 'bg-indigo-100 text-indigo-700',
+      'Email Failed': 'bg-red-100 text-red-700',
+    };
+
+    function actionBadge(action: string) {
+      const cls = ACTION_COLORS[action] || 'bg-neutral-100 text-neutral-600';
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">${esc(action) || '—'}</span>`;
+    }
+
+    // ── Relative timestamp ──────────────────────────────────────────────────
+    function relTime(iso: string) {
+      if (!iso) return '—';
+      const diff = Date.now() - new Date(iso).getTime();
+      if (diff < 60000)   return 'just now';
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+      if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
+      return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function fullTime(iso: string) {
+      return iso ? new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit' }) : '—';
+    }
+
+    // ── Parse details (string or object) ─────────────────────────────────────
+    function detailPreview(details: any): string {
+      if (!details) return '';
+      if (typeof details === 'object') {
+        // Structured: build a short preview
+        if (details.field && details.new_value !== undefined) {
+          const nv = String(details.new_value).substring(0, 80);
+          return `"${details.field}" → ${nv}${details.new_value?.length > 80 ? '…' : ''}`;
+        }
+        if (details.service && details.changes) {
+          const keys = Object.keys(details.changes);
+          return `${details.service} — changed: ${keys.join(', ')}`;
+        }
+        const vals = Object.values(details).filter(Boolean);
+        return String(vals[0] || '').substring(0, 120);
+      }
+      // String: first 120 chars
+      return String(details).substring(0, 120);
+    }
+
+    // ── Render modal detail sections ─────────────────────────────────────────
+    function renderModalSections(details: any, action: string): string {
+      if (!details) return '<p class="text-sm text-neutral-400 italic">No additional details recorded.</p>';
+
+      const sections: string[] = [];
+
+      if (typeof details === 'object') {
+        // ── Content diff view ─────────────────────────────────────────────────
+        if (details.old_value !== undefined && details.new_value !== undefined) {
+          const field = details.field || details.section_key || '—';
+          const page  = details.page ? `<span class="ml-1 text-neutral-400">(${esc(details.page)} page)</span>` : '';
+          sections.push(`
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1.5">Field Changed ${page}</p>
+              <p class="text-sm font-semibold text-neutral-800 mb-2">${esc(field)}</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-red-400 mb-1">Previous Value</p>
+              <div class="bg-red-50 border border-red-200 rounded-lg px-3 py-2.5 text-xs text-red-800 whitespace-pre-wrap break-words max-h-40 overflow-y-auto">${esc(details.old_value) || '<span class="italic text-red-400">empty</span>'}</div>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1">New Value</p>
+              <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2.5 text-xs text-emerald-900 whitespace-pre-wrap break-words max-h-40 overflow-y-auto">${esc(details.new_value) || '<span class="italic text-emerald-400">empty</span>'}</div>
+            </div>`);
+          return sections.join('');
+        }
+
+        // ── Service changes diff ──────────────────────────────────────────────
+        if (details.service && details.changes && typeof details.changes === 'object') {
+          sections.push(`<div><p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">Service</p><p class="text-sm font-semibold text-neutral-800">${esc(details.service)}</p></div>`);
+          const changeKeys = Object.keys(details.changes);
+          if (changeKeys.length) {
+            const rows = changeKeys.map(k => {
+              const ch = details.changes[k];
+              return `<tr>
+                <td class="pr-3 py-1.5 text-[11px] font-semibold text-neutral-500 whitespace-nowrap">${esc(k)}</td>
+                <td class="px-2 py-1.5 text-[11px] text-red-600 line-through">${esc(String(ch.from ?? '—'))}</td>
+                <td class="px-1 py-1.5 text-neutral-400 text-[11px]">→</td>
+                <td class="px-2 py-1.5 text-[11px] text-emerald-700 font-semibold">${esc(String(ch.to ?? '—'))}</td>
+              </tr>`;
+            }).join('');
+            sections.push(`
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">What Changed</p>
+                <div class="bg-neutral-50 rounded-lg border border-neutral-200 overflow-hidden">
+                  <table class="w-full"><tbody>${rows}</tbody></table>
+                </div>
+              </div>`);
+          }
+          return sections.join('');
+        }
+
+        // ── Generic object: render key/value pairs ────────────────────────────
+        const entries = Object.entries(details).filter(([, v]) => v !== null && v !== undefined && v !== '');
+        if (entries.length) {
+          const rows = entries.map(([k, v]) => `
+            <div class="bg-neutral-50 rounded-xl px-4 py-3 space-y-0.5">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">${esc(k)}</p>
+              <p class="text-sm text-neutral-700 break-words">${esc(typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v))}</p>
+            </div>`).join('');
+          return `<div class="grid grid-cols-1 gap-2">${rows}</div>`;
+        }
+      }
+
+      // ── Plain string ────────────────────────────────────────────────────────
+      const parts = String(details).split(' | ');
+      const rendered = parts.map(p => {
+        const c = p.indexOf(': ');
+        if (c > -1) return `<div class="bg-neutral-50 rounded-xl px-4 py-3 space-y-0.5"><p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">${esc(p.substring(0, c))}</p><p class="text-sm text-neutral-700 break-words whitespace-pre-wrap">${esc(p.substring(c + 2))}</p></div>`;
+        return `<div class="bg-neutral-50 rounded-xl px-4 py-3"><p class="text-sm text-neutral-700 break-words whitespace-pre-wrap">${esc(p)}</p></div>`;
+      }).join('');
+      return `<div class="grid grid-cols-1 gap-2">${rendered || '<p class="text-sm text-neutral-400 italic">No details.</p>'}</div>`;
+    }
+
+    // ── Modal ────────────────────────────────────────────────────────────────
+    const modal    = document.getElementById('detail-modal')!;
+    const overlay  = document.getElementById('detail-modal-overlay')!;
+    const closeBtn = document.getElementById('detail-modal-close')!;
+
+    function openModal(rec: any) {
+      const cls = ACTION_COLORS[rec.action] || 'bg-neutral-100 text-neutral-600';
+      (document.getElementById('modal-badge') as HTMLElement).className = `inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${cls}`;
+      (document.getElementById('modal-badge') as HTMLElement).textContent = rec.action || '—';
+      (document.getElementById('modal-ts') as HTMLElement).textContent = fullTime(rec.created_at);
+      (document.getElementById('modal-user') as HTMLElement).textContent = rec.username || '—';
+      (document.getElementById('modal-role') as HTMLElement).textContent = rec.role || '—';
+      (document.getElementById('modal-ip') as HTMLElement).textContent = rec.ip_address || '—';
+      (document.getElementById('modal-id') as HTMLElement).textContent = rec.id || '—';
+      (document.getElementById('modal-sections') as HTMLElement).innerHTML = renderModalSections(rec.details, rec.action);
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() { modal.classList.add('hidden'); }
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Load audit log ───────────────────────────────────────────────────────
+    async function loadAudit() {
+      const username = (document.getElementById('filter-username') as HTMLInputElement).value.trim();
+      const action   = (document.getElementById('filter-action')   as HTMLSelectElement).value;
+      const wrap     = document.getElementById('audit-table-wrap')!;
+      const countEl  = document.getElementById('audit-count')!;
+      const lastEl   = document.getElementById('audit-last-loaded')!;
+      wrap.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>';
+      countEl.textContent = '—';
+
+      try {
+        const params: Record<string, string> = { limit: '500' };
+        if (username) params.username = username;
+        if (action)   params.action   = action;
+        const data    = await apiFetch('admin-audit', { params });
+        const records: any[] = data?.records || [];
+        countEl.textContent = `${records.length} entries`;
+        lastEl.textContent  = 'Loaded ' + new Date().toLocaleTimeString();
+        lastEl.classList.remove('hidden');
+
+        if (!records.length) {
+          wrap.innerHTML = '<div class="px-6 py-10 text-center text-neutral-400 text-sm">No log entries match your filter.</div>';
+          return;
+        }
+
+        wrap.innerHTML = `
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-neutral-100 bg-neutral-50/80">
+                <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-neutral-400 w-28">When</th>
+                <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-neutral-400 w-44">Action</th>
+                <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-neutral-400 w-28">User</th>
+                <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-neutral-400">What Changed / Details</th>
+                <th class="px-4 py-3 w-6"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100" id="audit-tbody"></tbody>
+          </table>`;
+
+        const tbody = document.getElementById('audit-tbody')!;
+        records.forEach(rec => {
+          const preview = detailPreview(rec.details);
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-primary-50/40 cursor-pointer transition-colors group';
+          tr.innerHTML = `
+            <td class="px-4 py-3.5">
+              <span class="text-xs text-neutral-500 font-medium block">${relTime(rec.created_at)}</span>
+              <span class="text-[10px] text-neutral-400 font-mono">${rec.created_at ? new Date(rec.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}</span>
+            </td>
+            <td class="px-4 py-3.5">${actionBadge(rec.action)}</td>
+            <td class="px-4 py-3.5 text-xs text-neutral-600 font-mono">${esc(rec.username) || '—'}</td>
+            <td class="px-4 py-3.5 max-w-0 w-full">
+              ${preview ? `<span class="block text-xs text-neutral-500 truncate">${esc(preview)}</span>` : '<span class="text-neutral-300 text-xs italic">—</span>'}
+            </td>
+            <td class="px-3 py-3.5 text-neutral-300 group-hover:text-primary-400 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </td>`;
+          tr.addEventListener('click', () => openModal(rec));
+          tbody.appendChild(tr);
+        });
+
+      } catch (err: any) {
+        wrap.innerHTML = `<div class="px-6 py-10 text-center text-red-400 text-sm">Error: ${err.message}</div>`;
+      }
+    }
+
+    document.getElementById('apply-filter')?.addEventListener('click', loadAudit);
+    document.getElementById('refresh-btn')?.addEventListener('click', loadAudit);
+    document.getElementById('filter-username')?.addEventListener('keydown', e => { if (e.key === 'Enter') loadAudit(); });
+    loadAudit();
+  </script>
 
     const ACTION_COLORS: Record<string, string> = {
       'Login':                'bg-emerald-100 text-emerald-700',

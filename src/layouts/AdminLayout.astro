@@ -76,19 +76,20 @@ const aCms = (id: string) => activeNav === id
       z-index: 100;
       pointer-events: none;
     }
-    /* ── Mobile: override sidebar margin ── */
+    /* ── Mobile: override sidebar margin, add bottom-nav spacing ── */
     @media (max-width: 1023px) {
       #main-content {
         margin-left: 0 !important;
         max-width: 100vw;
-        overflow-x: hidden;   /* contain child overflow; overflow-x-auto wrappers scroll internally */
+        overflow-x: hidden;
+        padding-bottom: 4.5rem; /* space for bottom nav */
       }
       body { overflow-x: hidden; }
       /* Slide-overs: full width on phones */
       .fixed.inset-y-0.right-0 { width: 100% !important; max-width: 100vw; }
       /* Tighten page padding on mobile */
       .p-6.lg\:p-8 { padding: 1rem !important; }
-      /* Table scroll containers must be width-constrained so they don't burst the layout */
+      /* Table scroll containers must be width-constrained */
       [class*="overflow-x-auto"] { max-width: 100%; }
     }
     /* ── Very small phones (<480px): collapse 2-col grids ── */
@@ -363,6 +364,32 @@ const aCms = (id: string) => activeNav === id
       </aside>
     </div>
 
+    <!-- Mobile bottom navigation bar -->
+    <nav id="mobile-bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-neutral-900 border-t border-white/[0.08] flex items-center justify-around px-2 py-1 safe-area-pb">
+      <a href="/admin/" class={`mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-colors ${activeNav === 'dashboard' ? 'text-primary-400' : 'text-neutral-500 hover:text-neutral-300'}`}>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span class="text-[9px] font-medium leading-none">Home</span>
+      </a>
+      <a href="/admin/calendar" class={`mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-colors ${activeNav === 'calendar' ? 'text-primary-400' : 'text-neutral-500 hover:text-neutral-300'}`}>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[9px] font-medium leading-none">Calendar</span>
+      </a>
+      <a href="/admin/new-appointment" class="mobile-nav-item flex flex-col items-center gap-0.5 px-2 py-1.5">
+        <div class="w-9 h-9 bg-primary-600 hover:bg-primary-500 rounded-2xl flex items-center justify-center transition-colors shadow-lg">
+          <svg class="w-4.5 h-4.5 text-white w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <span class="text-[9px] font-medium leading-none text-neutral-500">New</span>
+      </a>
+      <a href="/admin/appointments" class={`mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-colors ${activeNav === 'appointments' ? 'text-primary-400' : 'text-neutral-500 hover:text-neutral-300'}`}>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span class="text-[9px] font-medium leading-none">Bookings</span>
+      </a>
+      <button id="mobile-menu-btn-bottom" class={`mobile-nav-item flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-colors text-neutral-500 hover:text-neutral-300`}>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <span class="text-[9px] font-medium leading-none">More</span>
+      </button>
+    </nav>
+
     <!-- Main content -->
     <main id="main-content" class="flex-1 min-w-0 min-h-screen bg-neutral-100" style="margin-left:13rem">
       <slot />
@@ -421,6 +448,7 @@ const aCms = (id: string) => activeNav === id
 
     const mobileSidebar = document.getElementById('mobile-sidebar');
     document.getElementById('mobile-menu-btn')?.addEventListener('click', () => mobileSidebar?.classList.remove('hidden'));
+    document.getElementById('mobile-menu-btn-bottom')?.addEventListener('click', () => mobileSidebar?.classList.remove('hidden'));
     document.getElementById('mobile-sidebar-overlay')?.addEventListener('click', () => mobileSidebar?.classList.add('hidden'));
     document.getElementById('mobile-close-btn')?.addEventListener('click', () => mobileSidebar?.classList.add('hidden'));
   </script>

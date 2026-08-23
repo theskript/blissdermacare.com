@@ -47,6 +47,8 @@ exports.handler = async (event) => {
       if (!page_key || !section_key) {
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'page_key and section_key are required' }) };
       }
+      // Fetch old value for audit trail before overwriting
+      const { data: oldRow } = await sb.from('site_content').select('id,value,label').eq('page_key', page_key).eq('section_key', section_key).single();
       const { data, error } = await sb.from('site_content')
         .update({ value, updated_at: new Date().toISOString() })
         .eq('page_key', page_key)
@@ -54,7 +56,13 @@ exports.handler = async (event) => {
         .select().single();
       if (error) throw new Error(error.message);
       await logAudit(sb, { action: 'Update Site Content', username: user.username, role: user.role,
-        targetId: data.id, details: { page_key, section_key }, ip });
+        targetId: data.id, details: {
+          page: page_key,
+          field: oldRow?.label || section_key,
+          section_key,
+          old_value: (oldRow?.value || '').substring(0, 500),
+          new_value: (value || '').substring(0, 500),
+        }, ip });
       return { statusCode: 200, headers: CORS, body: JSON.stringify(data) };
     }
 

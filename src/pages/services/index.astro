@@ -9,11 +9,14 @@ const supabase = createClient(
   import.meta.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Fetch categories and service counts/min-prices in parallel
-const [{ data: cats }, { data: services }] = await Promise.all([
+// Fetch categories, service counts/min-prices, and membership plan prices in parallel
+const [{ data: cats }, { data: services }, { data: planData }] = await Promise.all([
   supabase.from('service_categories').select('id,slug,name,tagline,description,page_url,image_url,active').eq('active', true).order('sort_order', { ascending: true }),
   supabase.from('services').select('category,price').neq('active', false),
+  supabase.from('services').select('slug,price').eq('is_membership_plan', true).neq('active', false),
 ]);
+
+const planPrice = (slug: string, def: number) => { const p = (planData ?? []).find((p: any) => p.slug === slug); return p ? Math.round(p.price / 100) : def; };
 
 type CatStats = { count: number; min: number };
 const stats: Record<string, CatStats> = {};
@@ -108,20 +111,20 @@ const allCats = cats ?? [];
         </div>
         <div class="grid grid-cols-3 gap-3">
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20">
-            <p class="text-2xl font-bold font-serif mb-1"><span data-svc-plan-price="glow-ritual">$89</span></p>
+            <p class="text-2xl font-bold font-serif mb-1"><span data-svc-plan-price="glow-ritual">${planPrice('glow-ritual', 89)}</span></p>
             <p class="text-xs text-rose-200 font-semibold uppercase tracking-wide mb-2">/month</p>
             <p class="text-xs text-rose-100">Glow Ritual</p>
             <p class="text-[10px] text-rose-200 mt-1">1 facial/mo</p>
           </div>
           <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center border-2 border-white/50 relative">
             <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[9px] font-bold bg-white text-primary-700 px-2 py-0.5 rounded-full whitespace-nowrap">Most Popular</span>
-            <p class="text-2xl font-bold font-serif mb-1"><span data-svc-plan-price="radiance-plan">$159</span></p>
+            <p class="text-2xl font-bold font-serif mb-1"><span data-svc-plan-price="radiance-plan">${planPrice('radiance-plan', 159)}</span></p>
             <p class="text-xs text-rose-200 font-semibold uppercase tracking-wide mb-2">/month</p>
             <p class="text-xs text-rose-100">Radiance Plan</p>
             <p class="text-[10px] text-rose-200 mt-1">2 services/mo</p>
           </div>
           <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20">
-            <p class="text-2xl font-bold font-serif mb-1"><span data-svc-plan-price="vip-luxe">$249</span></p>
+            <p class="text-2xl font-bold font-serif mb-1"><span data-svc-plan-price="vip-luxe">${planPrice('vip-luxe', 249)}</span></p>
             <p class="text-xs text-rose-200 font-semibold uppercase tracking-wide mb-2">/month</p>
             <p class="text-xs text-rose-100">Bliss VIP</p>
             <p class="text-[10px] text-rose-200 mt-1">3 services/mo</p>
@@ -144,17 +147,3 @@ const allCats = cats ?? [];
   </section>
 
 </Layout>
-
-<script is:inline>
-  /* Update membership plan prices in services hub teaser */
-  fetch('/.netlify/functions/get-services?includePlans=true')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var plans=d.plans||[];
-      plans.forEach(function(plan){
-        var price=Math.round(plan.price/100);
-        var el=document.querySelector('[data-svc-plan-price="'+plan.slug+'"]');
-        if(el)el.textContent='$'+price;
-      });
-    }).catch(function(){});
-</script>

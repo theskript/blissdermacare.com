@@ -100,9 +100,22 @@ exports.handler = async (event) => {
       // is_bookable always mirrors active — no separate toggle needed
       if (fields.active !== undefined) fields.is_bookable = fields.active;
       fields.updated_at = new Date().toISOString();
+      // Fetch old data for a meaningful audit trail
+      const { data: oldData } = await sb.from('services').select('name,price,active,featured,category,badge').eq('id', id).single();
       const { data, error } = await sb.from('services').update(fields).eq('id', id).select().single();
       if (error) throw new Error(error.message);
-      await logAudit(sb, { action: 'Update Service', username: user.username, role: user.role, targetId: id, details: fields, ip });
+      // Build a human-readable changes summary
+      const changes = {};
+      if (oldData) {
+        if (fields.name     !== undefined && fields.name     !== oldData.name)     changes.name     = { from: oldData.name,     to: fields.name };
+        if (fields.price    !== undefined && fields.price    !== oldData.price)    changes.price    = { from: `$${(oldData.price/100).toFixed(0)}`, to: `$${(fields.price/100).toFixed(0)}` };
+        if (fields.active   !== undefined && fields.active   !== oldData.active)   changes.active   = { from: oldData.active,   to: fields.active };
+        if (fields.featured !== undefined && fields.featured !== oldData.featured) changes.featured = { from: oldData.featured, to: fields.featured };
+        if (fields.category !== undefined && fields.category !== oldData.category) changes.category = { from: oldData.category, to: fields.category };
+        if (fields.badge    !== undefined && fields.badge    !== oldData.badge)    changes.badge    = { from: oldData.badge,    to: fields.badge };
+      }
+      await logAudit(sb, { action: 'Update Service', username: user.username, role: user.role, targetId: id,
+        details: { service: data.name, changes: Object.keys(changes).length ? changes : fields }, ip });
       return { statusCode: 200, headers: CORS, body: JSON.stringify(data) };
     }
 
