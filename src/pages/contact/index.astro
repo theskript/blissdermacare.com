@@ -1,5 +1,69 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.SUPABASE_URL!,
+  import.meta.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const [{ data: schedule }, { data: contentRows }] = await Promise.all([
+  supabase.from('availability').select('day_of_week,is_open,open_time,close_time').order('day_of_week', { ascending: true }),
+  supabase.from('site_content').select('section_key,value').eq('page_key', 'contact'),
+]);
+
+const content: Record<string, string> = {};
+for (const row of contentRows ?? []) { if (row.value) content[row.section_key] = row.value; }
+
+const phone      = content.phone      ?? '(609) 366-0857';
+const email      = content.email      ?? 'info@blissdermacare.com';
+const address1   = content.address_1  ?? '8905 Regents Park Dr';
+const address2   = content.address_2  ?? 'Tampa, FL 33647';
+const addrNote   = content.address_note ?? 'We operate as a private studio — appointments required.';
+const phoneHours = content.phone_hours ?? 'Mon–Fri, 10 AM – 7 PM';
+const emailSub   = content.email_sub  ?? 'We respond within 24 hours';
+const instagram  = content.instagram  ?? '@blissdermacare';
+const instaSub   = content.instagram_sub ?? 'DMs welcome — we\'re active daily';
+const heroH1     = content.hero_h1    ?? 'Contact Us';
+const heroSub    = content.hero_sub   ?? 'Questions, concerns, or just want to say hello — we respond quickly.';
+const ctaH2      = content.cta_h2     ?? 'Ready to book?';
+const ctaP       = content.cta_p      ?? 'Submit a booking request online and we\'ll confirm within 24 hours.';
+
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function fmt(t: string): string {
+  const [h, m] = t.split(':').map(Number);
+  return `${h > 12 ? h - 12 : h === 0 ? 12 : h}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+type HRow = { label: string; value: string; closed: boolean };
+function buildHours(sched: any[]): HRow[] {
+  const rows: HRow[] = [];
+  let i = 0;
+  while (i < 7) {
+    const day = sched.find(s => s.day_of_week === i) ?? { day_of_week: i, is_open: false };
+    const k   = day.is_open ? `${day.open_time}|${day.close_time}` : 'closed';
+    let j = i + 1;
+    while (j < 7) {
+      const next = sched.find(s => s.day_of_week === j) ?? { day_of_week: j, is_open: false };
+      if ((next.is_open ? `${next.open_time}|${next.close_time}` : 'closed') !== k) break;
+      j++;
+    }
+    rows.push({
+      label: i === j - 1 ? DAYS[i] : `${DAYS[i]} \u2013 ${DAYS[j-1]}`,
+      value: k === 'closed' ? 'Closed' : `${fmt(day.open_time)} \u2013 ${fmt(day.close_time)}`,
+      closed: k === 'closed',
+    });
+    i = j;
+  }
+  return rows;
+}
+
+const hours = buildHours(schedule ?? []);
+const telHref    = `tel:+1${phone.replace(/\D/g, '')}`;
+const mailtoHref = `mailto:${email}`;
 ---
 
 <Layout title="Contact – Bliss Dermacare" description="Get in touch with Bliss Dermacare in Tampa, FL. Call, text, email, or DM us on Instagram. We respond quickly.">
@@ -8,8 +72,8 @@ import Layout from '../../layouts/Layout.astro';
   <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">We'd Love to Hear From You</span>
-      <h1 class="text-5xl font-serif text-neutral-900 mb-4" data-sc="hero_h1">Contact Us</h1>
-      <p class="text-lg text-neutral-600" data-sc="hero_sub">Questions, concerns, or just want to say hello — we respond quickly.</p>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4">{heroH1}</h1>
+      <p class="text-lg text-neutral-600">{heroSub}</p>
     </div>
   </section>
 
@@ -19,24 +83,24 @@ import Layout from '../../layouts/Layout.astro';
 
       <!-- Contact Cards -->
       <div class="grid md:grid-cols-3 gap-6 mb-14">
-        <a href="tel:+16093660857"
+        <a href={telHref}
           class="group block bg-[#faf9f7] rounded-2xl p-8 border border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all text-center">
           <div class="w-14 h-14 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:bg-primary-200 transition-colors">
             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
           </div>
           <h3 class="font-semibold text-neutral-900 mb-1">Call or Text</h3>
-          <p class="text-primary-600 font-medium text-lg" data-sc="phone">(609) 366-0857</p>
-          <p class="text-xs text-neutral-500 mt-2" data-sc="phone_hours">Mon–Fri, 10 AM – 7 PM</p>
+          <p class="text-primary-600 font-medium text-lg">{phone}</p>
+          <p class="text-xs text-neutral-500 mt-2">{phoneHours}</p>
         </a>
 
-        <a href="mailto:info@blissdermacare.com"
+        <a href={mailtoHref}
           class="group block bg-[#faf9f7] rounded-2xl p-8 border border-neutral-200 hover:border-primary-300 hover:shadow-md transition-all text-center">
           <div class="w-14 h-14 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:bg-primary-200 transition-colors">
             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
           <h3 class="font-semibold text-neutral-900 mb-1">Email</h3>
-          <p class="text-primary-600 font-medium break-all" data-sc="email">info@blissdermacare.com</p>
-          <p class="text-xs text-neutral-500 mt-2" data-sc="email_sub">We respond within 24 hours</p>
+          <p class="text-primary-600 font-medium break-all">{email}</p>
+          <p class="text-xs text-neutral-500 mt-2">{emailSub}</p>
         </a>
 
         <a href="https://instagram.com/blissdermacare" target="_blank" rel="noopener noreferrer"
@@ -45,8 +109,8 @@ import Layout from '../../layouts/Layout.astro';
             <svg class="w-7 h-7 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
           </div>
           <h3 class="font-semibold text-neutral-900 mb-1">Instagram</h3>
-          <p class="text-primary-600 font-medium" data-sc="instagram">@blissdermacare</p>
-          <p class="text-xs text-neutral-500 mt-2" data-sc="instagram_sub">DMs welcome — we're active daily</p>
+          <p class="text-primary-600 font-medium">{instagram}</p>
+          <p class="text-xs text-neutral-500 mt-2">{instaSub}</p>
         </a>
       </div>
 
@@ -56,16 +120,19 @@ import Layout from '../../layouts/Layout.astro';
           <div>
             <h2 class="text-2xl font-serif text-neutral-900 mb-4">Studio Location</h2>
             <p class="text-neutral-700 font-medium mb-1">Bliss Dermacare</p>
-            <p class="text-neutral-600" data-sc="address_1">8905 Regents Park Dr</p>
-            <p class="text-neutral-600" data-sc="address_2">Tampa, FL 33647</p>
-            <p class="text-sm text-neutral-500 mt-3" data-sc="address_note">We operate as a private studio — appointments required.</p>
+            <p class="text-neutral-600" >{address1}</p>
+            <p class="text-neutral-600" >{address2}</p>
+            <p class="text-sm text-neutral-500 mt-3">{addrNote}</p>
           </div>
           <div>
             <h3 class="font-semibold text-neutral-900 mb-4">Hours</h3>
             <div id="contact-hours-list" class="space-y-2 text-sm">
-              <div class="flex justify-between"><span class="text-neutral-600">Monday – Friday</span><span class="font-medium text-neutral-900">10:00 AM – 7:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">10:00 AM – 6:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Sunday</span><span class="font-medium text-neutral-900">By request only</span></div>
+              {hours.map(row => (
+                <div class="flex justify-between">
+                  <span class="text-neutral-600">{row.label}</span>
+                  <span class={`font-medium ${row.closed ? 'text-neutral-400' : 'text-neutral-900'}`}>{row.value}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -73,8 +140,8 @@ import Layout from '../../layouts/Layout.astro';
 
       <!-- Booking CTA -->
       <div class="bg-neutral-900 rounded-2xl p-10 text-white text-center">
-        <h2 class="text-3xl font-serif mb-3" data-sc="cta_h2">Ready to book?</h2>
-        <p class="text-neutral-400 mb-8" data-sc="cta_p">Submit a booking request online and we'll confirm within 24 hours.</p>
+        <h2 class="text-3xl font-serif mb-3">{ctaH2}</h2>
+        <p class="text-neutral-400 mb-8">{ctaP}</p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a href="/book/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-3.5 rounded-full hover:bg-primary-700 transition-all font-medium">
             Book an Appointment
@@ -87,33 +154,5 @@ import Layout from '../../layouts/Layout.astro';
       </div>
     </div>
   </section>
-
-  <script>
-    import { loadAndRenderHours } from '../../scripts/hoursDisplay.js';
-    loadAndRenderHours('contact-hours-list');
-  </script>
-
-  <script is:inline>
-    fetch('/.netlify/functions/get-content?page=contact')
-      .then(function(r){return r.json();})
-      .then(function(d){
-        var c=d.content||{};
-        Object.keys(c).forEach(function(k){
-          var el=document.querySelector('[data-sc="'+k+'"]');
-          if(!el||!c[k].value)return;
-          el.textContent=c[k].value;
-        });
-        /* Update phone href */
-        if(c.phone&&c.phone.value){
-          var ph=document.querySelector('a[href^="tel:"]');
-          if(ph)ph.setAttribute('href','tel:+1'+c.phone.value.replace(/\D/g,''));
-        }
-        /* Update email href */
-        if(c.email&&c.email.value){
-          var em=document.querySelector('a[href^="mailto:"]');
-          if(em)em.setAttribute('href','mailto:'+c.email.value);
-        }
-      }).catch(function(){});
-  </script>
 
 </Layout>
