@@ -1,5 +1,33 @@
 ---
+export const prerender = false;
 import Layout from '../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+const [{ data: svcsData }, { data: partnersData }, { data: contentData }] = await Promise.all([
+  supabase.from('services').select('slug,name,price,tagline,description,image_url,category,is_package,is_membership_plan,featured,active').neq('active', false).order('sort_order', { ascending: true }),
+  supabase.from('partners').select('name,url,logo_url,badge_text').eq('featured', true).eq('active', true).order('sort_order', { ascending: true }),
+  supabase.from('site_content').select('section_key,value').eq('page_key', 'home'),
+]);
+
+const allSvcs = svcsData ?? [];
+const partners = partnersData ?? [];
+
+const sc: Record<string, string> = {};
+for (const r of contentData ?? []) { if (r.value) sc[r.section_key] = r.value; }
+function v(key: string, fallback = '') { return sc[key] ?? fallback; }
+
+const featured = allSvcs.filter((s: any) => s.featured && !s.is_membership_plan);
+const plans = allSvcs.filter((s: any) => s.is_membership_plan);
+const planPx = (slug: string, def: number) => { const p = plans.find((p: any) => p.slug === slug); return p ? Math.round(p.price / 100) : def; };
+const hasPackages = allSvcs.some((s: any) => s.category === 'packages');
+const sprayTan = allSvcs.find((s: any) => s.slug === 'spray-tan');
+const sprayTanPrice = sprayTan ? Math.round((sprayTan as any).price / 100) : 35;
+
+function safeUrl(u: string): string {
+  try { const x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? u : '#'; } catch { return '#'; }
+}
 ---
 
 <Layout title="Bliss Dermacare - Professional Aesthetician Services">
@@ -96,46 +124,27 @@ import Layout from '../layouts/Layout.astro';
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
         </a>
       </div>
-      <div id="featured-svcs-wrap" class="grid md:grid-cols-3 gap-6" style="opacity:0">
-        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-          <div class="h-48 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop&q=80" alt="Signature Radiance Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-serif text-neutral-900 mb-2">Signature Radiance Facial</h3>
-            <p class="text-neutral-500 text-sm mb-4">Deep cleansing, exfoliation, extractions & custom mask. Tailored to your skin every visit.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$99</span>
-              <a href="/book/" data-service-id="signature-radiance-facial" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+      <div id="featured-svcs-wrap" class="grid md:grid-cols-3 gap-6">
+        {featured.map((s: any) => {
+          const price = Math.round(s.price / 100);
+          return (
+            <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
+              <div class="h-48 overflow-hidden">
+                {s.image_url
+                  ? <img src={s.image_url} alt={s.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                  : <div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50"></div>}
+              </div>
+              <div class="p-6">
+                <h3 class="text-xl font-serif text-neutral-900 mb-2">{s.name}</h3>
+                {(s.tagline || s.description) && <p class="text-neutral-500 text-sm mb-4">{s.tagline || s.description}</p>}
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl font-bold text-primary-600">${price}</span>
+                  <a href="/book/" data-service-id={s.slug} class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-          <div class="h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/29648626/pexels-photo-29648626.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vampire Facial PRP" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-serif text-neutral-900 mb-2">Vampire Facial (PRP)</h3>
-            <p class="text-neutral-500 text-sm mb-4">Advanced PRP + microneedling for fine lines, scars & overall skin texture improvement.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$380</span>
-              <a href="/book/" data-service-id="vampire-facial-prp" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
-            </div>
-          </div>
-        </div>
-        <div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-          <div class="h-48 overflow-hidden">
-            <img src="https://images.pexels.com/photos/5178001/pexels-photo-5178001.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Lash Lift & Brow Lamination" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-serif text-neutral-900 mb-2">Lash Lift & Brow Lamination</h3>
-            <p class="text-neutral-500 text-sm mb-4">Define and lift your natural brows and lashes — no extensions required. Lasts 6–8 weeks.</p>
-            <div class="flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary-600">$79</span>
-              <a href="/book/" data-service-id="lash-lift-brow-lamination" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
       <div class="mt-8 text-center sm:hidden">
         <a href="/services/" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
@@ -387,20 +396,20 @@ import Layout from '../layouts/Layout.astro';
           <div class="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/8 hover:border-white/20 transition-all">
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-neutral-400 mb-2">Tier 1</p>
             <p class="text-xl font-serif text-white mb-1">The Glow Ritual</p>
-            <p class="text-2xl font-bold text-primary-400 mb-2"><span data-home-plan-price="glow-ritual">$89</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-2xl font-bold text-primary-400 mb-2"><span data-home-plan-price="glow-ritual">${planPx('glow-ritual', 89)}</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
             <p class="text-xs text-neutral-400">1 facial credit/month + 10% off</p>
           </div>
           <div class="bg-primary-600/20 border-2 border-primary-500/50 rounded-2xl p-5 relative">
             <span class="absolute -top-2.5 left-4 text-[10px] font-bold bg-primary-500 text-white px-2.5 py-0.5 rounded-full">Most Popular</span>
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-primary-300 mb-2">Tier 2</p>
             <p class="text-xl font-serif text-white mb-1">The Radiance Plan</p>
-            <p class="text-2xl font-bold text-primary-400 mb-2"><span data-home-plan-price="radiance-plan">$159</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-2xl font-bold text-primary-400 mb-2"><span data-home-plan-price="radiance-plan">${planPx('radiance-plan', 159)}</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
             <p class="text-xs text-neutral-400">Facial + lash/brow/body + 15% off</p>
           </div>
           <div class="bg-white/5 border border-amber-500/20 rounded-2xl p-5 hover:bg-white/8 hover:border-amber-500/40 transition-all">
             <p class="text-xs font-bold uppercase tracking-[0.15em] text-amber-400 mb-2">Tier 3 — VIP</p>
             <p class="text-xl font-serif text-white mb-1">The Bliss VIP</p>
-            <p class="text-2xl font-bold text-amber-400 mb-2"><span data-home-plan-price="vip-luxe">$249</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
+            <p class="text-2xl font-bold text-amber-400 mb-2"><span data-home-plan-price="vip-luxe">${planPx('vip-luxe', 249)}</span><span class="text-sm font-normal text-neutral-400">/mo</span></p>
             <p class="text-xs text-neutral-400">3 credits + 20% off + quarterly bonus</p>
           </div>
         </div>
@@ -450,7 +459,7 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Partners & Brands Strip — shown only when featured partners exist -->
-  <section id="partners-strip" class="hidden py-10 bg-[#f6f1eb] border-t border-neutral-200">
+  <section id="partners-strip" class={`${partners.length === 0 ? 'hidden' : ''} py-10 bg-[#f6f1eb] border-t border-neutral-200`}>
     <div class="max-w-6xl mx-auto px-6 lg:px-12">
       <div class="flex items-end justify-between mb-6">
         <div>
@@ -462,8 +471,21 @@ import Layout from '../layouts/Layout.astro';
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
         </a>
       </div>
-      <!-- Cards — filled by JS, horizontal scroll on mobile -->
-      <div id="partners-hp-cards" class="flex gap-3 overflow-x-auto pb-3 -mx-6 px-6 lg:mx-0 lg:px-0 snap-x" style="-ms-overflow-style:none;scrollbar-width:none"></div>
+      <div id="partners-hp-cards" class="flex gap-3 overflow-x-auto pb-3 -mx-6 px-6 lg:mx-0 lg:px-0 snap-x" style="-ms-overflow-style:none;scrollbar-width:none">
+        {partners.map((p: any) => (
+          <a href={safeUrl(p.url ?? '#')} target="_blank" rel="noopener noreferrer sponsored"
+            class="group relative flex flex-col items-center justify-center gap-2 bg-white rounded-2xl border border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all shrink-0 snap-start w-36 min-h-[108px] p-4">
+            <div class="flex items-center justify-center h-9 w-full">
+              {p.logo_url
+                ? <img src={p.logo_url} alt={p.name} class="max-h-8 max-w-[100px] object-contain" loading="lazy" />
+                : <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center"><span class="text-primary-700 font-bold text-base">{p.name.charAt(0)}</span></div>}
+            </div>
+            <p class="text-xs font-semibold text-neutral-800 text-center leading-snug">{p.name}</p>
+            {p.badge_text && <span class="text-[10px] font-bold bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full mt-1 leading-tight text-center">{p.badge_text}</span>}
+            <svg class="absolute top-2.5 right-2.5 w-3 h-3 text-neutral-300 group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+        ))}
+      </div>
       <div class="mt-5 text-center sm:hidden">
         <a href="/partners/" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
           See all partners
@@ -473,170 +495,6 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <script>
-    (async () => {
-      function esc(s: string) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-      function safeUrl(u: string) { try { const x=new URL(u); return (x.protocol==='http:'||x.protocol==='https:') ? u : '#'; } catch{return '#';} }
-      try {
-        const res = await fetch('/.netlify/functions/get-partners?featured=true');
-        if (!res.ok) return;
-        const { records } = await res.json();
-        if (!records || records.length === 0) return;
-        const container = document.getElementById('partners-hp-cards')!;
-        container.innerHTML = records.map((p: any) => {
-          const logo = p.logo_url
-            ? `<img src="${esc(p.logo_url)}" alt="${esc(p.name)}" class="max-h-8 max-w-[100px] object-contain" loading="lazy" />`
-            : `<div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center"><span class="text-primary-700 font-bold text-base">${esc(p.name.charAt(0))}</span></div>`;
-          const badge = p.badge_text
-            ? `<span class="text-[10px] font-bold bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full mt-1 leading-tight text-center">${esc(p.badge_text)}</span>`
-            : '';
-          return `<a href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener noreferrer sponsored"
-            class="group relative flex flex-col items-center justify-center gap-2 bg-white rounded-2xl border border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all shrink-0 snap-start w-36 min-h-[108px] p-4">
-            <div class="flex items-center justify-center h-9 w-full">${logo}</div>
-            <p class="text-xs font-semibold text-neutral-800 text-center leading-snug">${esc(p.name)}</p>
-            ${badge}
-            <svg class="absolute top-2.5 right-2.5 w-3 h-3 text-neutral-300 group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-          </a>`;
-        }).join('');
-        document.getElementById('partners-strip')!.classList.remove('hidden');
-      } catch(_) { /* silent fail — section stays hidden */ }
-    })();
-  </script>
 
-  <script>
-    fetch('/.netlify/functions/get-services')
-      .then(r => r.json())
-      .then(({ services }) => {
-        if (!services?.length) {
-          const fw = document.getElementById('featured-svcs-wrap');
-          if (fw) { fw.style.transition = 'opacity 0.2s'; fw.style.opacity = '1'; }
-          return;
-        }
-        const map = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
-
-        // Update/hide cards with data-service-id
-        const activePackageSlugs = new Set<string>();
-        document.querySelectorAll<HTMLAnchorElement>('a[data-service-id]').forEach(link => {
-          const slug = link.getAttribute('data-service-id') || '';
-          const svc  = map.get(slug);
-          // card = .group parent (featured cards) OR .rounded-xl grandparent (mini package cards)
-          const card = (link.closest('.group') || link.closest('[class*="rounded-xl"]')) as HTMLElement | null;
-          if (!card) return;
-          if (!svc) { card.style.display = 'none'; return; }
-          if (svc.is_package || svc.category === 'packages') activePackageSlugs.add(slug);
-          const priceEl = card.querySelector<HTMLElement>('.font-bold.text-primary-600, [class*="font-bold"][class*="text-primary"]');
-          if (priceEl && /^\$\d|From/.test(priceEl.textContent || '')) {
-            priceEl.textContent = '$' + Math.round(svc.price / 100);
-          }
-        });
-
-        // Spray tan spotlight: hide section if service inactive, update standalone price
-        const stSvc = map.get('spray-tan');
-        const stSec = document.getElementById('spray-tan-spotlight');
-        if (stSec) {
-          if (!stSvc) { stSec.style.display = 'none'; }
-          else {
-            const stPrice = document.getElementById('spray-tan-spotlight-price');
-            if (stPrice) stPrice.textContent = '$' + Math.round(stSvc.price / 100);
-          }
-        }
-
-        // Packages section: hide if no active packages
-        const pkgSec = document.getElementById('home-new-this-season');
-        if (pkgSec) {
-          const hasActivePkgs = (services as any[]).some((s: any) => s.category === 'packages');
-          if (!hasActivePkgs) pkgSec.style.display = 'none';
-        }
-
-        // Replace "Popular treatments" grid with featured services if any are set
-        function _e(s: unknown): string {
-          return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
-        const featured = (services as any[]).filter((s: any) => s.featured);
-        if (featured.length) {
-          const wrap = document.getElementById('featured-svcs-wrap');
-          if (wrap) {
-            wrap.innerHTML = featured.map((s: any) => {
-              const price = Math.round(s.price / 100);
-              const img = s.image_url
-                ? '<img src="' + _e(s.image_url) + '" alt="' + _e(s.name) + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />'
-                : '<div class="w-full h-full bg-gradient-to-br from-primary-50 to-rose-50"></div>';
-              const desc = s.tagline || s.description
-                ? '<p class="text-neutral-500 text-sm mb-4">' + _e(s.tagline || s.description) + '</p>'
-                : '';
-              return '<div class="group rounded-2xl overflow-hidden border border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">' +
-                '<div class="h-48 overflow-hidden">' + img + '</div>' +
-                '<div class="p-6">' +
-                '<h3 class="text-xl font-serif text-neutral-900 mb-2">' + _e(s.name) + '</h3>' +
-                desc +
-                '<div class="flex items-center justify-between">' +
-                '<span class="text-2xl font-bold text-primary-600">$' + price + '</span>' +
-                '<a href="/book/" class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">Book &rarr;</a>' +
-                '</div></div></div>';
-            }).join('');
-          }
-        }
-        const fw2 = document.getElementById('featured-svcs-wrap');
-        if (fw2) { fw2.style.transition = 'opacity 0.2s'; fw2.style.opacity = '1'; }
-      }).catch(() => {
-        const fw3 = document.getElementById('featured-svcs-wrap');
-        if (fw3) fw3.style.opacity = '1';
-      });
-  </script>
-
-  <script is:inline>
-    fetch('/.netlify/functions/get-content?page=home')
-      .then(function(r){return r.json();})
-      .then(function(d){
-        var c=d.content||{};
-        /* Standard text overrides */
-        Object.keys(c).forEach(function(k){
-          if(!c[k].value)return;
-          var el=document.querySelector('[data-sc="'+k+'"]');
-          if(el)el.textContent=c[k].value;
-        });
-        /* Image src overrides */
-        document.querySelectorAll('[data-sc-src]').forEach(function(img){
-          var key=img.getAttribute('data-sc-src');
-          if(key&&c[key]&&c[key].value)img.setAttribute('src',c[key].value);
-        });
-        /* JSON bullet-list overrides */
-        document.querySelectorAll('[data-sc-bullets]').forEach(function(ul){
-          var key=ul.getAttribute('data-sc-bullets');
-          if(!key||!c[key]||!c[key].value)return;
-          try{
-            var bullets=JSON.parse(c[key].value);
-            if(Array.isArray(bullets)&&bullets.length){
-              ul.innerHTML=bullets.map(function(b){
-                return '<li class="flex items-center gap-3 text-neutral-700">'+
-                  '<div class="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center shrink-0">'+
-                  '<svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">'+
-                  '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>'+
-                  b.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</li>';
-              }).join('');
-            }
-          }catch(e){}
-        });
-        /* Section visibility */
-        if(c.spray_tan_visible&&c.spray_tan_visible.value==='false'){
-          var st=document.getElementById('spray-tan-spotlight');
-          if(st)st.style.display='none';
-        }
-      }).catch(function(){});
-  </script>
-
-  <script is:inline>
-    /* Update membership plan prices on home page from DB */
-    fetch('/.netlify/functions/get-services?includePlans=true')
-      .then(function(r){return r.json();})
-      .then(function(d){
-        var plans=d.plans||[];
-        plans.forEach(function(plan){
-          var price=Math.round(plan.price/100);
-          var el=document.querySelector('[data-home-plan-price="'+plan.slug+'"]');
-          if(el)el.textContent='$'+price;
-        });
-      }).catch(function(){});
-  </script>
 
 </Layout>

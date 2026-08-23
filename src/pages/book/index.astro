@@ -51,6 +51,7 @@ function buildHours(sched: any[]): HRow[] {
   return rows;
 }
 const hours = buildHours(schedRows ?? []);
+function fmtDur(m: number): string { return m >= 60 && m % 60 === 0 ? `${m/60} hr` : m >= 60 ? `${Math.floor(m/60)} hr ${m%60} min` : `${m} min`; }
 
 const SOLO_CATS = new Set(['packages','semipermanent','advanced','wellness']);
 const cats = {
@@ -163,44 +164,21 @@ const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.string
                 <div data-cat-section="facials">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Facials</p>
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="signature-radiance-facial" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Signature Radiance Facial</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$99</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="diamond-glow" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Diamond Glow</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$119</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">50 min</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="teen-skincare-facial" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Teen Skincare Facial</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$64</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">45 min</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="smooth-canvas-facial" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all h-full relative">
-                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>NEW</span>
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Smooth Canvas Facial</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$89</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">45 min</p>
-                      </div>
-                    </label>
-
+                    {cats.facials.map(s => {
+                      const p = Math.round(s.price / 100);
+                      return (
+                        <label class="cursor-pointer">
+                          <input type="checkbox" name="service" value={s.slug} class="sr-only peer" />
+                          <div class={`rounded-xl border-2 ${s.badge ? 'border-amber-200 hover:border-amber-300' : 'border-neutral-200 hover:border-primary-300'} p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all h-full relative`}>
+                            {s.badge && <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>{s.badge}</span>}
+                            <p class="font-semibold text-sm text-neutral-900 leading-snug">{s.name}</p>
+                            {s.tagline && <p class="text-xs text-neutral-600 mt-1">{s.tagline}</p>}
+                            <p class="text-primary-600 font-bold text-sm mt-1.5">${p}</p>
+                            {s.duration && <p class="text-xs text-neutral-400 mt-0.5">{fmtDur(s.duration)}</p>}
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -212,65 +190,21 @@ const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.string
                     <p class="text-xs text-amber-800"><strong>Age 21+</strong> required for waxing services only</p>
                   </div>
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="lash-extensions" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Extensions</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$159</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">2 hr</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="lash-extensions-fill" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Extensions Fill</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$43</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">1 hr</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                      <input type="checkbox" name="service" value="lash-lift-brow-lamination" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900 leading-snug">Lash Lift &amp; Brow Lamination</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$79</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">60 min</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="body-and-face-waxing" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900">Body &amp; Face Waxing</p>
-                        <p class="text-xs text-neutral-600 mt-1">Facial, arms, legs, underarms</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="brazilian-wax" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all h-full">
-                        <p class="font-semibold text-sm text-neutral-900">Brazilian Wax</p>
-                        <p class="text-xs text-neutral-600 mt-1">Complete bikini area hair removal</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$87</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">45–60 min</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="spray-tan" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-amber-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-amber-300 transition-all relative h-full">
-                        <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>NEW</span>
-                        <p class="font-semibold text-sm text-neutral-900">Custom Airbrush Spray Tan</p>
-                        <p class="text-xs text-neutral-600 mt-1">Streak-free, custom bronze glow &mdash; no age restriction</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$65</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">30–45 min</p>
-                      </div>
-                    </label>
-
+                    {cats.lashBrowBody.map(s => {
+                      const p = Math.round(s.price / 100);
+                      return (
+                        <label class="cursor-pointer block">
+                          <input type="checkbox" name="service" value={s.slug} class="sr-only peer" />
+                          <div class={`rounded-xl border-2 ${s.badge ? 'border-amber-200 hover:border-amber-300' : 'border-neutral-200 hover:border-primary-300'} p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all h-full relative`}>
+                            {s.badge && <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>{s.badge}</span>}
+                            <p class="font-semibold text-sm text-neutral-900 leading-snug">{s.name}</p>
+                            {s.tagline && <p class="text-xs text-neutral-600 mt-1">{s.tagline}</p>}
+                            <p class="text-primary-600 font-bold text-sm mt-1.5">${p}</p>
+                            {s.duration && <p class="text-xs text-neutral-400 mt-0.5">{fmtDur(s.duration)}</p>}
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -278,47 +212,21 @@ const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.string
                 <div data-cat-section="advanced">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Advanced Treatments</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="prp-treatment" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">PRP (Platelet-Rich Plasma)</p>
-                        <p class="text-xs text-neutral-600 mt-1">Skin rejuvenation &amp; collagen stimulation</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$399</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">60 min / session</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="lip-filler" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Lip Filler</p>
-                        <p class="text-xs text-neutral-600 mt-1">Hyaluronic acid — natural enhancement</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$599</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">45 min / syringe</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="ed-injectables" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">ED Injectables</p>
-                        <p class="text-xs text-neutral-600 mt-1">Erectile dysfunction injectable therapy</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$499</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">60 min / session</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="weight-loss-program" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Weight Loss Program</p>
-                        <p class="text-xs text-neutral-600 mt-1">GLP-1 / Semiglutide assisted, monthly</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$299</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">/month · incl. consultation</p>
-                      </div>
-                    </label>
-
+                    {cats.advanced.map(s => {
+                      const p = Math.round(s.price / 100);
+                      return (
+                        <label class="cursor-pointer block">
+                          <input type="checkbox" name="service" value={s.slug} class="sr-only peer" />
+                          <div class={`rounded-xl border-2 ${s.badge ? 'border-amber-200 hover:border-amber-300' : 'border-neutral-200 hover:border-primary-300'} p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all relative`}>
+                            {s.badge && <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>{s.badge}</span>}
+                            <p class="font-semibold text-sm text-neutral-900">{s.name}</p>
+                            {s.tagline && <p class="text-xs text-neutral-600 mt-1">{s.tagline}</p>}
+                            <p class="text-primary-600 font-bold text-sm mt-1.5">${p}</p>
+                            {s.duration && <p class="text-xs text-neutral-400 mt-0.5">{fmtDur(s.duration)}</p>}
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -326,47 +234,21 @@ const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.string
                 <div data-cat-section="semipermanent">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Semipermanent Makeup</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="scalp-micropigmentation" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Scalp Micropigmentation</p>
-                        <p class="text-xs text-neutral-600 mt-1">SMP for density or shaved-head look</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$650</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">3 hr / session · 2–3 sessions</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="lip-blush" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Lip Blush</p>
-                        <p class="text-xs text-neutral-600 mt-1">Soft color &amp; definition, naturally blended</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$499</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">2 hr / session</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="nano-brows" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Nano Brows</p>
-                        <p class="text-xs text-neutral-600 mt-1">Ultra-fine hair strokes, digital machine</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$499</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">2.5 hr / session</p>
-                      </div>
-                    </label>
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="powder-brows" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">Powder Brows</p>
-                        <p class="text-xs text-neutral-600 mt-1">Soft ombré shading for a polished look</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$549</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">2.5 hr / session</p>
-                      </div>
-                    </label>
-
+                    {cats.semipermanent.map(s => {
+                      const p = Math.round(s.price / 100);
+                      return (
+                        <label class="cursor-pointer block">
+                          <input type="checkbox" name="service" value={s.slug} class="sr-only peer" />
+                          <div class={`rounded-xl border-2 ${s.badge ? 'border-amber-200 hover:border-amber-300' : 'border-neutral-200 hover:border-primary-300'} p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all relative`}>
+                            {s.badge && <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>{s.badge}</span>}
+                            <p class="font-semibold text-sm text-neutral-900">{s.name}</p>
+                            {s.tagline && <p class="text-xs text-neutral-600 mt-1">{s.tagline}</p>}
+                            <p class="text-primary-600 font-bold text-sm mt-1.5">${p}</p>
+                            {s.duration && <p class="text-xs text-neutral-400 mt-0.5">{fmtDur(s.duration)}</p>}
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -374,17 +256,21 @@ const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.string
                 <div data-cat-section="wellness">
                   <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">Ancillary Services</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-
-                    <label class="cursor-pointer block">
-                      <input type="checkbox" name="service" value="iv-hydration-therapy" class="sr-only peer" />
-                      <div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">
-                        <p class="font-semibold text-sm text-neutral-900">IV Hydration Therapy</p>
-                        <p class="text-xs text-neutral-600 mt-1">Custom vitamin &amp; hydration IV drip</p>
-                        <p class="text-primary-600 font-bold text-sm mt-1.5">$149</p>
-                        <p class="text-xs text-neutral-400 mt-0.5">60 min / session</p>
-                      </div>
-                    </label>
-
+                    {cats.wellness.map(s => {
+                      const p = Math.round(s.price / 100);
+                      return (
+                        <label class="cursor-pointer block">
+                          <input type="checkbox" name="service" value={s.slug} class="sr-only peer" />
+                          <div class={`rounded-xl border-2 ${s.badge ? 'border-amber-200 hover:border-amber-300' : 'border-neutral-200 hover:border-primary-300'} p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all relative`}>
+                            {s.badge && <span class="absolute top-2 right-2 text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full" data-svc-badge>{s.badge}</span>}
+                            <p class="font-semibold text-sm text-neutral-900">{s.name}</p>
+                            {s.tagline && <p class="text-xs text-neutral-600 mt-1">{s.tagline}</p>}
+                            <p class="text-primary-600 font-bold text-sm mt-1.5">${p}</p>
+                            {s.duration && <p class="text-xs text-neutral-400 mt-0.5">{fmtDur(s.duration)}</p>}
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -922,130 +808,7 @@ const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.string
       const SOLO_CATEGORIES = new Set(['packages', 'semipermanent', 'advanced', 'wellness']);
       const SOLO_SERVICES   = new Set<string>([...(_b.solo ?? []), 'other']);
 
-      // Load live prices/names from DB, update card display
-      try {
-        const resp = await fetch('/.netlify/functions/get-services');
-        if (resp.ok) {
-          const { services } = await resp.json();
-          for (const s of (services as any[])) {
-            PRICES[s.slug]         = Math.round(s.price / 100);
-            SERVICE_LABELS[s.slug] = s.name;
-            if (s.duration) DURATIONS[s.slug] = s.duration;
-          }
-          // Hide any checkbox whose slug is not in the active services list
-          document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
-            if (!PRICES[cb.value]) {
-              const label = cb.closest('label');
-              if (label) (label as HTMLElement).style.display = 'none';
-            }
-          });
-          // Hide the packages section if every package checkbox is inactive
-          const pkgSec = document.getElementById('booking-packages-section');
-          if (pkgSec) {
-            const pkgCbs = Array.from(pkgSec.querySelectorAll<HTMLInputElement>('input[name="service"]'));
-            if (pkgCbs.length && pkgCbs.every(cb => (cb.closest('label') as HTMLElement | null)?.style.display === 'none')) {
-              pkgSec.style.display = 'none';
-            }
-          }
-          // Update displayed prices on checkbox cards
-          document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
-            const p = PRICES[cb.value];
-            if (!p) return;
-            const priceEl = cb.closest('label')?.querySelector<HTMLElement>('[class*="text-primary-600"][class*="font-bold"],[class*="text-amber-6"][class*="font-bold"]');
-            if (priceEl) priceEl.textContent = cb.value === 'mix-match-package' ? `From $${p}` : `$${p}`;
-          });
-          // Update or hide badge spans based on DB badge field
-          const _bmap = new Map<string, any>((services as any[]).map((s: any) => [s.slug, s]));
-          document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
-            const svc = _bmap.get(cb.value);
-            const lbl = cb.closest('label');
-            if (!lbl) return;
-            const badgeEl = lbl.querySelector<HTMLElement>('[data-svc-badge]');
-            if (badgeEl) {
-              if (svc?.badge) { badgeEl.textContent = svc.badge; }
-              else { badgeEl.style.display = 'none'; }
-            }
-          });
-          // Update mix-match picker prices by matching on label text
-          document.querySelectorAll<HTMLInputElement>('.mix-match-service-cb').forEach(cb => {
-            const matched = (services as any[]).find((s: any) => s.name === cb.dataset.mmLabel);
-            if (matched) {
-              const newPrice = Math.round(matched.price / 100);
-              cb.dataset.mmPrice = String(newPrice);
-              const priceEl = cb.closest('label')?.querySelector<HTMLElement>('[class*="text-primary-600"]');
-              if (priceEl) priceEl.textContent = `$${newPrice}`;
-            }
-          });
 
-          // Render checkboxes for any active DB services without a hardcoded card
-          function _bEsc(s: unknown): string {
-            return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-          }
-          const covered = new Set(Array.from(
-            document.querySelectorAll<HTMLInputElement>('input[name="service"]')
-          ).map(cb => cb.value));
-          const extras = (services as any[]).filter((s: any) => !covered.has(s.slug));
-          for (const s of extras as any[]) {
-            if (s.is_package || SOLO_CATEGORIES.has(s.category)) SOLO_SERVICES.add(s.slug);
-          }
-          if (extras.length) {
-            for (const s of extras as any[]) {
-              if (s.is_package) continue; // packages handled in packages section
-              const catKey = s.category === 'wellness' ? 'wellness' : s.category;
-              const section = document.querySelector<HTMLElement>(`[data-cat-section="${catKey}"]`);
-              const price = Math.round(s.price / 100);
-              const lbl = document.createElement('label');
-              lbl.className = 'cursor-pointer block';
-              lbl.innerHTML = '<input type="checkbox" name="service" value="' + _bEsc(s.slug) + '" class="sr-only peer"/>'+
-                '<div class="rounded-xl border-2 border-neutral-200 p-4 peer-checked:border-primary-500 peer-checked:bg-primary-50 hover:border-primary-300 transition-all">'+ 
-                '<p class="font-semibold text-sm text-neutral-900">' + _bEsc(s.name) + '</p>'+
-                '<p class="text-primary-600 font-bold text-sm mt-1.5">$' + price + '</p>'+
-                (s.duration ? '<p class="text-xs text-neutral-400 mt-0.5">' + s.duration + ' min</p>' : '')+'</div>';
-              if (section) {
-                const grid = section.querySelector<HTMLElement>('.grid');
-                if (grid) grid.appendChild(lbl);
-              } else {
-                /* Unknown category — append a new section */
-                const svcsContainer = document.querySelector<HTMLElement>('#booking-form .space-y-6');
-                if (svcsContainer) {
-                  let sec = svcsContainer.querySelector<HTMLElement>(`[data-cat-section="${_bEsc(catKey)}"]`);
-                  if (!sec) {
-                    sec = document.createElement('div');
-                    sec.dataset.catSection = catKey;
-                    sec.innerHTML = '<p class="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">' + _bEsc(s.category) + '</p><div class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>';
-                    svcsContainer.insertBefore(sec, svcsContainer.querySelector('#booking-packages-section'));
-                  }
-                  const g = sec.querySelector<HTMLElement>('.grid');
-                  if (g) g.appendChild(lbl);
-                }
-              }
-            }
-          }
-          // Populate mix-match picker from active non-package services in eligible categories
-          const _mmElig = (services as any[]).filter((s: any) =>
-            ['facials', 'lash-brow-body'].includes(s.category) && !s.is_package
-          );
-          const _mmGrid = document.getElementById('mix-match-options');
-          if (_mmGrid && _mmElig.length) {
-            _mmGrid.innerHTML = _mmElig.map((s: any) => {
-              const p = Math.round(s.price / 100);
-              const d = s.duration ? s.duration + ' min' : '';
-              const mmCat = s.category === 'facials' ? 'facial' : 'body';
-              return '<label class="cursor-pointer">' +
-                '<input type="checkbox" data-mm-value="' + _bEsc(s.slug) + '" data-mm-price="' + p +
-                '" data-mm-label="' + _bEsc(s.name) + '" data-mm-duration="' + _bEsc(d) +
-                '" data-mm-category="' + mmCat + '" class="sr-only peer mix-match-service-cb"/>' +
-                '<div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">' +
-                '<p class="font-semibold text-xs text-neutral-900 leading-snug">' + _bEsc(s.name) + '</p>' +
-                '<p class="text-primary-600 font-bold text-xs mt-1">$' + p + '</p>' +
-                (d ? '<p class="text-[10px] text-neutral-400">' + _bEsc(d) + '</p>' : '') +
-                '</div></label>';
-            }).join('');
-          }
-        }
-      } catch (fetchErr) {
-        console.warn('Could not load live service prices:', fetchErr);
-      }
       // Pre-populate checkbox prices synchronously from SSR data (eliminates stale-price flash)
       document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
         const p = PRICES[cb.value];
