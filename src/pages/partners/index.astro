@@ -1,5 +1,29 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
+const { data: partners } = await supabase
+  .from('partners')
+  .select('id,name,url,logo_url,category,badge_text,tagline,active,featured')
+  .neq('active', false)
+  .order('name', { ascending: true });
+
+const allPartners = partners ?? [];
+const categories = [...new Set(allPartners.map(p => p.category).filter(Boolean))].sort() as string[];
+
+const BADGE_COLORS: Record<string, string> = {
+  'Skincare Products':      'bg-rose-100 text-rose-700',
+  'Wellness & Supplements': 'bg-emerald-100 text-emerald-700',
+  'Beauty Tools':           'bg-violet-100 text-violet-700',
+  'Nutrition & Diet':       'bg-amber-100 text-amber-700',
+  'Fitness & Health':       'bg-sky-100 text-sky-700',
+  'Other':                  'bg-neutral-100 text-neutral-600',
+};
+function catColor(cat: string) { return BADGE_COLORS[cat] ?? BADGE_COLORS['Other']; }
+function safeUrl(url: string) { try { const u = new URL(url); return (u.protocol==='http:'||u.protocol==='https:') ? url : '#'; } catch { return '#'; } }
 ---
 
 <Layout
@@ -25,34 +49,65 @@ import Layout from '../../layouts/Layout.astro';
   <section class="py-12 bg-white min-h-[60vh]">
     <div class="max-w-6xl mx-auto px-6 lg:px-12">
 
-      <!-- Category filter tabs -->
+      <!-- Category filter tabs — server-rendered -->
       <div id="filter-tabs" class="flex gap-2 overflow-x-auto pb-2 mb-8 -mx-6 px-6 lg:mx-0 lg:px-0 scrollbar-hide">
         <button class="filter-btn active shrink-0 px-4 py-2 rounded-full text-sm font-medium border border-primary-200 bg-primary-600 text-white transition-all" data-cat="all">
+          All ({allPartners.length})
+        </button>
+        {categories.map(cat => (
+          <button class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-medium border bg-white text-neutral-700 border-neutral-200 transition-all" data-cat={cat}>
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <!-- Partners grid — server-rendered -->
+      {allPartners.length > 0 ? (
+        <div id="partners-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {allPartners.map(p => (
+            <a href={safeUrl(p.url ?? '#')} target="_blank" rel="noopener noreferrer sponsored"
+               data-partner-cat={p.category}
+               class="group flex flex-col bg-white rounded-2xl border border-neutral-200 hover:border-primary-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div class="h-36 flex items-center justify-center px-8 bg-gradient-to-b from-[#f9f5f2] to-white border-b border-neutral-100">
+                {p.logo_url ? (
+                  <img src={p.logo_url} alt={p.name} class="max-h-12 max-w-[140px] object-contain" loading="lazy" />
+                ) : (
+                  <div class="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center">
+                    <span class="text-primary-700 font-bold text-xl">{p.name?.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              <div class="flex-1 flex flex-col p-5">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <h3 class="font-serif text-lg text-neutral-900 leading-snug group-hover:text-primary-700 transition-colors">{p.name}</h3>
+                  <svg class="w-4 h-4 text-neutral-300 group-hover:text-primary-500 transition-colors shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </div>
+                <span class={`inline-block text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full mb-3 w-fit ${catColor(p.category ?? 'Other')}`}>{p.category ?? 'Other'}</span>
+                {p.tagline && <p class="text-sm text-neutral-500 leading-relaxed flex-1">{p.tagline}</p>}
+                {p.badge_text && (
+                  <div class="mt-3 inline-flex items-center gap-1.5 bg-primary-50 border border-primary-100 text-primary-700 text-xs font-semibold px-3 py-1 rounded-full">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-5 5a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 10V5a2 2 0 012-2z"/></svg>
+                    {p.badge_text}
+                  </div>
+                )}
+              </div>
+              <div class="px-5 pb-5">
+                <span class="w-full flex items-center justify-center gap-2 bg-neutral-900 group-hover:bg-primary-600 text-white text-sm font-semibold py-3 rounded-xl transition-colors duration-200">
+                  Visit Partner
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="py-16 text-center">
+          <p class="text-neutral-500 text-sm">No partners listed yet — check back soon.</p>
+        </div>
+      )}
           All Partners
         </button>
       </div>
-
-      <!-- Loading skeleton -->
-      <div id="cards-loading" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div class="h-56 rounded-2xl bg-neutral-100 animate-pulse"></div>
-        <div class="h-56 rounded-2xl bg-neutral-100 animate-pulse"></div>
-        <div class="h-56 rounded-2xl bg-neutral-100 animate-pulse"></div>
-      </div>
-
-      <!-- Partners grid — filled by JS -->
-      <div id="partners-grid" class="hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-
-      <!-- Empty state -->
-      <div id="no-partners" class="hidden py-16 text-center">
-        <div class="w-14 h-14 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-          </svg>
-        </div>
-        <p class="text-neutral-500 text-sm">No partners listed yet — check back soon.</p>
-      </div>
-    </div>
-  </section>
 
   <!-- Disclaimer -->
   <section class="py-10 bg-[#faf9f7] border-t border-neutral-100">
@@ -142,75 +197,19 @@ import Layout from '../../layouts/Layout.astro';
     `;
   }
 
-  let allPartners: any[] = [];
-  let activeFilter = 'all';
-
-  async function init() {
-    const loading = document.getElementById('cards-loading')!;
-    const grid    = document.getElementById('partners-grid')!;
-    const empty   = document.getElementById('no-partners')!;
-    const tabs    = document.getElementById('filter-tabs')!;
-
-    try {
-      const res = await fetch('/.netlify/functions/get-partners');
-      if (!res.ok) throw new Error('fetch failed');
-      const { records } = await res.json();
-      allPartners = records || [];
-    } catch (e) {
-      allPartners = [];
-    }
-
-    loading!.classList.add('hidden');
-
-    if (allPartners.length === 0) {
-      empty.classList.remove('hidden');
-      return;
-    }
-
-    // Build category tabs
-    const cats = [...new Set(allPartners.map(p => p.category).filter(Boolean))].sort();
-    cats.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-all';
-      btn.dataset.cat = cat;
-      btn.textContent = cat;
-      tabs.appendChild(btn);
+  /* Filter cards by category — all cards are pre-rendered server-side */
+  document.getElementById('filter-tabs')?.addEventListener('click', e => {
+    const btn = (e.target as Element).closest('.filter-btn') as HTMLElement | null;
+    if (!btn) return;
+    const cat = btn.dataset.cat ?? 'all';
+    document.querySelectorAll<HTMLElement>('.filter-btn').forEach(b => {
+      const active = b === btn;
+      b.classList.toggle('bg-primary-600', active); b.classList.toggle('text-white', active); b.classList.toggle('border-primary-200', active);
+      b.classList.toggle('bg-white', !active); b.classList.toggle('text-neutral-700', !active); b.classList.toggle('border-neutral-200', !active);
     });
-
-    // Tab click handler
-    tabs.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeFilter = (btn as HTMLElement).dataset.cat ?? 'all';
-        tabs.querySelectorAll('.filter-btn').forEach(b => {
-          b.classList.toggle('active', b === btn);
-          if (b === btn) {
-            b.classList.add('bg-primary-600', 'text-white', 'border-primary-200');
-            b.classList.remove('bg-white', 'text-neutral-700', 'border-neutral-200');
-          } else {
-            b.classList.remove('bg-primary-600', 'text-white', 'border-primary-200');
-            b.classList.add('bg-white', 'text-neutral-700', 'border-neutral-200');
-          }
-        });
-        renderGrid();
-      });
+    document.querySelectorAll<HTMLElement>('[data-partner-cat]').forEach(card => {
+      const visible = cat === 'all' || card.dataset.partnerCat === cat;
+      card.style.display = visible ? '' : 'none';
     });
-
-    grid.classList.remove('hidden');
-    renderGrid();
-  }
-
-  function renderGrid() {
-    const grid = document.getElementById('partners-grid')!;
-    const filtered = activeFilter === 'all'
-      ? allPartners
-      : allPartners.filter(p => p.category === activeFilter);
-
-    if (filtered.length === 0) {
-      grid.innerHTML = '<div class="col-span-full py-10 text-center text-sm text-neutral-400">No partners in this category yet.</div>';
-    } else {
-      grid.innerHTML = filtered.map(renderCard).join('');
-    }
-  }
-
-  init();
+  });
 </script>

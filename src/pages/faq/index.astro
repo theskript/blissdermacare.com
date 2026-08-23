@@ -1,7 +1,18 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+export const prerender = false;
 
-const faqs = [
+import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
+const { data: rows } = await supabase.from('site_content').select('section_key,value').eq('page_key', 'faq');
+
+const sc: Record<string, string> = {};
+for (const r of rows ?? []) { if (r.value) sc[r.section_key] = r.value; }
+
+type FaqItem = { q: string; a: string };
+
+const fallbackFaqs: FaqItem[] = [
   {
     q: "Do you offer membership or recurring plans?",
     a: "Yes — we offer three monthly membership tiers: The Glow Ritual ($89/mo), The Radiance Plan ($159/mo), and The Bliss VIP ($249/mo). Each plan includes monthly service credits, priority booking, and a member discount on additional services. Credits roll over 30 days, and you can cancel or pause anytime. Visit our <a href='/memberships/' class='text-primary-600 hover:underline'>memberships page</a> to compare plans and sign up."
@@ -43,6 +54,14 @@ const faqs = [
     a: "We ask for at least 24 hours notice if you need to cancel or reschedule. Late cancellations or no-shows may be subject to a cancellation fee. Life happens — just communicate with us and we'll do our best to work it out."
   }
 ];
+
+let faqs: FaqItem[] = fallbackFaqs;
+if (sc.items) {
+  try { const parsed = JSON.parse(sc.items); if (Array.isArray(parsed) && parsed.length) faqs = parsed; } catch {}
+}
+
+const heroH1 = sc.hero_h1 ?? 'FAQ';
+const heroSub = sc.hero_sub ?? 'Everything you need to know before your first (or next) appointment.';
 ---
 
 <Layout title="FAQ – Bliss Dermacare" description="Answers to common questions about booking, treatments, the Demo Model Program, cancellations, and more at Bliss Dermacare in Tampa, FL.">
@@ -51,13 +70,13 @@ const faqs = [
   <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Common Questions</span>
-      <h1 class="text-5xl font-serif text-neutral-900 mb-4" data-sc="hero_h1">FAQ</h1>
-      <p class="text-lg text-neutral-600" data-sc="hero_sub">Everything you need to know before your first (or next) appointment.</p>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4">{heroH1}</h1>
+      <p class="text-lg text-neutral-600">{heroSub}</p>
     </div>
   </section>
 
   <!-- FAQ Accordion -->
-  <section class="py-14 bg-white" id="faq-section" style="opacity:0">
+  <section class="py-14 bg-white">
     <div class="max-w-3xl mx-auto px-6">
       <div class="space-y-3" id="faq-list">
         {faqs.map((faq, i) => (
@@ -98,53 +117,6 @@ const faqs = [
     </div>
   </section>
 </Layout>
-
-<script is:inline>
-  fetch('/.netlify/functions/get-content?page=faq')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var c=d.content||{};
-      // Update hero text
-      ['hero_h1','hero_sub'].forEach(function(k){
-        var el=document.querySelector('[data-sc="'+k+'"]');
-        if(el&&c[k]&&c[k].value)el.textContent=c[k].value;
-      });
-      // Replace FAQ list if items exist in DB
-      if(c.items&&c.items.value){
-        try{
-          var items=JSON.parse(c.items.value);
-          var list=document.getElementById('faq-list');
-          if(list&&items.length){
-            list.innerHTML=items.map(function(f,i){
-              return '<div class="bg-[#faf9f7] rounded-2xl border border-neutral-200 overflow-hidden" data-faq-item>'+
-                '<button class="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-neutral-100/60 transition-colors" aria-expanded="false" data-faq-btn>'+
-                '<span class="font-semibold text-neutral-900 text-base">'+f.q+'</span>'+
-                '<svg class="w-5 h-5 text-primary-600 flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-faq-icon><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>'+
-                '<div class="hidden px-6 pb-5" data-faq-answer><p class="text-neutral-600 leading-relaxed">'+f.a+'</p></div></div>';
-            }).join('');
-            // Re-attach accordion listeners
-            list.querySelectorAll('[data-faq-btn]').forEach(function(btn){
-              btn.addEventListener('click',function(){
-                var item=btn.closest('[data-faq-item]');
-                var answer=item&&item.querySelector('[data-faq-answer]');
-                var icon=btn.querySelector('[data-faq-icon]');
-                var isOpen=btn.getAttribute('aria-expanded')==='true';
-                document.querySelectorAll('[data-faq-item]').forEach(function(el){
-                  el.querySelector('[data-faq-btn]').setAttribute('aria-expanded','false');
-                  el.querySelector('[data-faq-answer]').classList.add('hidden');
-                  el.querySelector('[data-faq-icon]').style.transform='';
-                });
-                if(!isOpen){btn.setAttribute('aria-expanded','true');if(answer)answer.classList.remove('hidden');if(icon)icon.style.transform='rotate(180deg)';}
-              });
-            });
-          }
-        }catch(e){}
-      }
-      var _fs=document.getElementById('faq-section');if(_fs){_fs.style.transition='opacity 0.2s';_fs.style.opacity='1';}
-    }).catch(function(){
-      var _fs=document.getElementById('faq-section');if(_fs)_fs.style.opacity='1';
-    });
-</script>
 
 <script>
   document.querySelectorAll('[data-faq-btn]').forEach(btn => {

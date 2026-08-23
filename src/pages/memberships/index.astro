@@ -1,5 +1,28 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+const [{ data: planRows }, { data: contentRows }] = await Promise.all([
+  supabase.from('services').select('slug,name,price').eq('is_membership_plan', true),
+  supabase.from('site_content').select('section_key,value').eq('page_key', 'memberships'),
+]);
+
+const plans: Record<string, { name: string; price: number }> = {};
+for (const p of planRows ?? []) { plans[p.slug] = { name: p.name, price: Math.round(p.price / 100) }; }
+
+const mc: Record<string, string> = {};
+for (const r of contentRows ?? []) { if (r.value) mc[r.section_key] = r.value; }
+
+const tier1Price = plans['glow-ritual']?.price ?? 89;
+const tier2Price = plans['radiance-plan']?.price ?? 159;
+const tier3Price = plans['vip-luxe']?.price ?? 249;
+const tier1Name  = plans['glow-ritual']?.name  ?? 'The Glow Ritual';
+const tier2Name  = plans['radiance-plan']?.name ?? 'The Radiance Plan';
+const tier3Name  = plans['vip-luxe']?.name      ?? 'The Bliss VIP';
 ---
 
 <Layout title="Membership Plans – Bliss Dermacare" description="Join a Bliss Dermacare membership and enjoy monthly facials, lash & body services, and exclusive discounts. Three tiers starting at $89/month. Cancel anytime.">
@@ -62,13 +85,12 @@ import Layout from '../../layouts/Layout.astro';
           <div class="p-7 flex-1">
             <div class="mb-5">
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary-500 mb-2">Tier 1</p>
-              <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">The Glow Ritual</h3>
+              <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">{tier1Name}</h3>
               <p class="text-sm text-neutral-500">For the consistent skincare client who wants glowing skin year-round.</p>
             </div>
             <div class="flex items-baseline gap-2 mb-6">
-              <span class="text-4xl font-bold text-neutral-900">$89</span>
+              <span class="text-4xl font-bold text-neutral-900">${tier1Price}</span>
               <span class="text-sm text-neutral-400">/month</span>
-              <span class="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save up to $10/mo</span>
             </div>
 
             <!-- Included Services -->
@@ -118,11 +140,11 @@ import Layout from '../../layouts/Layout.astro';
           <div class="px-7 pb-7">
             <button
               data-plan="glow-ritual"
-              data-plan-name="The Glow Ritual"
-              data-plan-price="89"
+              data-plan-name={tier1Name}
+              data-plan-price={String(tier1Price)}
               onclick="openMembershipSignup(this)"
               class="w-full py-3.5 rounded-xl border-2 border-primary-600 text-primary-600 font-semibold text-sm hover:bg-primary-600 hover:text-white transition-all">
-              Start Glow Ritual — $89/mo
+              Start {tier1Name} — ${tier1Price}/mo
             </button>
           </div>
         </div>
@@ -136,13 +158,12 @@ import Layout from '../../layouts/Layout.astro';
           <div class="p-7 pt-11 flex-1">
             <div class="mb-5">
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary-500 mb-2">Tier 2</p>
-              <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">The Radiance Plan</h3>
+              <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">{tier2Name}</h3>
               <p class="text-sm text-neutral-500">Two services per month — a premium facial plus your choice of lash, brow, or body treatment.</p>
             </div>
             <div class="flex items-baseline gap-2 mb-6">
-              <span class="text-4xl font-bold text-neutral-900">$159</span>
+              <span class="text-4xl font-bold text-neutral-900">${tier2Price}</span>
               <span class="text-sm text-neutral-400">/month</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save up to $56/mo</span>
             </div>
 
             <!-- Included Services -->
@@ -203,11 +224,11 @@ import Layout from '../../layouts/Layout.astro';
           <div class="px-7 pb-7">
             <button
               data-plan="radiance-plan"
-              data-plan-name="The Radiance Plan"
-              data-plan-price="159"
+              data-plan-name={tier2Name}
+              data-plan-price={String(tier2Price)}
               onclick="openMembershipSignup(this)"
               class="w-full py-3.5 rounded-xl bg-primary-600 text-white font-semibold text-sm hover:bg-primary-700 transition-all shadow-md hover:shadow-lg">
-              Start Radiance Plan — $159/mo
+              Start {tier2Name} — ${tier2Price}/mo
             </button>
           </div>
         </div>
@@ -217,13 +238,12 @@ import Layout from '../../layouts/Layout.astro';
           <div class="p-7 flex-1">
             <div class="mb-5">
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-amber-500 mb-2">Tier 3 — VIP</p>
-              <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">The Bliss VIP</h3>
+              <h3 class="text-2xl font-bold font-serif text-neutral-900 mb-1">{tier3Name}</h3>
               <p class="text-sm text-neutral-500">Three services every month plus quarterly bonuses — the ultimate self-care routine at maximum savings.</p>
             </div>
             <div class="flex items-baseline gap-2 mb-6">
-              <span class="text-4xl font-bold text-neutral-900">$249</span>
+              <span class="text-4xl font-bold text-neutral-900">${tier3Price}</span>
               <span class="text-sm text-neutral-400">/month</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Save up to $132/mo</span>
             </div>
 
             <!-- Included Services -->
@@ -299,11 +319,11 @@ import Layout from '../../layouts/Layout.astro';
           <div class="px-7 pb-7">
             <button
               data-plan="vip-luxe"
-              data-plan-name="The Bliss VIP"
-              data-plan-price="249"
+              data-plan-name={tier3Name}
+              data-plan-price={String(tier3Price)}
               onclick="openMembershipSignup(this)"
               class="w-full py-3.5 rounded-xl border-2 border-amber-500 text-amber-700 font-semibold text-sm hover:bg-amber-500 hover:text-white transition-all">
-              Join VIP Luxe — $249/mo
+              Join {tier3Name} — ${tier3Price}/mo
             </button>
           </div>
         </div>
@@ -921,44 +941,6 @@ import Layout from '../../layouts/Layout.astro';
         errDiv.classList.add('flex');
       }
     });
-  </script>
-
-  <script is:inline>
-    /* Sync credit descriptions from site_content if admin has overridden them */
-    fetch('/.netlify/functions/get-content?page=memberships')
-      .then(function(r){return r.json();})
-      .then(function(d){
-        var c=d.content||{};
-        Object.keys(c).forEach(function(k){
-          var el=document.querySelector('[data-sc="'+k+'"]');
-          if(el&&c[k]&&c[k].value)el.textContent=c[k].value;
-        });
-      }).catch(function(){});
-  </script>
-
-  <script>
-    /* Update plan prices and names from DB; preserves page design, just refreshes data */
-    fetch('/.netlify/functions/get-services?includePlans=true')
-      .then(r => r.json())
-      .then(({ plans }) => {
-        if (!plans?.length) return;
-        plans.forEach((plan: any) => {
-          const price = Math.round(plan.price / 100);
-          const card = document.querySelector<HTMLElement>(`[data-plan-card="${plan.slug}"]`);
-          if (card) {
-            const priceEl = card.querySelector<HTMLElement>('.text-4xl.font-bold');
-            if (priceEl) priceEl.textContent = '$' + price;
-            const nameEl = card.querySelector<HTMLElement>('h3');
-            if (nameEl && plan.name) nameEl.textContent = plan.name;
-            card.querySelectorAll<HTMLElement>('[data-plan-price]').forEach(btn => {
-              btn.setAttribute('data-plan-price', String(price));
-              if (plan.name) btn.setAttribute('data-plan-name', plan.name);
-              const txt = btn.textContent || '';
-              btn.textContent = txt.replace(/\$\d+\/mo/, '$' + price + '/mo').replace(/\$\d+\/month/, '$' + price + '/month');
-            });
-          }
-        });
-      }).catch(() => {});
   </script>
 
 </Layout>
