@@ -1138,11 +1138,11 @@ const { title, description = 'Professional aesthetician services in a serene, mo
       // ── Mutations ──────────────────────────────────────────────────────────
       function addItem(id) {
         if (id === 'mix-match-package') { openMMModal(); return; }
+        if (isInCart(id)) { removeItem(id); return; }
         const svc = SERVICES[id];
         if (!svc) return;
         const err = canAdd(id);
         if (err) { showToast(err); return; }
-        if (isInCart(id)) { openDrawer(); return; }
         const items = getCart();
         items.push({ id, name: svc.name, price: svc.price, duration: svc.duration });
         saveCart(items);
@@ -1215,7 +1215,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
 
       function renderAll() { updateBadge(); renderDrawer(); updateAddButtons(); }
 
-      // ── Add-button state (greyed = blocked by rules) ───────────────────────
+      // ── Add-button state ───────────────────────────────────────────────────
       function updateAddButtons() {
         const ids        = getCart().map(i => i.id);
         const currentDur = ids.reduce((s, i) => s + (DURATIONS[i] ?? 60), 0);
@@ -1225,30 +1225,36 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           const id     = btn.getAttribute('data-add-to-cart');
           const inCart = ids.includes(id);
           let blocked  = false;
-          let blockLabel = 'Cart Full';
           if (!inCart) {
-            if (hasSolo) {
-              blocked    = true;
-              blockLabel = 'Pkg Only';
-            } else if (SOLO.has(id) && ids.length > 0) {
-              blocked    = true;
-              blockLabel = 'Clear Cart';
-            } else if (!SOLO.has(id) && (currentDur + (DURATIONS[id] ?? 60)) > 120) {
-              blocked    = true;
-              blockLabel = 'Cart Full';
-            }
+            if (hasSolo)                                                        blocked = true;
+            else if (SOLO.has(id) && ids.length > 0)                           blocked = true;
+            else if (!SOLO.has(id) && (currentDur + (DURATIONS[id] ?? 60)) > 120) blocked = true;
           }
-          const textEl  = btn.querySelector('.cart-btn-text');
-          const plusEl  = btn.querySelector('.cart-btn-icon');
-          const checkEl = btn.querySelector('.cart-check-icon');
-          if (textEl)  textEl.textContent = inCart ? 'Added' : (blocked ? blockLabel : 'Add');
-          if (plusEl)  plusEl.classList.toggle('hidden', inCart || blocked);
-          if (checkEl) checkEl.classList.toggle('hidden', !inCart);
-          btn.classList.toggle('!border-emerald-300', inCart);
-          btn.classList.toggle('!text-emerald-700',   inCart);
-          btn.classList.toggle('!bg-emerald-50',       inCart);
-          btn.classList.toggle('opacity-50',           blocked && !inCart);
-          // Keep clickable so the toast explanation fires — not disabled
+
+          // Hide entirely when blocked — no confusing label in the card
+          if (blocked) { btn.style.display = 'none'; return; }
+          btn.style.display = '';
+
+          const textEl   = btn.querySelector('.cart-btn-text');
+          const plusEl   = btn.querySelector('.cart-btn-icon');
+          const checkEl  = btn.querySelector('.cart-check-icon');
+          const removeEl = btn.querySelector('.cart-remove-icon');
+
+          if (inCart) {
+            if (textEl)   textEl.textContent = 'Remove';
+            if (plusEl)   plusEl.classList.add('hidden');
+            if (checkEl)  checkEl.classList.add('hidden');
+            if (removeEl) removeEl.classList.remove('hidden');
+            btn.classList.add('!border-red-200', '!text-red-500', '!bg-red-50');
+            btn.classList.remove('!border-emerald-300', '!text-emerald-700', '!bg-emerald-50', 'opacity-50');
+          } else {
+            if (textEl)   textEl.textContent = 'Add';
+            if (plusEl)   plusEl.classList.remove('hidden');
+            if (checkEl)  checkEl.classList.add('hidden');
+            if (removeEl) removeEl.classList.add('hidden');
+            btn.classList.remove('!border-red-200', '!text-red-500', '!bg-red-50');
+            btn.classList.remove('!border-emerald-300', '!text-emerald-700', '!bg-emerald-50', 'opacity-50');
+          }
           btn.disabled = false;
         });
       }
@@ -1265,6 +1271,7 @@ const { title, description = 'Professional aesthetician services in a serene, mo
           btn.innerHTML = `
             <svg class="cart-btn-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
             <svg class="cart-check-icon hidden w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            <svg class="cart-remove-icon hidden w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
             <span class="cart-btn-text">Add</span>`;
 
           if (isPackage) {
