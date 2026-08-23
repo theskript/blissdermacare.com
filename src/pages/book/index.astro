@@ -1,5 +1,74 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
+
+const [{ data: allSvcs }, { data: gRows }, { data: cRows }, { data: schedRows }] = await Promise.all([
+  supabase.from('services').select('slug,name,category,price,duration,tagline,description,badge,is_package,active').neq('active', false).order('sort_order', { ascending: true }),
+  supabase.from('site_content').select('section_key,value').eq('page_key', 'global'),
+  supabase.from('site_content').select('section_key,value').eq('page_key', 'contact'),
+  supabase.from('availability').select('day_of_week,is_open,open_time,close_time').order('day_of_week', { ascending: true }),
+]);
+
+const svcs = allSvcs ?? [];
+const gc: Record<string, string> = {};
+for (const r of gRows ?? []) { if (r.value) gc[r.section_key] = r.value; }
+for (const r of cRows ?? []) { if (r.value) gc[r.section_key] = r.value; }
+
+const phone   = gc.phone    ?? '(609) 366-0857';
+const addr1   = gc.address_1 ?? '8905 Regents Park Dr';
+const addr2   = gc.address_2 ?? 'Tampa, FL 33647';
+const telHref = `tel:+1${phone.replace(/\D/g, '')}`;
+
+const discPct = {
+  none: 0,
+  'first-responder-veteran': parseInt(gc.discount_first_responder_veteran ?? '15', 10),
+  'teacher-educator':        parseInt(gc.discount_teacher_educator        ?? '10', 10),
+  'senior-65-plus':           parseInt(gc.discount_senior_65_plus          ?? '10', 10),
+  'student':                   parseInt(gc.discount_student                 ?? '10', 10),
+};
+
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function fmt24(t: string) { const [h,m] = t.split(':').map(Number); return `${h>12?h-12:h===0?12:h}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; }
+type HRow = { label: string; value: string; closed: boolean };
+function buildHours(sched: any[]): HRow[] {
+  const rows: HRow[] = []; let i = 0;
+  while (i < 7) {
+    const day = sched.find(s => s.day_of_week === i) ?? { day_of_week: i, is_open: false };
+    const k = day.is_open ? `${day.open_time}|${day.close_time}` : 'closed';
+    let j = i + 1;
+    while (j < 7) {
+      const next = sched.find(s => s.day_of_week === j) ?? { day_of_week: j, is_open: false };
+      if ((next.is_open ? `${next.open_time}|${next.close_time}` : 'closed') !== k) break;
+      j++;
+    }
+    rows.push({ label: i===j-1?DAYS[i]:`${DAYS[i]} \u2013 ${DAYS[j-1]}`, value: k==='closed'?'Closed':`${fmt24(day.open_time)} \u2013 ${fmt24(day.close_time)}`, closed: k==='closed' });
+    i = j;
+  }
+  return rows;
+}
+const hours = buildHours(schedRows ?? []);
+
+const SOLO_CATS = new Set(['packages','semipermanent','advanced','wellness']);
+const cats = {
+  facials:       svcs.filter(s => s.category === 'facials' && !s.is_package),
+  lashBrowBody:  svcs.filter(s => s.category === 'lash-brow-body' && !s.is_package),
+  advanced:      svcs.filter(s => s.category === 'advanced'),
+  semipermanent: svcs.filter(s => s.category === 'semipermanent'),
+  wellness:      svcs.filter(s => s.category === 'wellness'),
+  packages:      svcs.filter(s => s.category === 'packages' || s.is_package),
+};
+const mmServices = svcs.filter(s => ['facials','lash-brow-body'].includes(s.category) && !s.is_package);
+
+// Serialize for client JS (PRICES, DURATIONS, SOLO, DISCOUNT_PCT)
+const _PJ: Record<string,number> = {other:1}; const _LJ: Record<string,string> = {other:'Other / Not Sure'}; const _DJ: Record<string,number> = {other:60}; const _SJ: string[] = ['other'];
+for (const s of svcs) { _PJ[s.slug]=Math.round(s.price/100); _LJ[s.slug]=s.name; if(s.duration) _DJ[s.slug]=s.duration; if(SOLO_CATS.has(s.category)||s.is_package) _SJ.push(s.slug); }
+_SJ.push('lash-body-smooth','brow-lash-wax-ritual','glow-smooth-escape','mix-match-package','bronze-bare-glow');
+const _ssrPrices = JSON.stringify(_PJ); const _ssrLabels = JSON.stringify(_LJ); const _ssrDur = JSON.stringify(_DJ);
+const _ssrSolo = JSON.stringify([...new Set(_SJ)]); const _ssrDisc = JSON.stringify(discPct);
 ---
 
 <Layout title="Book an Appointment – Bliss Dermacare" description="Request a skincare appointment at Bliss Dermacare in Tampa, FL. Choose your service, preferred date and time, and we'll confirm your appointment shortly.">
@@ -88,7 +157,7 @@ import Layout from '../../layouts/Layout.astro';
                 </div>
               </div>
               <p class="text-sm text-neutral-500 mb-5">Select one or more services. <strong class="text-neutral-700">2-hour max</strong> for combined individual services. Packages are standalone bookings.</p>
-              <div class="space-y-6" id="svc-picker" style="opacity:0">
+              <div class="space-y-6" id="svc-picker">
 
                 <!-- Facials -->
                 <div data-cat-section="facials">
@@ -386,8 +455,21 @@ import Layout from '../../layouts/Layout.astro';
                     <p class="text-sm font-semibold text-neutral-800 mb-1">Choose your 2 services for this package:</p>
                     <p class="text-xs text-neutral-500 mb-4">Choose <strong class="text-neutral-700">1 facial + 1 lash, brow, or wax service</strong> — you'll receive a <strong class="text-primary-600">$15 package discount</strong> off the combined total.</p>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2" id="mix-match-options">
-                      <!-- Populated from get-services: facials = group A, lash-brow-body = group B -->
-                      <div class="col-span-full text-xs text-neutral-400 text-center py-4">Loading available services…</div>
+                      {mmServices.map(svc => {
+                        const p = Math.round(svc.price / 100);
+                        const dur = svc.duration ? `${svc.duration} min` : '';
+                        const mmCat = svc.category === 'facials' ? 'facial' : 'body';
+                        return (
+                          <label class="cursor-pointer">
+                            <input type="checkbox" data-mm-value={svc.slug} data-mm-price={String(p)} data-mm-label={svc.name} data-mm-duration={dur} data-mm-category={mmCat} class="sr-only peer mix-match-service-cb" />
+                            <div class="rounded-xl border-2 border-neutral-200 bg-white p-3 peer-checked:border-primary-500 peer-checked:bg-primary-100 hover:border-primary-300 transition-all h-full">
+                              <p class="font-semibold text-xs text-neutral-900 leading-snug">{svc.name}</p>
+                              <p class="text-primary-600 font-bold text-xs mt-1">${p}</p>
+                              {dur && <p class="text-[10px] text-neutral-400">{dur}</p>}
+                            </div>
+                          </label>
+                        );
+                      })}
                     </div>
                     <!-- Category conflict hint -->
                     <p id="mm-category-hint" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
@@ -738,9 +820,12 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-[#faf9f7] rounded-2xl p-6 border border-neutral-100">
             <h3 class="font-semibold text-neutral-900 mb-4">Appointment Hours</h3>
             <div id="book-hours-list" class="space-y-3 text-sm">
-              <div class="flex justify-between"><span class="text-neutral-600">Wednesday – Friday</span><span class="font-medium text-neutral-900">12:30 PM – 7:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Saturday</span><span class="font-medium text-neutral-900">12:30 PM – 6:00 PM</span></div>
-              <div class="flex justify-between"><span class="text-neutral-600">Sun – Tue</span><span class="font-medium text-neutral-400">Closed</span></div>
+              {hours.map(row => (
+                <div class="flex justify-between">
+                  <span class="text-neutral-600">{row.label}</span>
+                  <span class={row.closed ? 'font-medium text-neutral-400' : 'font-medium text-neutral-900'}>{row.value}</span>
+                </div>
+              ))}
             </div>
             <p id="book-hours-note" class="mt-4 pt-4 border-t border-neutral-200 text-xs text-neutral-500">
               Last appointment starts at 7:00 PM on weekdays, 6:00 PM on Saturdays.
@@ -750,8 +835,8 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-white rounded-2xl p-6 border border-neutral-200">
             <h3 class="font-semibold text-neutral-900 mb-4">Location</h3>
             <p class="text-sm text-neutral-600 mb-1">Bliss Dermacare Studio</p>
-            <p class="text-sm text-neutral-900 font-medium" id="book-addr-1">8905 Regents Park Dr</p>
-            <p class="text-sm text-neutral-900 font-medium" id="book-addr-2">Tampa, FL 33647</p>
+            <p class="text-sm text-neutral-900 font-medium" id="book-addr-1">{addr1}</p>
+            <p class="text-sm text-neutral-900 font-medium" id="book-addr-2">{addr2}</p>
           </div>
 
           <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-100">
@@ -780,9 +865,9 @@ import Layout from '../../layouts/Layout.astro';
           <div class="bg-neutral-900 rounded-2xl p-6 text-white">
             <h3 class="font-semibold mb-3">Can't find the right time?</h3>
             <p class="text-sm text-neutral-400 mb-4">Reach out directly and we'll work something out.</p>
-            <a id="book-sidebar-phone" href="tel:+16093660857" class="flex items-center gap-2 text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors">
+            <a id="book-sidebar-phone" href={telHref} class="flex items-center gap-2 text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-              <span id="book-sidebar-phone-text">(609) 366-0857</span>
+              <span id="book-sidebar-phone-text">{phone}</span>
             </a>
           </div>
 
@@ -822,55 +907,20 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- SSR data passed to client script -->
+  <script define:vars={{ _ssrPrices, _ssrLabels, _ssrDur, _ssrSolo, _ssrDisc }}>
+    window.__SSR_BOOKING = { prices: JSON.parse(_ssrPrices), labels: JSON.parse(_ssrLabels), dur: JSON.parse(_ssrDur), solo: JSON.parse(_ssrSolo), disc: JSON.parse(_ssrDisc) };
+  </script>
+
   <script>
     (async function () {
-      // Fetch admin-controlled global settings (discount %) + contact info for sidebar
-      let _gc: Record<string, any> = {};
-      try {
-        const [gR, cR] = await Promise.all([
-          fetch('/.netlify/functions/get-content?page=global'),
-          fetch('/.netlify/functions/get-content?page=contact'),
-        ]);
-        if (gR.ok) { const d = await gR.json(); Object.assign(_gc, d.content || {}); }
-        if (cR.ok) { const d = await cR.json(); Object.assign(_gc, d.content || {}); }
-        const _a1 = document.getElementById('book-addr-1'), _a2 = document.getElementById('book-addr-2');
-        const _pt = document.getElementById('book-sidebar-phone-text'), _pl = document.getElementById('book-sidebar-phone');
-        if (_a1 && _gc.address_1?.value) _a1.textContent = _gc.address_1.value;
-        if (_a2 && _gc.address_2?.value) _a2.textContent = _gc.address_2.value;
-        if (_pt && _gc.phone?.value) {
-          _pt.textContent = _gc.phone.value;
-          if (_pl) _pl.setAttribute('href', 'tel:+1' + _gc.phone.value.replace(/\D/g,''));
-        }
-      } catch (_) {}
-
-      // Service data populated from API — defaults prevent blank state during fetch
-      let PRICES: Record<string, number> = { 'other': 1 };
-      let SERVICE_LABELS: Record<string, string> = { 'other': 'Other / Not Sure' };
-      let DURATIONS: Record<string, number> = {
-        'signature-radiance-facial': 60, 'diamond-glow': 50,
-        'teen-skincare-facial': 45,
-        'lash-extensions': 120, 'lash-extensions-fill': 60, 'lash-lift-brow-lamination': 60,
-        'body-and-face-waxing': 60, 'brazilian-wax': 60,
-        'lash-body-smooth': 135, 'brow-lash-wax-ritual': 135, 'glow-smooth-escape': 135,
-        'mix-match-package': 135, 'spray-tan': 45, 'bronze-bare-glow': 105,
-        'smooth-canvas-facial': 45, 'prp-treatment': 60,
-        'lip-filler': 45, 'ed-injectables': 60,
-        'weight-loss-program': 30, 'scalp-micropigmentation': 180,
-        'lip-blush': 120, 'nano-brows': 150, 'powder-brows': 150,
-        'iv-hydration-therapy': 60, 'other': 60,
-      };
-
-      // Categories where all services must be booked standalone
+      // Service data pre-populated from SSR — no API fetch needed
+      const _b = (window as any).__SSR_BOOKING ?? {};
+      let PRICES: Record<string, number>       = Object.assign({ other: 1 },   _b.prices ?? {});
+      let SERVICE_LABELS: Record<string, string> = Object.assign({ other: 'Other / Not Sure' }, _b.labels ?? {});
+      let DURATIONS: Record<string, number>    = Object.assign({ other: 60 },  _b.dur   ?? {});
       const SOLO_CATEGORIES = new Set(['packages', 'semipermanent', 'advanced', 'wellness']);
-
-      // Services that must be booked alone — defined early so the fetch block can extend it
-      const SOLO_SERVICES = new Set<string>([
-        'lash-body-smooth', 'brow-lash-wax-ritual', 'glow-smooth-escape',
-        'mix-match-package', 'bronze-bare-glow', 'other',
-        'prp-treatment', 'lip-filler', 'ed-injectables', 'weight-loss-program',
-        'scalp-micropigmentation', 'lip-blush', 'nano-brows', 'powder-brows',
-        'iv-hydration-therapy',
-      ]);
+      const SOLO_SERVICES   = new Set<string>([...(_b.solo ?? []), 'other']);
 
       // Load live prices/names from DB, update card display
       try {
@@ -996,17 +1046,17 @@ import Layout from '../../layouts/Layout.astro';
       } catch (fetchErr) {
         console.warn('Could not load live service prices:', fetchErr);
       }
-      // Reveal service picker after processing (or after failure, showing hardcoded defaults)
-      const _pickerEl = document.getElementById('svc-picker');
-      if (_pickerEl) { _pickerEl.style.transition = 'opacity 0.2s'; _pickerEl.style.opacity = '1'; }
+      // Pre-populate checkbox prices synchronously from SSR data (eliminates stale-price flash)
+      document.querySelectorAll<HTMLInputElement>('input[name="service"]').forEach(cb => {
+        const p = PRICES[cb.value];
+        if (!p) return;
+        const priceEl = cb.closest('label')?.querySelector<HTMLElement>('[class*="text-primary-600"][class*="font-bold"],[class*="text-amber-6"][class*="font-bold"]');
+        if (priceEl) priceEl.textContent = cb.value === 'mix-match-package' ? `From $${p}` : `$${p}`;
+      });
 
-      const DISCOUNT_PCT: Record<string, number> = {
-        'none': 0,
-        'first-responder-veteran': parseInt(_gc.discount_first_responder_veteran?.value || '15', 10),
-        'teacher-educator':        parseInt(_gc.discount_teacher_educator?.value        || '10', 10),
-        'senior-65-plus':           parseInt(_gc.discount_senior_65_plus?.value          || '10', 10),
-        'student':                   parseInt(_gc.discount_student?.value                 || '10', 10),
-      };
+      const DISCOUNT_PCT: Record<string, number> = Object.assign({ none: 0 }, _b.disc ?? {
+        'first-responder-veteran': 15, 'teacher-educator': 10, 'senior-65-plus': 10, 'student': 10,
+      });
 
       const DISCOUNT_LABELS: Record<string, string> = {
         'first-responder-veteran': 'First Responder / Veteran (15% off)',
