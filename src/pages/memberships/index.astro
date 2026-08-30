@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 const [{ data: planRows }, { data: contentRows }] = await Promise.all([
-  supabase.from('services').select('slug,name,price').eq('is_membership_plan', true),
+  supabase.from('membership_plans').select('slug,name,price').neq('active', false),
   supabase.from('site_content').select('section_key,value').eq('page_key', 'memberships'),
 ]);
 

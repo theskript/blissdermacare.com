@@ -148,22 +148,24 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     if (role !== 'owner') window.location.href = '/admin/';
 
     // ── Environment health ─────────────────────────────────────────────────────
-    // We can't read env vars from the client, so we probe each function endpoint
-    // and infer config from success/failure.
     const ENV_CHECKS = [
-      { label: 'SUPABASE_URL + SERVICE_ROLE_KEY', probe: async () => { const r = await apiFetch('admin-appointments', { params: { date: '2000-01-01' } }); return !!r; } },
-      { label: 'SENDGRID_API_KEY',               probe: async () => { const r = await apiFetch('admin-notification-settings'); return r?.notifyOwnerOnNewBooking !== undefined; } },
-      { label: 'SALESMSG_API_KEY',               probe: async () => { const r = await apiFetch('admin-notification-settings'); return r !== null; } },
-      { label: 'ADMIN_JWT_SECRET',               probe: async () => { try { await apiFetch('admin-appointments', { params: { date: '2000-01-01' } }); return true; } catch { return false; } } },
-      { label: 'STRIPE_SECRET_KEY',              probe: async () => true /* can't safely probe */ },
+      { label: 'SUPABASE_URL + SERVICE_ROLE_KEY', keys: ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'] },
+      { label: 'SENDGRID_API_KEY', keys: ['SENDGRID_API_KEY'] },
+      { label: 'SALESMSG_API_KEY', keys: ['SALESMSG_API_KEY'] },
+      { label: 'ADMIN_JWT_SECRET', keys: ['ADMIN_JWT_SECRET'] },
+      { label: 'STRIPE_SECRET_KEY', keys: ['STRIPE_SECRET_KEY'] },
     ];
 
     (async () => {
       const el = document.getElementById('env-list')!;
       el.innerHTML = '';
+      let environment: Record<string, boolean> = {};
+      try {
+        const response = await apiFetch('admin-environment-health');
+        environment = response?.environment || {};
+      } catch {}
       for (const check of ENV_CHECKS) {
-        let ok = true;
-        try { ok = await check.probe(); } catch { ok = false; }
+        const ok = check.keys.every(key => environment[key] === true);
         el.innerHTML += `
           <div class="py-3 flex items-center justify-between gap-4">
             <span class="text-sm font-mono text-neutral-700">${check.label}</span>

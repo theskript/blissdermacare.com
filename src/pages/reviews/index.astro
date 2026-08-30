@@ -1,0 +1,156 @@
+---
+export const prerender = false;
+import Layout from '../../layouts/Layout.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
+const [{ data: reviewsData }, { data: servicesData }] = await Promise.all([
+  supabase.from('reviews').select('id,client_name,service_name,rating,review_text,created_at').eq('published', true).order('featured', { ascending: false }).order('sort_order').order('created_at', { ascending: false }),
+  supabase.from('services').select('name').neq('active', false).order('name'),
+]);
+const reviews = reviewsData ?? [];
+const services = servicesData ?? [];
+const average = reviews.length ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length : 0;
+---
+
+<Layout title="Client Reviews | Bliss Dermacare" description="Read verified client experiences and share your review of a Bliss Dermacare treatment.">
+  <section class="border-b border-neutral-100 bg-[#f6f1eb] py-14 md:py-20">
+    <div class="mx-auto max-w-6xl px-6 lg:px-12">
+      <div class="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
+        <div class="max-w-3xl">
+          <span class="mb-4 block text-xs font-semibold uppercase tracking-[0.2em] text-primary-600">Client Experiences</span>
+          <h1 class="mb-4 text-5xl font-serif leading-tight text-neutral-900 md:text-6xl">Real care. Real results.</h1>
+          <p class="max-w-2xl text-lg leading-relaxed text-neutral-600">Every treatment is personal. Read what clients say about their experience, then share yours after your visit.</p>
+        </div>
+        {reviews.length > 0 && (
+          <div class="border-l-2 border-primary-300 pl-5">
+            <div class="text-3xl font-semibold text-neutral-900">{average.toFixed(1)} <span class="text-xl text-amber-500">★★★★★</span></div>
+            <p class="text-sm text-neutral-500">From {reviews.length} published review{reviews.length === 1 ? '' : 's'}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white py-14">
+    <div class="mx-auto max-w-6xl px-6 lg:px-12">
+      {reviews.length > 0 ? (
+        <div class="columns-1 gap-5 md:columns-2 lg:columns-3">
+          {reviews.map((review: any) => (
+            <article class="mb-5 break-inside-avoid rounded-lg border border-neutral-200 bg-[#faf9f7] p-6">
+              <div class="mb-4 text-sm tracking-[0.15em] text-amber-500" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}<span class="text-neutral-300">{'★'.repeat(5 - review.rating)}</span></div>
+              <blockquote class="mb-5 text-base leading-relaxed text-neutral-700">“{review.review_text}”</blockquote>
+              <footer class="border-t border-neutral-200 pt-4">
+                <p class="font-semibold text-neutral-900">{review.client_name}</p>
+                <p class="text-sm text-primary-700">{review.service_name}</p>
+              </footer>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="border-y border-neutral-200 py-12 text-center">
+          <h2 class="text-3xl font-serif text-neutral-900">Be the first to share your experience.</h2>
+          <p class="mt-2 text-neutral-500">Submitted reviews are reviewed before appearing here.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section id="share" class="bg-neutral-900 py-16 text-white">
+    <div class="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-12">
+      <div>
+        <span class="mb-4 block text-xs font-semibold uppercase tracking-[0.2em] text-primary-300">Share Your Experience</span>
+        <h2 class="mb-4 text-4xl font-serif">How did your visit feel?</h2>
+        <p class="leading-relaxed text-neutral-300">Your feedback helps future clients choose with confidence and helps us keep improving. Your email is used only to verify the submission and is never displayed.</p>
+      </div>
+
+      <div class="rounded-lg bg-white p-6 text-neutral-900 md:p-8">
+        <div id="review-success" class="hidden rounded-lg border border-emerald-200 bg-emerald-50 p-5 text-center">
+          <h3 class="font-semibold text-emerald-800">Thank you for sharing.</h3>
+          <p class="mt-1 text-sm text-emerald-700">Your review was submitted for approval.</p>
+        </div>
+        <div id="review-error" class="hidden mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+
+        <form id="review-form" class="space-y-5">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="text-sm font-medium text-neutral-700">Your name
+              <input name="clientName" required maxlength="80" autocomplete="name" class="mt-1.5 w-full rounded-lg border border-neutral-300 px-4 py-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100" />
+            </label>
+            <label class="text-sm font-medium text-neutral-700">Email address
+              <input name="email" type="email" required maxlength="160" autocomplete="email" class="mt-1.5 w-full rounded-lg border border-neutral-300 px-4 py-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100" />
+            </label>
+          </div>
+          <label class="block text-sm font-medium text-neutral-700">Service received
+            <select name="serviceName" required class="mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100">
+              <option value="">Choose a service</option>
+              {services.map((service: any) => <option value={service.name}>{service.name}</option>)}
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <fieldset>
+            <legend class="mb-2 text-sm font-medium text-neutral-700">Your rating</legend>
+            <div class="flex flex-row-reverse justify-end gap-1" id="rating-field">
+              {[5, 4, 3, 2, 1].map(value => (
+                <label class="cursor-pointer text-3xl text-neutral-300 transition-colors hover:text-amber-400 has-[:checked]:text-amber-500" title={`${value} stars`}>
+                  <input class="sr-only" type="radio" name="rating" value={value} required />★
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <label class="block text-sm font-medium text-neutral-700">Your review
+            <textarea name="reviewText" required minlength="20" maxlength="1200" rows="5" placeholder="Tell us about your treatment and experience..." class="mt-1.5 w-full resize-y rounded-lg border border-neutral-300 px-4 py-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"></textarea>
+          </label>
+          <label class="hidden" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+          <label class="flex items-start gap-3 text-sm leading-relaxed text-neutral-600">
+            <input name="consent" type="checkbox" required class="mt-1 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
+            <span>I confirm this reflects my experience and give Bliss Dermacare permission to display my name, rating, service, and review publicly.</span>
+          </label>
+          <button id="review-submit" class="w-full rounded-lg bg-primary-600 px-6 py-3.5 font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60">Submit Review</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const form = document.getElementById('review-form') as HTMLFormElement;
+    const success = document.getElementById('review-success')!;
+    const errorBox = document.getElementById('review-error')!;
+    const submit = document.getElementById('review-submit') as HTMLButtonElement;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorBox.classList.add('hidden');
+      submit.disabled = true;
+      submit.textContent = 'Submitting...';
+      const data = new FormData(form);
+      const response = await fetch('/.netlify/functions/review-submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientName: data.get('clientName'),
+          email: data.get('email'),
+          serviceName: data.get('serviceName'),
+          rating: Number(data.get('rating')),
+          reviewText: data.get('reviewText'),
+          consent: data.get('consent') === 'on',
+          website: data.get('website'),
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (response.ok) {
+        form.classList.add('hidden');
+        success.classList.remove('hidden');
+      } else {
+        errorBox.textContent = result.error || 'Something went wrong. Please try again.';
+        errorBox.classList.remove('hidden');
+        submit.disabled = false;
+        submit.textContent = 'Submit Review';
+      }
+    });
+  </script>
+
+  <style>
+    #rating-field label:has(input:checked),
+    #rating-field label:has(input:checked) ~ label { color: #f59e0b; }
+  </style>
+</Layout>

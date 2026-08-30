@@ -5,21 +5,24 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-const [{ data: svcsData }, { data: partnersData }, { data: contentData }] = await Promise.all([
-  supabase.from('services').select('slug,name,price,tagline,description,image_url,category,is_package,is_membership_plan,featured,active').neq('active', false).order('sort_order', { ascending: true }),
+const [{ data: svcsData }, { data: partnersData }, { data: contentData }, { data: reviewsData }, { data: plansData }] = await Promise.all([
+  supabase.from('services').select('slug,name,price,tagline,description,image_url,category,is_package,featured,active').neq('active', false).order('sort_order', { ascending: true }),
   supabase.from('partners').select('name,url,logo_url,badge_text').eq('featured', true).eq('active', true).order('sort_order', { ascending: true }),
   supabase.from('site_content').select('section_key,value').eq('page_key', 'home'),
+  supabase.from('reviews').select('id,client_name,service_name,rating,review_text').eq('published', true).order('featured', { ascending: false }).order('sort_order').order('created_at', { ascending: false }).limit(3),
+  supabase.from('membership_plans').select('slug,price').neq('active', false),
 ]);
 
 const allSvcs = svcsData ?? [];
 const partners = partnersData ?? [];
+const reviews = reviewsData ?? [];
 
 const sc: Record<string, string> = {};
 for (const r of contentData ?? []) { if (r.value) sc[r.section_key] = r.value; }
 function v(key: string, fallback = '') { return sc[key] ?? fallback; }
 
-const featured = allSvcs.filter((s: any) => s.featured && !s.is_membership_plan);
-const plans = allSvcs.filter((s: any) => s.is_membership_plan);
+const featured = allSvcs.filter((s: any) => s.featured);
+const plans = plansData ?? [];
 const planPx = (slug: string, def: number) => { const p = plans.find((p: any) => p.slug === slug); return p ? Math.round(p.price / 100) : def; };
 const hasPackages = allSvcs.some((s: any) => s.category === 'packages');
 const sprayTan = allSvcs.find((s: any) => s.slug === 'spray-tan');
@@ -417,6 +420,35 @@ function safeUrl(u: string): string {
       </div>
     </div>
   </section>
+
+  {reviews.length > 0 && (
+    <section class="border-y border-neutral-100 bg-white py-16">
+      <div class="mx-auto max-w-6xl px-6 lg:px-12">
+        <div class="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <span class="mb-3 block text-xs font-semibold uppercase tracking-[0.2em] text-primary-600">Client Stories</span>
+            <h2 class="text-4xl font-serif text-neutral-900">Care you can feel.</h2>
+          </div>
+          <a href="/reviews/" class="text-sm font-semibold text-primary-700 hover:text-primary-800">Read all reviews &rarr;</a>
+        </div>
+        <div class="grid gap-5 md:grid-cols-3">
+          {reviews.map((review: any) => (
+            <article class="flex min-h-[260px] flex-col rounded-lg border border-neutral-200 bg-[#faf9f7] p-6">
+              <div class="mb-4 text-sm tracking-[0.15em] text-amber-500" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}<span class="text-neutral-300">{'★'.repeat(5 - review.rating)}</span></div>
+              <blockquote class="flex-1 text-base leading-relaxed text-neutral-700">“{review.review_text}”</blockquote>
+              <footer class="mt-5 border-t border-neutral-200 pt-4">
+                <p class="font-semibold text-neutral-900">{review.client_name}</p>
+                <p class="text-sm text-primary-700">{review.service_name}</p>
+              </footer>
+            </article>
+          ))}
+        </div>
+        <div class="mt-8 text-center">
+          <a href="/reviews/#share" class="inline-flex items-center justify-center rounded-lg border border-neutral-900 px-5 py-3 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white">Share your experience</a>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- CTA Strip -->
   <section class="py-14 bg-[#faf9f7]">

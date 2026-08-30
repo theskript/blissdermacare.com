@@ -13,7 +13,7 @@ const supabase = createClient(
 const [{ data: cats }, { data: services }, { data: planData }] = await Promise.all([
   supabase.from('service_categories').select('id,slug,name,tagline,description,page_url,image_url,active').eq('active', true).order('sort_order', { ascending: true }),
   supabase.from('services').select('category,price').neq('active', false),
-  supabase.from('services').select('slug,price').eq('is_membership_plan', true).neq('active', false),
+  supabase.from('membership_plans').select('slug,price').neq('active', false),
 ]);
 
 const planPrice = (slug: string, def: number) => { const p = (planData ?? []).find((p: any) => p.slug === slug); return p ? Math.round(p.price / 100) : def; };
