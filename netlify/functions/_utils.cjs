@@ -1,5 +1,8 @@
 'use strict';
 
+// load .env in local dev (no-op in production where env vars come from Netlify)
+require('dotenv').config();
+
 /**
  * Shared utilities — JWT, Supabase, Twilio SMS, SendGrid email.
  * Includes Airtable-style ↔ snake_case field translation so admin panel
