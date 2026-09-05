@@ -39,3 +39,6 @@ lerna-debug.log*
 
 # Local Netlify folder
 .netlify
+
+# Downloaded site snapshot
+downloaded_site/
