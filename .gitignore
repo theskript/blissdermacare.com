@@ -42,3 +42,6 @@ lerna-debug.log*
 
 # Downloaded site snapshot
 downloaded_site/
+
+# Local documents
+documents/
