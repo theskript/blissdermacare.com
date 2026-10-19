@@ -7,14 +7,15 @@ import { vendorEvent } from '../../data/vendorEvent';
   title="Application Received – Vendor Applications | Bliss Dermacare"
   description="Your vendor reservation for the Health & Financial Wellness Event has been received."
 >
-  <section class="py-14 border-b bg-emerald-50 border-emerald-100">
+  <section id="vs-hero" class="py-14 border-b bg-amber-50 border-amber-100">
     <div class="max-w-2xl mx-auto px-6 text-center">
-      <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
-        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      <div id="vs-icon" class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-5">
+        <svg id="vs-icon-spin" class="w-8 h-8 text-amber-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+        <svg id="vs-icon-check" class="w-8 h-8 text-emerald-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
       </div>
-      <span class="text-emerald-700 text-xs font-bold uppercase tracking-[0.2em] mb-3 block">Payment Confirmed</span>
-      <h1 class="text-4xl font-serif text-neutral-900 mb-3">Your application is in.</h1>
-      <p class="text-base text-neutral-600 max-w-md mx-auto">Thank you for applying to vend at the Health &amp; Financial Wellness Event. We've emailed you a confirmation and a Stripe receipt.</p>
+      <span id="vs-label" class="text-amber-700 text-xs font-bold uppercase tracking-[0.2em] mb-3 block">Confirming your payment</span>
+      <h1 id="vs-title" class="text-4xl font-serif text-neutral-900 mb-3">Almost done.</h1>
+      <p id="vs-text" class="text-base text-neutral-600 max-w-md mx-auto">We're confirming your payment with Stripe. This usually takes a few seconds.</p>
     </div>
   </section>
 
@@ -75,3 +76,44 @@ import { vendorEvent } from '../../data/vendorEvent';
     </div>
   </section>
 </Layout>
+
+<script>
+  const ENDPOINT = '/.netlify/functions/vendor-application';
+  const el = (id: string) => document.getElementById(id)!;
+  const sid = new URLSearchParams(location.search).get('session_id');
+
+  function show(kind: 'paid' | 'processing' | 'unknown') {
+    const hero = el('vs-hero');
+    const set = (label: string, title: string, text: string) => { el('vs-label').textContent = label; el('vs-title').textContent = title; el('vs-text').textContent = text; };
+    el('vs-icon-spin').classList.toggle('hidden', kind === 'paid' || kind === 'unknown');
+    el('vs-icon-check').classList.toggle('hidden', kind !== 'paid');
+    if (kind === 'paid') {
+      hero.className = 'py-14 border-b bg-emerald-50 border-emerald-100';
+      el('vs-icon').className = 'w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5';
+      el('vs-label').className = 'text-emerald-700 text-xs font-bold uppercase tracking-[0.2em] mb-3 block';
+      set('Payment Confirmed', 'Your application is in.', "Thank you for applying to vend at the Health & Financial Wellness Event. We'll be in touch about your application soon.");
+    } else if (kind === 'processing') {
+      set('Payment processing', 'Your payment is still processing.', "No action needed: your application is saved and is recorded automatically as soon as Stripe confirms the payment. If you haven't heard from us within a day, call (609) 366-0857.");
+    } else {
+      set('Thank you', 'We have your return from checkout.', "If your card was charged, your application is on file and we'll confirm it shortly. Questions? Call or text (609) 366-0857.");
+    }
+  }
+
+  async function check(): Promise<string> {
+    try {
+      const r = await fetch(`${ENDPOINT}?session_id=${encodeURIComponent(sid!)}`, { cache: 'no-store' });
+      return (await r.json()).state || 'unknown';
+    } catch { return 'error'; }
+  }
+
+  (async () => {
+    if (!sid) { show('unknown'); return; }
+    for (let i = 0; i < 8; i++) {
+      const state = await check();
+      if (state === 'paid') { show('paid'); return; }
+      if (state === 'unknown' || state === 'error' || state === 'expired') { show('unknown'); return; }
+      await new Promise(r => setTimeout(r, 2500));
+    }
+    show('processing');
+  })();
+</script>

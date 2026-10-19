@@ -2,13 +2,14 @@
 
 /**
  * GET  /.netlify/functions/vendor-application — availability tier (no exact counts)
+ *      ?session_id=cs_...   — the success page asks "was this paid?"; we ask Stripe and record it (no webhook needed)
  * POST /.netlify/functions/vendor-application — saves the application (unpaid) and
  *      returns a Stripe Checkout URL for the reservation fee. The webhook marks it paid.
  */
 
 const Stripe = require('stripe');
 const { getSupabase } = require('./_utils.cjs');
-const { EVENT, CATEGORIES, countReserved, availabilityTier } = require('./_vendor-event.cjs');
+const { EVENT, CATEGORIES, countReserved, availabilityTier, reconcileVendorSession } = require('./_vendor-event.cjs');
 
 const CORS = {
   'Content-Type':                'application/json',
@@ -32,6 +33,20 @@ exports.handler = async (event) => {
   const sb = getSupabase();
 
   if (event.httpMethod === 'GET') {
+    const sid = (event.queryStringParameters || {}).session_id;
+    if (sid) {
+      if (!/^cs_(live|test)_[A-Za-z0-9]{10,200}$/.test(sid)) return reply(400, { error: 'Invalid session.' });
+      try {
+        const { data: app } = await sb.from('vendor_applications').select('*').eq('stripe_session_id', sid).maybeSingle();
+        if (!app) return reply(200, { state: 'unknown' });
+        if (!process.env.STRIPE_SECRET_KEY) return reply(200, { state: app.payment_status === 'unpaid' ? 'pending' : 'paid' });
+        const { state } = await reconcileVendorSession(sb, Stripe(process.env.STRIPE_SECRET_KEY), app);
+        return reply(200, { state: state === 'skipped' ? 'unknown' : state });
+      } catch (err) {
+        console.error('vendor-application reconcile error:', err);
+        return reply(200, { state: 'error' });
+      }
+    }
     try {
       return reply(200, availabilityTier(await countReserved(sb)));
     } catch (err) {
@@ -42,9 +57,10 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'POST') return reply(405, { error: 'Method not allowed' });
 
-  // Never take money we can't record: the webhook is what marks an application paid.
-  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
-    console.error('Vendor applications disabled: STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET is not configured');
+  // Payments are recorded by the webhook when configured AND by reconciliation (return page + scheduled vendor-reconcile
+  // + admin button), which only need the Stripe key. Without the key we cannot create or verify a payment: fail closed.
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('Vendor applications disabled: STRIPE_SECRET_KEY is not configured');
     return reply(503, { error: 'Vendor applications are temporarily unavailable. Please call (609) 366-0857 and we will take your application by phone.' });
   }
 

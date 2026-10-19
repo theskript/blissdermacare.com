@@ -2,13 +2,13 @@
 
 /**
  * GET    /.netlify/functions/admin-vendors — list applications + capacity
- * PATCH  /.netlify/functions/admin-vendors — read/unread, readAll, or set status (+ optional refund)
+ * PATCH  /.netlify/functions/admin-vendors — read/unread, readAll, {reconcile:true} (ask Stripe about unpaid applications), or set status (+ optional refund)
  * DELETE /.netlify/functions/admin-vendors — delete an unpaid/refunded application
  */
 
 const Stripe = require('stripe');
 const { requireAuth, getSupabase, sendEmail, logAudit, getClientIP } = require('./_utils.cjs');
-const { EVENT, countReserved, vendorApprovedEmail, vendorDeclinedEmail } = require('./_vendor-event.cjs');
+const { EVENT, countReserved, vendorApprovedEmail, vendorDeclinedEmail, reconcilePending } = require('./_vendor-event.cjs');
 
 const CORS = {
   'Content-Type':                'application/json',
@@ -52,7 +52,19 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); } catch { return reply(400, { error: 'Invalid JSON' }); }
 
   if (event.httpMethod === 'PATCH') {
-    const { id, read, readAll, status, refund } = body;
+    const { id, read, readAll, status, refund, reconcile } = body;
+
+    if (reconcile) {
+      if (!process.env.STRIPE_SECRET_KEY) return reply(500, { error: 'STRIPE_SECRET_KEY is not configured' });
+      try {
+        const result = await reconcilePending(sb, Stripe(process.env.STRIPE_SECRET_KEY), { sinceHours: 24 * 14 });
+        audit('Vendor Reconcile', JSON.stringify(result), '');
+        return reply(200, { ok: true, ...result });
+      } catch (err) {
+        console.error('admin-vendors reconcile error:', err);
+        return reply(500, { error: err.message });
+      }
+    }
 
     if (readAll) {
       const { error } = await sb.from('vendor_applications').update({ read_at: new Date().toISOString() }).is('read_at', null);

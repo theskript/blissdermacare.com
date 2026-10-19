@@ -128,7 +128,59 @@ async function handleVendorPayment(sb, session) {
   await Promise.allSettled(results);
 }
 
+// ── Reconciliation: record payments by asking Stripe directly, so recording never depends on the webhook ──────────
+// handleVendorPayment is idempotent (UPDATE ... WHERE payment_status='unpaid'), so webhook + reconcile racing is safe:
+// exactly one of them wins and only the winner sends messages.
+const SESSION_GRACE_MS = 60 * 60 * 1000; // an open checkout younger than this is still in progress: do not search yet
+
+async function findPaidPaymentIntent(stripe, app) {
+  const r = await stripe.paymentIntents.search({ query: `metadata['application_id']:'${app.id}' AND status:'succeeded'`, limit: 1 });
+  return (r && r.data && r.data[0]) || null;
+}
+
+// Returns { state: 'paid' | 'pending' | 'expired' | 'skipped' | 'error' }
+async function reconcileVendorSession(sb, stripe, app) {
+  if (!app) return { state: 'skipped' };
+  if (app.payment_status === 'paid' || app.payment_status === 'refunded') return { state: 'paid' };
+  if (!app.stripe_session_id) return { state: 'skipped' };
+  try {
+    const session = await stripe.checkout.sessions.retrieve(app.stripe_session_id);
+    if (session.payment_status === 'paid' && session.metadata && session.metadata.application_id === app.id) {
+      await handleVendorPayment(sb, session);
+      return { state: 'paid' };
+    }
+    const inProgress = session.status === 'open' && Date.now() - new Date(app.agreed_terms_at).getTime() < SESSION_GRACE_MS;
+    if (inProgress) return { state: 'pending' };
+    // The applicant may have paid an EARLIER checkout (retry = new session). Every PaymentIntent carries application_id.
+    const pi = await findPaidPaymentIntent(stripe, app);
+    if (pi) {
+      await handleVendorPayment(sb, { id: app.stripe_session_id, amount_total: pi.amount_received ?? pi.amount, payment_intent: pi.id, metadata: { type: 'vendor_application', application_id: app.id } });
+      return { state: 'paid' };
+    }
+    return { state: session.status === 'expired' ? 'expired' : 'pending' };
+  } catch (err) {
+    console.warn(`Vendor reconcile failed for ${app.id}:`, err.message);
+    return { state: 'error' };
+  }
+}
+
+// Checks every recently-submitted unpaid application that has a Stripe session. Used by the scheduled job and the admin button.
+async function reconcilePending(sb, stripe, { sinceHours = 72, limit = 50 } = {}) {
+  const since = new Date(Date.now() - sinceHours * 3600 * 1000).toISOString();
+  const { data, error } = await sb.from('vendor_applications').select('*')
+    .eq('event_slug', EVENT.slug).eq('payment_status', 'unpaid').not('stripe_session_id', 'is', null)
+    .gte('agreed_terms_at', since).order('agreed_terms_at', { ascending: false }).limit(limit);
+  if (error) throw new Error(error.message);
+  const out = { checked: (data || []).length, recorded: 0, pending: 0, expired: 0, errors: 0 };
+  for (const app of data || []) {
+    const { state } = await reconcileVendorSession(sb, stripe, app);
+    if (state === 'paid') out.recorded++; else if (state === 'pending') out.pending++; else if (state === 'expired') out.expired++; else if (state === 'error') out.errors++;
+  }
+  return out;
+}
+
 module.exports = {
   EVENT, CATEGORIES, SAMPLE_POLICY, esc, countReserved, availabilityTier,
   vendorApprovedEmail, vendorDeclinedEmail, handleVendorPayment,
+  reconcileVendorSession, reconcilePending,
 };

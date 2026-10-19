@@ -15,6 +15,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           class="hidden px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
           ✓ Mark All as Read
         </button>
+        <button id="va-reconcile-btn"
+          class="px-4 py-2.5 bg-white border border-neutral-200 hover:border-neutral-300 disabled:opacity-50 text-neutral-700 text-sm font-medium rounded-xl transition-colors"
+          title="Asks Stripe whether any unpaid application was actually paid, and records it">
+          Re-check payments with Stripe
+        </button>
         <a href="/vendors/" target="_blank"
           class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-700 text-sm font-medium rounded-xl transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,6 +239,17 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     $('va-mark-all-btn').addEventListener('click', async () => {
       if (!confirm('Mark all applications as read?')) return;
       try { await apiFetch('admin-vendors', { method: 'PATCH', body: { readAll: true } }); await load(); } catch (err: any) { alert(err.message); }
+    });
+
+    $('va-reconcile-btn').addEventListener('click', async () => {
+      const btn = $('va-reconcile-btn') as HTMLButtonElement;
+      btn.disabled = true; btn.textContent = 'Checking Stripe…';
+      try {
+        const r = await apiFetch('admin-vendors', { method: 'PATCH', body: { reconcile: true } });
+        alert(`Checked ${r.checked} unpaid application${r.checked !== 1 ? 's' : ''}.\nNewly recorded as paid: ${r.recorded}\nStill in checkout: ${r.pending}\nExpired (never paid): ${r.expired}${r.errors ? `\nCould not check: ${r.errors}` : ''}`);
+        await load();
+      } catch (err: any) { alert(err.message); }
+      btn.disabled = false; btn.textContent = 'Re-check payments with Stripe';
     });
 
     $('va-status-filter').addEventListener('change', load);
