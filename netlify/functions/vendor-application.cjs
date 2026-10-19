@@ -124,7 +124,9 @@ exports.handler = async (event) => {
 
     const siteUrl = (process.env.URL || 'https://blissdermacare.com').replace(/\/$/, '');
     const metadata = { type: 'vendor_application', application_id: appId, event: EVENT.slug };
-    const description = `${EVENT.name} vendor reservation — ${record.business_name}`.slice(0, 200);
+    // Stripe objects (products, descriptions) cannot be edited or deleted later, so they carry NO applicant data (no business/contact name).
+    // Traceability is the opaque application_id in metadata; the applicant's email goes only in customer_email (receipt).
+    const description = `${EVENT.name} vendor reservation`;
 
     const session = await Stripe(process.env.STRIPE_SECRET_KEY).checkout.sessions.create({
       payment_method_types: ['card'],
@@ -133,7 +135,7 @@ exports.handler = async (event) => {
       line_items: [{
         price_data: {
           currency: 'usd',
-          product_data: { name: `Vendor Reservation — ${EVENT.name}`, description: `${EVENT.dateLabel}, ${EVENT.timeLabel} · ${record.business_name}`.slice(0, 300) },
+          product_data: { name: `Vendor Reservation — ${EVENT.name}`, description: `${EVENT.dateLabel}, ${EVENT.timeLabel}` },
           unit_amount: EVENT.feeCents,
         },
         quantity: 1,
