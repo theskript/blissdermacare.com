@@ -1,0 +1,331 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { vendorEvent } from '../../data/vendorEvent';
+
+const event = vendorEvent;
+
+const categories = ['Health & Wellness', 'Financial Services', 'Beauty & Skincare', 'Food & Beverage', 'Nonprofit / Community', 'Other'];
+
+const why = [
+  { title: 'A Focused Audience', body: 'Guests come for one thing: improving their health and their finances. Your business is in front of people already thinking about both.', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+  { title: 'A Curated Lineup', body: 'A small, hand-picked group of vendors means real conversations and no getting lost in a crowd of booths.', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+  { title: 'Hosted at Bliss Dermacare', body: 'A welcoming, professional Tampa studio setting that makes a great first impression for you and your brand.', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z' },
+];
+
+const steps = [
+  { title: 'Apply', body: 'Tell us about your business and what you’d like to share with attendees.' },
+  { title: 'Reserve with $25', body: 'Pay the reservation fee securely through Stripe to submit your application.' },
+  { title: 'We confirm', body: 'We review every application and email you a decision. Not selected? You’re refunded in full.' },
+];
+
+const faqs = [
+  { q: 'What does the $25 cover?', a: `The $25 is a reservation fee that submits your application for one of a limited number of vendor spots. It's charged securely by Stripe when you submit the form.` },
+  { q: 'When will I hear back?', a: 'We review applications as they come in and email you as soon as a decision is made. Check your spam folder if you don’t see us.' },
+  { q: 'Can I get a refund?', a: 'Yes — if we’re unable to offer you a space, or if we cancel the event, your $25 is refunded in full to your original payment method. Once you’ve been approved, the fee is non-refundable if you choose to withdraw.' },
+  { q: 'What items can I bring?', a: `${event.samplePolicy} This keeps the event welcoming and easy to browse. Setup and load-in details are emailed after approval.` },
+  { q: 'Do I need licenses or insurance?', a: 'You’re responsible for any licenses, permits, or insurance your products or services require. Health and financial professionals should include their license or registration details in the application.' },
+  { q: 'Who do I contact with questions?', a: 'Call or text (609) 366-0857, or use our contact page — we’re happy to help before you apply.' },
+];
+
+const input = 'w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm';
+---
+
+<Layout
+  title="Vendor Applications – Health & Financial Wellness Event | Bliss Dermacare"
+  description="Apply to be a vendor at the Health & Financial Wellness Event on Friday, November 6, 2026 at Bliss Dermacare in Tampa, FL. Limited vendor spots — reserve yours for $25."
+>
+
+  <!-- Hero -->
+  <section class="py-14 bg-[#faf9f7] border-b border-neutral-100">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 block">Vendor Applications</span>
+      <h1 class="text-5xl font-serif text-neutral-900 mb-4">{event.name}</h1>
+      <p class="text-lg text-neutral-600 max-w-2xl mx-auto">Share your health or financial wellness business with the Tampa community. Apply to vend and reserve your spot for just ${event.fee}.</p>
+
+      <div class="mt-8 grid sm:grid-cols-3 gap-3 text-left">
+        <div class="bg-white rounded-2xl border border-neutral-200 p-4 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div><p class="text-xs font-bold uppercase tracking-wide text-neutral-400">Date</p><p class="text-sm font-semibold text-neutral-900">{event.date}</p></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-neutral-200 p-4 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div><p class="text-xs font-bold uppercase tracking-wide text-neutral-400">Time</p><p class="text-sm font-semibold text-neutral-900">{event.time}</p></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-neutral-200 p-4 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div><p class="text-xs font-bold uppercase tracking-wide text-neutral-400">Location</p><p class="text-sm font-semibold text-neutral-900">{event.location}</p><p class="text-xs text-neutral-500">{event.address}</p></div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#apply" class="inline-flex items-center gap-2 bg-primary-600 text-white px-7 py-3 rounded-full hover:bg-primary-700 transition-all font-semibold shadow-sm hover:shadow-md">
+          Apply to Vend — ${event.fee}
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+        <span id="spots-badge" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-4 py-2 rounded-full">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="spots-text">Limited vendor spots available</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why vend -->
+  <section class="py-14 bg-white">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Why Vend With Us</span>
+        <h2 class="text-4xl font-serif text-neutral-900">Meet the people you want to reach.</h2>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-6">
+        {why.map(item => (
+          <div class="text-center p-6">
+            <div class="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={item.icon}/></svg>
+            </div>
+            <h3 class="font-serif text-lg text-neutral-900 mb-2">{item.title}</h3>
+            <p class="text-sm text-neutral-600 leading-relaxed">{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="py-14 bg-[#faf9f7] border-y border-neutral-100">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">How It Works</span>
+        <h2 class="text-4xl font-serif text-neutral-900">Three simple steps.</h2>
+      </div>
+      <ol class="grid sm:grid-cols-3 gap-6">
+        {steps.map((s, i) => (
+          <li class="bg-white rounded-2xl border border-neutral-200 p-6">
+            <div class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center mb-4">{i + 1}</div>
+            <h3 class="font-serif text-lg text-neutral-900 mb-1">{s.title}</h3>
+            <p class="text-sm text-neutral-600 leading-relaxed">{s.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Application -->
+  <section id="apply" class="py-14 bg-white scroll-mt-20">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid lg:grid-cols-5 gap-12">
+
+        <!-- Left: context -->
+        <div class="lg:col-span-2 space-y-6 lg:sticky lg:top-28 lg:self-start">
+          <div>
+            <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Apply Now</span>
+            <h2 class="text-4xl font-serif text-neutral-900 leading-tight">Reserve your vendor spot.</h2>
+          </div>
+          <p class="text-neutral-600 leading-relaxed">Complete the application and pay the ${event.fee} reservation fee to submit it. Vendor spots are limited and filling up.</p>
+
+          <div class="bg-primary-50 border border-primary-100 rounded-2xl p-6 space-y-3">
+            <h3 class="font-semibold text-neutral-900 text-sm">Reservation fee: ${event.fee}</h3>
+            <ul class="space-y-2 text-sm text-neutral-600">
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Paid securely online with Stripe</li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span><strong>Refunded in full</strong> if we can't offer you a space or the event is cancelled</span></li>
+              <li class="flex items-start gap-2"><svg class="w-4 h-4 text-primary-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Non-refundable if you withdraw after approval</li>
+            </ul>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-2">
+            <h3 class="font-semibold text-neutral-900 text-sm flex items-center gap-2">
+              <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              Sample-size items only
+            </h3>
+            <p class="text-sm text-neutral-700 leading-relaxed">Trial/travel sizes, single-use packets, or small tasting portions. Full-size products are not permitted at vendor tables.</p>
+          </div>
+
+          <div class="text-sm text-neutral-500">
+            Questions before applying? <a href="/contact/" class="text-primary-600 hover:text-primary-700 font-medium transition-colors">Reach out directly</a> or call <a href="tel:+16093660857" class="text-primary-600 hover:text-primary-700 font-medium">(609) 366-0857</a>.
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div class="lg:col-span-3">
+
+          <div id="vendor-cancelled" class="hidden mb-5 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+            <p class="text-sm text-amber-800 text-center">Payment wasn't completed and you haven't been charged. Submit the form again to finish reserving your spot.</p>
+          </div>
+
+          <div id="vendor-full" class="hidden p-6 bg-neutral-50 border border-neutral-200 rounded-2xl text-center">
+            <h3 class="text-lg font-serif text-neutral-900 mb-1">All vendor spots are reserved</h3>
+            <p class="text-sm text-neutral-600">Call or text <a href="tel:+16093660857" class="text-primary-600 font-medium">(609) 366-0857</a> to join the waitlist.</p>
+          </div>
+
+          <form id="vendor-form" class="space-y-5" novalidate>
+            <div id="vendor-error" class="hidden p-4 bg-red-50 border border-red-200 rounded-2xl">
+              <p id="vendor-error-msg" class="text-sm text-red-700 text-center">Something went wrong. Please try again.</p>
+            </div>
+
+            <!-- Honeypot -->
+            <div class="absolute -left-[9999px]" aria-hidden="true">
+              <label>Leave blank<input type="text" name="hp" tabindex="-1" autocomplete="off" /></label>
+            </div>
+
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400">Your Business</p>
+
+            <div>
+              <label for="vBusiness" class="block text-sm font-medium text-neutral-700 mb-1.5">Business / Organization Name *</label>
+              <input type="text" id="vBusiness" name="business_name" required maxlength="150" class={input} />
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label for="vContact" class="block text-sm font-medium text-neutral-700 mb-1.5">Contact Name *</label>
+                <input type="text" id="vContact" name="contact_name" required maxlength="100" autocomplete="name" class={input} />
+              </div>
+              <div>
+                <label for="vPhone" class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number *</label>
+                <input type="tel" id="vPhone" name="phone" required maxlength="30" autocomplete="tel" placeholder="(555) 000-0000" class={input} />
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label for="vEmail" class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address *</label>
+                <input type="email" id="vEmail" name="email" required maxlength="200" autocomplete="email" class={input} />
+              </div>
+              <div>
+                <label for="vWebsite" class="block text-sm font-medium text-neutral-700 mb-1.5">Website or Social <span class="text-neutral-400 font-normal">(optional)</span></label>
+                <input type="text" id="vWebsite" name="website" maxlength="300" placeholder="yourbusiness.com or @handle" class={input} />
+              </div>
+            </div>
+
+            <div>
+              <label for="vCategory" class="block text-sm font-medium text-neutral-700 mb-1.5">Vendor Category *</label>
+              <select id="vCategory" name="category" required class={`${input} bg-white`}>
+                <option value="">Select a category...</option>
+                {categories.map(c => <option value={c}>{c}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label for="vDescription" class="block text-sm font-medium text-neutral-700 mb-1.5">What will you offer or showcase? *</label>
+              <textarea id="vDescription" name="description" required rows="4" maxlength="1500"
+                placeholder="Describe the sample-size products or services you’ll share and what attendees can expect at your table."
+                class={`${input} resize-none`}></textarea>
+            </div>
+
+            <div>
+              <label for="vLicense" class="block text-sm font-medium text-neutral-700 mb-1.5">License / Registration Details <span class="text-neutral-400 font-normal">(if applicable)</span></label>
+              <input type="text" id="vLicense" name="license_info" maxlength="300" placeholder="e.g. FL license # or registration (health & financial professionals)" class={input} />
+            </div>
+
+            <div>
+              <label for="vSpecial" class="block text-sm font-medium text-neutral-700 mb-1.5">Anything else we should know? <span class="text-neutral-400 font-normal">(optional)</span></label>
+              <textarea id="vSpecial" name="special_requests" rows="2" maxlength="500" class={`${input} resize-none`}></textarea>
+            </div>
+
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 pt-2">Agreement</p>
+
+            <label class="flex items-start gap-3 text-sm text-neutral-600 leading-relaxed cursor-pointer">
+              <input type="checkbox" id="vSamples" name="agree_samples" required class="w-4 h-4 mt-1 rounded border-neutral-300 accent-primary-600 shrink-0" />
+              <span>I confirm I will only bring and offer <strong>sample-size items</strong> (trial/travel sizes, single-use packets, or small tasting portions). No full-size products. *</span>
+            </label>
+
+            <label class="flex items-start gap-3 text-sm text-neutral-600 leading-relaxed cursor-pointer">
+              <input type="checkbox" id="vAgree" name="agree" required class="w-4 h-4 mt-1 rounded border-neutral-300 accent-primary-600 shrink-0" />
+              <span>I understand the ${event.fee} reservation fee is refunded in full if Bliss Dermacare can't offer me a space or cancels the event, and is non-refundable if I withdraw after approval. I'm responsible for any licenses, permits, or insurance my products or services require, and I'll follow the event guidelines provided. *</span>
+            </label>
+
+            <button type="submit"
+              class="w-full bg-primary-600 text-white py-4 px-6 rounded-xl hover:bg-primary-700 disabled:opacity-60 transition-all font-semibold text-base shadow-sm hover:shadow-md">
+              Continue to Payment — ${event.fee}
+            </button>
+
+            <p class="text-xs text-neutral-500 text-center flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              You'll be redirected to Stripe's secure checkout. We never see your card details.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-14 bg-[#faf9f7] border-t border-neutral-100">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-primary-600 uppercase tracking-[0.2em] text-xs font-semibold mb-3 block">Vendor FAQ</span>
+        <h2 class="text-4xl font-serif text-neutral-900">Good to know.</h2>
+      </div>
+      <div class="space-y-3">
+        {faqs.map(f => (
+          <details class="group bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+            <summary class="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none font-medium text-neutral-900 text-sm hover:bg-neutral-50 transition-colors">
+              {f.q}
+              <svg class="w-4 h-4 text-neutral-400 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <p class="px-6 pb-5 pt-1 text-sm text-neutral-600 leading-relaxed">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  const ENDPOINT = '/.netlify/functions/vendor-application';
+  const form      = document.getElementById('vendor-form')       as HTMLFormElement | null;
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+  const errorEl   = document.getElementById('vendor-error')      as HTMLElement | null;
+  const errorMsg  = document.getElementById('vendor-error-msg')  as HTMLElement | null;
+  const BTN_LABEL = submitBtn?.textContent?.trim() || 'Continue to Payment';
+
+  if (new URLSearchParams(location.search).get('payment') === 'cancelled') {
+    document.getElementById('vendor-cancelled')?.classList.remove('hidden');
+  }
+
+  // Availability tier (no exact counts)
+  fetch(ENDPOINT).then(r => r.json()).then(d => {
+    if (!d.tier) return;
+    if (!d.open) {
+      form?.classList.add('hidden');
+      document.getElementById('vendor-full')?.classList.remove('hidden');
+    }
+    const text = document.getElementById('spots-text');
+    if (text) text.textContent = d.label;
+  }).catch(() => {});
+
+  function showError(msg: string) {
+    if (errorMsg) errorMsg.textContent = msg;
+    errorEl?.classList.remove('hidden');
+    errorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = BTN_LABEL; }
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl?.classList.add('hidden');
+    if (!form.reportValidity()) return;
+
+    const fd = new FormData(form);
+    const body: Record<string, string | boolean> = {};
+    for (const [k, v] of fd.entries()) body[k] = v as string;
+    for (const k of ['agree', 'agree_samples']) body[k] = fd.has(k);
+
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Redirecting to secure checkout…'; }
+
+    try {
+      const res  = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const json = await res.json();
+      if (!res.ok || !json.url) throw new Error(json.error || 'Submission failed');
+      window.location.href = json.url;
+    } catch (err: any) {
+      showError(err.message || 'Something went wrong. Please try again.');
+    }
+  });
+</script>

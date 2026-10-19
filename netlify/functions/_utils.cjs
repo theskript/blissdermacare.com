@@ -369,6 +369,15 @@ async function getNotificationSettings() {
   };
 }
 
+// Alerts every owner phone/email. Never throws; callers treat notification failure as non-fatal.
+async function notifyOwners(subject, text) {
+  const ns = await getNotificationSettings();
+  const escaped = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const sends = ns.ownerPhones.map(ph => sendSMS(ph, String(text).substring(0, 1600)));
+  if (ns.ownerEmails.length) sends.push(sendEmail({ to: ns.ownerEmails, subject, html: `<p>${escaped.replace(/\n/g, '<br>')}</p>`, text }));
+  await Promise.allSettled(sends);
+}
+
 module.exports = {
   getSupabase,
   apptFromDB, apptToDB,
@@ -379,5 +388,5 @@ module.exports = {
   sendSMS, sendEmail,
   logAudit, getClientIP,
   toDateStr, formatTime, timeToMinutes, etOffsetHours,
-  getNotificationSettings,
+  getNotificationSettings, notifyOwners,
 };

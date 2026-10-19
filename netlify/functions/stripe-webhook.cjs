@@ -2,6 +2,7 @@
 
 const Stripe = require('stripe');
 const { getSupabase, sendEmail, sendSMS, getNotificationSettings } = require('./_utils.cjs');
+const { handleVendorPayment } = require('./_vendor-event.cjs');
 
 const PLAN_LABELS = {
   'glow-ritual':   'The Glow Ritual',
@@ -34,6 +35,17 @@ exports.handler = async (event) => {
   // ── checkout.session.completed ────────────────────────────────────────────
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
+
+    // Vendor application reservation fee
+    if (session.metadata && session.metadata.type === 'vendor_application') {
+      try {
+        await handleVendorPayment(sb, session);
+      } catch (err) {
+        console.error('Vendor payment processing error:', err.message);
+        return { statusCode: 500, body: 'Processing failed' };
+      }
+      return { statusCode: 200, body: JSON.stringify({ received: true }) };
+    }
 
     // One-time appointment payment
     if (session.mode === 'payment') {

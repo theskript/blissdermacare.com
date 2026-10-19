@@ -1,13 +1,13 @@
 ---
 export interface Props {
   title: string;
-  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'reviews' | 'system' | 'demo-models' | 'careers' | 'consultations' | 'services' | 'categories' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content' | 'analytics';
+  activeNav?: 'dashboard' | 'calendar' | 'appointments' | 'pre-service-forms' | 'clients' | 'new-appointment' | 'staff' | 'audit' | 'availability' | 'notifications' | 'partners' | 'reviews' | 'system' | 'demo-models' | 'careers' | 'vendors' | 'consultations' | 'services' | 'categories' | 'membership-plans' | 'promo-codes' | 'marketing' | 'page-builder' | 'site-content' | 'analytics';
 }
 const { title, activeNav } = Astro.props;
 
 const GROUP_MAP: Record<string, string> = {
   dashboard: 'dash', calendar: 'schedule', appointments: 'schedule', 'new-appointment': 'schedule',
-  clients: 'people', 'pre-service-forms': 'people', consultations: 'people', 'demo-models': 'people', careers: 'people',
+  clients: 'people', 'pre-service-forms': 'people', consultations: 'people', 'demo-models': 'people', careers: 'people', vendors: 'people',
   services: 'catalog', categories: 'catalog', 'membership-plans': 'catalog', 'promo-codes': 'catalog',
   'site-content': 'website', 'page-builder': 'website', partners: 'website', reviews: 'website',
   marketing: 'mktg', analytics: 'mktg',
@@ -185,6 +185,7 @@ const g = (gid: string) => {
             <a href="/admin/consultations" class={a('consultations')}>Consultations</a>
             <a href="/admin/demo-models" class={a('demo-models')}>Demo Models</a>
             <a href="/admin/careers" class={a('careers')}>Careers</a>
+            <a href="/admin/vendors" class={a('vendors')}>Vendors</a>
           </div>
         </div>
 
@@ -304,6 +305,7 @@ const g = (gid: string) => {
           <a href="/admin/consultations" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Consultations</a>
           <a href="/admin/demo-models" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Demo Models</a>
           <a href="/admin/careers" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Careers</a>
+          <a href="/admin/vendors" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 hover:text-white hover:bg-white/[0.06]">Vendors</a>
           <a href="/admin/new-appointment" class="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-primary-600/80 text-white mt-1">+ New Appointment</a>
           <div class="mobile-owner-only hidden">
             <div class="h-px bg-white/[0.07] mx-1 my-2"></div>

@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { vendorEvent } from '../../data/vendorEvent';
+---
+
+<Layout
+  title="Application Received – Vendor Applications | Bliss Dermacare"
+  description="Your vendor reservation for the Health & Financial Wellness Event has been received."
+>
+  <section class="py-14 border-b bg-emerald-50 border-emerald-100">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="text-emerald-700 text-xs font-bold uppercase tracking-[0.2em] mb-3 block">Payment Confirmed</span>
+      <h1 class="text-4xl font-serif text-neutral-900 mb-3">Your application is in.</h1>
+      <p class="text-base text-neutral-600 max-w-md mx-auto">Thank you for applying to vend at the Health &amp; Financial Wellness Event. We've emailed you a confirmation and a Stripe receipt.</p>
+    </div>
+  </section>
+
+  <section class="py-12 bg-white">
+    <div class="max-w-2xl mx-auto px-6 space-y-4">
+
+      <div class="rounded-2xl border border-neutral-200 bg-[#fafaf8] p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-4">What Happens Next</p>
+        <ol class="space-y-4">
+          <li class="flex gap-4">
+            <div class="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</div>
+            <div>
+              <p class="font-semibold text-neutral-900 text-sm">We review your application</p>
+              <p class="text-xs text-neutral-500 mt-0.5">We review applications as they come in and will email you with a decision. Check your spam folder if you don't see us.</p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <div class="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</div>
+            <div>
+              <p class="font-semibold text-neutral-900 text-sm">Spot confirmed — or refunded</p>
+              <p class="text-xs text-neutral-500 mt-0.5">If we can't offer you a space, your $25 reservation fee is refunded in full.</p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <div class="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</div>
+            <div>
+              <p class="font-semibold text-neutral-900 text-sm">Setup details</p>
+              <p class="text-xs text-neutral-500 mt-0.5">Approved vendors receive setup and load-in information by email before the event.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="rounded-2xl border border-neutral-200 p-5 flex gap-4">
+        <div class="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <div>
+          <p class="font-semibold text-neutral-900 text-sm mb-1">{vendorEvent.date} · {vendorEvent.time}</p>
+          <p class="text-sm text-neutral-600 leading-relaxed">{vendorEvent.location} · {vendorEvent.address}</p>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border-2 border-amber-200 bg-amber-50 p-5 flex gap-4">
+        <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </div>
+        <div>
+          <p class="font-semibold text-neutral-900 text-sm mb-1">Sample-size items only</p>
+          <p class="text-sm text-neutral-600 leading-relaxed">{vendorEvent.samplePolicy}</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-neutral-500 text-center pt-2">
+        Questions? Call or text <a href="tel:+16093660857" class="text-primary-600 hover:text-primary-700 font-medium">(609) 366-0857</a> ·
+        <a href="/" class="text-primary-600 hover:text-primary-700 font-medium">Back to Home</a>
+      </p>
+    </div>
+  </section>
+</Layout>

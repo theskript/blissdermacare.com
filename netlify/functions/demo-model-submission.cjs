@@ -5,7 +5,7 @@
  * Saves a demo model application to Supabase.
  */
 
-const { getSupabase, sendSMS, sendEmail, getNotificationSettings } = require('./_utils.cjs');
+const { getSupabase, notifyOwners } = require('./_utils.cjs');
 
 const CORS = {
   'Content-Type':                'application/json',
@@ -59,12 +59,8 @@ exports.handler = async (event) => {
 
     // Owner notification (non-fatal)
     try {
-      const ns = await getNotificationSettings();
       const bodyText = `🎯 Demo Model Application\n${record.name}\n📱 ${record.phone}\n✉️ ${record.email}\nSkin: ${record.skin_type || '—'} · Concern: ${record.skin_concern || '—'}`;
-      if (ns.sms_enabled && ns.owner_phone) await sendSMS(ns.owner_phone, bodyText);
-      if (ns.email_enabled && ns.owner_email) {
-        await sendEmail(ns.owner_email, 'New Demo Model Application — Bliss Dermacare', `<p>${bodyText.replace(/\n/g, '<br>')}</p>`);
-      }
+      await notifyOwners('New Demo Model Application — Bliss Dermacare', bodyText);
     } catch (notifErr) {
       console.warn('Demo model notification failed (non-fatal):', notifErr.message);
     }

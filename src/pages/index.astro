@@ -1,6 +1,7 @@
 ---
 export const prerender = false;
 import Layout from '../layouts/Layout.astro';
+import { vendorEvent } from '../data/vendorEvent';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(import.meta.env.SUPABASE_URL!, import.meta.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -27,6 +28,9 @@ const planPx = (slug: string, def: number) => { const p = plans.find((p: any) =>
 const hasPackages = allSvcs.some((s: any) => s.category === 'packages');
 const sprayTan = allSvcs.find((s: any) => s.slug === 'spray-tan');
 const sprayTanPrice = sprayTan ? Math.round((sprayTan as any).price / 100) : 35;
+
+// Feature auto-hides once the event is over
+const showVendorEvent = Date.now() < new Date(vendorEvent.endsAt).getTime();
 
 function safeUrl(u: string): string {
   try { const x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? u : '#'; } catch { return '#'; }
@@ -84,6 +88,52 @@ function safeUrl(u: string): string {
       </div>
     </div>
   </section>
+
+  <!-- Featured Event: vendor applications -->
+  {showVendorEvent && (
+    <section id="featured-event" class="relative overflow-hidden bg-neutral-900 text-white">
+      <div class="absolute inset-0 bg-gradient-to-br from-primary-900/80 via-neutral-900 to-neutral-900" aria-hidden="true"></div>
+      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary-500/20 blur-3xl" aria-hidden="true"></div>
+      <div class="relative max-w-6xl mx-auto px-6 lg:px-12 py-14 md:py-16">
+        <div class="grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
+          <div>
+            <span class="inline-flex items-center gap-2 mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-primary-300">
+              <span class="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></span>
+              Featured Event · Vendor Applications Open
+            </span>
+            <h2 class="text-4xl lg:text-5xl font-serif leading-[1.1] mb-4">{vendorEvent.name}</h2>
+            <p class="text-lg text-neutral-300 leading-relaxed max-w-2xl mb-6">
+              A morning of health and financial wellness right here at Bliss Dermacare. Run a health, wellness, or financial business? Apply to vend and put your sample-size offerings in front of the Tampa community.
+            </p>
+            <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-neutral-200 mb-8">
+              <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>{vendorEvent.date}</span>
+              <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{vendorEvent.time}</span>
+              <span class="inline-flex items-center gap-2"><svg class="w-4 h-4 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>{vendorEvent.location} · Tampa, FL</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+              <a href="/vendors/" class="group inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-7 py-3.5 rounded-full font-semibold transition-colors shadow-lg shadow-primary-900/30">
+                Apply to Vend — ${vendorEvent.fee}
+                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+              <span id="home-spots-badge" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-200 bg-amber-400/10 border border-amber-300/30 px-4 py-2 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="home-spots-text">Limited vendor spots available</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 space-y-4">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400">Good to know</p>
+            <ul class="space-y-3 text-sm text-neutral-200">
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-primary-300 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>${vendorEvent.fee} reservation fee, paid securely by Stripe</li>
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-primary-300 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Refunded in full if we can't offer you a space</li>
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-primary-300 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Sample-size items only — no full-size products</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- Booking Process -->
   <section class="py-14 bg-[#faf9f7]">
@@ -530,3 +580,14 @@ function safeUrl(u: string): string {
 
 
 </Layout>
+
+<script>
+  fetch('/.netlify/functions/vendor-application').then(r => r.json()).then(d => {
+    const el = document.getElementById('home-spots-text');
+    if (el && d.label) el.textContent = d.label;
+    if (d.open === false) {
+      const cta = document.querySelector('#featured-event a[href="/vendors/"]');
+      if (cta) cta.textContent = 'Join the waitlist';
+    }
+  }).catch(() => {});
+</script>

@@ -102,6 +102,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 Consults
                 <span id="tab-badge-consult" class="hidden text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full"></span>
               </button>
+              <button class="sub-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors text-neutral-500 hover:text-neutral-800" data-tab="vendors">
+                Vendors
+                <span id="tab-badge-vendors" class="hidden text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full"></span>
+              </button>
             </div>
           </div>
 
@@ -116,6 +120,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
           <div id="tab-panel-consult" class="tab-panel hidden flex-1 divide-y divide-neutral-50 overflow-y-auto" style="max-height:580px">
+            <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
+          </div>
+          <div id="tab-panel-vendors" class="tab-panel hidden flex-1 divide-y divide-neutral-50 overflow-y-auto" style="max-height:580px">
             <div class="px-5 py-8 text-center text-neutral-400 text-sm">Loading…</div>
           </div>
 
@@ -243,12 +250,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     // ── Submission row (all form types) ───────────────────────────────────────
     function submissionRow(record: any, type: string, endpoint: string, dotColor: string) {
       const isUnread = !record.read_at;
-      const name = esc(record.name || '—');
+      const name = esc(record.name || record.business_name || '—');
       const sub =
         type === 'psf'    ? esc((record.service_requested || '').substring(0, 50)) :
         type === 'demo'   ? esc((record.skin_concern || record.skin_type || '').substring(0, 50)) :
         type === 'career' ? esc((record.role || '').substring(0, 50)) :
-                            esc((record.concerns || '').substring(0, 50));
+        type === 'vendor' ? esc((record.category || '').substring(0, 50)) :
+                            esc([].concat(record.concerns || []).join(', ').substring(0, 50));
       const ta = timeAgo(record.created_at);
       const dotCls = isUnread ? dotColor : 'bg-neutral-200';
       const btnCls = isUnread ? 'text-neutral-500 hover:bg-neutral-100' : 'text-neutral-300 hover:bg-neutral-50';
@@ -464,7 +472,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       const [
         todayData, weekData, pendingData,
-        psfData, demoData, careerData, consultData,
+        psfData, demoData, careerData, consultData, vendorData,
         monthData,
       ] = await Promise.all([
         apiFetch('admin-appointments', { params: { date: today } }),
@@ -474,6 +482,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         apiFetch('admin-demo-models',    { params: { unread: 'true', limit: '20' } }).catch(() => null),
         apiFetch('admin-careers',        { params: { unread: 'true', limit: '20' } }).catch(() => null),
         apiFetch('admin-consultations',  { params: { unread: 'true', limit: '20' } }).catch(() => null),
+        apiFetch('admin-vendors',        { params: { unread: 'true', paid: 'true' } }).catch(() => null),
         role === 'owner'
           ? apiFetch('admin-appointments', { params: { startDate: monthStart, endDate: today } }).catch(() => null)
           : Promise.resolve(null),
@@ -486,9 +495,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const unreadDemos = demoData?.records    || [];
       const unreadJobs  = careerData?.records  || [];
       const unreadCons  = consultData?.records || [];
+      const unreadVendors = vendorData?.records || [];
       const monthRecs   = monthData?.records   || [];
 
-      const totalUnread = unreadPSFs.length + unreadDemos.length + unreadJobs.length + unreadCons.length;
+      const totalUnread = unreadPSFs.length + unreadDemos.length + unreadJobs.length + unreadCons.length + unreadVendors.length;
 
       // ── Stats ───────────────────────────────────────────────────────────────
       const monthRevenue = role === 'owner'
@@ -565,6 +575,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       setBadge('tab-badge-demo',    unreadDemos.length);
       setBadge('tab-badge-careers', unreadJobs.length);
       setBadge('tab-badge-consult', unreadCons.length);
+      setBadge('tab-badge-vendors', unreadVendors.length);
 
       function renderTab(panelId: string, records: any[], type: string, endpoint: string, dotColor: string, emptyMsg: string) {
         const panel = document.getElementById(panelId)!;
@@ -578,6 +589,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       renderTab('tab-panel-demo',    unreadDemos, 'demo',   'admin-demo-models',        'bg-rose-500',   'No unread demo model applications.');
       renderTab('tab-panel-careers', unreadJobs,  'career', 'admin-careers',            'bg-blue-500',   'No unread career applications.');
       renderTab('tab-panel-consult', unreadCons,  'consult','admin-consultations',       'bg-emerald-500','No unread consultation requests.');
+      renderTab('tab-panel-vendors', unreadVendors, 'vendor', 'admin-vendors',           'bg-amber-500',  'No unread vendor applications.');
 
       // ── Appointment click handlers ──────────────────────────────────────────
       document.querySelectorAll('.appt-row').forEach(el => {

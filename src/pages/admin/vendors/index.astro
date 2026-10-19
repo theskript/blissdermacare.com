@@ -1,0 +1,250 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Vendor Applications" activeNav="vendors">
+
+  <div class="p-6 lg:p-8">
+    <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-serif font-semibold text-neutral-900">Vendor Applications</h1>
+        <p class="text-sm text-neutral-500 mt-1">Health &amp; Financial Wellness Event · Nov 6, 2026</p>
+        <p id="va-count-label" class="text-sm text-neutral-500 mt-0.5">Loading…</p>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <button id="va-mark-all-btn"
+          class="hidden px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
+          ✓ Mark All as Read
+        </button>
+        <a href="/vendors/" target="_blank"
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-700 text-sm font-medium rounded-xl transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          Public Page
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-5">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input id="va-search" type="text" placeholder="Search business, name or email…"
+          class="pl-9 pr-4 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-sm w-64"/>
+      </div>
+      <select id="va-status-filter"
+        class="px-3 py-2.5 rounded-xl border border-neutral-300 focus:border-primary-500 outline-none transition-all text-sm bg-white">
+        <option value="">All statuses</option>
+        <option value="pending">Pending review</option>
+        <option value="approved">Approved</option>
+        <option value="declined">Declined</option>
+        <option value="withdrawn">Withdrawn</option>
+      </select>
+      <label class="inline-flex items-center gap-2 text-sm text-neutral-600 cursor-pointer">
+        <input id="va-paid-only" type="checkbox" class="w-4 h-4 rounded border-neutral-300 accent-primary-600" checked /> Paid only
+      </label>
+    </div>
+
+    <div id="va-new-badge" class="hidden mb-4 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-full">
+      <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+      <span id="va-new-count"></span> unread
+    </div>
+
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div id="va-table-wrap" class="overflow-x-auto">
+        <div class="px-6 py-10 text-center text-neutral-400 text-sm">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail slide-over -->
+  <div id="va-detail-panel" class="hidden fixed inset-y-0 right-0 w-full sm:w-[520px] bg-white shadow-2xl border-l border-neutral-200 z-50 flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 shrink-0">
+      <h3 class="font-semibold text-neutral-900">Application Details</h3>
+      <button id="va-close-detail" class="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="va-detail-content" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm"></div>
+  </div>
+  <div id="va-detail-overlay" class="hidden fixed inset-0 bg-black/20 z-40"></div>
+
+  <script>
+    import { requireLogin, apiFetch } from '../../../scripts/adminAuth.js';
+    requireLogin();
+
+    let fullRecords: any[] = [];
+    let allRecords: any[] = [];
+    let reserved = 0;
+    let capacity = 0;
+
+    const esc = (s: unknown) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const $ = (id: string) => document.getElementById(id)!;
+
+    const STATUS_STYLES: Record<string,string> = {
+      pending:   'bg-amber-100 text-amber-800',
+      approved:  'bg-emerald-100 text-emerald-800',
+      declined:  'bg-red-100 text-red-700',
+      withdrawn: 'bg-neutral-200 text-neutral-600',
+    };
+    const PAY_STYLES: Record<string,string> = {
+      paid:     'bg-emerald-100 text-emerald-800',
+      unpaid:   'bg-neutral-100 text-neutral-500',
+      refunded: 'bg-blue-100 text-blue-700',
+    };
+    const badge = (text: string, cls: string) => `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${cls}">${esc(text)}</span>`;
+    const label = (t: string) => `<span class="text-xs font-bold uppercase tracking-widest text-neutral-400">${t}</span>`;
+
+    function applyFilters() {
+      const search = (($('va-search') as HTMLInputElement).value || '').trim().toLowerCase();
+      const paidOnly = ($('va-paid-only') as HTMLInputElement).checked;
+      allRecords = fullRecords.filter((r: any) =>
+        (!paidOnly || r.payment_status !== 'unpaid') &&
+        (!search || [r.business_name, r.contact_name, r.email].some((v: string) => (v || '').toLowerCase().includes(search))));
+      $('va-count-label').textContent = `${reserved} of ${capacity} spots reserved · ${allRecords.length} application${allRecords.length !== 1 ? 's' : ''} shown`;
+    }
+
+    async function load() {
+      const status = ($('va-status-filter') as HTMLSelectElement).value;
+      const wrap = $('va-table-wrap');
+      try {
+        const data = await apiFetch('admin-vendors', { params: status ? { status } : {} });
+        fullRecords = data?.records || [];
+        reserved = data?.reserved ?? 0;
+        capacity = data?.capacity ?? 0;
+        applyFilters();
+
+        const unread = fullRecords.filter((r: any) => !r.read_at && r.payment_status !== 'unpaid').length;
+        $('va-new-count').textContent = String(unread);
+        $('va-new-badge').classList.toggle('hidden', unread === 0);
+        $('va-mark-all-btn').classList.toggle('hidden', unread === 0);
+        render();
+      } catch (err: any) {
+        wrap.innerHTML = `<div class="px-6 py-6 text-red-500 text-sm">${esc(err.message)}</div>`;
+      }
+    }
+
+    function render() {
+      const wrap = $('va-table-wrap');
+      if (!allRecords.length) {
+        wrap.innerHTML = '<div class="px-6 py-12 text-center text-neutral-400 text-sm">No applications found.</div>';
+        return;
+      }
+      wrap.innerHTML = `
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+              <th class="px-6 py-3 text-left">Business</th>
+              <th class="px-6 py-3 text-left hidden md:table-cell">Category</th>
+              <th class="px-6 py-3 text-left">Status</th>
+              <th class="px-6 py-3 text-left hidden lg:table-cell">Payment</th>
+              <th class="px-6 py-3 text-left">Submitted</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-50">
+            ${allRecords.map((r: any, i: number) => `
+              <tr class="hover:bg-neutral-50 cursor-pointer va-row transition-colors" data-i="${i}">
+                <td class="px-6 py-4">
+                  <div class="text-sm text-neutral-900 ${!r.read_at && r.payment_status !== 'unpaid' ? 'font-bold' : 'font-medium'}">${esc(r.business_name)}</div>
+                  <div class="text-xs text-neutral-400">${esc(r.contact_name)} · ${esc(r.email)}</div>
+                </td>
+                <td class="px-6 py-4 text-xs text-neutral-600 hidden md:table-cell">${esc(r.category)}</td>
+                <td class="px-6 py-4">${badge(r.status, STATUS_STYLES[r.status] || '')}</td>
+                <td class="px-6 py-4 hidden lg:table-cell">${badge(r.payment_status, PAY_STYLES[r.payment_status] || '')}</td>
+                <td class="px-6 py-4 text-xs text-neutral-400 whitespace-nowrap">${new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+      wrap.querySelectorAll('.va-row').forEach(row =>
+        row.addEventListener('click', () => openDetail(allRecords[Number((row as HTMLElement).dataset.i)])));
+    }
+
+    async function act(fn: () => Promise<unknown>) {
+      try { await fn(); closeDetail(); await load(); } catch (err: any) { alert(err.message); }
+    }
+
+    function openDetail(rec: any) {
+      const paid = rec.payment_status === 'paid';
+      const site = rec.website
+        ? `<a href="${/^https?:\/\//i.test(rec.website) ? esc(rec.website) : '#'}" target="_blank" rel="noopener" class="text-primary-600 hover:underline break-all">${esc(rec.website)}</a>`
+        : '<span class="text-neutral-400">—</span>';
+
+      $('va-detail-content').innerHTML = `
+        <div class="space-y-4">
+          <div>${label('Business')}<p class="mt-1 text-neutral-900 font-semibold text-base">${esc(rec.business_name)}</p>
+            <div class="mt-1 flex gap-2">${badge(rec.status, STATUS_STYLES[rec.status] || '')}${badge(rec.payment_status, PAY_STYLES[rec.payment_status] || '')}</div></div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>${label('Contact')}<p class="mt-1 text-neutral-800">${esc(rec.contact_name)}</p></div>
+            <div>${label('Category')}<p class="mt-1 text-neutral-800">${esc(rec.category)}</p></div>
+            <div>${label('Email')}<p class="mt-1 text-neutral-800 break-all"><a href="mailto:${esc(rec.email)}" class="hover:underline">${esc(rec.email)}</a></p></div>
+            <div>${label('Phone')}<p class="mt-1 text-neutral-800"><a href="tel:${esc(rec.phone)}" class="hover:underline">${esc(rec.phone)}</a></p></div>
+          </div>
+          <div>${label('Website / Social')}<p class="mt-1">${site}</p></div>
+          <div>${label('Offering')}<p class="mt-1 text-neutral-700 leading-relaxed whitespace-pre-wrap">${esc(rec.description)}</p></div>
+          ${rec.license_info ? `<div>${label('License / Registration')}<p class="mt-1 text-neutral-700">${esc(rec.license_info)}</p></div>` : ''}
+          <div>${label('Sample-size policy')}<p class="mt-1 text-neutral-700">${rec.agreed_sample_only ? 'Agreed ✓' : '<span class="text-amber-700">Not recorded</span>'}</p></div>
+          ${rec.special_requests ? `<div>${label('Notes from vendor')}<p class="mt-1 text-neutral-700 whitespace-pre-wrap">${esc(rec.special_requests)}</p></div>` : ''}
+          <div class="grid grid-cols-2 gap-4">
+            <div>${label('Submitted')}<p class="mt-1 text-neutral-500 text-xs">${new Date(rec.created_at).toLocaleString('en-US')}</p></div>
+            <div>${label('Paid')}<p class="mt-1 text-neutral-500 text-xs">${paid || rec.payment_status === 'refunded' ? `$${((rec.amount_paid || 0) / 100).toFixed(2)} · ${rec.paid_at ? new Date(rec.paid_at).toLocaleString('en-US') : ''}` : '—'}</p></div>
+          </div>
+          ${rec.stripe_payment_intent_id ? `<div>${label('Stripe payment')}<p class="mt-1 text-neutral-500 text-xs font-mono break-all">${esc(rec.stripe_payment_intent_id)}</p></div>` : ''}
+        </div>
+        <div class="space-y-2 pt-4 border-t border-neutral-100">
+          ${paid && rec.status !== 'approved' ? '<button id="va-approve" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors">Approve &amp; email vendor</button>' : ''}
+          ${paid && rec.status !== 'declined' ? '<button id="va-decline-refund" class="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition-colors">Decline &amp; refund $25</button>' : ''}
+          ${rec.status === 'approved' ? '<button id="va-withdraw" class="w-full py-2.5 px-4 border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-sm font-semibold rounded-xl transition-colors">Mark withdrawn (no refund)</button>' : ''}
+          <div class="flex gap-3">
+            <button id="va-toggle-read" class="flex-1 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-semibold rounded-xl transition-colors">${rec.read_at ? 'Mark as Unread' : 'Mark as Read'}</button>
+            <button id="va-del" class="py-2.5 px-4 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors">Delete</button>
+          </div>
+        </div>`;
+
+      $('va-detail-panel').classList.remove('hidden');
+      $('va-detail-panel').classList.add('flex');
+      $('va-detail-overlay').classList.remove('hidden');
+
+      const patch = (body: object) => apiFetch('admin-vendors', { method: 'PATCH', body: { id: rec.id, ...body } });
+
+      document.getElementById('va-approve')?.addEventListener('click', () => {
+        if (confirm(`Approve ${rec.business_name}? They'll be emailed.`)) act(() => patch({ status: 'approved' }));
+      });
+      document.getElementById('va-decline-refund')?.addEventListener('click', () => {
+        if (confirm(`Decline ${rec.business_name} and refund their $25 via Stripe? They'll be emailed. This can't be undone.`)) act(() => patch({ status: 'declined', refund: true }));
+      });
+      document.getElementById('va-withdraw')?.addEventListener('click', () => {
+        if (confirm(`Mark ${rec.business_name} as withdrawn? No refund is issued.`)) act(() => patch({ status: 'withdrawn' }));
+      });
+      $('va-toggle-read').addEventListener('click', () => act(() => patch({ read: !rec.read_at })));
+      $('va-del').addEventListener('click', () => {
+        if (confirm(`Delete application from ${rec.business_name}?`)) act(() => apiFetch('admin-vendors', { method: 'DELETE', body: { id: rec.id } }));
+      });
+    }
+
+    function closeDetail() {
+      $('va-detail-panel').classList.add('hidden');
+      $('va-detail-panel').classList.remove('flex');
+      $('va-detail-overlay').classList.add('hidden');
+    }
+    $('va-close-detail').addEventListener('click', closeDetail);
+    $('va-detail-overlay').addEventListener('click', closeDetail);
+
+    $('va-mark-all-btn').addEventListener('click', async () => {
+      if (!confirm('Mark all applications as read?')) return;
+      try { await apiFetch('admin-vendors', { method: 'PATCH', body: { readAll: true } }); await load(); } catch (err: any) { alert(err.message); }
+    });
+
+    $('va-status-filter').addEventListener('change', load);
+    $('va-paid-only').addEventListener('change', () => { applyFilters(); render(); });
+    let searchTimer: ReturnType<typeof setTimeout>;
+    $('va-search').addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { applyFilters(); render(); }, 300);
+    });
+
+    load();
+  </script>
+
+</AdminLayout>

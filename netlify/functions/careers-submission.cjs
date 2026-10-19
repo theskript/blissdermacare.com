@@ -5,7 +5,7 @@
  * Saves a career application to Supabase.
  */
 
-const { getSupabase, sendSMS, sendEmail, getNotificationSettings } = require('./_utils.cjs');
+const { getSupabase, notifyOwners } = require('./_utils.cjs');
 
 const CORS = {
   'Content-Type':                'application/json',
@@ -61,12 +61,8 @@ exports.handler = async (event) => {
 
     // Owner notification (non-fatal)
     try {
-      const ns = await getNotificationSettings();
       const bodyText = `💼 Career Application\n${record.name} — ${record.role}\n📱 ${record.phone}\n✉️ ${record.email}\nAvailability: ${record.availability || '—'}`;
-      if (ns.sms_enabled && ns.owner_phone) await sendSMS(ns.owner_phone, bodyText);
-      if (ns.email_enabled && ns.owner_email) {
-        await sendEmail(ns.owner_email, 'New Career Application — Bliss Dermacare', `<p>${bodyText.replace(/\n/g, '<br>')}</p>`);
-      }
+      await notifyOwners('New Career Application — Bliss Dermacare', bodyText);
     } catch (notifErr) {
       console.warn('Careers notification failed (non-fatal):', notifErr.message);
     }

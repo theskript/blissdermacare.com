@@ -5,7 +5,7 @@
  * Saves a skincare consultation request to Supabase.
  */
 
-const { getSupabase, sendSMS, sendEmail, getNotificationSettings } = require('./_utils.cjs');
+const { getSupabase, notifyOwners } = require('./_utils.cjs');
 
 const CORS = {
   'Content-Type':                'application/json',
@@ -66,13 +66,9 @@ exports.handler = async (event) => {
 
     // Owner notification (non-fatal)
     try {
-      const ns = await getNotificationSettings();
       const concernsList = (record.concerns || []).join(', ') || '—';
       const bodyText = `✨ Consultation Request\n${record.name}\n📱 ${record.phone}\n✉️ ${record.email}\nSkin: ${record.skin_type || '—'} · Concerns: ${concernsList}\nContact via: ${record.contact_preference || '—'}`;
-      if (ns.sms_enabled && ns.owner_phone) await sendSMS(ns.owner_phone, bodyText);
-      if (ns.email_enabled && ns.owner_email) {
-        await sendEmail(ns.owner_email, 'New Consultation Request — Bliss Dermacare', `<p>${bodyText.replace(/\n/g, '<br>')}</p>`);
-      }
+      await notifyOwners('New Consultation Request — Bliss Dermacare', bodyText);
     } catch (notifErr) {
       console.warn('Consultation notification failed (non-fatal):', notifErr.message);
     }
